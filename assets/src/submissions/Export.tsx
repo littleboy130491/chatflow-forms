@@ -33,7 +33,8 @@ export async function downloadExport(api: AdminApi, url: string): Promise<void> 
     objectUrl = URL.createObjectURL(blob),
     link = document.createElement('a');
   link.href = objectUrl;
-  link.download = 'chatflow-submissions.csv';
+  link.download = response.headers.get('Content-Type')?.includes('spreadsheetml')
+    ? 'chatflow-submissions.xlsx' : 'chatflow-submissions.csv';
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -43,6 +44,7 @@ export function Export({ api, filters, ids }: { api: AdminApi; filters: Filters;
   const [columns, setColumns] = useState(''),
     [headerStyle, setHeader] = useState<'labels' | 'keys'>('labels'),
     [delimiter, setDelimiter] = useState<',' | ';'>(','),
+    [format, setFormat] = useState<'csv' | 'xlsx'>('csv'),
     [job, setJob] = useState<ExportJob | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
@@ -55,7 +57,10 @@ export function Export({ api, filters, ids }: { api: AdminApi; filters: Filters;
   );
   return (
     <section className="cff-card">
-      <h2>{__('Export CSV', 'chatflow-forms')}</h2>
+      <h2>{__('Export submissions', 'chatflow-forms')}</h2>
+      <Select label={__('Format', 'chatflow-forms')} value={format}
+        choices={[{ value: 'csv', label: 'CSV' }, ...(('xlsx' in api.config.features && api.config.features.xlsx) ? [{value: 'xlsx', label: 'XLSX'}] : [])]}
+        onChange={(next) => setFormat(next as 'csv' | 'xlsx')} />
       <p>
         {ids.length
           ? __('Exports only selected rows and the active filters.', 'chatflow-forms')
@@ -104,6 +109,7 @@ export function Export({ api, filters, ids }: { api: AdminApi; filters: Filters;
                     .filter(Boolean),
                   headerStyle,
                   delimiter,
+                  format,
                 ),
               ),
             );

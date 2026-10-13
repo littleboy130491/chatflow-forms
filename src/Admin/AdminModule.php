@@ -25,6 +25,7 @@ final class AdminModule implements Module {
 		$pages     = array(
 			'cff-forms'       => array( 'builder', 'cff_manage_forms', __( 'Forms', 'chatflow-forms' ) ),
 			'cff-submissions' => array( 'submissions', 'cff_view_submissions', __( 'Submissions', 'chatflow-forms' ) ),
+			'cff-analytics'   => array( 'analytics', 'cff_view_submissions', __( 'Analytics', 'chatflow-forms' ) ),
 			'cff-settings'    => array( 'settings', 'cff_manage_settings', __( 'Settings', 'chatflow-forms' ) ),
 			'cff-tools'       => array( 'submissions', $this->toolsCapability(), __( 'Tools', 'chatflow-forms' ) ),
 		);
@@ -50,6 +51,7 @@ final class AdminModule implements Module {
 		$cap    = array(
 			'builder'     => 'cff_manage_forms',
 			'submissions' => 'cff_view_submissions',
+			'analytics'   => 'cff_view_submissions',
 			'settings'    => 'cff_manage_settings',
 		)[ $name ] ?? '';
 		if ( 'cff-tools' === $this->pageSlug() ) {
@@ -129,6 +131,7 @@ final class AdminModule implements Module {
 			'features'     => array(
 				'fieldTypes' => $types,
 				'uploads'    => false,
+				'xlsx'       => \ChatFlow\Submissions\Xlsx::available(),
 			),
 		);
 		// This is an admin-only locator, not a write or authorization input.

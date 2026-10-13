@@ -18,7 +18,9 @@ export interface GlobalSettings {
     respectDnt: boolean;
   };
   retention: { enabled: boolean; days: number; partialDays?: number | null };
-  spam?: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
+  spam?: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number;
+    captcha?: 'none' | 'turnstile' | 'hcaptcha' | 'recaptcha'; siteKey?: string; secretKey?: string;
+    minScore?: number; akismetEnabled?: boolean; akismetKey?: string };
   proxy: {
     mode: 'automatic' | 'direct' | 'cloudflare' | 'custom';
     trustedRanges: string[];
@@ -232,6 +234,23 @@ export function Settings({ api }: { api: AdminApi }) {
                 }
               />
             ))}
+          </section>
+          <section className="cff-card">
+            <h2>{__('Optional captcha and Akismet credentials', 'chatflow-forms')}</h2>
+            <Select label={__('Captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
+              choices={['none','turnstile','hcaptcha','recaptcha'].map((value) => ({value,label:value}))}
+              onChange={(captcha) => update({...settings,spam:{...settings.spam!,captcha:captcha as NonNullable<NonNullable<GlobalSettings['spam']>['captcha']>}})} />
+            {([
+              {key:'siteKey',label:__('Public site key','chatflow-forms')},
+              {key:'secretKey',label:__('Private captcha key','chatflow-forms')},
+              {key:'akismetKey',label:__('Private Akismet key','chatflow-forms')},
+            ] as const).map(({key,label}) => <Field key={key} label={label} type={key === 'siteKey' ? 'text' : 'password'} value={settings.spam?.[key] ?? ''}
+              onChange={(value) => update({...settings,spam:{...settings.spam!,[key]:value}})} />)}
+            <Field label={__('reCAPTCHA v3 minimum score (0–1)','chatflow-forms')} type="number" value={settings.spam?.minScore ?? 0.5}
+              onChange={(value) => update({...settings,spam:{...settings.spam!,minScore:Number(value)}})} />
+            <Check label={__('Enable optional Akismet','chatflow-forms')} value={settings.spam?.akismetEnabled ?? false}
+              onChange={(akismetEnabled) => update({...settings,spam:{...settings.spam!,akismetEnabled}})} />
+            <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
           </section>
           <section className="cff-card">
             <h2>{__('Trusted proxy configuration', 'chatflow-forms')}</h2>

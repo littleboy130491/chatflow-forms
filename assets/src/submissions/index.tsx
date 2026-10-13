@@ -2,6 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
+import { Analytics } from './Analytics';
 import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, queryString } from '../builder/api';
@@ -302,6 +303,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
 }
 function AdminSubmissions({ config }: { config: AdminConfig }) {
   const api = useMemo(() => new AdminApi(config), [config]);
+  if ((config.screen as string) === 'analytics') return can(config, 'view_submissions') ? <Analytics api={api} /> : <p>{__('You cannot view analytics.', 'chatflow-forms')}</p>;
   if (config.screen === 'settings')
     return can(config, 'manage_settings') ? (
       <Settings api={api} />

@@ -828,6 +828,7 @@ export interface ChatFlowPrivateFormSettingsV1 {
   };
 }
 export interface Appearance {
+  confetti?: boolean;
   theme?: "light" | "dark" | "auto";
   primary?: string;
   botBubbleBackground?: string;

@@ -5,6 +5,7 @@ use ChatFlow\Forms\FormRepository;
 use ChatFlow\Submissions\Database;
 use ChatFlow\Submissions\Repository;
 use ChatFlow\Submissions\Submission;
+use ChatFlow\Submissions\Xlsx;
 
 final class Export {
 	public function __construct( private FormRepository $forms = new FormRepository(), private Repository $submissions = new Repository() ) {}
@@ -14,8 +15,11 @@ final class Export {
 	 */
 	public function create( array $options ): array|\WP_Error {
 		global $wpdb;
-		if ( array_diff( array_keys( $options ), array( 'formId', 'filters', 'ids', 'columns', 'headerStyle', 'delimiter', 'format' ) ) || ! is_int( $options['formId'] ?? null ) || 'csv' !== ( $options['format'] ?? 'csv' ) || ! in_array( $options['delimiter'] ?? ',', array( ',', ';' ), true ) || ! in_array( $options['headerStyle'] ?? 'labels', array( 'labels', 'keys' ), true ) || ! is_array( $options['filters'] ?? array() ) || ! is_array( $options['columns'] ?? array() ) ) {
-			return Database::error( 'cff_export_invalid', 'Invalid CSV options.', 422 ); }
+		if ( array_diff( array_keys( $options ), array( 'formId', 'filters', 'ids', 'columns', 'headerStyle', 'delimiter', 'format' ) ) || ! is_int( $options['formId'] ?? null ) || ! in_array( $options['format'] ?? 'csv', array( 'csv', 'xlsx' ), true ) || ! in_array( $options['delimiter'] ?? ',', array( ',', ';' ), true ) || ! in_array( $options['headerStyle'] ?? 'labels', array( 'labels', 'keys' ), true ) || ! is_array( $options['filters'] ?? array() ) || ! is_array( $options['columns'] ?? array() ) ) {
+			return Database::error( 'cff_export_invalid', 'Invalid export options.', 422 ); }
+		$format = $options['format'] ?? 'csv';
+		if ( 'xlsx' === $format && ! Xlsx::available() ) {
+			return Database::error( 'cff_xlsx_unavailable', 'XLSX support is not installed.', 503 ); }
 		$form = $this->forms->getDraft( $options['formId'] );
 		if ( ! $form ) {
 			return Database::error( 'cff_not_found', 'Form not found.', 404 ); }
@@ -51,7 +55,7 @@ final class Export {
 					return Database::error( 'cff_export_invalid', 'Unknown export column.', 422 ); }
 				$columns = array_replace( array_flip( $requested ), array_intersect_key( $columns, array_flip( $requested ) ) );
 			}
-			$storage = 'export-' . bin2hex( random_bytes( 32 ) ) . '.csv';
+			$storage = 'export-' . bin2hex( random_bytes( 32 ) ) . ( 'xlsx' === $format ? '.bin' : '.csv' );
 			$path    = ( new PrivateFiles() )->path( $storage );
 			$handle  = fopen( $path, 'x+b' );
 			if ( false === $handle ) {
@@ -75,6 +79,7 @@ final class Export {
 						'user_id'     => get_current_user_id(),
 						'form_id'     => $form->id(),
 						'status'      => 'queued',
+						'format'      => $format,
 						'criteria'    => Database::json( $criteria ),
 						'storage_key' => $storage,
 						'created_at'  => Database::now(),
@@ -83,7 +88,7 @@ final class Export {
 				)
 			);
 			$id = (int) $wpdb->insert_id;
-			if ( $count <= 5000 ) {
+			if ( $count <= 5000 && 'csv' === $format ) {
 				do {
 					$this->run( $id, false );
 					$row = $this->row( $id );
@@ -151,28 +156,39 @@ final class Export {
 			fflush( $handle );
 			fclose( $handle );
 			$status = count( $items ) === 1000 ? 'running' : 'ready';
-			Database::check(
-				$wpdb->update(
-					$wpdb->prefix . 'cff_exports',
-					array(
-						'cursor_id'     => $row['cursor_id'],
-						'row_count'     => (int) $row['row_count'] + count( $items ),
-						'criteria'      => Database::json( $criteria ),
-						'status'        => $status,
-						'download_hash' => hash( 'sha256', $this->ticket( $row ) ),
-					),
-					array( 'id' => $id )
+			if ( 'ready' === $status && 'xlsx' === $row['format'] ) {
+				Xlsx::convert( $row['storage_key'], $criteria['delimiter'] ); }
+			$updated = $wpdb->update(
+				$wpdb->prefix . 'cff_exports',
+				array(
+					'cursor_id'     => $row['cursor_id'],
+					'row_count'     => (int) $row['row_count'] + count( $items ),
+					'criteria'      => Database::json( $criteria ),
+					'status'        => $status,
+					'download_hash' => hash( 'sha256', $this->ticket( $row ) ),
+				),
+				array(
+					'id'     => $id,
+					'status' => $row['status'],
 				)
 			);
+			Database::check( $updated );
+			if ( 0 === $updated ) {
+				( new PrivateFiles() )->remove( $row['storage_key'] );
+				if ( 'xlsx' === $row['format'] ) {
+					Xlsx::cleanupWorkspace( $row['storage_key'] );
+					( new PrivateFiles() )->remove( Xlsx::temporaryKey( $row['storage_key'] ) ); }
+				return;
+			}
 			if ( $schedule && 'running' === $status ) {
 				Scheduler::enqueue( 'cff_export_batch', array( $id ), 1 ); }
 			if ( $schedule && 'ready' === $status ) {
 				$user = get_userdata( (int) $row['user_id'] );
 				if ( $user && user_can( $user, 'cff_export_submissions' ) ) {
-					wp_mail( $user->user_email, __( 'ChatFlow CSV export ready', 'chatflow-forms' ), __( 'Your private export is ready. Open ChatFlow Submissions to download it within 24 hours.', 'chatflow-forms' ) ); }
+					wp_mail( $user->user_email, __( 'ChatFlow export ready', 'chatflow-forms' ), __( 'Your private export is ready. Open ChatFlow Submissions to download it within 24 hours.', 'chatflow-forms' ) ); }
 			}
 		} catch ( \Throwable $error ) {
-			$wpdb->update( $wpdb->prefix . 'cff_exports', array( 'status' => 'failed' ), array( 'id' => $id ) ); } finally {
+			$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}cff_exports SET status='failed' WHERE id=%d AND status IN ('queued','running')", $id ) ); } finally {
 			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) ); }
 	}
 	public function download(): void {
@@ -193,18 +209,23 @@ final class Export {
 			wp_die( esc_html__( 'Private storage unavailable.', 'chatflow-forms' ), '', array( 'response' => 503 ) ); }
 		nocache_headers();
 		header( 'Cache-Control: private,no-store' );
-		header( 'Content-Type: text/csv; charset=UTF-8' );
+		header( 'Content-Type: ' . ( 'xlsx' === $row['format'] ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv; charset=UTF-8' ) );
 		header( 'X-Content-Type-Options: nosniff' );
-		header( 'Content-Disposition: attachment; filename="chatflow-' . $id . '.csv"' );
+		header( 'Content-Disposition: attachment; filename="chatflow-' . $id . ( 'xlsx' === $row['format'] ? '.xlsx' : '.csv' ) . '"' );
 		header( 'Content-Length: ' . filesize( $path ) );
 		readfile( $path );
 		exit;
 	}
-	public function expire(): void {
+	public function expire( ?int $id = null ): void {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id,storage_key FROM {$wpdb->prefix}cff_exports WHERE expires_at<=%s AND status<>'expired' LIMIT 100", Database::now() ), ARRAY_A );
+		$rows = null === $id
+			? $wpdb->get_results( $wpdb->prepare( "SELECT id,storage_key,format FROM {$wpdb->prefix}cff_exports WHERE expires_at<=%s AND storage_key<>'' LIMIT 100", Database::now() ), ARRAY_A )
+			: $wpdb->get_results( $wpdb->prepare( "SELECT id,storage_key,format FROM {$wpdb->prefix}cff_exports WHERE expires_at<=%s AND storage_key<>'' AND id=%d", Database::now(), $id ), ARRAY_A );
 		foreach ( $rows as $row ) {
 			( new PrivateFiles() )->remove( $row['storage_key'] );
+			if ( 'xlsx' === $row['format'] ) {
+				Xlsx::cleanupWorkspace( $row['storage_key'] );
+				( new PrivateFiles() )->remove( Xlsx::temporaryKey( $row['storage_key'] ) ); }
 			Database::check(
 				$wpdb->update(
 					$wpdb->prefix . 'cff_exports',
