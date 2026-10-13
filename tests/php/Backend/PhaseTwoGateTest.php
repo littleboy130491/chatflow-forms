@@ -235,7 +235,7 @@ final class PhaseTwoGateTest extends TestCase {
 		add_filter( 'cff_field_types', $filter );
 		try {
 			$public = \ChatFlow\Forms\PublicProjection::build( $this->form() );
-			self::assertCount( 19, $public['features']['fieldTypes'] );
+			self::assertCount( 20, $public['features']['fieldTypes'] );
 			self::assertNotContains( 'file_upload', $public['features']['fieldTypes'] );
 			self::assertFalse( $public['features']['uploads'] );
 		} finally {

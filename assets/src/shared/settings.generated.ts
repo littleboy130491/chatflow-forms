@@ -183,6 +183,12 @@ export interface ChatFlowPrivateFormSettingsV1 {
         ];
   };
   sessions?: {
+    magicLinks?: {
+      enabled?: boolean;
+      whatsapp?: boolean;
+      emailField?: string;
+      ttlMinutes?: number;
+    };
     savePartial?: boolean;
     resumeEnabled?: boolean;
     resumePrompt?: boolean;

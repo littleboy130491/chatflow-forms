@@ -25,6 +25,8 @@ import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
 import { downloadForm } from './formIO';
 import { Templates } from './Templates';
+import { FlowMap } from './FlowMap';
+import { PowerEditor } from './PowerEditor';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -33,6 +35,7 @@ export const fieldLabels: Record<string, string> = {
   email: __('Email', 'chatflow-forms'),
   phone: __('Phone', 'chatflow-forms'),
   number: __('Number', 'chatflow-forms'),
+  calculated: __('Calculated number', 'chatflow-forms'),
   rating: __('Rating', 'chatflow-forms'),
   scale: __('Scale', 'chatflow-forms'),
   nps: __('Net promoter score', 'chatflow-forms'),
@@ -605,7 +608,8 @@ function BuilderView({
                 ))}
             </tbody>
           </table>
-          <p>{__('Scoring and visual node graphs are not enabled in MVP.', 'chatflow-forms')}</p>
+          <FlowMap schema={schema} onChange={setSchema} onSelect={id => { setSelected(id); setTab('build'); }} />
+          <PowerEditor schema={schema} onChange={setSchema} />
         </section>
       )}
       {tab === 'design' && (

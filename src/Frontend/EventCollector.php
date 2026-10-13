@@ -34,7 +34,9 @@ final class EventCollector {
 				if ( ! $global['tracking']['enabled'] || ( $body['optOut'] ?? false ) || '1' === ( $server['HTTP_SEC_GPC'] ?? '' ) || $respect && '1' === ( $server['HTTP_DNT'] ?? '' ) || $global['tracking']['consentRequired'] && ! ( $body['consentGranted'] ?? false ) ) {
 					return array( 'stored' => 0 ); }
 				$context = Database::decode( $row['context'] );
-				$path    = ( new Engine() )->replay( $form->schema(), $context['_answers'] ?? array(), $context );
+				if ( isset( $context['_variantSchema'] ) ) {
+					$form = \ChatFlow\Logic\Experiments::withSchema( $form, $context['_variantSchema'] ); }
+				$path = ( new Engine() )->replay( $form->schema(), \ChatFlow\Logic\Experiments::inputs( $context['_answers'] ?? array(), $form->schema() ), $context );
 				foreach ( $body['events'] as $event ) {
 					$step = $event['stepId'] ?? '';
 					if ( '' === $step ? 'view' !== $event['event'] : ! in_array( $step, $path['visited'], true ) ) {
@@ -63,7 +65,7 @@ final class EventCollector {
 								'session_id'   => (int) $row['id'],
 								'step_id'      => $event['stepId'] ?? '',
 								'event'        => $event['event'],
-								'variant_id'   => '',
+								'variant_id'   => $context['_variantId'] ?? '',
 								'payload'      => null,
 								'ts'           => Database::now(),
 							)

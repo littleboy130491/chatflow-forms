@@ -4,9 +4,9 @@ namespace ChatFlow\Install;
 use ChatFlow\Forms\FormPostType;
 
 final class Installer {
-	public const DB_VERSION   = 2;
+	public const DB_VERSION   = 3;
 	public const CAPABILITIES = array( 'cff_manage_forms', 'cff_view_submissions', 'cff_edit_submissions', 'cff_delete_submissions', 'cff_export_submissions', 'cff_purge_submissions', 'cff_manage_settings' );
-	public const TABLES       = array( 'form_versions', 'submissions', 'submission_values', 'submission_notes', 'sessions', 'requests', 'uploads', 'exports', 'events', 'stats_daily', 'deliveries', 'audit_log', 'rate_limits' );
+	public const TABLES       = array( 'form_versions', 'submissions', 'submission_values', 'submission_notes', 'sessions', 'magic_links', 'requests', 'uploads', 'exports', 'events', 'stats_daily', 'deliveries', 'audit_log', 'rate_limits' );
 
 	public static function activate( bool $network_wide = false ): void {
 		self::eachSite(
@@ -73,7 +73,7 @@ final class Installer {
 	}
 
 	private static function unschedule(): void {
-		foreach ( array( 'cff_retention', 'cff_abandon_sessions', 'cff_refresh_cloudflare_ranges', 'cff_aggregate_stats', 'cff_recover_deliveries', 'cff_dispatch_delivery', 'cff_export_batch', 'cff_purge_batch', 'cff_private_cleanup' ) as $hook ) {
+		foreach ( array( 'cff_retention', 'cff_abandon_sessions', 'cff_refresh_cloudflare_ranges', 'cff_aggregate_stats', 'cff_recover_deliveries', 'cff_dispatch_delivery', 'cff_export_batch', 'cff_purge_batch', 'cff_private_cleanup', 'cff_recover_magic_links', 'cff_send_magic_link' ) as $hook ) {
 			wp_clear_scheduled_hook( $hook );
 		}
 		if ( function_exists( 'as_unschedule_all_actions' ) && class_exists( '\\ActionScheduler_StoreSchema' ) && ( new \ActionScheduler_StoreSchema() )->tables_exist() ) {
@@ -175,6 +175,11 @@ final class Installer {
 				if ( '' !== $wpdb->last_error ) {
 					throw new \RuntimeException( 'ChatFlow database migration failed; version was not advanced.' );
 				}
+			}
+			if ( 3 === $version && ! $wpdb->get_var( $wpdb->prepare( 'SHOW COLUMNS FROM %i LIKE %s', $wpdb->prefix . 'cff_sessions', 'variant_id' ) ) ) {
+				$wpdb->query( "ALTER TABLE {$wpdb->prefix}cff_sessions ADD COLUMN variant_id varchar(64) NOT NULL DEFAULT ''" );
+				if ( '' !== $wpdb->last_error ) {
+					throw new \RuntimeException( 'ChatFlow variant migration failed; version was not advanced.' ); }
 			}
 			update_option( 'cff_db_version', $version, false );
 		}
@@ -417,6 +422,27 @@ final class Installer {
 					PRIMARY KEY  (bucket_hash),
 					KEY expiry (expires_at)
 				) ENGINE=InnoDB {$c};",
+			);
+		}
+		if ( 3 === $version ) {
+			return array(
+				"CREATE TABLE {$p}magic_links (
+				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				session_id bigint(20) unsigned NOT NULL,
+				token_hash char(64) NOT NULL,
+				payload longtext,
+				status varchar(20) NOT NULL DEFAULT 'pending',
+				attempts tinyint unsigned NOT NULL DEFAULT 0,
+				next_attempt_at datetime NOT NULL,
+				expires_at datetime NOT NULL,
+				consumed_at datetime DEFAULT NULL,
+				created_at datetime NOT NULL,
+				PRIMARY KEY  (id),
+				UNIQUE KEY token_hash (token_hash),
+				KEY session_id (session_id),
+				KEY expiry (expires_at),
+				KEY pending (status,next_attempt_at)
+			) ENGINE=InnoDB {$c};",
 			);
 		}
 		return array();

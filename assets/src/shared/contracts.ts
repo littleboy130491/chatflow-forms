@@ -28,10 +28,11 @@ export interface PublicSchemaEnvelope {
   form: { id: number; title: string; slug: string; version: number; schema: FormSchema;
     appearance: NonNullable<FormSettings['appearance']>; phrases: NonNullable<FormSettings['phrases']>;
     media?: Record<string, { url: string; alt?: string }>;
-    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean } };
+    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean; magicLinks?: { enabled: boolean; whatsapp: boolean } } };
   features: { fieldTypes: string[]; uploads: boolean; engagement: boolean };
 }
 export interface SessionEnvelope {
+  schema?: FormSchema; variantId?: string;
   sessionId: string; formId: number; version: number; revision: number;
   status: 'active' | 'completed' | 'closed' | 'expired'; answers: AnswerMap; visited: string[];
   currentStepId: string | null; progress: number; requestToken: string; requestExpiresAt: string;

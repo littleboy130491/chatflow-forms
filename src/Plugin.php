@@ -27,6 +27,7 @@ final class Plugin implements Module {
 			array(
 				new \ChatFlow\Forms\FormsModule( $forms, $fields ),
 				new \ChatFlow\Rest\RestModule( $forms, new Engine( $fields ), $fields ),
+				new \ChatFlow\Submissions\MagicLinks(),
 				new \ChatFlow\Frontend\FrontendModule( $forms ),
 				new \ChatFlow\Privacy\PrivacyModule( $forms ),
 				new \ChatFlow\Admin\AdminModule( $forms ),

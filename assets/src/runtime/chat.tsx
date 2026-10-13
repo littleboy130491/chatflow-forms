@@ -17,6 +17,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
   const [shown, setShown] = useState(0);
   const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [magicStatus, setMagicStatus] = useState('');
   const [reduced, setReduced] = useState(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
   const active = useRef<HTMLDivElement>(null);
   const last = useRef<HTMLDivElement>(null);
@@ -63,7 +64,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
 
   const bot = (text: string, key: string | number) => <div className="bubble bot" key={key}><Markdown text={interpolateText(text)} /></div>;
   const summary = () => <section className="summary" aria-label={phrase('summary')}><h2>{phrase('summary')}</h2><dl>
-    {(state.path?.visited ?? []).map(id => form?.schema.steps.find(s => s.id === id)).filter((s): s is Step => !!s && !['hidden', 'statement', 'summary', 'media'].includes(s.type) && Object.prototype.hasOwnProperty.call(state.answers, s.key)).map(s => <div key={s.id}><dt>{s.label}</dt><dd>{answerLabel(s, state.answers[s.key], phrase)} <button className="link-button" disabled={state.busy} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}`}>{phrase('edit')}</button></dd></div>)}
+    {(state.path?.visited ?? []).map(id => form?.schema.steps.find(s => s.id === id)).filter((s): s is Step => !!s && !['hidden', 'statement', 'summary', 'media', 'calculated'].includes(s.type) && Object.prototype.hasOwnProperty.call(state.answers, s.key)).map(s => <div key={s.id}><dt>{s.label}</dt><dd>{answerLabel(s, state.answers[s.key], phrase)} <button className="link-button" disabled={state.busy} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}`}>{phrase('edit')}</button></dd></div>)}
   </dl></section>;
   const restart = <button disabled={state.busy || state.error === 'submissionPending'} onClick={() => setConfirm(true)}>{phrase('startOver')}</button>;
   const error = state.error && <div className="notice" role="alert"><p>{phrase(state.error)}</p>{!state.conflict && <button disabled={state.busy || state.offline} onClick={() => void controller.retry()}>{phrase('retry')}</button>}</div>;
@@ -108,6 +109,15 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
       {error}
       <div ref={last} />
     </main>
-    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer aria-live="polite">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : state.dirty ? phrase('unsaved') : phrase('saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}</footer></>}
+    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer aria-live="polite">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : state.dirty ? phrase('unsaved') : phrase('saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}
+      {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
+        <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm('Send a one-time resume link to the email already provided in this form?')) return; void controller.magicLink('email').then(() => setMagicStatus('If an eligible email was provided, a resume link will be sent.')).catch(() => setMagicStatus('Unable to request a resume link right now.')); }}>Email me a resume link</button>
+        {form.session.magicLinks.whatsapp && <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm('Create a single-use link to share yourself? Anyone with the link can resume your form.')) return; void controller.magicLink('whatsapp').then(async result => {
+          if (!result.link) { setMagicStatus('Unable to create a link right now.'); return; }
+          try { if (navigator.share) await navigator.share({ text: result.link }); else { await navigator.clipboard.writeText(result.link); setMagicStatus('Link copied. Paste it into WhatsApp yourself.'); } }
+          catch { setMagicStatus('Share cancelled or unavailable. Request a new link to retry.'); }
+        }).catch(() => setMagicStatus('Unable to create a link right now.')); }}>Share resume link (choose WhatsApp)</button>}
+        <small role="status">{magicStatus}</small>
+      </div>}</footer></>}
   </section>;
 }

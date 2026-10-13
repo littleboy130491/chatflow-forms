@@ -75,7 +75,12 @@ final class SessionService {
 				$meta                       = $this->safeMeta( is_array( $meta ) ? $meta : array() );
 				$context                    = $metadata->context( $form, $meta );
 				$context['defaultEndingId'] = $form->settings()['completion']['defaultEndingId'] ?? '';
-				$replay                     = $this->replay( $form, $prefill, $context, 'partial' );
+				$variant                    = \ChatFlow\Logic\Experiments::assign( $form );
+				$context['_variantId']      = $variant['id'];
+				if ( '' !== $variant['id'] ) {
+					$context['_variantSchema'] = $variant['schema']; }
+				$form   = \ChatFlow\Logic\Experiments::withSchema( $form, $variant['schema'] );
+				$replay = $this->replay( $form, $prefill, $context, 'partial' );
 				if ( is_wp_error( $replay ) ) {
 					return $replay; }
 				$context['_answers']    = $replay['answers'];
@@ -98,6 +103,7 @@ final class SessionService {
 							'resume_hash'   => hash( 'sha256', $credential ),
 							'form_id'       => $form_id,
 							'form_version'  => $version,
+							'variant_id'    => $variant['id'],
 							'submission_id' => $submission?->id(),
 							'context'       => Database::json( $context ),
 							'started_at'    => Database::now(),
@@ -337,7 +343,11 @@ final class SessionService {
 	private function snapshot( array $row ): Form|\WP_Error {
 		if ( ! $this->forms->getPublished( (int) $row['form_id'] ) ) {
 			return Database::error( 'cff_form_not_found', 'Published form not found.', 404 ); }
-		return $this->forms->getPublished( (int) $row['form_id'], (int) $row['form_version'] ) ?? Database::error( 'cff_version_conflict', 'The saved version is unavailable. Your partial was kept.', 409 );
+		$form = $this->forms->getPublished( (int) $row['form_id'], (int) $row['form_version'] );
+		if ( ! $form ) {
+			return Database::error( 'cff_version_conflict', 'The saved version is unavailable. Your partial was kept.', 409 ); }
+		$context = Database::decode( $row['context'] );
+		return isset( $context['_variantSchema'] ) ? \ChatFlow\Logic\Experiments::withSchema( $form, $context['_variantSchema'] ) : $form;
 	}
 	private function lockForm( int $id ): void {
 		global $wpdb;
@@ -350,7 +360,7 @@ final class SessionService {
 	private function storedReplay( array $row, Form $form ): array|\WP_Error {
 		$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
 		$context    = Database::decode( $row['context'] );
-		return $this->replay( $form, $submission?->answers() ?? $context['_answers'] ?? array(), $context, 'partial' );
+		return $this->replay( $form, \ChatFlow\Logic\Experiments::inputs( $submission?->answers() ?? $context['_answers'] ?? array(), $form->schema() ), $context, 'partial' );
 	}
 	/**
 	 * @param array<string,mixed> $answers
@@ -374,8 +384,9 @@ final class SessionService {
 	 * @param array<string,mixed> $replay
 	 * @return array<string,mixed> */
 	private function envelope( array $row, Form $form, array $replay ): array {
-		$context = Database::decode( $row['context'] );
-		unset( $context['_meta'], $context['_answers'], $context['_startScope'] );
+		$context    = Database::decode( $row['context'] );
+		$variant_id = $context['_variantId'] ?? '';
+		$context    = array_intersect_key( $context, array_flip( array( 'hidden', 'url', 'meta', 'now', 'defaultEndingId' ) ) );
 		foreach ( array( 'hidden', 'url', 'meta' ) as $key ) {
 			$context[ $key ] = (object) ( $context[ $key ] ?? array() ); }
 		return array(
@@ -389,6 +400,8 @@ final class SessionService {
 			'currentStepId'    => $replay['currentStepId'],
 			'progress'         => $replay['progress'],
 			'context'          => $context,
+			'variantId'        => $variant_id,
+			'schema'           => \ChatFlow\Forms\PublicProjection::build( $form )['form']['schema'],
 			'requestToken'     => $this->signer->issue(
 				'request',
 				array(

@@ -10,6 +10,7 @@ final class PublicProjection {
 	public static function build( Form $form, ?array $types = null ): array {
 		$types ??= ( new \ChatFlow\Fields\Registry() )->types();
 		$schema = $form->schema();
+		unset( $schema['experiments'] );
 		// Cookie/default hidden sources stay on the server until an uncached handshake.
 		foreach ( $schema['steps'] as &$step ) {
 			if ( 'hidden' === $step['type'] ) {
@@ -32,6 +33,10 @@ final class PublicProjection {
 					'resumePrompt'  => $session['resumePrompt'] ?? true,
 					'resumeDays'    => $session['resumeDays'] ?? 30,
 					'savePartial'   => $session['savePartial'] ?? true,
+					'magicLinks'    => array(
+						'enabled'  => $session['magicLinks']['enabled'] ?? false,
+						'whatsapp' => $session['magicLinks']['whatsapp'] ?? false,
+					),
 				),
 			),
 			'features' => array(

@@ -46,11 +46,13 @@ function OptionEditor({
   onChange,
   onDelete,
   allowOther,
+  schema,
 }: {
   option: Option;
   onChange: (option: Option) => void;
   onDelete: () => void;
   allowOther: boolean;
+  schema: FormSchema;
 }) {
   return (
     <fieldset className="cff-option">
@@ -101,6 +103,7 @@ function OptionEditor({
           onChange={(isOther) => onChange({ ...option, isOther })}
         />
       )}
+      <details><summary>{__('Logic', 'chatflow-forms')}</summary><RuleEditor schema={schema} rules={option.logic ?? []} onChange={(logic) => onChange({ ...option, logic })} /></details>
       <Button isDestructive onClick={onDelete}>
         {__('Remove option', 'chatflow-forms')}
       </Button>
@@ -246,6 +249,7 @@ export function Inspector({
                       <OptionEditor
                         allowOther={step.type === 'single_choice'}
                         option={option}
+                        schema={schema}
                         onChange={(next) =>
                           setOptions((step.options ?? []).map((item) => (item.id === next.id ? next : item)))
                         }
@@ -294,6 +298,7 @@ export function Inspector({
               </Button>
             </Fragment>
           )}
+          {step.type === 'calculated' && <Field label={__('Arithmetic expression (answer.key, variable.key)', 'chatflow-forms')} value={settings.expression ?? ''} onChange={expression => patchSettings({ expression })} />}
           {step.type === 'phone' && (
             <Field
               label={__('Default country (ISO code)', 'chatflow-forms')}

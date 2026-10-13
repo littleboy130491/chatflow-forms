@@ -1,5 +1,6 @@
 import type { Action, AnswerMap, Condition, FormSchema, JSONValue, ReplayContext, ReplayResult, Step } from '../contracts';
 import { diagnoseSchema } from './diagnostics';
+import { bounded, calculate } from './calculation';
 import { isDisplay, sanitizeAnswer, validateAnswer } from './fields';
 import { interpolate } from './interpolate';
 import { evaluateCondition } from './operators';
@@ -37,8 +38,8 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
         if (action.operation === 'set') vars[action.key] = action.value;
         else if (numeric(current) && numeric(action.value)) {
           const next = current + (action.operation === 'add' ? action.value : -action.value);
-          if (Number.isFinite(next)) vars[action.key] = next;
-          else result.errors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable value is not finite.'));
+          try { vars[action.key] = bounded(next); }
+          catch { actionErrors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable value exceeds the finite calculation limit.')); }
         } else actionErrors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable action has an invalid type.'));
         break;
       }
@@ -54,24 +55,27 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
       seen.add(step.id);
       if (!visible.get(step.id)) { index++; continue; }
       result.visited.push(step.id);
-      const display = isDisplay(step.type), hidden = step.type === 'hidden';
+      const display = isDisplay(step.type), hidden = step.type === 'hidden', computed = step.type === 'calculated';
       if (!display) {
         const exists = own(supplied, step.key);
-        if (!hidden && !exists && (mode === 'partial' || required.get(step.id))) {
+        if (!hidden && !computed && !exists && (mode === 'partial' || required.get(step.id))) {
           result.currentStepId = step.id;
           if (mode === 'complete') result.errors.push(issue('/answers/' + pointer(step.key), 'required', 'An answer is required.', step.key));
           break;
         }
-        const rawValue = hidden ? hiddenValue(step, result.answers, context) : exists ? supplied[step.key] ?? null : null;
+        let rawValue: JSONValue;
+        try { rawValue = computed ? calculate(step.settings?.expression ?? '', result.answers, result.variables) : hidden ? hiddenValue(step, result.answers, context) : exists ? supplied[step.key] ?? null : null; }
+        catch { result.currentStepId = step.id; result.errors.push(issue('/answers/' + pointer(step.key), 'calculation_error', 'The calculation is invalid or outside its limits.', step.key)); break; }
         const value = sanitizeAnswer(step, rawValue, context);
         processed.add(step.key);
+        if (computed && exists) { discard.add(step.key); result.errors.push(issue('/answers/' + pointer(step.key), 'computed_answer_tampered', 'Calculated answers cannot be supplied by visitors.', step.key)); }
         if (hidden && exists && !equal(supplied[step.key], value)) {
           discard.add(step.key); result.errors.push(issue('/answers/' + pointer(step.key), 'hidden_answer_tampered', 'Hidden answers are server-derived.', step.key));
         }
-        const validation = validateAnswer({ ...step, required: required.get(step.id) === true }, rawValue, context);
+        const validation = computed ? [] : validateAnswer({ ...step, required: required.get(step.id) === true }, rawValue, context);
         if (validation.length) { result.errors.push(...validation); result.currentStepId = step.id; if (exists) discard.add(step.key); break; }
         result.answers[step.key] = value;
-        if (!hidden) answeredInputs++;
+        if (!hidden && !computed) answeredInputs++;
       }
       let next = index + 1;
       for (const rule of rulesFor(step)) {
@@ -85,6 +89,10 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
       index = next;
     }
     if (!result.currentStepId && !result.endingId) result.endingId = defaultEnding;
+    if (result.endingId && !result.errors.length) {
+      const outcome = schema.outcomes?.find(o => evaluateCondition(o.if, result.answers, result.variables, context));
+      if (outcome) result.endingId = outcome.endingId;
+    }
   }
   for (const key of Object.keys(supplied).sort()) {
     const step = byKey.get(key);
@@ -103,7 +111,7 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
       if (estimates.has(s.id)) break;
       estimates.add(s.id);
       if (!visibility.get(s.id)) { cursor++; continue; }
-      if (!isDisplay(s.type) && s.type !== 'hidden') remaining++;
+      if (!isDisplay(s.type) && s.type !== 'hidden' && s.type !== 'calculated') remaining++;
       let next = cursor + 1, end = false;
       for (const r of rulesFor(s)) {
         if (!known(r.if) || !evaluateCondition(r.if, result.answers, vars, context)) continue;

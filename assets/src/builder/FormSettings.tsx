@@ -575,6 +575,12 @@ export function SettingsEditor({
           value={settings.sessions?.abandonDays ?? 30}
           onChange={(value) => set('sessions', { ...settings.sessions, abandonDays: Number(value) })}
         />
+        <h3>{__('Cross-device resume links', 'chatflow-forms')}</h3>
+        <Check label={__('Enable one-time email resume links', 'chatflow-forms')} value={settings.sessions?.magicLinks?.enabled ?? false} onChange={enabled => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, enabled } })} />
+        <Check label={__('Allow user-initiated WhatsApp sharing', 'chatflow-forms')} value={settings.sessions?.magicLinks?.whatsapp ?? false} onChange={whatsapp => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, whatsapp } })} />
+        <Select label={__('Recipient email field', 'chatflow-forms')} value={settings.sessions?.magicLinks?.emailField ?? ''} choices={[{ value: '', label: __('Choose an email field', 'chatflow-forms') }, ...form.schema.steps.filter(step => step.type === 'email').map(step => ({ value: step.key, label: step.label }))]} onChange={emailField => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, emailField } })} />
+        <Field label={__('Link lifetime in minutes (5–1440)', 'chatflow-forms')} type="number" value={settings.sessions?.magicLinks?.ttlMinutes ?? 30} onChange={ttlMinutes => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, ttlMinutes: Number(ttlMinutes) } })} />
+        <p>{__('Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.', 'chatflow-forms')}</p>
         <Check
           label={__('Notify on abandoned contact leads', 'chatflow-forms')}
           value={notifications.notifyAbandoned}

@@ -73,6 +73,25 @@ export interface ChatFlowFormSchemaV1 {
   /**
    * @maxItems 100
    */
+  outcomes?: {
+    if: Condition;
+    endingId: string;
+  }[];
+  /**
+   * @maxItems 510
+   */
+  flowPositions?: {
+    id: string;
+    x: number;
+    y: number;
+  }[];
+  /**
+   * @maxItems 1
+   */
+  experiments?: [] | [Experiment];
+  /**
+   * @maxItems 100
+   */
   variables?: Variable[];
 }
 export interface Bot {
@@ -84,6 +103,7 @@ export interface Step {
   id: string;
   key: string;
   type:
+    | "calculated"
     | "short_text"
     | "long_text"
     | "email"
@@ -132,6 +152,7 @@ export interface Step {
         country?: string;
       };
   settings?: {
+    expression?: string;
     country?: string;
     autocomplete?: string;
     inputMode?: "text" | "numeric" | "tel" | "decimal" | "email" | "url" | "search" | "none";
@@ -370,6 +391,289 @@ export interface Button {
   label: string;
   action: "link" | "restart" | "close";
   url?: string;
+}
+export interface Experiment {
+  id: string;
+  enabled: boolean;
+  /**
+   * @minItems 2
+   * @maxItems 5
+   */
+  variants:
+    | [
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        }
+      ]
+    | [
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        }
+      ]
+    | [
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        }
+      ]
+    | [
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        },
+        {
+          id: string;
+          weight: number;
+          /**
+           * @maxItems 500
+           */
+          copy?: {
+            stepId: string;
+            /**
+             * @maxItems 50
+             */
+            messages: string[];
+          }[];
+          /**
+           * @minItems 1
+           * @maxItems 500
+           */
+          stepOrder?: [string, ...string[]];
+        }
+      ];
 }
 export interface Variable {
   key: string;

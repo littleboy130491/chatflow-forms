@@ -13,6 +13,7 @@ export interface AnalyticsReport {
   steps: {id: string; label: string; views: number; answers: number; dropOff: number; back: number; abandon: number}[];
   distributions: {key: string; label: string; options: {value: string; label: string; count: number}[]; unknownCount: number}[];
   sources: {label: string; count: number}[]; devices: {label: string; count: number}[];
+  variants: {id: string; starts: number; completions: number}[];
 }
 export function Analytics({ api }: {api: AdminApi}) {
   const today = new Date().toISOString().slice(0, 10);
@@ -60,6 +61,12 @@ export function Analytics({ api }: {api: AdminApi}) {
         <p>{__('Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft.', 'chatflow-forms')}</p>
         <table className="widefat striped"><thead><tr>{[__('Step','chatflow-forms'),__('Viewed','chatflow-forms'),__('Answered','chatflow-forms'),__('Drop-off','chatflow-forms'),__('Back','chatflow-forms'),__('Abandon','chatflow-forms')].map((label) => <th key={label} scope="col">{label}</th>)}</tr></thead>
         <tbody>{report.steps.map((step) => <tr key={step.id}><th scope="row">{step.label}</th>{[step.views,step.answers,step.dropOff,step.back,step.abandon].map((n,i) => <td key={i}>{n}</td>)}</tr>)}</tbody></table>
+      </section>
+      <section className="cff-card"><h2>{__('Experiment variants', 'chatflow-forms')}</h2>
+        <p>{__('Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates.', 'chatflow-forms')}</p>
+        <table className="widefat striped"><thead><tr><th scope="col">{__('Variant', 'chatflow-forms')}</th><th scope="col">{__('Starts', 'chatflow-forms')}</th><th scope="col">{__('Completions', 'chatflow-forms')}</th></tr></thead><tbody>
+          {report.variants.filter(row => row.id).map(row => <tr key={row.id}><th scope="row">{row.id}</th><td>{row.starts}</td><td>{row.completions}</td></tr>)}
+        </tbody></table>
       </section>
       <section className="cff-card"><h2>{__('Answer distributions', 'chatflow-forms')}</h2><p>{__('Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission.', 'chatflow-forms')}</p>
         {report.distributions.map((distribution) => <section key={distribution.key}><h3>{distribution.label}</h3><ul>{distribution.options.map((option) => <li key={option.value}>{option.label}: {option.count}</li>)}<li>{__('Removed / unknown options', 'chatflow-forms')}: {distribution.unknownCount}</li></ul></section>)}

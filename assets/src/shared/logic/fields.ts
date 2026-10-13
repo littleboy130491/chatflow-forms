@@ -3,7 +3,7 @@ import type { JSONValue, Step, ReplayContext, ValidationIssue } from '../contrac
 import { age, choiceValue, dateParts, empty, isOtherAnswer, issue, matches, numeric, pointer, regex } from './value';
 
 export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
-export const ENABLED_FIELD_TYPES = [...V1_FIELD_TYPES, 'rating', 'scale', 'nps', 'slider', 'address', 'media', 'file_upload'] as const;
+export const ENABLED_FIELD_TYPES = [...V1_FIELD_TYPES, 'rating', 'scale', 'nps', 'slider', 'address', 'media', 'file_upload', 'calculated'] as const;
 export const isDisplay = (type: string): boolean => ['statement', 'summary', 'media'].includes(type);
 export function plainText(value: string, multiline = false): string {
   let text = value.replace(/\r\n?/g, '\n').replace(/<[^>]*>/g, '');

@@ -97,7 +97,8 @@ final class Report {
 			$source_counts[ $name ] = ( $source_counts[ $name ] ?? 0 ) + (int) $source['total'];
 		}
 		arsort( $source_counts );
-		$devices = $wpdb->get_results( $wpdb->prepare( "SELECT device_type AS label,COUNT(*) AS count FROM {$wpdb->prefix}cff_submissions WHERE form_id=%d AND created_at>=%s AND created_at<%s AND status NOT IN ('spam','trash') GROUP BY device_type ORDER BY count DESC", $form_id, $range['start'], $range['end'] ), ARRAY_A );
+		$devices  = $wpdb->get_results( $wpdb->prepare( "SELECT device_type AS label,COUNT(*) AS count FROM {$wpdb->prefix}cff_submissions WHERE form_id=%d AND created_at>=%s AND created_at<%s AND status NOT IN ('spam','trash') GROUP BY device_type ORDER BY count DESC", $form_id, $range['start'], $range['end'] ), ARRAY_A );
+		$variants = $wpdb->get_results( $wpdb->prepare( "SELECT s.variant_id AS id,COUNT(DISTINCT s.id) AS starts,COUNT(DISTINCT IF(t.status='completed' AND t.completed_at>=%s AND t.completed_at<%s,t.id,NULL)) AS completions FROM {$wpdb->prefix}cff_sessions s LEFT JOIN {$wpdb->prefix}cff_submissions t ON t.id=s.submission_id WHERE s.form_id=%d AND s.started_at>=%s AND s.started_at<%s GROUP BY s.variant_id ORDER BY starts DESC LIMIT 100", $range['start'], $range['end'], $form_id, $range['start'], $range['end'] ), ARRAY_A );
 		return array(
 			'formId'            => $form_id,
 			'from'              => $from,
@@ -123,6 +124,14 @@ final class Report {
 					'count' => (int) $row['count'],
 				),
 				$devices
+			),
+			'variants'          => array_map(
+				static fn( $row ) => array(
+					'id'          => $row['id'],
+					'starts'      => (int) $row['starts'],
+					'completions' => (int) $row['completions'],
+				),
+				$variants
 			),
 		);
 	}
