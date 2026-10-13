@@ -155,7 +155,12 @@ final class AdminModule implements Module {
 					'mode'   => array(
 						'type'    => 'string',
 						'default' => 'inline',
-						'enum'    => array( 'inline', 'fullpage' ),
+						'enum'    => array( 'inline', 'fullpage', 'launcher' ),
+					),
+					'position' => array(
+						'type'    => 'string',
+						'default' => 'right',
+						'enum'    => array( 'left', 'right' ),
 					),
 					'height' => array(
 						'type'    => 'integer',
@@ -186,13 +191,14 @@ final class AdminModule implements Module {
 		if ( ! $id || ! function_exists( 'cff_render_form' ) ) {
 			return '';
 		}
-		$mode = in_array( $attributes['mode'] ?? '', array( 'inline', 'fullpage' ), true ) ? $attributes['mode'] : 'inline';
+		$mode = in_array( $attributes['mode'] ?? '', array( 'inline', 'fullpage', 'launcher' ), true ) ? $attributes['mode'] : 'inline';
 		return cff_render_form(
 			$id,
 			array(
-				'mode'   => $mode,
-				'height' => max( 200, min( 2000, absint( $attributes['height'] ?? 600 ) ) ),
-				'theme'  => in_array( $attributes['theme'] ?? '', array( 'light', 'dark', 'auto' ), true ) ? $attributes['theme'] : 'auto',
+				'mode'     => $mode,
+				'position' => 'left' === ( $attributes['position'] ?? 'right' ) ? 'left' : 'right',
+				'height'   => max( 200, min( 2000, absint( $attributes['height'] ?? 600 ) ) ),
+				'theme'    => in_array( $attributes['theme'] ?? '', array( 'light', 'dark', 'auto' ), true ) ? $attributes['theme'] : 'auto',
 			)
 		);
 	}

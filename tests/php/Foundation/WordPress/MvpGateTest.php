@@ -229,6 +229,17 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-cff-loading', $html );
 		$this->assertStringContainsString( '"theme":"dark"', $html );
 		$this->assertStringNotContainsString( 'startToken', $html );
+		$launcher = ( new \ChatFlow\Frontend\Renderer() )->render(
+			$form->id(),
+			array(
+				'mode'     => 'launcher',
+				'position' => 'left',
+			)
+		);
+		$this->assertStringContainsString( 'data-mode="launcher"', $launcher );
+		$this->assertStringContainsString( 'data-position="left"', $launcher );
+		$this->assertStringNotContainsString( 'min-height:', $launcher );
+		$this->assertStringNotContainsString( 'startToken', $launcher );
 	}
 
 	public function testTestNotificationPayloadsAreCleanedWithoutDeletingRealDeliveries(): void {
