@@ -16,6 +16,8 @@ final class FrontendModule implements Module {
 					array(
 						'id'     => 0,
 						'height' => 600,
+						'mode'   => 'inline',
+						'theme'  => 'auto',
 					),
 					$attributes,
 					'chatflow'
@@ -74,6 +76,18 @@ final class FrontendModule implements Module {
 		if ( ! $tracking['enabled'] || $settings['privacy']['respectDnt'] && '1' === ( $_SERVER['HTTP_DNT'] ?? '' ) ) {
 			return; }
 		wp_enqueue_script( 'cff-tracking', plugins_url( 'build/runtime/tracking.js', CFF_FILE ), array(), CFF_VERSION, true );
-		wp_add_inline_script( 'cff-tracking', 'window.cffTracking=' . wp_json_encode( array_merge( $tracking, array( 'consentGranted' => false ) ) ) . ';', 'before' );
+		wp_add_inline_script(
+			'cff-tracking',
+			'window.cffTracking=' . wp_json_encode(
+				array_merge(
+					$tracking,
+					array(
+						'consentGranted' => false,
+						'respectDnt'     => $settings['privacy']['respectDnt'],
+					)
+				)
+			) . ';',
+			'before'
+		);
 	}
 }

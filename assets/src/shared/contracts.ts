@@ -56,7 +56,7 @@ export interface GlobalSettings {
   privacy: { ip: 'anonymized' | 'full' | 'none'; storeUserAgent: boolean; storeMeta: boolean; respectDnt: boolean };
   retention: { enabled: boolean; days: number; partialDays: number | null };
   spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
-  proxy: { mode: 'direct' | 'cloudflare' | 'custom'; trustedRanges: string[]; header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP' };
+  proxy: { mode: 'automatic' | 'direct' | 'cloudflare' | 'custom'; trustedRanges: string[]; header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP' };
   email: { fromName: string; fromEmail: string; replyTo: string; logoUrl: string; brandColor: string; footerText: string };
 }
 export interface SubmissionDTO {

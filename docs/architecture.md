@@ -1,12 +1,10 @@
 # ChatFlow composition contracts (v1)
 
-This is the integration contract, not a claim that Phase 1 is implemented. Phase 0
-implements bootstrap, lifecycle, tables, form DTO/repository, schema validation,
-token signing, private updater and build/package tooling. It does **not** register
-visitor/admin REST routes, email jobs, embedding or a usable builder/runtime.
-The three admin and two visitor entrypoints are explicitly foundation stubs.
-PLAN.md is preserved verbatim. Names below are binding on the five lane owners;
-only the later integrator edits shared foundation wiring/build configuration.
+The integration now registers all seven production modules below. React admin,
+Preact Shadow DOM runtime, visitor/admin REST, durable sessions/submissions,
+privacy tools and delivery jobs are implemented. See docs/mvp-checks.md for
+executed shell checks and untested acceptance criteria. PLAN.md is preserved
+verbatim. The ownership descriptions record the contribution architecture.
 
 ## Ownership and composition
 

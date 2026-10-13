@@ -1,10 +1,13 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
-export default defineConfig({
+export default defineConfig(() => {
+  const tracking = process.env.CFF_ENTRY === 'tracking';
+  return {
   esbuild: { jsx: 'automatic', jsxImportSource: 'preact' },
   build: {
-    target: 'es2020', outDir: 'build/runtime', emptyOutDir: true, sourcemap: false,
-    lib: { entry: { runtime: resolve('assets/src/runtime/index.tsx'), tracking: resolve('assets/src/tracking/index.ts') }, formats: ['es'], fileName: (_format, name) => `${name}.js` },
-    rollupOptions: { output: { assetFileNames: '[name][extname]' } }
+    target: 'es2020', outDir: 'build/runtime', emptyOutDir: !tracking, sourcemap: false,
+    lib: { entry: resolve(tracking ? 'assets/src/tracking/index.ts' : 'assets/src/runtime/index.tsx'), formats: ['es'], fileName: () => tracking ? 'tracking.js' : 'runtime.js' },
+    rollupOptions: { output: { inlineDynamicImports: true, assetFileNames: '[name][extname]' } }
   }
+  };
 });

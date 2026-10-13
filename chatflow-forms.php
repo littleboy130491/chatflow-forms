@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: ChatFlow Forms
- * Description: Private conversational questionnaires. Foundation build; visitor/builder modules are not yet enabled.
+ * Description: Private conversational forms with a visual builder, resumable sessions and submissions.
  * Version: 0.1.0
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Imajiner
  * License: GPL-3.0-or-later
  * Text Domain: chatflow-forms
- * Domain Path: /languages
+ * Domain Path: /src/Admin/languages
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -17,11 +17,11 @@ define( 'CFF_VERSION', '0.1.0' );
 define( 'CFF_FILE', __FILE__ );
 define( 'CFF_PATH', __DIR__ . '/' );
 
-if ( version_compare( PHP_VERSION, '8.1', '<' ) || version_compare( get_bloginfo( 'version' ), '6.4', '<' ) ) {
+if ( version_compare( PHP_VERSION, '8.1', '<' ) || version_compare( get_bloginfo( 'version' ), '6.4', '<' ) || ! extension_loaded( 'openssl' ) ) {
 	add_action(
 		'admin_notices',
 		static function () {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'ChatFlow Forms requires PHP 8.1 and WordPress 6.4 or newer.', 'chatflow-forms' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'ChatFlow Forms requires PHP 8.1 with OpenSSL and WordPress 6.4 or newer.', 'chatflow-forms' ) . '</p></div>';
 		}
 	);
 	return;

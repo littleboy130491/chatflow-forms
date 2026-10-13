@@ -201,7 +201,7 @@ final class Imajiner {
 								'id'     => 'button_home',
 								'label'  => 'Kembali ke beranda',
 								'action' => 'link',
-								'url'    => home_url( '/' ),
+								'url'    => '/',
 							),
 						),
 					),

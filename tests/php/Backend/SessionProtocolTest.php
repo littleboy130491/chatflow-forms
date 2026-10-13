@@ -167,6 +167,24 @@ final class SessionProtocolTest extends TestCase {
 		);
 		$result = $this->sessions->resume( $this->form->id(), $s['resumeToken'] );
 		self::assertSame( 'cff_form_not_found', $result->get_error_code() ); }
+	public function testTamperedCredentialsAndExpiredSessionRejectWritesAndKeepPartial(): void {
+		global $wpdb;
+		$s     = $this->start();
+		$patch = $this->sessions->mutate( 'patch', $s['sessionId'], $this->body( $s, array( 'punya_website' => 'Belum pernah' ) ), $s['requestToken'], wp_generate_uuid4() );
+		self::assertIsArray( $patch );
+		self::assertInstanceOf( \WP_Error::class, $this->sessions->get( $s['sessionId'], $s['requestToken'] . 'x' ) );
+		self::assertInstanceOf( \WP_Error::class, $this->sessions->resume( $this->form->id(), $s['resumeToken'] . 'x' ) );
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}cff_sessions WHERE public_id=%s", $s['sessionId'] ), ARRAY_A );
+		$wpdb->update( $wpdb->prefix . 'cff_sessions', array( 'expires_at' => gmdate( 'Y-m-d H:i:s', time() - 60 ) ), array( 'id' => $row['id'] ) );
+		self::assertInstanceOf( \WP_Error::class, $this->sessions->resume( $this->form->id(), $s['resumeToken'] ) );
+		self::assertInstanceOf( \WP_Error::class, $this->sessions->mutate( 'submit', $s['sessionId'], $this->body( $patch, $this->answers() ), $s['requestToken'], wp_generate_uuid4() ) );
+		$partial = ( new Repository( $this->forms ) )->get( (int) $row['submission_id'] );
+		self::assertSame( 'partial', $partial->status() );
+		self::assertSame( 'Belum pernah', $partial->answers()['punya_website'] );
+		$wpdb->update( $wpdb->prefix . 'cff_sessions', array( 'last_seen_at' => gmdate( 'Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS ) ), array( 'id' => $row['id'] ) );
+		do_action( 'cff_abandon_sessions' );
+		self::assertSame( 'abandoned', ( new Repository( $this->forms ) )->get( $partial->id() )->status() );
+	}
 	public function testStartAndSubmitReceiptsRemovedWithPrivateSubmission(): void {
 		global $wpdb;
 		$s       = $this->start();

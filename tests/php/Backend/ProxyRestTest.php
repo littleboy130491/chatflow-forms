@@ -19,7 +19,7 @@ final class ProxyRestTest extends TestCase {
 		$fields = new Registry();
 		$rest   = new RestModule( $forms, new Engine( $fields ), $fields );
 		$rest->register();
-		$rest->routes();
+		do_action( 'rest_api_init', rest_get_server() );
 		$definition = Imajiner::definition();
 		$form       = $forms->create( 'HTTP protocol', $definition['schema'], $definition['settings'] );
 		self::assertNotInstanceOf( \WP_Error::class, $form );
@@ -272,7 +272,7 @@ final class ProxyRestTest extends TestCase {
 		$forms  = new FormRepository();
 		$rest   = new RestModule( $forms, new Engine( $fields ), $fields );
 		$rest->register();
-		$rest->routes();
+		do_action( 'rest_api_init', rest_get_server() );
 		$user = wp_insert_user(
 			array(
 				'user_login' => 'cff-rest-' . wp_generate_uuid4(),

@@ -14,8 +14,13 @@ final class Renderer {
 		if ( ! $form ) {
 			return ''; }
 		wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true );
-		$data   = wp_json_encode( PublicProjection::build( $form ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
+		$envelope = PublicProjection::build( $form );
+		if ( in_array( $attributes['theme'] ?? '', array( 'auto', 'light', 'dark' ), true ) ) {
+			$envelope['form']['appearance']->theme = $attributes['theme'];
+		}
+		$data   = wp_json_encode( $envelope, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
 		$height = max( 200, min( 2000, (int) ( $attributes['height'] ?? $form->settings()['display']['height'] ?? 600 ) ) );
-		return '<cff-chat data-form-id="' . $id . '" data-rest-url="' . esc_url( rest_url( 'cff/v1/' ) ) . '" style="display:block;min-height:' . $height . 'px"><script type="application/json" data-cff-schema>' . $data . '</script></cff-chat>';
+		$mode   = 'fullpage' === ( $attributes['mode'] ?? '' ) ? 'fullpage' : 'inline';
+		return '<cff-chat data-mode="' . $mode . '" data-form-id="' . $id . '" data-rest-url="' . esc_url( rest_url( 'cff/v1/' ) ) . '" style="display:block;min-height:' . $height . 'px"><span data-cff-loading>' . esc_html__( 'Loading chat…', 'chatflow-forms' ) . '</span><script type="application/json" data-cff-schema>' . $data . '</script></cff-chat>';
 	}
 }

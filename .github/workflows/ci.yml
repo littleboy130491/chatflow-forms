@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: '24.19.0'
           cache: npm
-      - run: composer install --no-interaction --prefer-dist && composer scope && npx --yes npm@11.16.0 ci --no-audit --no-fund
+      - run: composer install --no-interaction --prefer-dist && composer scope && npx --yes npm@11.16.0 ci --no-audit --no-fund && npm run build
       - run: npm run env:start
       - if: ${{ !matrix.multisite }}
         run: npm run test:wp

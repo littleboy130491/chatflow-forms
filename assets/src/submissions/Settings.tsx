@@ -20,7 +20,7 @@ export interface GlobalSettings {
   retention: { enabled: boolean; days: number; partialDays?: number | null };
   spam?: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
   proxy: {
-    mode: 'direct' | 'cloudflare' | 'custom';
+    mode: 'automatic' | 'direct' | 'cloudflare' | 'custom';
     trustedRanges: string[];
     header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP';
   };
@@ -244,7 +244,7 @@ export function Settings({ api }: { api: AdminApi }) {
             <Select
               label={__('Proxy mode', 'chatflow-forms')}
               value={settings.proxy.mode}
-              choices={['direct', 'cloudflare', 'custom'].map((value) => ({ value, label: value }))}
+              choices={['automatic', 'direct', 'cloudflare', 'custom'].map((value) => ({ value, label: value }))}
               onChange={(mode) =>
                 update({
                   ...settings,

@@ -15,15 +15,17 @@ regeneration produces no difference. Admin exports are under
 window.CFFAdmin.{builder,submissions,blocks}; visitor exports mountRuntime.
 WordPress npm packages are build/type-only devDependencies: WordPress supplies
 their runtime scripts, and dependency-extraction manifests externalize them.
-The dev-toolchain simple-git override pins the patched 4.0.2 security release;
-Docker environment startup and both WordPress suites validate compatibility.
+The dev-toolchain simple-git override pins the patched 4.0.2 security release.
+The tools/wp-env.mjs launcher adapts the callable export expected by wp-env to
+the v4 named API without downgrading or removing the security pin. Native
+WordPress/MariaDB is an alternative when Docker cannot start (see mvp-checks.md).
 No forced peer resolution is used. Production npm audit is clean. Upstream
 dev-only advisories (not shipped) remain in the WordPress build/lint toolchain;
 do not run builds against untrusted repositories or patterns.
 
 `npm run package` requires all build/dependency prerequisites and emits
 build/chatflow-forms.zip with exactly one chatflow-forms/ root. It includes plugin
-bootstrap/uninstall/autoload, src/, schema/, build/admin, build/runtime,
+bootstrap/uninstall/autoload, src/, schema/, templates/, build/admin, build/runtime,
 vendor-prefixed with licences, shared Action Scheduler and its licence, README,
 LICENSE and composer.json. It excludes node_modules, development Composer vendor,
 tests, source TS, PLAN, repository/workflow files, caches, credentials and logs.

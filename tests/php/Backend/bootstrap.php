@@ -15,7 +15,9 @@ foreach ( array(
 	if ( ! defined( $key ) ) {
 		define( $key, $value ); }
 }
-require $repo . '/autoload.php';
+if ( ! class_exists( \ChatFlow\Vendor\Opis\JsonSchema\Validator::class ) ) {
+	require $repo . '/autoload.php';
+}
 $dependencies = getenv( 'CFF_BACKEND_DEPENDENCIES' );
 if ( $dependencies ) {
 	spl_autoload_register(

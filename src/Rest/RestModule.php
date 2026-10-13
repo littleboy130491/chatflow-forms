@@ -120,7 +120,8 @@ final class RestModule implements Module {
 	public function requestBoundary( mixed $result, \WP_REST_Server $server, \WP_REST_Request $r ): mixed {
 		if ( ! str_starts_with( $r->get_route(), '/cff/v1/' ) ) {
 			return $result; }
-		if ( strlen( $r->get_body() ) > 1048576 ) {
+		$body = $r->get_body();
+		if ( $body && strlen( $body ) > 1048576 ) {
 			return Database::error( 'cff_request_too_large', 'Request too large.', 413 ); }
 		foreach ( array_keys( $r->get_query_params() ) as $key ) {
 			if ( preg_match( '/token|credential|nonce/i', $key ) ) {

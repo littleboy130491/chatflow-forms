@@ -82,7 +82,12 @@ final class LifecycleTest extends \WP_UnitTestCase {
 		Installer::uninstall();
 		$this->assertNotNull( get_post( $form->id() ) );
 		update_option( 'cff_settings', array( 'delete_data_on_uninstall' => true ) );
+		update_option( 'cff_purge_gate_fixture', 'owned' );
+		update_option( 'cffXpurgeXforeign', 'preserve' );
 		Installer::uninstall();
+		$this->assertFalse( get_option( 'cff_purge_gate_fixture' ) );
+		$this->assertSame( 'preserve', get_option( 'cffXpurgeXforeign' ) );
+		delete_option( 'cffXpurgeXforeign' );
 		$this->assertNull( get_post( $form->id() ) );
 		$this->assertNull( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $wpdb->prefix . 'cff_sessions' ) ) ) );
 		$this->assertFalse( get_role( 'cff_fixture' )->has_cap( 'cff_manage_forms' ) );

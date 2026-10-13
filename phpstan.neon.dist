@@ -5,6 +5,8 @@ parameters:
     scanFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
         - tests/php/constants.php
+        - tests/php/Backend/static-constants.php
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
     scanDirectories:
         - vendor-prefixed
         - vendor/woocommerce/action-scheduler

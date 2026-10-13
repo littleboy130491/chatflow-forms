@@ -29,6 +29,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const restUrl = options.restUrl ?? host.dataset.restUrl;
   if (!options.preview && !restUrl) throw new TypeError('Missing REST endpoint');
   const shadow = host.shadowRoot ?? host.attachShadow({ mode: 'open' });
+  host.querySelector('[data-cff-loading]')?.remove();
   const style = document.createElement('style'); style.textContent = css;
   const customization = document.createElement('style');
   const root = document.createElement('div'); shadow.replaceChildren(style, customization, root);

@@ -2,7 +2,9 @@
 /vendor-prefixed/
 /node_modules/
 /dist/
-/build/
+/build/*
+!/build/admin/
+!/build/runtime/
 /.phpunit.cache/
 /.phpunit.result.cache
 /.phpstan-cache/

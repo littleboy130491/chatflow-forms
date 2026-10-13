@@ -136,6 +136,17 @@ final class Outbox {
 
 	public function recover(): void {
 		global $wpdb;
+		$expired_tests = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}cff_deliveries WHERE submission_id=0 AND event='notification.test' AND created_at<%s ORDER BY id LIMIT 100", gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS ) ) );
+		foreach ( $expired_tests as $id ) {
+			$this->scheduler->cancel( (int) $id );
+			$wpdb->delete(
+				$wpdb->prefix . 'cff_deliveries',
+				array(
+					'id'            => (int) $id,
+					'submission_id' => 0,
+				)
+			);
+		}
 		$now   = gmdate( 'Y-m-d H:i:s' );
 		$stale = $wpdb->get_results( $wpdb->prepare( "SELECT id,submission_id,attempts FROM {$wpdb->prefix}cff_deliveries WHERE status='processing' AND next_attempt_at<=%s ORDER BY id LIMIT 100", $now ), ARRAY_A );
 		foreach ( $stale as $row ) {

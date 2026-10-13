@@ -14,8 +14,8 @@ if ( file_exists( $path ) ) {
 	unlink( $path );
 }
 $archive = new PharData( $path, 0, null, Phar::ZIP );
-$files   = array( 'chatflow-forms.php', 'autoload.php', 'uninstall.php', 'README.md', 'LICENSE', 'composer.json' );
-foreach ( array( 'src', 'schema', 'build/admin', 'build/runtime', 'vendor-prefixed', 'vendor/woocommerce/action-scheduler' ) as $directory ) {
+$files   = array( 'chatflow-forms.php', 'autoload.php', 'uninstall.php', 'README.md', 'LICENSE', 'composer.json', 'docs/architecture.md', 'docs/hooks.md', 'docs/payload.md', 'docs/release.md', 'docs/mvp-checks.md' );
+foreach ( array( 'src', 'schema', 'templates', 'build/admin', 'build/runtime', 'vendor-prefixed', 'vendor/woocommerce/action-scheduler' ) as $directory ) {
 	$iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root . '/' . $directory, FilesystemIterator::SKIP_DOTS ) );
 	foreach ( $iterator as $file ) {
 		if ( $file->isLink() ) {
