@@ -1,0 +1,313 @@
+import { replay } from '../shared/logic';
+import { collectMeta } from '../tracking';
+import { ApiClient, ApiError, uuid } from './api';
+import { SessionStorage, type SavedSession } from './persistence';
+import type { AnswerMap, Completion, PublicForm, ReplayContext, ReplayResult, RuntimeOptions, Session, Step } from './types';
+
+export interface RuntimeState {
+  phase: 'loading' | 'resume' | 'ready' | 'submitting' | 'done' | 'error';
+  form: PublicForm | null; answers: AnswerMap; path: ReplayResult | null; activeId: string | null;
+  acknowledged: string[]; busy: boolean; dirty: boolean; offline: boolean;
+  error: string | null; fieldError: string | null; conflict: boolean; newerVersion: boolean;
+  storageUnavailable: boolean; completion: Completion | null;
+}
+type Mutation = { method: 'PATCH' | 'DELETE' | 'POST'; body: Record<string, unknown>; key: string };
+const display = (step: Step) => step.type === 'statement' || step.type === 'summary';
+
+export class RuntimeController {
+  state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
+  private listeners = new Set<() => void>();
+  private session: Session | null = null;
+  private context: ReplayContext = { hidden: {}, url: {}, meta: {}, now: new Date().toISOString() };
+  private pending: Mutation | null = null;
+  private pendingStart: { token: string; key: string; meta: ReturnType<typeof collectMeta>; prefill: AnswerMap; version: number } | null = null;
+  private saved: SavedSession | null = null;
+  private latest: PublicForm | null = null;
+  private stepStarted = Date.now();
+  private timings: Record<string, number> = {};
+  private disposed = false;
+  private submittedOnce = false;
+  private editing: string | null = null;
+  private prefill: AnswerMap;
+  constructor(public readonly options: RuntimeOptions, private readonly api: ApiClient | null, private readonly storage = new SessionStorage(), private readonly emit: (name: string, detail: Record<string, unknown>) => void = () => {}) { this.prefill = options.prefill ?? {}; if (options.preview && options.context) this.context = options.context; }
+  subscribe(listener: () => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
+  dispose(): void { this.disposed = true; this.listeners.clear(); }
+  private notify(): void { if (!this.disposed) for (const listener of this.listeners) listener(); }
+  private event(name: string, extra: Record<string, unknown> = {}): void { if (!this.options.preview && this.state.form) this.emit(name, { formId: this.state.form.form.id, version: this.state.form.form.version, ...extra }); }
+
+  async initialize(): Promise<void> {
+    try {
+      const formId = this.options.form?.form.id ?? this.options.formId;
+      if (!this.options.preview && formId) this.saved = this.storage.read(formId);
+      this.state.form = this.options.form ?? await this.api!.form(this.options.formId!);
+      this.latest = this.state.form;
+      if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
+      const form = this.state.form.form;
+      this.saved = form.session.resumeEnabled ? this.storage.read(form.id) : null;
+      const token = form.session.resumeEnabled ? this.storage.credential(form.id) : null;
+      if (token) {
+        await this.adopt(await this.api!.resume(form.id, token));
+        if (this.saved?.dirty && this.saved.sessionId === this.session?.sessionId) {
+          this.state.answers = this.saved.answers; this.state.dirty = true;
+          this.state.conflict = this.saved.revision !== this.session.revision;
+          this.timings = this.saved.stepTimings;
+        }
+        this.state.acknowledged = this.saved?.acknowledged ?? this.displayBeforeCurrent();
+        this.compute();
+        this.state.newerVersion = this.latest.form.version !== this.session?.version;
+        this.state.phase = form.session.resumePrompt || this.state.newerVersion ? 'resume' : 'ready';
+        if (this.state.phase === 'ready' && this.state.dirty && !this.state.conflict) await this.flush();
+        return;
+      }
+      await this.start();
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'cff_network' && this.saved?.form && this.saved.context && !this.options.preview) {
+        this.state.form = this.saved.form; this.context = this.saved.context; this.state.answers = this.saved.answers;
+        this.state.acknowledged = this.saved.acknowledged; this.state.dirty = this.saved.dirty; this.timings = this.saved.stepTimings;
+        this.state.offline = true; this.state.phase = 'resume'; this.compute();
+      } else this.handle(error);
+    }
+    finally { this.notify(); }
+  }
+
+  private displayBeforeCurrent(): string[] {
+    const steps = this.state.form!.form.schema.steps;
+    const ids = this.session?.visited ?? [];
+    return ids.filter(id => id !== this.session?.currentStepId && steps.some(s => s.id === id && display(s)));
+  }
+  private async adopt(session: Session): Promise<void> {
+    if (!this.state.form || session.formId !== this.state.form.form.id) throw new ApiError('cff_invalid_response', 0);
+    if (!session.context?.now || !Number.isFinite(Date.parse(session.context.now))) throw new ApiError('cff_invalid_response', 0);
+    if (session.status !== 'active') { this.storage.clear(session.formId); throw new ApiError('cff_session_expired', 401); }
+    if (session.version !== this.state.form.form.version) {
+      const pinned = await this.api!.form(session.formId, session.version);
+      if (pinned.form.version !== session.version) throw new ApiError('cff_version_conflict', 409);
+      this.state.form = pinned;
+    }
+    this.session = session;
+    this.context = session.context ?? this.context;
+    this.state.answers = session.answers;
+    this.compute();
+  }
+  async start(): Promise<void> {
+    if (this.state.busy || this.disposed) return;
+    this.state.busy = true; this.state.error = null; this.notify();
+    try {
+      const form = this.state.form!.form;
+      if (!this.options.preview) {
+        if (!this.pendingStart) {
+          const token = await this.api!.startToken(form.id, form.version);
+          if (token.version !== form.version) throw new ApiError('cff_version_conflict', 409);
+          this.pendingStart = { token: token.startToken, key: uuid(), meta: collectMeta(this.options.tracking ?? globalThis.window?.cffTracking), prefill: {}, version: form.version };
+        }
+        const operation = this.pendingStart;
+        await this.adopt(await this.api!.start(form.id, operation.version, operation.meta, operation.prefill, operation.token, operation.key));
+        this.pendingStart = null;
+      } else { this.compute(); }
+      this.state.phase = this.state.path?.errors.length ? 'error' : 'ready'; this.persist(); this.event('cff:start');
+    } catch (error) { this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+  }
+  async continueSaved(): Promise<void> {
+    this.state.phase = this.state.path?.errors.length ? 'error' : 'ready'; this.notify(); this.event('cff:start', { resumed: true });
+    if (this.state.dirty && !this.state.conflict) await this.flush();
+  }
+  private compute(): void {
+    const form = this.state.form; if (!form) return;
+    let path = replay(form.form.schema, this.state.answers, this.context, 'partial');
+    if (path.discardedKeys.length) {
+      const cleaned = { ...this.state.answers }; for (const key of path.discardedKeys) delete cleaned[key];
+      path = replay(form.form.schema, cleaned, this.context, 'partial');
+    }
+    this.state.path = path; this.state.answers = path.answers;
+    if (path.errors.length) { this.state.error = 'invalid'; this.state.phase = 'error'; }
+    const next = this.editing ?? path.visited.find(id => form.form.schema.steps.some(step => step.id === id && display(step)) && !this.state.acknowledged.includes(id)) ?? path.currentStepId;
+    if (this.state.activeId !== next) {
+      this.state.activeId = next ?? null; this.stepStarted = Date.now();
+      if (next) this.event('cff:step', { stepId: next });
+    }
+    this.notify();
+  }
+  get activeStep(): Step | undefined { return this.state.form?.form.schema.steps.find(step => step.id === this.state.activeId); }
+  get canSkip(): boolean {
+    const step = this.activeStep; if (!step || step.type === 'consent' || display(step)) return false;
+    const path = replay(this.state.form!.form.schema, { ...this.state.answers, [step.key]: null }, this.context, 'partial');
+    return path.currentStepId !== step.id && !path.errors.some(issue => issue.fieldKey === step.key);
+  }
+  get meta(): AnswerMap { return (this.context.meta ?? {}) as AnswerMap; }
+  get visibleSteps(): Step[] {
+    const form = this.state.form; if (!form || !this.state.path) return [];
+    const index = this.state.path.visited.indexOf(this.state.activeId ?? '');
+    return this.state.path.visited.slice(0, index < 0 ? undefined : index + 1).map(id => form.form.schema.steps.find(step => step.id === id)!).filter(step => step && step.type !== 'hidden');
+  }
+  async answer(value: unknown): Promise<void> {
+    const step = this.activeStep;
+    if (!step || this.state.busy || this.pending?.method === 'POST' || this.state.conflict) return;
+    this.state.fieldError = null;
+    if (display(step)) {
+      this.timings[step.id] = (this.timings[step.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted);
+      this.state.acknowledged = [...new Set([...this.state.acknowledged, step.id])];
+      this.compute(); this.persist(); return;
+    }
+    const candidate = { ...this.state.answers, [step.key]: value } as AnswerMap;
+    const test = replay(this.state.form!.form.schema, candidate, this.context, 'partial');
+    const issue = test.errors.find(issue => issue.fieldKey === step.key);
+    if (issue || test.currentStepId === step.id) { this.state.fieldError = issue?.code === 'required' || issue?.code === 'cff_required' ? 'required' : 'invalid'; this.notify(); return; }
+    this.timings[step.id] = (this.timings[step.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted);
+    this.state.answers = candidate; this.editing = null; this.state.dirty = true;
+    this.compute(); this.persist();
+    if (this.state.form!.form.session.savePartial !== false) await this.flush();
+  }
+  edit(id: string): void {
+    if (this.state.busy || this.state.phase !== 'ready' || this.pending?.method === 'POST') return;
+    const path = this.state.path; const step = this.state.form?.form.schema.steps.find(step => step.id === id);
+    if (!path?.visited.includes(id) || !step || display(step) || step.type === 'hidden') return;
+    this.editing = id; this.state.fieldError = null;
+    const cut = path.visited.indexOf(id);
+    this.state.acknowledged = this.state.acknowledged.filter(key => path.visited.indexOf(key) < cut);
+    this.compute();
+  }
+  back(): void {
+    const steps = this.visibleSteps.filter(step => !display(step) && step.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, step.key));
+    const previous = steps[steps.length - 1]; if (previous) this.edit(previous.id);
+  }
+  prefillAnswers(answers: AnswerMap): void {
+    if (this.state.phase === 'done' || this.pending?.method === 'POST') return;
+    this.prefill = { ...this.prefill, ...answers };
+    this.notify();
+  }
+  inputValue(step: Step): unknown { return this.state.answers[step.key] ?? this.prefill[step.key] ?? step.defaultValue; }
+  private inputAnswers(): AnswerMap {
+    const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden').map(step => step.key));
+    return Object.fromEntries(Object.entries(this.state.answers).filter(([key]) => keys.has(key))) as AnswerMap;
+  }
+  private persist(): void {
+    if (!this.session && this.saved && this.state.offline && !this.options.preview) {
+      this.saved = { ...this.saved, answers: this.state.answers, acknowledged: this.state.acknowledged, dirty: this.state.dirty, stepTimings: this.timings };
+      this.state.storageUnavailable = !this.storage.write(this.saved); return;
+    }
+    if (this.options.preview || !this.state.form?.form.session.resumeEnabled || !this.session?.resumeToken || !this.session.resumeExpiresAt) return;
+    this.state.storageUnavailable = !this.storage.write({ formId: this.session.formId, version: this.session.version, sessionId: this.session.sessionId, resumeToken: this.session.resumeToken, expiresAt: this.session.resumeExpiresAt, revision: this.session.revision, answers: this.state.answers, acknowledged: this.state.acknowledged, dirty: this.state.dirty, stepTimings: this.timings, form: this.state.form, context: this.context });
+  }
+  private async mutate<T>(operation: Mutation): Promise<T> {
+    if (!this.session) throw new ApiError('cff_session_expired', 401);
+    if (!(operation.method === 'POST' && this.submittedOnce) && Date.parse(this.session.requestExpiresAt) <= Date.now() + 5000 && this.session.resumeToken) {
+      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
+      this.session = { ...fresh, answers: this.session.answers };
+    }
+    try { if (operation.method === 'POST') this.submittedOnce = true; return await this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key); }
+    catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 401 || !this.session.resumeToken) throw error;
+      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
+      this.session = { ...fresh, answers: this.session.answers };
+      return this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key);
+    }
+  }
+  async flush(): Promise<void> {
+    if (this.options.preview || this.state.form?.form.session.savePartial === false || this.state.offline || this.state.busy || this.state.conflict || this.pending?.method === 'POST' || !this.session || !this.state.dirty) return;
+    this.state.busy = true; this.notify();
+    const desired = this.inputAnswers();
+    try {
+      if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: { ...this.timings } } };
+      const response = await this.mutate<Session>(this.pending);
+      const newer = JSON.stringify(desired) !== JSON.stringify(this.pending.body.answers);
+      this.pending = null; this.session = response;
+      this.context = response.context ?? this.context;
+      if (!newer) this.state.answers = response.answers;
+      this.state.dirty = newer; this.state.error = null; this.compute(); this.persist();
+    } catch (error) { this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+    if (this.state.dirty && !this.state.error && !this.state.offline) await this.flush();
+  }
+  async submit(honeypot = ''): Promise<void> {
+    if (this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
+    if (this.state.activeId && !this.pending) return;
+    const validation = replay(this.state.form!.form.schema, this.state.answers, this.context, 'complete');
+    if (validation.errors.length && !this.pending) { this.state.fieldError = 'invalid'; this.notify(); return; }
+    if (this.options.preview) {
+      const ending = this.state.form!.form.schema.endings.find(e => e.id === validation.endingId) ?? this.state.form!.form.schema.endings[0];
+      this.state.completion = { submission: { uuid: '', status: 'completed' }, ending: { ...ending, messages: ending.messages ?? [], buttons: ending.buttons ?? [] } };
+      this.state.phase = 'done'; this.notify(); return;
+    }
+    if (this.pending?.method !== 'POST') { await this.flush(); if (this.state.dirty && this.state.form!.form.session.savePartial !== false) return; }
+    this.state.busy = true; this.state.phase = 'submitting'; this.state.error = null; this.notify();
+    try {
+      if (!this.pending) this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot } };
+      this.state.completion = await this.mutate<Completion>(this.pending);
+      this.pending = null; this.state.phase = 'done'; this.state.dirty = false;
+      this.storage.clear(this.state.form!.form.id);
+      this.event('cff:complete', { submissionId: this.state.completion.submission.uuid, endingId: this.state.completion.ending.id });
+    } catch (error) { this.state.phase = 'ready'; this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+  }
+  async restart(): Promise<void> {
+    if (this.state.busy || this.pending?.method === 'POST' || this.pendingStart || this.state.offline) return;
+    this.state.busy = true; this.notify();
+    try {
+      if (this.session && this.state.phase !== 'done' && this.state.error !== 'expired' && !this.options.preview) {
+        if (this.pending?.method === 'PATCH') { this.state.busy = false; await this.flush(); this.state.busy = true; if (this.pending) return; }
+        this.pending ??= { method: 'DELETE', key: uuid(), body: { version: this.session.version, revision: this.session.revision } };
+        await this.mutate(this.pending);
+      }
+      if (!this.options.preview) this.storage.clear(this.state.form!.form.id);
+      this.session = null; this.saved = null; this.pending = null; this.pendingStart = null; this.submittedOnce = false;
+      this.state.answers = {}; this.state.acknowledged = []; this.state.completion = null; this.state.conflict = false; this.state.error = null; this.state.fieldError = null; this.state.dirty = false; this.editing = null; this.timings = {}; this.prefill = {};
+      if (!this.options.preview) this.state.form = await this.api!.form(this.state.form!.form.id);
+      this.latest = this.state.form; this.state.newerVersion = false; this.state.busy = false;
+      await this.start();
+    } catch (error) { this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+  }
+  async resolveConflict(useLocal: boolean): Promise<void> {
+    if (!this.session || this.state.busy) return;
+    this.state.busy = true;
+    try {
+      const local = this.state.answers;
+      const remote = await this.api!.resume(this.session.formId, this.session.resumeToken ?? this.storage.credential(this.session.formId) ?? '');
+      await this.adopt(remote); if (useLocal) this.state.answers = local;
+      this.pending = null; this.state.conflict = false; this.state.error = null; this.state.dirty = useLocal; this.compute(); this.persist();
+    } catch (error) { this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+    if (useLocal) await this.flush();
+  }
+  setOffline(offline: boolean): void {
+    this.state.offline = offline; this.notify();
+    if (!offline && this.state.phase === 'ready') { if (!this.session && this.saved) void this.reconnect(); else void this.flush(); }
+  }
+  markConflict(): void { if (this.state.phase !== 'done') { this.state.conflict = true; this.notify(); } }
+  private async reconnect(): Promise<void> {
+    if (!this.saved || this.state.busy) return;
+    this.state.busy = true;
+    try {
+      const answers = this.state.answers;
+      const dirty = this.state.dirty;
+      const remote = await this.api!.resume(this.saved.formId, this.saved.resumeToken);
+      await this.adopt(remote);
+      if (dirty) { this.state.answers = answers; this.state.dirty = true; this.state.conflict = remote.revision !== this.saved.revision; this.compute(); }
+      this.persist();
+    } catch (error) { this.handle(error); }
+    finally { this.state.busy = false; this.notify(); }
+    await this.flush();
+  }
+  async retry(): Promise<void> {
+    if (this.pending?.method === 'POST') await this.submit();
+    else if (this.pending?.method === 'DELETE') await this.restart();
+    else if (!this.session) { if (this.saved) await this.reconnect(); else if (this.state.form) await this.start(); else await this.initialize(); }
+    else await this.flush();
+  }
+  private handle(error: unknown): void {
+    const api = error instanceof ApiError ? error : new ApiError('cff_request_failed', 0);
+    if ([401, 422].includes(api.status) || (api.status === 409 && !api.code.includes('pending'))) this.pendingStart = null;
+    if ((api.status === 401 || api.code === 'cff_session_expired') && this.state.form && !this.options.preview) this.storage.clear(this.state.form.form.id);
+    this.state.error = api.status === 429 ? 'error' : api.code === 'cff_version_conflict' ? 'versionConflict' : api.status === 401 || api.code === 'cff_session_expired' ? 'expired' : api.status === 409 ? 'conflict' : 'error';
+    if (api.status === 409 && api.code !== 'cff_version_conflict' && !api.code.includes('pending') && !api.code.includes('idempotency')) this.state.conflict = true;
+    if (api.status === 422) {
+      this.pending = null; this.submittedOnce = false; this.state.fieldError = 'invalid';
+      const field = this.state.form?.form.schema.steps.find(step => api.issues.some(issue => issue?.fieldKey === step.key));
+      if (field && this.state.path?.visited.includes(field.id)) { this.editing = field.id; this.compute(); }
+    }
+    if (!this.session) this.state.phase = 'error';
+    if (this.pending?.method === 'POST' && (api.status === 0 || api.status >= 500 || api.code.includes('pending'))) this.state.error = 'submissionPending';
+    this.persist(); this.notify();
+  }
+}
