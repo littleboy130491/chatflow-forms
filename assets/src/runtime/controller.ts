@@ -3,6 +3,7 @@ import { collectMeta } from '../tracking';
 import { ApiClient, ApiError, uuid } from './api';
 import { SessionStorage, type SavedSession } from './persistence';
 import type { AnswerMap, Completion, PublicForm, ReplayContext, ReplayResult, RuntimeOptions, Session, Step } from './types';
+import { RuntimeAnalytics, type EngagementConfig } from './engagement';
 
 export interface RuntimeState {
   phase: 'loading' | 'resume' | 'ready' | 'submitting' | 'done' | 'error';
@@ -12,7 +13,7 @@ export interface RuntimeState {
   storageUnavailable: boolean; completion: Completion | null;
 }
 type Mutation = { method: 'PATCH' | 'DELETE' | 'POST'; body: Record<string, unknown>; key: string };
-const display = (step: Step) => step.type === 'statement' || step.type === 'summary';
+const display = (step: Step) => ['statement', 'summary', 'media'].includes(step.type);
 
 export class RuntimeController {
   state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
@@ -29,11 +30,33 @@ export class RuntimeController {
   private submittedOnce = false;
   private editing: string | null = null;
   private prefill: AnswerMap;
+  private engagement: EngagementConfig | null = null;
+  private analytics: RuntimeAnalytics | null = null;
+  private engagementVersion = 0;
+  private async loadEngagement(): Promise<void> {
+    if (!this.state.form || this.options.preview || this.engagementVersion === this.state.form.form.version) return;
+    this.engagement = null; this.analytics = null;
+    if (this.state.form.features.engagement) {
+      this.engagement = await this.api!.request<EngagementConfig>(`forms/${this.state.form.form.id}/engagement`, 'GET', undefined, {}, 'no-store', this.state.form.form.version);
+      this.analytics = new RuntimeAnalytics(this.api!, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => { try { return this.options.analyticsOptOut === true || localStorage.getItem('cff_analytics_optout') === '1'; } catch { return this.options.analyticsOptOut === true; } });
+    }
+    this.engagementVersion = this.state.form.form.version;
+  }
   constructor(public readonly options: RuntimeOptions, private readonly api: ApiClient | null, private readonly storage = new SessionStorage(), private readonly emit: (name: string, detail: Record<string, unknown>) => void = () => {}) { this.prefill = options.prefill ?? {}; if (options.preview && options.context) this.context = options.context; }
   subscribe(listener: () => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   dispose(): void { this.disposed = true; this.listeners.clear(); }
   private notify(): void { if (!this.disposed) for (const listener of this.listeners) listener(); }
-  private event(name: string, extra: Record<string, unknown> = {}): void { if (!this.options.preview && this.state.form) this.emit(name, { formId: this.state.form.form.id, version: this.state.form.form.version, ...extra }); }
+  private event(name: string, extra: Record<string, unknown> = {}): void {
+    if (this.options.preview || !this.state.form) return;
+    this.emit(name, { formId: this.state.form.form.id, version: this.state.form.form.version, ...extra });
+    if (name === 'cff:step' && typeof extra.stepId === 'string' && this.state.form.form.session.savePartial !== false) this.analytics?.add({ event: 'view', stepId: extra.stepId });
+    if (name === 'cff:start') { this.analytics?.add({ event: 'view' }); if (this.session) void this.analytics?.flush(this.session); }
+  }
+  close(): void { if (this.session && this.state.phase !== 'done') { this.analytics?.add({ event: 'abandon', ...(this.state.activeId && this.state.form?.form.session.savePartial !== false ? { stepId: this.state.activeId } : {}) }); void this.analytics?.flush(this.session); } }
+  async upload(step: Step, file: File) {
+    if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new ApiError('cff_upload_unavailable', 0);
+    return this.api.upload(this.session, step.id, file);
+  }
 
   async initialize(): Promise<void> {
     try {
@@ -43,6 +66,7 @@ export class RuntimeController {
       if (this.disposed) return;
       this.latest = this.state.form;
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
+      await this.loadEngagement();
       const form = this.state.form.form;
       this.saved = form.session.resumeEnabled ? this.storage.read(form.id) : null;
       const token = form.session.resumeEnabled ? this.storage.credential(form.id) : null;
@@ -87,6 +111,8 @@ export class RuntimeController {
       if (pinned.form.version !== session.version) throw new ApiError('cff_version_conflict', 409);
       this.state.form = pinned;
     }
+    await this.loadEngagement();
+    if (this.disposed) return;
     this.session = session;
     this.context = session.context ?? this.context;
     this.state.answers = session.answers;
@@ -162,6 +188,7 @@ export class RuntimeController {
     this.state.answers = candidate; this.editing = null; this.state.dirty = true;
     this.compute(); this.persist();
     if (this.state.form!.form.session.savePartial !== false) await this.flush();
+    if (this.session && !this.state.dirty) { this.analytics?.add({ event: 'answer', stepId: step.id }); void this.analytics?.flush(this.session); }
   }
   edit(id: string): void {
     if (this.state.busy || this.state.phase !== 'ready' || this.pending?.method === 'POST') return;
@@ -174,7 +201,7 @@ export class RuntimeController {
   }
   back(): void {
     const steps = this.visibleSteps.filter(step => !display(step) && step.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, step.key));
-    const previous = steps[steps.length - 1]; if (previous) this.edit(previous.id);
+    const previous = steps[steps.length - 1]; if (previous) { this.edit(previous.id); if (this.session) { this.analytics?.add({ event: 'back', stepId: previous.id }); void this.analytics?.flush(this.session); } }
   }
   prefillAnswers(answers: AnswerMap): void {
     if (this.state.phase === 'done' || this.pending?.method === 'POST') return;
@@ -240,7 +267,13 @@ export class RuntimeController {
     if (this.pending?.method !== 'POST') { await this.flush(); if (this.state.dirty && this.state.form!.form.session.savePartial !== false) return; }
     this.state.busy = true; this.state.phase = 'submitting'; this.state.error = null; this.notify();
     try {
-      if (!this.pending) this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot } };
+      if (!this.pending) {
+        const captchaToken = this.engagement && this.engagement.captcha.provider !== 'none' ? await this.options.captcha?.(this.engagement.captcha) : '';
+        if (this.engagement && this.engagement.captcha.provider !== 'none' && !captchaToken) throw new ApiError('cff_captcha_required', 422);
+        if (this.disposed) return;
+        this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot, ...(captchaToken ? { captchaToken } : {}) } };
+      }
+      if (this.session) await this.analytics?.flush(this.session);
       this.state.completion = await this.mutate<Completion>(this.pending);
       if (this.disposed) return;
       this.pending = null; this.state.phase = 'done'; this.state.dirty = false;

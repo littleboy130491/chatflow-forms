@@ -30,8 +30,44 @@ final class FrontendModule implements Module {
 		add_filter( 'template_include', array( $this, 'template' ) );
 		add_filter( 'script_loader_tag', array( $this, 'moduleTag' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'tracking' ) );
+		add_action( 'wp_footer', array( $this, 'launchers' ), 5 );
+		add_action( 'cff_retention', array( $this, 'cleanupUploads' ) );
 		foreach ( array( 'rocket_delay_js_exclusions', 'rocket_exclude_defer_js', 'litespeed_optm_js_defer_exc', 'autoptimize_filter_js_exclude' ) as $filter ) {
 			add_filter( $filter, array( $this, 'optimizerExclusions' ) ); }
+	}
+	public function cleanupUploads(): void {
+		try {
+			( new Uploads() )->cleanup(); } catch ( \Throwable $error ) {
+			/* Keep records for retry if private storage is unavailable. */ }
+	}
+	/** @param array<string,mixed> $rules */
+	public static function eligible( array $rules, int $page_id ): bool {
+		if ( ! ( $rules['enabled'] ?? false ) || in_array( $page_id, $rules['excludePageIds'] ?? array(), true ) ) {
+			return false; }
+		return ! ( $rules['includePageIds'] ?? array() ) || in_array( $page_id, $rules['includePageIds'], true );
+	}
+	public function launchers(): void {
+		if ( is_admin() || get_query_var( 'cff_form_slug' ) ) {
+			return; }
+		$ids = get_posts(
+			array(
+				'post_type'      => 'cff_form',
+				'post_status'    => 'publish',
+				'fields'         => 'ids',
+				'posts_per_page' => 100,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+				'no_found_rows'  => true,
+			)
+		);
+		foreach ( $ids as $id ) {
+			$form    = $this->forms->getPublished( (int) $id );
+			$display = $form?->settings()['display'] ?? array();
+			if ( ! $form || Renderer::rendered( (int) $id ) || ! in_array( $display['mode'] ?? '', array( 'launcher', 'popup' ), true ) || ! self::eligible( $display['launcher'] ?? array(), get_queried_object_id() ) ) {
+				continue; }
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes every attribute and uses hex-encoded JSON.
+			echo ( new Renderer( $this->forms ) )->render( (int) $id, array( 'mode' => $display['mode'] ) );
+		}
 	}
 	public function rewrite(): void {
 		$base = Settings::get()['fullpageBase'];

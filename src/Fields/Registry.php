@@ -20,6 +20,11 @@ final class Registry {
 			$this->register( $field );
 		}
 	}
+	/** Enable only when canonical TS parity and upload ownership checks are integrated.
+	 * @return list<FieldType> */
+	public static function engagementFields(): array {
+		return array( new NumericScaleField( 'rating' ), new NumericScaleField( 'scale' ), new NumericScaleField( 'nps' ), new NumericScaleField( 'slider' ), new AddressField(), new MediaField(), new FileUploadField() );
+	}
 
 	public function register( FieldType $type ): void {
 		$name = $type->type();

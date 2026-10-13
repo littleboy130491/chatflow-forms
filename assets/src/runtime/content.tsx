@@ -31,6 +31,8 @@ export function Markdown({ text }: { text: string }) {
 export function answerLabel(step: Step, value: unknown, phrase: (key: string) => string): string {
   if (value === undefined || value === null || value === '') return phrase('empty');
   if (typeof value === 'boolean') return phrase(value ? 'yes' : 'no');
+  if (step.type === 'file_upload') return phrase('uploadSaved');
+  if (step.type === 'address' && value && typeof value === 'object' && !Array.isArray(value)) return Object.values(value).filter(v => typeof v === 'string').join(', ');
   const label = (v: unknown) => {
     if (v && typeof v === 'object' && !Array.isArray(v)) {
       const choice = v as { value?: unknown; other?: unknown };

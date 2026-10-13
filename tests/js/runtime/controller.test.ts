@@ -66,7 +66,7 @@ describe('replay-driven visitor controller', () => {
     const pending = new Promise<Response>(resolve => { release = resolve; });
     const fetcher = vi.fn<typeof fetch>().mockImplementation(() => pending);
     const controller = new RuntimeController({ form: form() }, new ApiClient('/cff/v1/', fetcher));
-    const initialized = controller.initialize(); controller.dispose(); release(response({ version: 1, startToken: 'test-start' })); await initialized;
+    const initialized = controller.initialize(); await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1)); controller.dispose(); release(response({ version: 1, startToken: 'test-start' })); await initialized;
     expect(fetcher).toHaveBeenCalledTimes(1); expect(localStorage.length).toBe(0);
   });
   it('never PATCHes when partial saving is disabled, but submits confirmed answers', async () => {

@@ -7,6 +7,8 @@ import { RuntimeController } from './controller';
 import { registerField } from './registry';
 import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
 import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
+import { createOverlay } from './overlay';
+import { captchaToken } from './captcha';
 export type { RuntimeOptions, FieldProps, PublicForm } from './types';
 export { registerField } from './registry';
 
@@ -14,8 +16,9 @@ export interface RuntimeHandle {
   unmount(): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
+  open(): void;
 }
-const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number }>();
+const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number; controller: RuntimeController }>();
 function previewState(controller: RuntimeController) {
   return { phase: controller.state.phase, visited: [...(controller.state.path?.visited ?? [])], currentStepId: controller.state.activeId, variables: { ...controller.state.path?.variables }, progress: controller.state.path?.progress ?? 0, errors: [...(controller.state.path?.errors ?? [])] };
 }
@@ -25,7 +28,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const id = options.form?.form.id ?? options.formId ?? Number(host.dataset.formId);
   if (!Number.isSafeInteger(id) || id <= 0) throw new TypeError('Invalid form ID');
   if (options.preview && !options.form) throw new TypeError('Preview requires a public form envelope');
-  if (options.mode && !['inline', 'fullpage'].includes(options.mode)) throw new TypeError('Unsupported display mode');
+  if (options.mode && !['inline', 'fullpage', 'launcher', 'popup'].includes(options.mode)) throw new TypeError('Unsupported display mode');
   const restUrl = options.restUrl ?? host.dataset.restUrl;
   if (!options.preview && !restUrl) throw new TypeError('Missing REST endpoint');
   const shadow = host.shadowRoot ?? host.attachShadow({ mode: 'open' });
@@ -33,8 +36,16 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const style = document.createElement('style'); style.textContent = css;
   const customization = document.createElement('style');
   const root = document.createElement('div'); shadow.replaceChildren(style, customization, root);
-  const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode: options.mode ?? (host.dataset.mode === 'fullpage' ? 'fullpage' : 'inline') };
+  const mode = options.mode ?? (['fullpage', 'launcher', 'popup'].includes(host.dataset.mode ?? '') ? host.dataset.mode as NonNullable<RuntimeOptions['mode']> : 'inline');
+  const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode };
+  const captchaRoot = document.createElement('div'); captchaRoot.className = 'captcha';
+  config.captcha ??= config => captchaToken(config, captchaRoot);
   const controller = new RuntimeController(config, options.preview ? null : new ApiClient(restUrl!), undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
+  let initialized = false;
+  const initialize = () => { if (initialized) return; initialized = true; connection(); void controller.initialize().then(appearance); };
+  const overlay = !options.preview && (mode === 'launcher' || mode === 'popup') ? createOverlay(shadow, host, mode, options.launcher ?? {}, () => { initialize(); }, config.locale ?? 'en', () => controller.close()) : null;
+  if (overlay) { root.remove(); overlay.content.append(root); }
+  root.after(captchaRoot);
   const appearance = () => {
     const value = controller.state.form?.form.appearance;
     if (!value) return;
@@ -49,20 +60,21 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const connection = () => controller.setOffline(navigator.onLine === false);
   const externalChange = (event: StorageEvent) => { if (event.key?.startsWith(`cff:session:${id}:`)) controller.markConflict(); };
   if (!options.preview) { window.addEventListener('online', connection); window.addEventListener('offline', connection); window.addEventListener('storage', externalChange); }
-  render(<Chat controller={controller} onClose={() => { if (!options.preview) host.hidden = true; }} />, root);
+  render(<Chat controller={controller} onClose={() => { if (overlay) overlay.close(); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, root);
   const handle: RuntimeHandle = {
-    unmount: () => { unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, root); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, root); overlay?.dispose(); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    open: () => { if (overlay) overlay.open(); else { host.hidden = false; initialize(); host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); } },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
   };
-  mounted.set(host, { handle, id });
-  connection(); void controller.initialize().then(appearance);
+  mounted.set(host, { handle, id, controller });
+  if (!overlay) initialize();
   return handle;
 }
 
 declare global {
   interface Window {
-    ChatFlow: { open(formId: string | number): boolean; prefill(answers: AnswerMap, formId?: string | number): void; registerField(type: string, renderer: ComponentType<FieldProps>): () => void };
+    ChatFlow: { open(formId: string | number): boolean; prefill(answers: AnswerMap, formId?: string | number): void; registerField(type: string, renderer: ComponentType<FieldProps>): () => void; optOutAnalytics(optOut?: boolean): void };
   }
 }
 
@@ -70,6 +82,7 @@ export function autoMount(root: Pick<Document, 'querySelectorAll'> = document): 
   for (const host of root.querySelectorAll<HTMLElement>('cff-chat[data-form-id]')) {
     if (mounted.has(host)) continue;
     const config: RuntimeOptions = {};
+    try { if (host.dataset.launcher) config.launcher = JSON.parse(host.dataset.launcher) as NonNullable<RuntimeOptions['launcher']>; } catch { /* Ignore malformed optional appearance. */ }
     const inline = host.querySelector<HTMLScriptElement>('script[type="application/json"][data-cff-schema]');
     if (inline) { try { config.form = JSON.parse(inline.textContent ?? '') as NonNullable<RuntimeOptions['form']>; } catch { /* Fetch public schema instead. */ } }
     try { mountRuntime(host, config); } catch { host.textContent = 'ChatFlow: configuration error'; }
@@ -77,12 +90,11 @@ export function autoMount(root: Pick<Document, 'querySelectorAll'> = document): 
 }
 if (typeof window !== 'undefined') {
   window.ChatFlow = {
+    optOutAnalytics(optOut = true) { try { localStorage.setItem('cff_analytics_optout', optOut ? '1' : '0'); } catch { /* Storage may be disabled. */ } for (const { controller } of mounted.values()) controller.options.analyticsOptOut = optOut; },
     open: id => {
       autoMount(); const host = [...mounted.keys()].find(h => mounted.get(h)?.id === Number(id));
       if (!host) return false;
-      host.hidden = false;
-      host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); return true;
+      mounted.get(host)!.handle.open(); return true;
     },
     prefill: (answers, id) => { for (const { handle, id: formId } of mounted.values()) if (id === undefined || Number(id) === formId) handle.prefill(answers); },
     registerField,
