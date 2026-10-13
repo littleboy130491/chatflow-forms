@@ -1,0 +1,439 @@
+%d submissions and %d files match.|%d kiriman dan %d berkas cocok.
+A published conversational form.|Formulir percakapan yang telah diterbitkan.
+Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
+Abandoned|Ditinggalkan
+Action|Tindakan
+Actions|Tindakan
+Activity|Aktivitas
+Add AND / OR|Tambah DAN / ATAU
+Add OR group|Tambah grup ATAU
+Add admin email|Tambah email admin
+Add autoresponder|Tambah balasan otomatis
+Add button|Tambah tombol
+Add condition|Tambah kondisi
+Add ending|Tambah penutup
+Add message|Tambah pesan
+Add note|Tambah catatan
+Add option|Tambah pilihan
+Add private plain-text note|Tambah catatan pribadi teks biasa
+Add rule|Tambah aturan
+Add webhook|Tambah webhook
+Admin notifications|Notifikasi admin
+All (AND)|Semua (DAN)
+All forms|Semua formulir
+All statuses|Semua status
+Allowed external redirect hosts (comma-separated)|Host pengalihan eksternal yang diizinkan (pisahkan dengan koma)
+An unexpected error occurred.|Terjadi kesalahan tak terduga.
+Anonymized|Dianonimkan
+Answer field key|Kunci kolom jawaban
+Answer operator|Operator jawaban
+Answer value|Nilai jawaban
+Answers|Jawaban
+Any|Apa pun
+Any (OR)|Salah satu (ATAU)
+Append options|Tambahkan pilihan
+Append submission UUID|Tambahkan UUID kiriman
+Append whitelisted answers|Tambahkan jawaban yang diizinkan
+Apply JSON|Terapkan JSON
+Apply filters|Terapkan filter
+Ask before resuming|Tanya sebelum melanjutkan
+Associated private files are deleted together with submissions.|Berkas pribadi terkait dihapus bersama kiriman.
+Attribution cookie days|Masa cookie atribusi (hari)
+Auto-continue statement|Lanjutkan pernyataan secara otomatis
+Autocomplete|Pelengkapan otomatis
+Automatic retention|Retensi otomatis
+Automatically delete old submissions|Hapus kiriman lama secara otomatis
+Autoresponders|Balasan otomatis
+Avatar attachment ID|ID lampiran avatar
+BCC|BCC
+Back to submissions|Kembali ke kiriman
+Body HTML / merge tags|Isi HTML / tag penggabungan
+Bot bubble colour|Warna gelembung bot
+Bot message|Pesan bot
+Bot name|Nama bot
+Brand colour|Warna merek
+Build|Susun
+Bulk options (one label per line)|Pilihan massal (satu label per baris)
+Button URL (merge tags allowed)|URL tombol (tag penggabungan diizinkan)
+Button action|Tindakan tombol
+Button label|Label tombol
+CC|CC
+Cancel|Batal
+Captcha and Akismet are optional later features, not enabled here.|Captcha dan Akismet merupakan fitur opsional mendatang, belum diaktifkan di sini.
+Chat width (240–1600)|Lebar percakapan (240–1600)
+ChatFlow|ChatFlow
+ChatFlow Form|Formulir ChatFlow
+ChatFlow Forms|Formulir ChatFlow
+ChatFlow settings|Pengaturan ChatFlow
+ChatFlow tools|Alat ChatFlow
+Check email MX on server|Periksa MX email di server
+Choice layout|Tata letak pilihan
+Choose a field|Pilih kolom
+Choose a form from the block settings.|Pilih formulir dari pengaturan blok.
+Choose email field|Pilih kolom email
+Choose form|Pilih formulir
+Close preview|Tutup pratinjau
+Closing date (UTC ISO 8601, blank = never)|Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)
+Collected metadata|Metadata yang dikumpulkan
+Column keys (comma-separated; blank = all)|Kunci kolom (pisahkan dengan koma; kosong = semua)
+Comma|Koma
+Completed|Selesai
+Confirm publish|Konfirmasi penerbitan
+Consent|Persetujuan
+Consent text|Teks persetujuan
+Content|Konten
+Continue / submit button|Tombol lanjut / kirim
+Conversation flow|Alur percakapan
+Conversation replay|Putar ulang percakapan
+Copy|Salin
+Corner radius (0–32)|Radius sudut (0–32)
+Create private export|Buat ekspor pribadi
+Criteria / count|Kriteria / jumlah
+Custom headers (private)|Header khusus (pribadi)
+Date|Tanggal
+Default country (ISO code)|Negara bawaan (kode ISO)
+Default ending|Penutup bawaan
+Default theme|Tema bawaan
+Default value|Nilai bawaan
+Delay in seconds (0 = immediate)|Jeda dalam detik (0 = langsung)
+Delete partial on start over|Hapus kiriman sebagian saat mulai ulang
+Delete selected|Hapus yang dipilih
+Delete this site’s forms and submissions on plugin uninstall|Hapus formulir dan kiriman situs ini saat plugin dihapus
+Delimiter|Pemisah
+Delivery activity|Aktivitas pengiriman
+Design|Desain
+Design basics|Dasar desain
+Desktop|Desktop
+Destination|Tujuan
+Device|Perangkat
+Discard local edits and reload?|Buang perubahan lokal dan muat ulang?
+Display defaults|Tampilan bawaan
+Display mode|Mode tampilan
+Do not store|Jangan simpan
+Download (authenticated, expiring)|Unduh (memerlukan autentikasi, memiliki masa berlaku)
+Draft preview|Pratinjau draf
+Draft preview — no sessions or jobs|Pratinjau draf — tanpa sesi atau tugas
+Draft saved|Draf disimpan
+Drag or use arrow keys to reorder|Seret atau gunakan tombol panah untuk mengurutkan
+Duplicate|Duplikat
+Duplicate field|Duplikat kolom
+Edit|Ubah
+Email|Email
+Email HTML preview|Pratinjau HTML email
+Email body|Isi email
+Emoji|Emoji
+Enable first-touch tracking|Aktifkan pelacakan kunjungan pertama
+Enable honeypot protection|Aktifkan perlindungan honeypot
+Enable per-form automatic retention|Aktifkan retensi otomatis per formulir
+Enable resume|Aktifkan lanjutkan sesi
+Enabled|Diaktifkan
+Ending messages (one per line)|Pesan penutup (satu per baris)
+Ending type|Jenis penutup
+Endings and completion|Penutup dan penyelesaian
+Exclusive / none of the above|Eksklusif / tidak satu pun di atas
+Export|Ekspor
+Export CSV|Ekspor CSV
+Export expired or download denied. Request a new export.|Ekspor kedaluwarsa atau unduhan ditolak. Buat ekspor baru.
+Export form JSON|Ekspor JSON formulir
+Exports every matching row using the active filters, not just this page.|Mengekspor seluruh baris yang cocok dengan filter aktif, bukan hanya halaman ini.
+Exports only selected rows and the active filters.|Mengekspor hanya baris terpilih yang cocok dengan filter aktif.
+Field|Kolom
+Field key|Kunci kolom
+Field labels|Label kolom
+Field palette|Palet kolom
+First bot message|Pesan bot pertama
+First-touch attribution|Atribusi kunjungan pertama
+Font stack|Daftar font
+Footer text|Teks kaki email
+Form|Formulir
+Form ID|ID formulir
+Form ID (blank = all)|ID formulir (kosong = semua)
+Form JSON file|Berkas JSON formulir
+Form file exceeds 1 MiB.|Berkas formulir melebihi 1 MiB.
+Form name|Nama formulir
+Form version|Versi formulir
+Format|Format
+Forms|Formulir
+From date (UTC)|Dari tanggal (UTC)
+From email|Email pengirim
+From name|Nama pengirim
+Full IP|IP lengkap
+Fullpage|Halaman penuh
+Fullpage base slug|Slug dasar halaman penuh
+Global email layout|Tata letak email global
+Group selected|Kelompokkan yang dipilih
+Group title|Judul grup
+Headers|Header
+Height (200–2000 px)|Tinggi (200–2000 px)
+Help text|Teks bantuan
+Hidden|Tersembunyi
+Hidden field|Kolom tersembunyi
+Hidden until shown by a rule|Tersembunyi hingga ditampilkan oleh aturan
+Hidden value source|Sumber nilai tersembunyi
+Honeypot|Honeypot
+I agree to the privacy policy.|Saya menyetujui kebijakan privasi.
+IP storage|Penyimpanan IP
+Image attachment ID|ID lampiran gambar
+Import form|Impor formulir
+Import form JSON|Impor JSON formulir
+Import new draft|Impor sebagai draf baru
+Inherit theme font|Gunakan font tema
+Inline|Inline
+Insert answer merge tag|Sisipkan tag penggabungan jawaban
+Insert merge tag|Sisipkan tag penggabungan
+Inspect logic path and variables|Periksa jalur logika dan variabel
+Invalid ChatFlow form file.|Berkas formulir ChatFlow tidak valid.
+Invalid JSON. Nothing was changed.|JSON tidak valid. Tidak ada perubahan.
+Invalid export download destination.|Tujuan unduhan ekspor tidak valid.
+Jump to step (preview only)|Lompat ke langkah (hanya pratinjau)
+Keep local edits (explicit override)|Pertahankan perubahan lokal (timpa secara eksplisit)
+Key|Kunci
+Keyboard hint|Petunjuk keyboard
+Label|Label
+Launcher, popup and QR tools are optional later features.|Peluncur, popup, dan alat QR merupakan fitur opsional mendatang.
+Leave with unsaved changes?|Keluar dengan perubahan yang belum disimpan?
+Limits|Batasan
+Link (including WhatsApp)|Tautan (termasuk WhatsApp)
+Live version|Versi aktif
+Loading settings…|Memuat pengaturan…
+Loading…|Memuat…
+Logic|Logika
+Logic diagnostics|Diagnostik logika
+Logic rules (evaluated in order)|Aturan logika (dievaluasi berurutan)
+Logo URL|URL logo
+Long text|Teks panjang
+Machine keys|Kunci mesin
+Mark read|Tandai dibaca
+Mark spam|Tandai spam
+Mark unread|Tandai belum dibaca
+Match conditions|Kondisi pencocokan
+Maximum|Maksimum
+Maximum length|Panjang maksimum
+Maximum selections|Pilihan maksimum
+Message|Pesan
+Metadata and consent|Metadata dan persetujuan
+Minimum|Minimum
+Minimum age|Usia minimum
+Minimum completion seconds|Waktu penyelesaian minimum (detik)
+Minimum length|Panjang minimum
+Minimum selections|Pilihan minimum
+Mobile|Ponsel
+Move down|Pindah ke bawah
+Move up|Pindah ke atas
+Multiple choice|Pilihan jamak
+Name|Nama
+Nested condition|Kondisi bertingkat
+New Imajiner survey|Survei Imajiner baru
+New blank form|Formulir kosong baru
+New group|Grup baru
+New question|Pertanyaan baru
+New submission|Kiriman baru
+Next|Berikutnya
+No|Tidak
+No logic warnings detected.|Tidak ditemukan peringatan logika.
+No matching submissions.|Tidak ada kiriman yang cocok.
+Not starred|Tidak berbintang
+Notes|Catatan
+Notify on abandoned contact leads|Kirim notifikasi untuk prospek kontak yang ditinggalkan
+Number|Angka
+Number increment|Kelipatan angka
+Off by default. Per-form retention settings can override this default.|Nonaktif secara bawaan. Pengaturan retensi per formulir dapat mengganti nilai bawaan ini.
+Older than days (default 360 unless dates set)|Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)
+Open imported form|Buka formulir hasil impor
+Operand source|Sumber operand
+Operator|Operator
+Option label|Label pilihan
+Other (free-text option)|Lainnya (pilihan teks bebas)
+Partial|Sebagian
+Partial retention and spam defaults|Retensi kiriman sebagian dan perlindungan spam bawaan
+Partial retention days (blank = disabled)|Retensi kiriman sebagian (hari; kosong = nonaktif)
+Partial/abandoned retention days (blank = same)|Retensi sebagian/ditinggalkan (hari; kosong = sama)
+Past submission ID (optional; requires submission access)|ID kiriman sebelumnya (opsional; memerlukan akses kiriman)
+Per user (blank = unlimited)|Per pengguna (kosong = tanpa batas)
+Permanently purge|Hapus secara permanen
+Phone|Telepon
+Phrase key → translated text|Kunci frasa → teks terjemahan
+Placeholder|Teks petunjuk
+Plain Q&A|Tanya jawab biasa
+Plain-text version|Versi teks biasa
+Preview|Pratinjau
+Preview count|Pratinjau jumlah
+Preview published form|Pratinjau formulir terbit
+Preview saved draft email|Pratinjau email draf tersimpan
+Previous|Sebelumnya
+Primary colour|Warna utama
+Privacy and retention override|Pengaturan khusus privasi dan retensi
+Privacy defaults|Privasi bawaan
+Privacy policy URL|URL kebijakan privasi
+Proxy mode|Mode proxy
+Publish|Terbitkan
+Publish failed.|Penerbitan gagal.
+Publish new version|Terbitkan versi baru
+Publish the form before sending test mail.|Terbitkan formulir sebelum mengirim email uji.
+Publish this form before embedding it.|Terbitkan formulir sebelum menyematkannya.
+Purge audit log|Log audit penghapusan
+Purge data|Hapus data
+Purge job|Tugas penghapusan
+Purge log|Log penghapusan
+Purge submissions|Hapus kiriman
+Rate window seconds|Jendela pembatasan (detik)
+Reaction text|Teks reaksi
+Read|Dibaca
+Read / starred|Dibaca / berbintang
+Read state|Status baca
+Recipients|Penerima
+Recorded consent text and version|Teks dan versi persetujuan yang direkam
+Redirect|Pengalihan
+Redirect URL|URL pengalihan
+Redirect delay (milliseconds)|Jeda pengalihan (milidetik)
+Redo|Ulangi
+Refresh activity|Segarkan aktivitas
+Refresh progress|Segarkan progres
+Regex pattern|Pola regex
+Reload server draft|Muat ulang draf server
+Remove button|Hapus tombol
+Remove condition|Hapus kondisi
+Remove email|Hapus email
+Remove ending|Hapus penutup
+Remove ending? Update any rules that reference it.|Hapus penutup? Perbarui semua aturan yang merujuknya.
+Remove message|Hapus pesan
+Remove option|Hapus pilihan
+Remove rule|Hapus aturan
+Remove webhook|Hapus webhook
+Reply-To|Alamat balasan
+Reply-To (address or email merge tag)|Alamat balasan (alamat atau tag penggabungan email)
+Require consent before tracking|Wajibkan persetujuan sebelum pelacakan
+Require login|Wajib login
+Required|Wajib
+Reserved scoring rule (not enabled in MVP)|Aturan penilaian cadangan (belum diaktifkan dalam MVP)
+Reset filters|Atur ulang filter
+Respect Do Not Track|Hormati Do Not Track
+Respondent email field|Kolom email responden
+Resume days (1–90)|Masa melanjutkan sesi (hari; 1–90)
+Retention days|Masa retensi (hari)
+Retry delivery|Ulangi pengiriman
+Rows per page|Baris per halaman
+Sample answers (JSON object)|Contoh jawaban (objek JSON)
+Sample answers must be an object.|Contoh jawaban harus berupa objek.
+Save draft|Simpan draf
+Save failed.|Penyimpanan gagal.
+Save partial submissions|Simpan kiriman sebagian
+Save settings|Simpan pengaturan
+Save this draft first to get its form ID.|Simpan draf terlebih dahulu untuk memperoleh ID formulir.
+Saving…|Menyimpan…
+Scoring and visual node graphs are not enabled in MVP.|Penilaian dan grafik simpul visual belum diaktifkan dalam MVP.
+Search answers / email / phone|Cari jawaban / email / telepon
+Search fields|Cari kolom
+Select a form|Pilih formulir
+Select an option|Pilih pilihan
+Select field|Pilih kolom
+Select submission|Pilih kiriman
+Select this page|Pilih halaman ini
+Semicolon|Titik koma
+Send only first matching autoresponder|Kirim hanya balasan otomatis pertama yang cocok
+Send only when conditions match|Kirim hanya jika kondisi cocok
+Send test of published version|Kirim uji versi terbit
+Sessions and resume|Sesi dan kelanjutan
+Settings|Pengaturan
+Settings saved.|Pengaturan disimpan.
+Share|Bagikan
+Short text|Teks pendek
+Shortcode|Shortcode
+Signing secret|Rahasia penandatanganan
+Single choice|Pilihan tunggal
+Skipped|Dilewati
+Source / device|Sumber / perangkat
+Source key|Kunci sumber
+Spam|Spam
+Spam protection|Perlindungan spam
+Star|Beri bintang
+Star state|Status bintang
+Starred|Berbintang
+Start over|Mulai ulang
+Starts per rate window|Jumlah mulai per jendela pembatasan
+Statement|Pernyataan
+Status|Status
+Status / attempts|Status / percobaan
+Status / version|Status / versi
+Store permitted metadata|Simpan metadata yang diizinkan
+Store tracking metadata|Simpan metadata pelacakan
+Store user agent|Simpan agen pengguna
+Stored value|Nilai tersimpan
+Subject|Subjek
+Submission|Kiriman
+Submissions|Kiriman
+Submissions per rate window|Kiriman per jendela pembatasan
+Summary|Ringkasan
+System status|Status sistem
+Tablet|Tablet
+Target|Target
+Test email queued. Check the activity log for delivery.|Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman.
+Test recipient|Penerima uji
+Text colour|Warna teks
+Thank you for your submission|Terima kasih atas kiriman Anda
+Thank you!|Terima kasih!
+The frozen form snapshot is unavailable.|Snapshot formulir yang dibekukan tidak tersedia.
+The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
+The runtime preview is unavailable. Rebuild the plugin assets.|Pratinjau runtime tidak tersedia. Bangun ulang aset plugin.
+Theme|Tema
+To date (UTC)|Sampai tanggal (UTC)
+Tools|Alat
+Total submissions (blank = unlimited)|Total kiriman (kosong = tanpa batas)
+Trash|Sampah
+Trash all selected submissions?|Pindahkan semua kiriman terpilih ke sampah?
+Trash selected|Pindahkan pilihan ke sampah
+Trash submission|Pindahkan kiriman ke sampah
+Trash this form? New visitors cannot start it afterwards.|Pindahkan formulir ini ke sampah? Pengunjung baru tidak dapat memulainya lagi.
+Trash this submission?|Pindahkan kiriman ini ke sampah?
+Trusted CIDR ranges (one per line)|Rentang CIDR tepercaya (satu per baris)
+Trusted proxy configuration|Konfigurasi proxy tepercaya
+Type DELETE to confirm|Ketik DELETE untuk konfirmasi
+Typing speed|Kecepatan mengetik
+UTM campaign|Kampanye UTM
+UTM source|Sumber UTM
+Undo|Urungkan
+Ungroup|Lepas pengelompokan
+Uninstall data|Data saat penghapusan plugin
+Unit suffix|Akhiran satuan
+Unread|Belum dibaca
+Unsaved draft|Draf belum disimpan
+Unstar|Hapus bintang
+Untitled form|Formulir tanpa judul
+Use the ChatFlow Form block or an Elementor Shortcode widget.|Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor.
+User / event|Pengguna / peristiwa
+User bubble colour|Warna gelembung pengguna
+Validation|Validasi
+Value|Nilai
+Values (JSON array)|Nilai (larik JSON)
+Verified proxy header|Header proxy terverifikasi
+Visit website|Kunjungi situs web
+Visitor phrase overrides|Frasa khusus pengunjung
+Webhook URL|URL webhook
+Webhooks|Webhook
+Whitelisted field keys|Kunci kolom yang diizinkan
+Yes|Ya
+Yes / No|Ya / Tidak
+You are not allowed to access this screen.|Anda tidak diizinkan mengakses halaman ini.
+You cannot manage forms.|Anda tidak dapat mengelola formulir.
+You cannot manage settings.|Anda tidak dapat mengelola pengaturan.
+You cannot view submissions.|Anda tidak dapat melihat kiriman.
+Another admin changed this draft. Autosave is paused; your local edits are preserved.|Admin lain mengubah draf ini. Penyimpanan otomatis dijeda; perubahan lokal Anda tetap tersimpan.
+Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
+Check colour contrast in the real preview. Optional custom effects are not enabled.|Periksa kontras warna pada pratinjau nyata. Efek khusus opsional belum diaktifkan.
+Deactivation never deletes data. Multisite uses each site’s own setting.|Menonaktifkan plugin tidak menghapus data. Multisite menggunakan pengaturan masing-masing situs.
+Delete selected fields? Review broken references before publishing.|Hapus kolom terpilih? Periksa referensi yang rusak sebelum menerbitkan.
+Diff uses the draft loaded in this editor, not the historical published snapshot.|Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya.
+Formula-like cells are escaped by the server. Exports contain personal data; store them securely.|Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman.
+Imports create a new draft and are validated by the server. Webhooks exported by ChatFlow have their secrets removed and are disabled.|Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang diekspor ChatFlow dihapus dan webhook dinonaktifkan.
+Keep local edits on the latest revision? The next save can replace another admin’s changes.|Pertahankan perubahan lokal pada revisi terbaru? Penyimpanan berikutnya dapat menimpa perubahan admin lain.
+Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules.|Kunci digunakan dalam ekspor dan integrasi. Mengganti nama tidak mengubah ID tetap; periksa tag penggabungan dan aturan terkait.
+Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers.|Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan.
+Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url="https://…"]Label[/cff_button].|Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url="https://…"]Label[/cff_button].
+Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.|Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi.
+Permanently deletes matching data in bounded batches. This cannot be undone. Preview first.|Menghapus data yang cocok secara permanen dalam batch terbatas. Tidak dapat dibatalkan. Lakukan pratinjau dahulu.
+Preview saves the current draft. Test sends use the published version; publish changed notification settings before testing them.|Pratinjau menyimpan draf saat ini. Pengiriman uji memakai versi terbit; terbitkan perubahan pengaturan notifikasi sebelum mengujinya.
+Published forms only. Custom elements require the plugin runtime asset; no tokens or private settings belong in HTML.|Hanya formulir terbit. Elemen khusus memerlukan aset runtime plugin; jangan sertakan token atau pengaturan pribadi di HTML.
+Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.|Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie.
+Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings.|Langkah: %d ditambahkan, %d diubah, %d dihapus. Versi baru membekukan skema dan pengaturan pribadi.
+Tracking is off by default. Connect your consent manager before enabling it.|Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya.
+Uninstall will permanently delete this site’s plugin data. Enable this?|Penghapusan plugin akan menghapus data plugin situs ini secara permanen. Aktifkan?
