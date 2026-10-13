@@ -125,7 +125,7 @@ describe('Shadow DOM mount and global API', () => {
     expect(panel.hidden).toBe(false);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     await vi.waitFor(() => expect(shadow.textContent).toContain('Hello'));
-    await act(() => panel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
+    await act(() => { panel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); });
     expect(panel.hidden).toBe(true);
     expect(shadow.activeElement).toBe(toggle);
     expect(window.ChatFlow.open(42)).toBe(true);
