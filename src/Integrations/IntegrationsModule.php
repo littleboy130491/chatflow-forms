@@ -77,6 +77,9 @@ final class IntegrationsModule implements Module {
 		if ( ! $form ) {
 			return 'cancelled';
 		}
+		if ( \ChatFlow\Security\CookieSources::deniedKeys( $form->schema() ) ) {
+			return 'cancelled';
+		}
 		$is_test = 'notification.test' === $row['event'] && 0 === (int) $row['submission_id'];
 		$stored  = $is_test ? null : ( new Repository() )->get( (int) $row['submission_id'] );
 		if ( ! $is_test && ( ! $stored || in_array( $stored->status(), array( 'trash', 'spam' ), true ) ) ) {

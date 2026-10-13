@@ -377,6 +377,7 @@ export function Inspector({
                 value={settings.sourceKey}
                 onChange={(sourceKey) => patchSettings({ sourceKey })}
               />
+              {settings.source === 'cookie' && <p>{__('Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.', 'chatflow-forms')}</p>}
               <Field
                 label={__('Default value', 'chatflow-forms')}
                 value={typeof step.defaultValue === 'string' ? step.defaultValue : ''}

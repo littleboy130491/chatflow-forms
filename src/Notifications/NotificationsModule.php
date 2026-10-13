@@ -125,6 +125,9 @@ final class NotificationsModule implements Module {
 		if ( ! $form ) {
 			return \ChatFlow\Submissions\Database::error( 'cff_form_missing', 'Submission form version unavailable.', 404 );
 		}
+		if ( \ChatFlow\Security\CookieSources::deniedKeys( $form->schema() ) ) {
+			return \ChatFlow\Submissions\Database::error( 'cff_restricted_cookie', 'Notifications from an outdated credential-cookie schema cannot be resent.', 422 );
+		}
 		$outbox = new Outbox();
 		$ids    = array();
 		try {

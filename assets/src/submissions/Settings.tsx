@@ -36,12 +36,14 @@ export interface GlobalSettings {
   };
 }
 export function Settings({ api }: { api: AdminApi }) {
+  const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [saved, setSaved] = useState(false);
   useEffect(() => {
     const abort = new AbortController();
+    void api.request<{smtpDetected:boolean}>('admin/system-status', 'GET', undefined, abort.signal).then(status => setSmtpDetected(status.smtpDetected)).catch(() => { if(!abort.signal.aborted) setSmtpDetected(null); });
     api
       .request<{ settings: GlobalSettings }>('admin/settings', 'GET', undefined, abort.signal)
       .then((result) => setSettings(result.settings))
@@ -304,6 +306,8 @@ export function Settings({ api }: { api: AdminApi }) {
           </section>
           <section className="cff-card">
             <h2>{__('Global email layout', 'chatflow-forms')}</h2>
+            {smtpDetected === false && <Notice status="warning" isDismissible={false}>{__('No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.', 'chatflow-forms')}</Notice>}
+            {smtpDetected === null && <p>{__('SMTP status is unknown. Verify your mail transport and test inbox delivery.', 'chatflow-forms')}</p>}
             {(
               [
                 { key: 'fromName', label: __('From name', 'chatflow-forms') },

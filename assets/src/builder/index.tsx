@@ -10,7 +10,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { diagnoseSchema } from '../shared/logic/index';
 import { Area, Button, Check, Field, Notice, Select } from './controls';
 import { AdminApi, can, errorMessage } from './api';
-import type { AdminConfig, FormDTO, FormSchema, Page, Step } from './api';
+import type { AdminConfig, FormDTO, FormSchema, Step } from './api';
 import {
   blankForm,
   DraftController,
@@ -23,12 +23,13 @@ import {
 import { Inspector, SortableItem } from './Inspector';
 import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
-import { downloadForm } from './formIO';
+import { googleFont, googleFonts } from '../shared/fonts';
 import { Templates } from './Templates';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
 import { Share } from './Share';
 import { Contrast } from './Contrast';
+export { mountFormsList } from './forms-list';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -54,135 +55,8 @@ export const fieldLabels: Record<string, string> = {
   statement: __('Statement', 'chatflow-forms'),
   summary: __('Summary', 'chatflow-forms'),
 };
-function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
-  const [page, setPage] = useState(1),
-    [forms, setForms] = useState<Page<FormDTO> | null>(null),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
-  const load = () => {
-    setBusy(true);
-    api
-      .request<Page<FormDTO>>(`admin/forms?page=${page}&perPage=20`)
-      .then(setForms)
-      .catch((err) => setError(errorMessage(err)))
-      .finally(() => setBusy(false));
-  };
-  useEffect(load, [api, page]);
-  return (
-    <section>
-      <h1>{__('ChatFlow Forms', 'chatflow-forms')}</h1>
-      <Templates api={api} onOpen={onOpen} />
-      <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
-        {__('New blank form', 'chatflow-forms')}
-      </Button>
-      <Button
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          setError('');
-          try {
-            onOpen(await api.request<FormDTO>('admin/templates/imajiner-survey', 'POST', {}));
-          } catch (err) {
-            setError(errorMessage(err));
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {__('New Imajiner survey', 'chatflow-forms')}
-      </Button>
-      {error && (
-        <Notice status="error" isDismissible={false}>
-          {error}
-        </Notice>
-      )}
-      <table className="widefat striped">
-        <thead>
-          <tr>
-            <th>{__('Name', 'chatflow-forms')}</th>
-            <th>{__('Status / version', 'chatflow-forms')}</th>
-            <th>{__('Submissions / completion rate', 'chatflow-forms')}</th>
-            <th>{__('Last submission', 'chatflow-forms')}</th>
-            <th>{__('Shortcode', 'chatflow-forms')}</th>
-            <th>{__('Actions', 'chatflow-forms')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forms?.items.map((form) => (
-            <tr key={form.id}>
-              <td>
-                <Button variant="link" onClick={() => onOpen(form)}>
-                  {form.title}
-                </Button>
-              </td>
-              <td>
-                {form.status} / {form.version}
-              </td>
-              <td>{form.statistics?.completed ?? 0} · {form.statistics?.completionRate ?? 0}%</td>
-              <td>{form.statistics?.lastSubmissionAt ?? '—'}</td>
-              <td>
-                <code>{`[chatflow id="${form.id}"]`}</code>
-                <Button
-                  onClick={() => {
-                    navigator.clipboard
-                      .writeText(`[chatflow id="${form.id}"]`)
-                      .catch((err) => setError(errorMessage(err)));
-                  }}
-                >
-                  {__('Copy', 'chatflow-forms')}
-                </Button>
-              </td>
-              <td>
-                <Button onClick={() => onOpen(form)}>{__('Edit', 'chatflow-forms')}</Button>
-                <Button onClick={() => onOpen(form)}>{__('Preview / edit draft', 'chatflow-forms')}</Button>
-                <Button onClick={() => downloadForm(form)}>{__('Export form JSON', 'chatflow-forms')}</Button>
-                <Button
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true); setError('');
-                    try {onOpen(await api.request<FormDTO>(`admin/forms/${form.id}/duplicate`, 'POST', {}));}
-                    catch (err) {setError(errorMessage(err));} finally {setBusy(false);}
-                  }}
-                >
-                  {__('Duplicate', 'chatflow-forms')}
-                </Button>
-                <Button
-                  isDestructive
-                  disabled={busy}
-                  onClick={async () => {
-                    if (
-                      window.confirm(
-                        __('Trash this form? New visitors cannot start it afterwards.', 'chatflow-forms'),
-                      )
-                    ) {
-                      try {
-                        await api.request(`admin/forms/${form.id}`, 'DELETE');
-                        load();
-                      } catch (err) {
-                        setError(errorMessage(err));
-                      }
-                    }
-                  }}
-                >
-                  {__('Trash', 'chatflow-forms')}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {busy && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
-      <Button disabled={page <= 1 || busy} onClick={() => setPage(page - 1)}>
-        {__('Previous', 'chatflow-forms')}
-      </Button>
-      <span>
-        {page} / {Math.max(1, Math.ceil((forms?.total ?? 0) / 20))}
-      </span>
-      <Button disabled={busy || page * 20 >= (forms?.total ?? 0)} onClick={() => setPage(page + 1)}>
-        {__('Next', 'chatflow-forms')}
-      </Button>
-    </section>
-  );
+function TemplatePicker({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
+  return <section><h1>{__('New form — choose a template', 'chatflow-forms')}</h1><Templates api={api} onOpen={onOpen} /><Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>{__('New blank form', 'chatflow-forms')}</Button></section>;
 }
 function draftStore(controller: DraftController) {
   return createReduxStore('cff/builder', {
@@ -232,7 +106,7 @@ function BuilderView({
   const [tab, setTab] = useState('build'),
     [selected, setSelected] = useState(schema.steps[0]?.id ?? ''),
     [marked, setMarked] = useState<string[]>([]),
-    [preview, setPreview] = useState(false),
+    [preview, setPreview] = useState(api.config.preview === true),
     [search, setSearch] = useState(''),
     [publishConfirm, setPublishConfirm] = useState(false);
   const [baseline, setBaseline] = useState<FormSchema | null>(null);
@@ -720,13 +594,20 @@ function BuilderView({
               }
             />
           ))}
+          <Select
+            label={__('Font source', 'chatflow-forms')}
+            value={form.settings.appearance?.googleFont ?? 'system'}
+            choices={[{ value: 'system', label: __('System / local — no ChatFlow font requests', 'chatflow-forms') }, ...googleFonts.map(font => ({ value: font, label: font }))]}
+            onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, googleFont: googleFont(font) ?? 'system', inheritFont: false } } }))}
+          />
+          <p>{__('Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.', 'chatflow-forms')}</p>
           <Check
             label={__('Inherit theme font', 'chatflow-forms')}
             value={form.settings.appearance?.inheritFont}
             onChange={(inheritFont) =>
               edit((value) => ({
                 ...value,
-                settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont } },
+                settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont, ...(inheritFont ? { googleFont: 'system' as const } : {}) } },
               }))
             }
           />
@@ -803,9 +684,9 @@ function AdminBuilder({ config }: { config: AdminConfig }) {
         </Notice>
       )}
       {form ? (
-        <Builder api={api} initial={form} onBack={() => setForm(null)} />
+        <Builder api={api} initial={form} onBack={() => { const url = new URL(config.adminUrl ?? "admin.php", window.location.href); url.searchParams.set("page", "cff-forms"); window.location.assign(url.href); }} />
       ) : (
-        <FormsList api={api} onOpen={setForm} />
+        <TemplatePicker api={api} onOpen={setForm} />
       )}
     </Fragment>
   );

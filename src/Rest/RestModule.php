@@ -85,6 +85,7 @@ final class RestModule implements Module {
 		$this->route( '/admin/submissions/(?P<id>\d+)', 'DELETE', array( $this, 'deleteSubmission' ), 'cff_delete_submissions' );
 		$this->route( '/admin/submissions/bulk', 'POST', array( $this, 'bulk' ), 'cff_edit_submissions' );
 		$this->route( '/admin/submissions/export', 'POST', fn( $r ) => $this->respond( ( new Export( $this->forms, $this->submissions ) )->create( $this->body( $r ) ) ), 'cff_export_submissions' );
+		$this->route( '/admin/export-forms', 'GET', array( $this, 'exportForms' ), 'cff_export_submissions' );
 		$this->route( '/admin/exports/(?P<id>\d+)', 'GET', fn( $r ) => $this->respond( ( new Export( $this->forms, $this->submissions ) )->progress( (int) $r['id'] ) ), 'cff_export_submissions' );
 		$this->route( '/admin/purge/preview', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->preview( $this->body( $r )['criteria'] ?? array() ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->start( $this->body( $r )['criteria'] ?? array(), (string) ( $this->body( $r )['confirmationToken'] ?? '' ), (string) ( $this->body( $r )['confirmation'] ?? '' ) ) ), 'cff_purge_submissions' );
@@ -258,7 +259,6 @@ final class RestModule implements Module {
 	private function pagination( \WP_REST_Request $r ): array {
 		return array( max( 1, absint( $r->get_param( 'page' ) ?? 1 ) ), max( 1, min( 100, absint( $r->get_param( 'perPage' ) ?? 20 ) ) ) ); }
 	public function formsList( \WP_REST_Request $r ): \WP_REST_Response {
-		global $wpdb;
 		[$page, $per] = $this->pagination( $r );
 		$query        = new \WP_Query(
 			array(
@@ -276,22 +276,42 @@ final class RestModule implements Module {
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
 				$item               = $form->toArray();
-				$summary            = $wpdb->get_row( $wpdb->prepare( "SELECT COUNT(*) AS completed,MAX(completed_at) AS latest FROM {$wpdb->prefix}cff_submissions WHERE form_id=%d AND status='completed'", $form->id() ), ARRAY_A );
-				$started            = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_sessions WHERE form_id=%d", $form->id() ) );
-				$completed          = (int) ( $summary['completed'] ?? 0 );
-				$started            = max( $completed, $started );
-				$item['statistics'] = array(
-					'completed'        => $completed,
-					'started'          => $started,
-					'completionRate'   => $started ? round( 100 * $completed / $started, 1 ) : 0,
-					'lastSubmissionAt' => $summary['latest'] ?? null,
-				);
+				$item['statistics'] = \ChatFlow\Forms\Statistics::get( $form->id() );
 				$items[]            = $item;
 			}
 		}
 		return $this->respond(
 			array(
 				'items'   => $items,
+				'total'   => $query->found_posts,
+				'page'    => $page,
+				'perPage' => $per,
+			)
+		);
+	}
+	public function exportForms( \WP_REST_Request $r ): \WP_REST_Response {
+		[$page, $per] = $this->pagination( $r );
+		$id           = absint( $r->get_param( 'id' ) );
+		$query        = new \WP_Query(
+			array(
+				'post_type'      => 'cff_form',
+				'post_status'    => array( 'draft', 'publish' ),
+				'posts_per_page' => $id ? 1 : $per,
+				'paged'          => $id ? 1 : $page,
+				'post__in'       => $id ? array( $id ) : null,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			)
+		);
+		return $this->respond(
+			array(
+				'items'   => array_map(
+					static fn( $post ) => array(
+						'id'    => $post->ID,
+						'title' => $post->post_title,
+					),
+					$query->posts
+				),
 				'total'   => $query->found_posts,
 				'page'    => $page,
 				'perPage' => $per,

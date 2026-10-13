@@ -8,6 +8,7 @@ use ChatFlow\Integrations\HookDispatcher;
 use ChatFlow\Integrations\Outbox;
 use ChatFlow\Logic\Engine;
 use ChatFlow\Security\TokenSigner;
+use ChatFlow\Security\CookieSources;
 use ChatFlow\Spam\Protection;
 use ChatFlow\Spam\RateLimiter;
 use ChatFlow\Tracking\IpResolver;
@@ -61,7 +62,7 @@ final class SessionService {
 				if ( is_wp_error( $guard ) ) {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
-					return $guard['response']; }
+					return $this->cachedResponse( $guard['response'] ); }
 				$this->lockForm( $form_id );
 				$form = $this->forms->getPublished( $form_id, $version );
 				if ( ! $form ) {
@@ -189,7 +190,7 @@ final class SessionService {
 				if ( 'submit' === $operation && 'completed' === $row['status'] && $this->verifyReceiptToken( $row, $token ) ) {
 					$receipt = $this->requests->receipt( 'session:' . $id . ':submit', $key, $body );
 					if ( null !== $receipt ) {
-						return $receipt; }
+						return $this->cachedResponse( $receipt, $row ); }
 				}
 				if ( ! $this->verify( $row, $token ) ) {
 					return $this->unauthorized(); }
@@ -197,7 +198,7 @@ final class SessionService {
 				if ( is_wp_error( $guard ) ) {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
-					return $guard['response']; }
+					return $this->cachedResponse( $guard['response'], $row ); }
 				if ( 'active' !== $row['status'] || strtotime( $row['expires_at'] . ' UTC' ) <= time() ) {
 					return $this->unauthorized(); }
 				if ( ( $body['version'] ?? null ) !== (int) $row['form_version'] ) {
@@ -208,7 +209,7 @@ final class SessionService {
 				$form = $this->snapshot( $row );
 				if ( is_wp_error( $form ) ) {
 					return $form; }
-				$context    = Database::decode( $row['context'] );
+				$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
 				$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
 				$revision   = (int) $row['revision'] + 1;
 				if ( 'delete' === $operation ) {
@@ -216,11 +217,22 @@ final class SessionService {
 						if ( $form->settings()['sessions']['deletePartialOnRestart'] ?? false ) {
 							$this->submissions->removeForRestart( $submission->id() );
 						} else {
+							$safe_data = array();
+							if ( CookieSources::deniedKeys( $form->schema() ) ) {
+								$safe_replay = $this->storedReplay( $row, $form );
+								if ( is_wp_error( $safe_replay ) ) {
+									return $safe_replay;
+								}
+								$safe_data = $this->data( $form, $safe_replay, $context['_meta'] ?? array() );
+							}
 							$submission = $this->submissions->complete(
 								$submission->id(),
-								array(
-									'status'       => 'abandoned',
-									'abandoned_at' => Database::now(),
+								array_merge(
+									$safe_data,
+									array(
+										'status'       => 'abandoned',
+										'abandoned_at' => Database::now(),
+									)
 								)
 							);
 							$this->enqueue( $submission, $form, 'submission.abandoned' );
@@ -290,7 +302,8 @@ final class SessionService {
 				$changes['revision'] = $revision;
 				if ( isset( $replay ) ) {
 					$context['_answers'] = $replay['answers'];
-					$changes['context']  = Database::json( $context ); }
+				}
+				$changes['context']      = Database::json( $context );
 				$changes['last_seen_at'] = Database::now();
 				Database::check( $wpdb->update( $wpdb->prefix . 'cff_sessions', $changes, array( 'id' => $row['id'] ) ) );
 				if ( 'delete' !== $operation && $submission ) {
@@ -354,12 +367,25 @@ final class SessionService {
 		$wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID=%d AND post_type='cff_form' FOR UPDATE", $id ) );
 		clean_post_cache( $id );
 	}
+	/** @param array<string,mixed> $response
+	 * @param array<string,mixed>|null $row
+	 * @return array<string,mixed>|\WP_Error */
+	private function cachedResponse( array $response, ?array $row = null ): array|\WP_Error {
+		$form = $this->forms->getVersion( (int) ( $row['form_id'] ?? $response['formId'] ?? 0 ), (int) ( $row['form_version'] ?? $response['version'] ?? 0 ) );
+		if ( ! $form ) {
+			return Database::error( 'cff_version_conflict', 'The saved version is unavailable.', 409 );
+		}
+		if ( CookieSources::deniedKeys( $form->schema() ) ) {
+			return Database::error( 'cff_restricted_cookie', 'An outdated cookie-source response cannot be replayed. Resume or start a new session.', 409 );
+		}
+		return $response;
+	}
 	/**
 	 * @param array<string,mixed> $row
 	 * @return array<string,mixed>|\WP_Error */
 	private function storedReplay( array $row, Form $form ): array|\WP_Error {
 		$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
-		$context    = Database::decode( $row['context'] );
+		$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
 		return $this->replay( $form, \ChatFlow\Logic\Experiments::inputs( $submission?->answers() ?? $context['_answers'] ?? array(), $form->schema() ), $context, 'partial' );
 	}
 	/**
@@ -367,8 +393,9 @@ final class SessionService {
 	 * @param array<string,mixed> $context
 	 * @return array<string,mixed>|\WP_Error */
 	private function replay( Form $form, array $answers, array $context, string $mode ): array|\WP_Error {
-		$replay = $this->engine->replay( $form->schema(), $answers, $context, $mode );
-		$issues = $replay['errors'];
+		$context = CookieSources::context( $form->schema(), $context );
+		$replay  = $this->engine->replay( CookieSources::projection( $form->schema() ), CookieSources::answers( $form->schema(), $answers ), $context, $mode );
+		$issues  = $replay['errors'];
 		foreach ( $form->schema()['steps'] as $step ) {
 			if ( in_array( $step['id'], $replay['visited'], true ) && array_key_exists( $step['key'], $replay['answers'] ) ) {
 				$this->fields->get( $step['type'] );
@@ -384,7 +411,7 @@ final class SessionService {
 	 * @param array<string,mixed> $replay
 	 * @return array<string,mixed> */
 	private function envelope( array $row, Form $form, array $replay ): array {
-		$context    = Database::decode( $row['context'] );
+		$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
 		$variant_id = $context['_variantId'] ?? '';
 		$context    = array_intersect_key( $context, array_flip( array( 'hidden', 'url', 'meta', 'now', 'defaultEndingId' ) ) );
 		foreach ( array( 'hidden', 'url', 'meta' ) as $key ) {

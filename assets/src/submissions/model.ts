@@ -74,7 +74,7 @@ export interface ExportOptions {
 }
 export interface ExportJob {
   exportId: number;
-  status: 'queued' | 'running' | 'ready' | 'failed';
+  status: 'queued' | 'running' | 'ready' | 'failed' | 'expired';
   rowCount?: number;
   downloadUrl?: string;
   expiresAt?: string;

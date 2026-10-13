@@ -6,6 +6,8 @@ import { Chat } from './chat';
 import { RuntimeController } from './controller';
 import { registerField } from './registry';
 import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
+import { googleFont, systemFont, type GoogleFont } from '../shared/fonts';
+import { acquireGoogleFont } from './fonts';
 import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
 import { createOverlay } from './overlay';
 import { captchaToken } from './captcha';
@@ -43,6 +45,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   config.captcha ??= config => captchaToken(config, captchaRoot);
   const controller = new RuntimeController(config, options.preview ? null : new ApiClient(restUrl!), undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
   let initialized = false;
+  let selectedFont: GoogleFont | undefined;
+  let releaseFont: () => void = () => {};
   const initialize = () => { if (initialized) return; initialized = true; connection(); void controller.initialize().then(appearance); };
   const overlay = !options.preview && (mode === 'launcher' || mode === 'popup') ? createOverlay(shadow, host, mode, options.launcher ?? {}, () => { initialize(); }, config.locale ?? 'en', () => controller.close()) : null;
   if (overlay) { root.remove(); overlay.content.append(root); }
@@ -50,7 +54,9 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const appearance = () => {
     const value = controller.state.form?.form.appearance;
     if (!value) return;
-    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : safeFont(value.font), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
+    const font = value.inheritFont ? undefined : googleFont(value.googleFont);
+    if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
+    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
     for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     const dark = value.theme === 'dark' || (value.theme === 'auto' && globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches);
     root.querySelector('.chat')?.classList.toggle('dark', Boolean(dark));
@@ -63,7 +69,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   if (!options.preview) { window.addEventListener('online', connection); window.addEventListener('offline', connection); window.addEventListener('storage', externalChange); }
   render(<Chat controller={controller} onClose={() => { if (overlay) overlay.close(); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, root);
   const handle: RuntimeHandle = {
-    unmount: () => { unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, root); overlay?.dispose(); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, root); overlay?.dispose(); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     open: () => { if (overlay) overlay.open(); else { host.hidden = false; initialize(); host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); } },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),

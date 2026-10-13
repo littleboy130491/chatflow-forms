@@ -4,7 +4,7 @@
 import * as React from '@wordpress/element';
 import { Analytics } from './Analytics';
 import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, queryString } from '../builder/api';
 import type { AdminConfig, Page } from '../builder/api';
 import { Button, Check, Notice, Select } from '../builder/controls';
@@ -15,10 +15,14 @@ import { Tools } from './Tools';
 import { Export } from './Export';
 import { displayValue, freezeFilters } from './model';
 import type { Filters as FilterValues, Status, SubmissionDTO } from './model';
+import { answerColumns, answerKeys, readAnswerColumns } from './answer-columns';
 import '../builder/style.css';
 import './style.css';
 
 function SubmissionList({ api }: { api: AdminApi }) {
+  const columnStorageKey = `cff:answer-columns:${api.config.restUrl}`;
+  const [preferredColumns, setPreferredColumns] = useState<string[] | null>(() => { try { return readAnswerColumns(localStorage, columnStorageKey); } catch { return null; } });
+  const [columnWarning, setColumnWarning] = useState('');
   const [filters, setFilters] = useState<FilterValues>({ status: 'completed' }),
     [applied, setApplied] = useState<FilterValues>({ status: 'completed' }),
     [page, setPage] = useState(1),
@@ -32,6 +36,12 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [revision, setRevision] = useState(0),
     [exporting, setExporting] = useState(false),
     [exportSelected, setExportSelected] = useState(false);
+  const allowedKeys = answerKeys(list?.items ?? []);
+  const columns = preferredColumns === null ? allowedKeys.slice(0, 3) : answerColumns(preferredColumns, allowedKeys);
+  const selectColumn = (index: number, key: string) => {
+    const next = [...columns]; next[index] = key; const safe = answerColumns(next, allowedKeys); setPreferredColumns(safe); setColumnWarning('');
+    try { localStorage.setItem(columnStorageKey, JSON.stringify(safe)); } catch { setColumnWarning(__('Column preferences cannot be saved in this browser.', 'chatflow-forms')); }
+  };
   const resend = async () => {
     if (!selected.length || !window.confirm(__('Resend all matching emails for the selected completed submissions?', 'chatflow-forms'))) return;
     setBusy(true); setActionError('');
@@ -96,6 +106,11 @@ function SubmissionList({ api }: { api: AdminApi }) {
   return (
     <main className="cff-admin">
       <h1>{__('Submissions', 'chatflow-forms')}</h1>
+      <fieldset><legend>{__('Answer columns (up to three)', 'chatflow-forms')}</legend>
+        {[0, 1, 2].map(index => <Select key={index} label={sprintf(__('Answer column %d', 'chatflow-forms'), index + 1)} value={columns[index] ?? ''} choices={[{value:'',label:__('No column', 'chatflow-forms')}, ...allowedKeys.map(key => ({value:key,label:key}))]} onChange={key => selectColumn(index, key)} />)}
+        <p>{__('Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.', 'chatflow-forms')}</p>
+        {columnWarning && <Notice status="warning" isDismissible={false}>{columnWarning}</Notice>}
+      </fieldset>
       {actionError && (
         <Notice status="error" isDismissible={false}>
           {actionError}
@@ -232,7 +247,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
               </th>
               <th>{__('Submission', 'chatflow-forms')}</th>
               <th>{__('Date', 'chatflow-forms')}</th>
-              <th>{__('Answers', 'chatflow-forms')}</th>
+              {columns.map(key => <th key={key}>{key}</th>)}
               <th>{__('Source / device', 'chatflow-forms')}</th>
               <th>{__('Read / starred', 'chatflow-forms')}</th>
             </tr>
@@ -263,15 +278,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                     {item.status} · {item.progress}%
                   </small>
                 </td>
-                <td>
-                  {Object.entries(item.answers)
-                    .slice(0, 3)
-                    .map(([key, value]) => (
-                      <p key={key}>
-                        <code>{key}</code>: {displayValue(value).slice(0, 160)}
-                      </p>
-                    ))}
-                </td>
+                {columns.map(key => <td key={key}>{displayValue(item.answers[key]).slice(0, 160) || '—'}</td>)}
                 <td>
                   {displayValue(item.meta.utm)}
                   <small>{displayValue(item.meta.device)}</small>

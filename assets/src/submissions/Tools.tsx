@@ -152,7 +152,7 @@ function ImportForm({ api }: { api: AdminApi }) {
         </Notice>
       )}
       {created && (
-        <a href={`${api.config.adminUrl}?page=cff-forms&formId=${created.id}`}>
+        <a href={`${api.config.adminUrl}?page=cff-builder&formId=${created.id}`}>
           {__('Open imported form', 'chatflow-forms')}
         </a>
       )}
@@ -168,7 +168,7 @@ export function Tools({ api }: { api: AdminApi }) {
     { id: 'system', cap: 'manage_settings', label: __('System status', 'chatflow-forms') },
   ] as const;
   const available = tabs.filter((tab) => can(api.config, tab.cap));
-  const [tab, setTab] = useState<string>(available[0]?.id ?? ''),
+  const [tab, setTab] = useState<string>(api.config.exportId && can(api.config, 'export_submissions') ? 'export' : available[0]?.id ?? ''),
     [filters, setFilters] = useState<FilterValues>({});
   return (
     <main className="cff-admin">
@@ -189,7 +189,7 @@ export function Tools({ api }: { api: AdminApi }) {
       {tab === 'export' && can(api.config, 'export_submissions') && (
         <React.Fragment>
           <Filters value={filters} onChange={setFilters} />
-          <Export api={api} filters={filters} ids={[]} />
+          <Export api={api} filters={filters} ids={[]} exportId={api.config.exportId} />
         </React.Fragment>
       )}
       {tab === 'import' && can(api.config, 'manage_forms') && <ImportForm api={api} />}

@@ -23,6 +23,9 @@ final class SchemaValidator {
 		$variables = array_column( $schema['variables'] ?? array(), 'key' );
 		foreach ( $schema['steps'] as $index => $step ) {
 			$path = '/steps/' . $index;
+			if ( 'hidden' === $step['type'] && 'cookie' === ( $step['settings']['source'] ?? '' ) && ! \ChatFlow\Security\CookieSources::allows( $step['settings']['sourceKey'] ?? $step['key'] ) ) {
+				$errors[] = $this->error( $path . '/settings/sourceKey', 'restricted_cookie', \ChatFlow\Security\CookieSources::MESSAGE );
+			}
 			$this->unique( $step['id'], $ids, $path . '/id', $errors );
 			$this->unique( $step['key'], $keys, $path . '/key', $errors );
 			$values = array();

@@ -1,0 +1,7 @@
+[
+ {"name":"tracking","allowed":true}, {"name":"utm_source","allowed":true}, {"name":"campaign","allowed":true}, {"name":"cff_locale","allowed":true}, {"name":"cff_theme","allowed":true},
+ {"name":"wordpress_logged_in_synthetic","allowed":false}, {"name":"wordpress_sec_synthetic","allowed":false}, {"name":"wordpress_synthetic","allowed":false}, {"name":"cff_s_42","allowed":false},
+ {"name":"PHPSESSID","allowed":false}, {"name":"JSESSIONID","allowed":false}, {"name":"ASP.NET_SessionId","allowed":false}, {"name":"connect.sid","allowed":false}, {"name":"laravel_session","allowed":false},
+ {"name":"access_token","allowed":false}, {"name":"refresh_token","allowed":false}, {"name":"auth","allowed":false}, {"name":"__Host-session","allowed":false}, {"name":"__Secure-token","allowed":false}, {"name":"XSRF-TOKEN","allowed":false},
+ {"name":"unknown_custom_cookie","allowed":false}
+]

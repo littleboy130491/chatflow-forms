@@ -9,7 +9,7 @@ final class PublicProjection {
 	 * @return array<string,mixed> */
 	public static function build( Form $form, ?array $types = null ): array {
 		$types ??= ( new \ChatFlow\Fields\Registry() )->types();
-		$schema = $form->schema();
+		$schema = \ChatFlow\Security\CookieSources::projection( $form->schema() );
 		unset( $schema['experiments'] );
 		// Cookie/default hidden sources stay on the server until an uncached handshake.
 		foreach ( $schema['steps'] as &$step ) {
@@ -69,7 +69,11 @@ final class PublicProjection {
 				); }
 		}
 		$envelope['form']['media'] = (object) $media;
-		$filtered                  = HookDispatcher::filter( 'cff_public_schema', $envelope, array( $form ) );
+		$hook_envelope             = $envelope;
+		foreach ( array( 'appearance', 'phrases', 'media' ) as $key ) {
+			$hook_envelope['form'][ $key ] = clone $envelope['form'][ $key ];
+		}
+		$filtered = HookDispatcher::filter( 'cff_public_schema', $hook_envelope, array( $form ) );
 		// Filters can safely customize display copy; never expand the credential/settings boundary.
 		if ( is_array( $filtered ) ) {
 			foreach ( array( 'appearance', 'phrases' ) as $key ) {

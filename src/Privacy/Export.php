@@ -185,7 +185,14 @@ final class Export {
 			if ( $schedule && 'ready' === $status ) {
 				$user = get_userdata( (int) $row['user_id'] );
 				if ( $user && user_can( $user, 'cff_export_submissions' ) ) {
-					wp_mail( $user->user_email, __( 'ChatFlow export ready', 'chatflow-forms' ), __( 'Your private export is ready. Open ChatFlow Submissions to download it within 24 hours.', 'chatflow-forms' ) ); }
+					$link = add_query_arg(
+						array(
+							'page'     => 'cff-tools',
+							'exportId' => $id,
+						),
+						admin_url( 'admin.php' )
+					);
+					wp_mail( $user->user_email, __( 'ChatFlow export ready', 'chatflow-forms' ), __( 'Your private export is ready. Sign in as its owner to download it within 24 hours:', 'chatflow-forms' ) . "\n" . $link ); }
 			}
 		} catch ( \Throwable $error ) {
 			$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}cff_exports SET status='failed' WHERE id=%d AND status IN ('queued','running')", $id ) ); } finally {
@@ -269,8 +276,18 @@ final class Export {
 			if ( str_starts_with( $key, 'utm_' ) ) {
 				return $meta['utm'][ substr( $key, 4 ) ] ?? '';
 			} return $meta[ $key ] ?? $meta['click_ids'][ $key ] ?? ''; }
-		return match ( $key ) {
-			'id' => $submission->id(), 'uuid' => $submission->uuid(), 'createdAt' => $submission->createdAt(), 'status' => $submission->status(), 'ending' => $submission->endingId(), default => $submission->answers()[ $key ] ?? '' };
+		if ( 'createdAt' === $key ) {
+			return ( new \DateTimeImmutable( $submission->createdAt(), new \DateTimeZone( 'UTC' ) ) )->setTimezone( wp_timezone() )->format( 'c' );
+		}
+		$value = match ( $key ) {
+			'id' => $submission->id(), 'uuid' => $submission->uuid(), 'status' => $submission->status(), 'ending' => $submission->endingId(), default => $submission->answers()[ $key ] ?? '' };
+		$form = $this->forms->getVersion( $submission->formId(), $submission->formVersion() );
+		foreach ( $form?->schema()['steps'] ?? array() as $step ) {
+			if ( $step['key'] === $key && 'multi_choice' === $step['type'] && is_array( $value ) && array_is_list( $value ) && ! array_filter( $value, static fn( $entry ) => ! is_scalar( $entry ) ) ) {
+				return implode( ', ', array_map( static fn( $entry ) => is_bool( $entry ) ? ( $entry ? 'true' : 'false' ) : (string) $entry, $value ) );
+			}
+		}
+		return $value;
 	}
 	public static function cell( mixed $value ): string {
 		$value = is_array( $value ) || is_object( $value ) ? Database::json( $value ) : ( is_bool( $value ) ? ( $value ? 'true' : 'false' ) : (string) $value );

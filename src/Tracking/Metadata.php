@@ -125,7 +125,7 @@ final class Metadata {
 			$value    = match ( $source ) {
 				'url' => $url[ $key ] ?? null,
 				'meta' => $flat[ $key ] ?? null,
-				'cookie' => isset( $_COOKIE[ $key ] ) && is_string( $_COOKIE[ $key ] ) ? substr( sanitize_text_field( wp_unslash( $_COOKIE[ $key ] ) ), 0, 1000 ) : null,
+				'cookie' => \ChatFlow\Security\CookieSources::allows( $key ) && isset( $_COOKIE[ $key ] ) && is_string( $_COOKIE[ $key ] ) ? substr( sanitize_text_field( wp_unslash( $_COOKIE[ $key ] ) ), 0, 1000 ) : null,
 				default => $step['defaultValue'] ?? null,
 			};
 			$hidden[ $step['key'] ] = $value;

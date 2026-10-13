@@ -565,6 +565,50 @@ Home|Rumah
 Work|Pekerjaan
 Explore our home range.|Jelajahi rangkaian produk untuk rumah kami.
 Explore our professional range.|Jelajahi rangkaian produk profesional kami.
+Action complete.|Tindakan selesai.
+All|Semua
+Completion rate|Tingkat penyelesaian
+Draft|Draf
+Export JSON|Ekspor JSON
+Font source|Sumber font
+Form builder|Pembuat formulir
+Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.|Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan.
+Invalid form action.|Tindakan formulir tidak valid.
+Live|Aktif
+New form|Formulir baru
+New form — choose a template|Formulir baru — pilih templat
+No forms found.|Tidak ada formulir yang ditemukan.
+Search forms|Cari formulir
+System / local — no ChatFlow font requests|Sistem / lokal — tanpa permintaan font ChatFlow
+Working…|Sedang diproses…
+A form is required so columns remain consistent. Active filters and selected rows are intersected with that form; no cross-form export is implied.|Formulir wajib dipilih agar kolom konsisten. Filter aktif dan baris pilihan dibatasi pada formulir tersebut; ekspor tidak melintasi formulir.
+Active/custom date filters|Filter tanggal aktif/kustom
+Answer column %d|Kolom jawaban %d
+Answer columns (up to three)|Kolom jawaban (maksimal tiga)
+Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.|Pilihan berasal dari kunci jawaban pada halaman yang dimuat. Hanya nama kunci, bukan nilai jawaban, yang disimpan di peramban ini.
+Column preferences cannot be saved in this browser.|Preferensi kolom tidak dapat disimpan di peramban ini.
+Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.|Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia.
+Copy stored IP|Salin IP tersimpan
+Download attached file|Unduh berkas terlampir
+Export date range (UTC)|Rentang tanggal ekspor (UTC)
+File download denied or unavailable.|Unduhan berkas ditolak atau tidak tersedia.
+Invalid file download destination.|Tujuan unduhan berkas tidak valid.
+Last 30 days|30 hari terakhir
+Last 7 days|7 hari terakhir
+Last 90 days|90 hari terakhir
+More forms|Formulir berikutnya
+No column|Tanpa kolom
+No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.|Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim.
+Required form — one form per file|Formulir wajib — satu formulir per berkas
+SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
+This month|Bulan ini
+The export form must match the active form filter. Change the filter or select its form before exporting.|Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor.
+A matching purge-preview CSV snapshot is not available. Export each affected form separately before deleting; ordinary exports are not an exact preview backup when rows change.|Cuplikan CSV yang sama persis dengan pratinjau penghapusan belum tersedia. Ekspor tiap formulir terdampak secara terpisah sebelum menghapus; ekspor biasa bukan cadangan pratinjau yang tepat jika baris berubah.
+Your private export is ready. Sign in as its owner to download it within 24 hours:|Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 24 jam:
+ChatFlow export ready|Ekspor ChatFlow siap
+Export unavailable or expired.|Ekspor tidak tersedia atau kedaluwarsa.
+Forbidden export download.|Unduhan ekspor tidak diizinkan.
+Private storage unavailable.|Penyimpanan privat tidak tersedia.
 Diff compares this draft to the current published snapshot.|Perbandingan membandingkan draf ini dengan versi terbit saat ini.
 Contrast feedback (WCAG AA normal text)|Umpan balik kontras (WCAG AA teks normal)
 Bot text|Teks bot

@@ -197,7 +197,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     expect(container.textContent).not.toContain('Answer field key');
     await click('Preview count');
     expect(request).toHaveBeenCalledWith('admin/purge/preview', 'POST', {
-      criteria: { status: 'spam', olderThanDays: 360 },
+      criteria: { olderThanDays: 360 },
     });
     expect(button('Permanently purge').disabled).toBe(true);
     await change('Type DELETE to confirm', 'delete');
@@ -223,7 +223,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     await change('Type DELETE to confirm', 'DELETE');
     await click('Permanently purge');
     expect(request).toHaveBeenLastCalledWith('admin/purge', 'POST', {
-      criteria: { status: 'spam', olderThanDays: 360 },
+      criteria: { olderThanDays: 360 },
       confirmationToken: 'unit-preview',
       confirmation: 'DELETE',
     });

@@ -2,6 +2,7 @@ import type { Action, Condition, FormSchema, ValidationIssue } from '../contract
 import { issue, numeric, regex } from './value';
 import { ENABLED_FIELD_TYPES } from './fields';
 import { powerDiagnostics } from './power';
+import { allowedCookieSource, cookieSourceMessage } from '../cookies';
 
 export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
@@ -20,6 +21,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const endings = new Set(schema.endings.map(e => e.id));
   const unique = (id: string, path: string): void => { if (ids.has(id)) add(path, 'duplicate_id', 'IDs must be globally unique.'); ids.add(id); };
   schema.steps.forEach((s, i) => {
+    if (s.type === 'hidden' && s.settings?.source === 'cookie' && !allowedCookieSource(s.settings.sourceKey ?? s.key)) add(`/steps/${i}/settings/sourceKey`, 'restricted_cookie', cookieSourceMessage);
     if (keys.has(s.key)) add(`/steps/${i}/key`, 'duplicate_key', 'Field keys must be unique.');
     keys.set(s.key, i); stepIds.set(s.id, i); unique(s.id, `/steps/${i}/id`);
     const values = new Set<string>();

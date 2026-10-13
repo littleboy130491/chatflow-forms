@@ -11,6 +11,7 @@ import { can, errorMessage } from '../builder/api';
 import type { AdminApi } from '../builder/api';
 import { displayValue } from './model';
 import type { Status, SubmissionDetail, SubmissionDTO } from './model';
+import { downloadUpload, storedIp, uploadIds } from './downloads';
 export interface Activity {
   deliveries: {
     id: number;
@@ -237,7 +238,9 @@ export function Detail({
                     <dt>
                       {step.label} <code>{step.key}</code>
                     </dt>
-                    <dd>{displayValue(detail.answers[step.key]) || '—'}</dd>
+                    <dd>{displayValue(detail.answers[step.key]) || '—'}
+                      {step.type === 'file_upload' && can(api.config, 'view_submissions') && uploadIds(detail.answers[step.key]).map(uuid => <Button key={uuid} disabled={busy} onClick={async () => { setBusy(true); try { await downloadUpload(api, uuid); } catch (error) { setError(errorMessage(error)); } finally { setBusy(false); } }}>{__('Download attached file', 'chatflow-forms')}</Button>)}
+                    </dd>
                   </Fragment>
                 ))}
             </dl>
@@ -268,6 +271,7 @@ export function Detail({
           {view === 'meta' && (
             <Fragment>
               <h2>{__('Collected metadata', 'chatflow-forms')}</h2>
+              {storedIp(detail.meta) && <p><code>{storedIp(detail.meta)}</code> <Button onClick={async () => { try { await navigator.clipboard.writeText(storedIp(detail.meta)!); } catch (error) { setError(errorMessage(error)); } }}>{__('Copy stored IP', 'chatflow-forms')}</Button></p>}
               <pre>{JSON.stringify(detail.meta, null, 2)}</pre>
               <h2>{__('Recorded consent text and version', 'chatflow-forms')}</h2>
               <pre>{JSON.stringify(detail.consent, null, 2)}</pre>

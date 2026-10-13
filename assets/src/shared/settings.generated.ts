@@ -845,6 +845,7 @@ export interface Appearance {
   radius?: number;
   width?: number;
   customCss?: string;
+  googleFont?: "system" | "Inter" | "Roboto" | "Open Sans";
 }
 export interface Notification {
   id: string;
