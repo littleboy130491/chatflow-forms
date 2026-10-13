@@ -35,10 +35,14 @@ final class Repository {
 	/** @param array<string,mixed> $filters */
 	public function where( array $filters ): string {
 		global $wpdb;
-		$allowed = array( 'formId', 'status', 'from', 'to', 'search', 'isRead', 'isStarred', 'utmSource', 'utmCampaign', 'device', 'fieldKey', 'operator', 'value', 'sort', 'order', 'ids', 'afterId', 'beforeId' );
+		$allowed = array( 'formId', 'status', 'from', 'to', 'search', 'isRead', 'isStarred', 'utmSource', 'utmCampaign', 'device', 'fieldKey', 'operator', 'value', 'sort', 'order', 'ids', 'afterId', 'beforeId', 'before', 'maxId', 'olderThanDays' );
 		if ( array_diff( array_keys( $filters ), $allowed ) ) {
 			throw new \InvalidArgumentException( 'Unknown filter.' ); }
 		$where = array( '1=1' );
+		if ( isset( $filters['maxId'] ) ) {
+			$where[] = $wpdb->prepare( 's.id<=%d', $filters['maxId'] ); }
+		if ( isset( $filters['before'] ) ) {
+			$where[] = $wpdb->prepare( 's.created_at<%s', $filters['before'] ); }
 		foreach ( array(
 			'formId'   => 'form_id',
 			'afterId'  => 'id',
@@ -157,8 +161,8 @@ final class Repository {
 			),
 			$data
 		);
-		$this->write( null, $data );
-		return $this->get( (int) $wpdb->insert_id ) ?? throw new \RuntimeException( 'Submission missing.' );
+		$id   = $this->write( null, $data );
+		return $this->get( $id ) ?? throw new \RuntimeException( 'Submission missing.' );
 	}
 
 	/** @param array<string,mixed> $data */
@@ -168,7 +172,7 @@ final class Repository {
 	}
 
 	/** @param array<string,mixed> $data */
-	private function write( ?int $id, array $data ): void {
+	private function write( ?int $id, array $data ): int {
 		global $wpdb;
 		$form    = $this->forms->getVersion( (int) ( $data['form_id'] ?? $this->get( (int) $id )?->formId() ), (int) ( $data['form_version'] ?? $this->get( (int) $id )?->formVersion() ) );
 		$answers = $data['answers'] ?? null;
@@ -198,6 +202,7 @@ final class Repository {
 				);
 			}
 		}
+		return $id;
 	}
 
 	/** @param array<string,mixed> $changes */
@@ -253,9 +258,13 @@ final class Repository {
 	}
 
 	public function delete( int $id ): bool {
+		return $this->deleteInternal( $id, false ); }
+	public function removeForRestart( int $id ): bool {
+		return $this->deleteInternal( $id, true ); }
+	private function deleteInternal( int $id, bool $preserveSession ): bool {
 		global $wpdb;
 		$result = Database::transaction(
-			function () use ( $wpdb, $id ) {
+			function () use ( $wpdb, $id, $preserveSession ) {
 				$wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}cff_submissions WHERE id=%d FOR UPDATE", $id ) );
 				$submission = $this->get( $id );
 				if ( ! $submission ) {
@@ -263,14 +272,30 @@ final class Repository {
 				$form = $this->forms->getVersion( $submission->formId(), $submission->formVersion() );
 				if ( $form ) {
 					\ChatFlow\Integrations\HookDispatcher::action( 'cff_submission_deleted', array( $submission, $form ), $id ); }
-				$sessions = $wpdb->get_results( $wpdb->prepare( "SELECT id,public_id FROM {$wpdb->prefix}cff_sessions WHERE submission_id=%d", $id ), ARRAY_A );
+				$sessions = $wpdb->get_results( $wpdb->prepare( "SELECT id,public_id,context FROM {$wpdb->prefix}cff_sessions WHERE submission_id=%d", $id ), ARRAY_A );
 				foreach ( $sessions as $session ) {
+					$context = Database::decode( $session['context'] );
+					if ( ! empty( $context['_startScope'] ) ) {
+						Database::check( $wpdb->delete( $wpdb->prefix . 'cff_requests', array( 'scope_hash' => $context['_startScope'] ) ) ); }
 					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_events', array( 'session_id' => $session['id'] ) ) );
 					foreach ( array( 'patch', 'delete', 'submit' ) as $op ) {
+						if ( $preserveSession && 'delete' === $op ) {
+							continue; }
 						Database::check( $wpdb->delete( $wpdb->prefix . 'cff_requests', array( 'scope_hash' => hash( 'sha256', get_current_blog_id() . ':session:' . $session['public_id'] . ':' . $op ) ) ) ); }
 				}
 				( new \ChatFlow\Privacy\PrivateFiles() )->deleteSubmission( $id );
-				foreach ( array( 'submission_values', 'submission_notes', 'deliveries', 'uploads', 'sessions' ) as $table ) {
+				if ( $preserveSession ) {
+					Database::check(
+						$wpdb->update(
+							$wpdb->prefix . 'cff_sessions',
+							array(
+								'submission_id' => null,
+								'context'       => Database::json( array( 'now' => gmdate( 'c' ) ) ),
+							),
+							array( 'submission_id' => $id )
+						)
+					); }
+				foreach ( $preserveSession ? array( 'submission_values', 'submission_notes', 'deliveries', 'uploads' ) : array( 'submission_values', 'submission_notes', 'deliveries', 'uploads', 'sessions' ) as $table ) {
 					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_' . $table, array( 'submission_id' => $id ) ) ); }
 				Database::check( $wpdb->delete( $wpdb->prefix . 'cff_submissions', array( 'id' => $id ) ) );
 				return true;

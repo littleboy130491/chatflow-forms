@@ -36,6 +36,8 @@ final class Submission {
 	}
 	/** @return array<string,mixed> */
 	public function admin(): array {
+		$meta = $this->meta();
+		unset( $meta['context'] );
 		return array(
 			'id'            => $this->id(),
 			'uuid'          => $this->uuid(),
@@ -43,7 +45,7 @@ final class Submission {
 			'formVersion'   => $this->formVersion(),
 			'status'        => $this->status(),
 			'answers'       => (object) $this->answers(),
-			'meta'          => (object) $this->meta(),
+			'meta'          => (object) $meta,
 			'endingId'      => $this->endingId(),
 			'createdAt'     => $this->createdAt(),
 			'updatedAt'     => $this->row['updated_at'],
