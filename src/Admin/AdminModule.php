@@ -148,11 +148,11 @@ final class AdminModule implements Module {
 				'api_version'     => '3',
 				'editor_script'   => 'cff-blocks',
 				'attributes'      => array(
-					'formId' => array(
+					'formId'   => array(
 						'type'    => 'integer',
 						'default' => 0,
 					),
-					'mode'   => array(
+					'mode'     => array(
 						'type'    => 'string',
 						'default' => 'inline',
 						'enum'    => array( 'inline', 'fullpage', 'launcher' ),
@@ -162,11 +162,11 @@ final class AdminModule implements Module {
 						'default' => 'right',
 						'enum'    => array( 'left', 'right' ),
 					),
-					'height' => array(
+					'height'   => array(
 						'type'    => 'integer',
 						'default' => 600,
 					),
-					'theme'  => array(
+					'theme'    => array(
 						'type'    => 'string',
 						'default' => 'auto',
 						'enum'    => array( 'light', 'dark', 'auto' ),
