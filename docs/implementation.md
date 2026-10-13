@@ -127,7 +127,7 @@ Post-audit checks passed on this VM:
 | Source WP multisite | Same matrix: 352 tests / 1437 assertions. One expected skip: uninstalled Elementor. |
 | Font CSS2 shell sample | Official Google CSS2 Inter, Roboto and Open Sans responses were fetched without credentials/referrer and accepted by the strict CSS/origin parser (14, 18 and 20 bounded faces). This is not in-browser loading/privacy/CSP acceptance. |
 | Build / package | `npm run build`, actual `npm run package` workflow, `php tools/verify-package.php`; scoped autoload/classes, Action Scheduler, runtime/admin assets, docs and dev-file exclusions verified. |
-| Extracted ZIP | Isolated fresh-prefix core, original source plugin inactive during isolated release activation; all custom tables/admin capabilities, draft vs published REST, private projection, font projection/native list classes, nonce-protected gallery, shortcode/runtime registration, owner-bound private CSV file and migration from DB version 0 while preserving publication passed. Uses no dev autoloader. |
+| Extracted ZIP | Isolated fresh-prefix core, original source plugin inactive during isolated release activation; all custom tables/admin capabilities, draft vs published REST, private projection, font projection/native list classes, nonce-protected gallery, shortcode/runtime registration, owner-bound private CSV/XLSX files, personal-data erasure and migration from DB version 0 while preserving publication passed. Uses no dev autoloader. |
 | Preservation | SHA256 of `PLAN.md` matches the integration base: `1eed3de0b6af25266219aac91a223705a5c79d1df8356eddc2affa6620d4822c`. Built outputs/manifests are committed; ZIP and vendor trees are not committed. |
 
 WordPress fixtures exercise ownership/nonce/capabilities, private storage,

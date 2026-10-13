@@ -17,7 +17,7 @@ foreach ( array( 'build/admin/builder.js', 'build/admin/submissions.js', 'build/
 }
 wp_set_current_user( 1 );
 $r = new \ChatFlow\Forms\FormRepository();
-$schema = array( 'schemaVersion' => 1, 'bot' => array( 'name' => 'Release' ), 'steps' => array( array( 'id' => 'score', 'key' => 'score', 'label' => 'Score', 'type' => 'rating', 'messages' => array() ) ), 'endings' => array( array( 'id' => 'done', 'type' => 'message', 'messages' => array( 'Done' ) ) ) );
+$schema = array( 'schemaVersion' => 1, 'bot' => array( 'name' => 'Release' ), 'steps' => array( array( 'id' => 'score', 'key' => 'score', 'label' => 'Score', 'type' => 'rating', 'messages' => array() ), array( 'id' => 'email', 'key' => 'email', 'label' => 'Email', 'type' => 'email', 'messages' => array() ) ), 'endings' => array( array( 'id' => 'done', 'type' => 'message', 'messages' => array( 'Done' ) ) ) );
 $f = $r->create( 'Isolated release smoke', $schema, array( 'appearance' => array( 'googleFont' => 'Inter' ) ) );
 $check( $f instanceof \ChatFlow\Forms\Form, 'Release draft creation failed.' );
 try {
@@ -49,29 +49,54 @@ try {
 		}
 		rmdir( $private_dir );
 	} );
+	$submissions = new \ChatFlow\Submissions\Repository( $r );
+	$submission = $submissions->savePartial( array( 'form_id' => $f->id(), 'form_version' => $f->version(), 'status' => 'completed', 'answers' => array( 'score' => 3, 'email' => 'release-smoke@example.test' ) ) );
 	$export = new \ChatFlow\Privacy\Export();
 	add_filter( 'pre_wp_mail', '__return_true' );
 	try {
-		$job = $export->create( array( 'formId' => $f->id(), 'format' => 'csv', 'columns' => array( 'id' ) ) );
-		$check( is_array( $job ) && 'ready' === $job['status'], 'Isolated private CSV export failed.' );
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT storage_key FROM {$wpdb->prefix}cff_exports WHERE id=%d", $job['exportId'] ), ARRAY_A );
-		$check( is_array( $row ) && is_file( ( new \ChatFlow\Privacy\PrivateFiles() )->path( $row['storage_key'] ) ), 'Private CSV file is missing.' );
-		wp_set_current_user( 0 );
-		$check( is_wp_error( $export->progress( $job['exportId'] ) ), 'Export owner boundary failed.' );
-		wp_set_current_user( 1 );
+		foreach ( array( 'csv', 'xlsx' ) as $format ) {
+			$job = $export->create( array( 'formId' => $f->id(), 'format' => $format, 'columns' => array( 'id', 'email' ) ) );
+			$check( is_array( $job ) && isset( $job['exportId'] ), 'Isolated private export creation failed.' );
+			$jobs[] = $job['exportId'];
+			if ( 'xlsx' === $format && 'ready' !== $job['status'] ) {
+				$export->run( $job['exportId'], false );
+				$job = $export->progress( $job['exportId'] );
+			}
+			$check( is_array( $job ) && 'ready' === $job['status'] && 1 === $job['rowCount'], 'Isolated private export failed.' );
+			$row = $wpdb->get_row( $wpdb->prepare( "SELECT storage_key FROM {$wpdb->prefix}cff_exports WHERE id=%d", $job['exportId'] ), ARRAY_A );
+			$check( is_array( $row ) && is_file( ( new \ChatFlow\Privacy\PrivateFiles() )->path( $row['storage_key'] ) ), 'Private export file is missing.' );
+			if ( 'xlsx' === $format ) {
+				$archive = new \ZipArchive();
+				$check( true === $archive->open( ( new \ChatFlow\Privacy\PrivateFiles() )->path( $row['storage_key'] ) ), 'Private XLSX is not a ZIP archive.' );
+				try {
+					$check( false !== $archive->locateName( 'xl/workbook.xml' ), 'Private XLSX workbook is missing.' );
+				} finally {
+					$archive->close();
+				}
+			}
+			wp_set_current_user( 0 );
+			$check( is_wp_error( $export->progress( $job['exportId'] ) ), 'Export owner boundary failed.' );
+			wp_set_current_user( 1 );
+		}
 	} finally {
 		remove_filter( 'pre_wp_mail', '__return_true' );
 		wp_set_current_user( 1 );
-		if ( ! empty( $row['storage_key'] ) ) ( new \ChatFlow\Privacy\PrivateFiles() )->remove( $row['storage_key'] );
-		if ( is_array( $job ?? null ) && ! empty( $job['exportId'] ) ) $wpdb->delete( $wpdb->prefix . 'cff_exports', array( 'id' => $job['exportId'] ) );
+		foreach ( $jobs ?? array() as $job_id ) {
+			$row = $wpdb->get_row( $wpdb->prepare( "SELECT storage_key FROM {$wpdb->prefix}cff_exports WHERE id=%d", $job_id ), ARRAY_A );
+			if ( ! empty( $row['storage_key'] ) ) ( new \ChatFlow\Privacy\PrivateFiles() )->remove( $row['storage_key'] );
+			$wpdb->delete( $wpdb->prefix . 'cff_exports', array( 'id' => $job_id ) );
+		}
 	}
+	$erased = ( new \ChatFlow\Privacy\PrivacyModule( $r ) )->erasePersonal( 'release-smoke@example.test' );
+	$check( true === $erased['items_removed'] && false === $erased['items_retained'] && null === $submissions->get( $submission->id() ), 'Extracted release privacy erasure failed.' );
 	update_option( 'cff_db_version', 0 );
 	\ChatFlow\Install\Installer::maybeUpgrade();
 	$check( \ChatFlow\Install\Installer::DB_VERSION === (int) get_option( 'cff_db_version' ), 'Release upgrade failed.' );
 	$check( null !== $r->getPublished( $f->id() ), 'Upgrade lost published form.' );
-	WP_CLI::success( 'Extracted release activation, scoped dependencies/assets, draft/published REST and upgrade passed.' );
+	WP_CLI::success( 'Extracted release activation, scoped dependencies/assets, private CSV/XLSX, erasure, draft/published REST and upgrade passed.' );
 } finally {
 	global $wpdb;
+	if ( isset( $submissions, $submission ) && $submissions->get( $submission->id() ) ) $submissions->delete( $submission->id() );
 	$wpdb->delete( $wpdb->prefix . 'cff_form_versions', array( 'form_id' => $f->id() ) );
 	wp_delete_post( $f->id(), true );
 }
