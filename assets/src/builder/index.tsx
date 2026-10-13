@@ -19,12 +19,12 @@ import {
   publishDiff,
   reorder,
   uid,
-  v1Types,
 } from './model';
 import { Inspector, SortableItem } from './Inspector';
 import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
 import { downloadForm } from './formIO';
+import { Templates } from './Templates';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -33,6 +33,13 @@ export const fieldLabels: Record<string, string> = {
   email: __('Email', 'chatflow-forms'),
   phone: __('Phone', 'chatflow-forms'),
   number: __('Number', 'chatflow-forms'),
+  rating: __('Rating', 'chatflow-forms'),
+  scale: __('Scale', 'chatflow-forms'),
+  nps: __('Net promoter score', 'chatflow-forms'),
+  slider: __('Slider', 'chatflow-forms'),
+  file_upload: __('File upload', 'chatflow-forms'),
+  address: __('Address', 'chatflow-forms'),
+  media: __('Media', 'chatflow-forms'),
   date: __('Date', 'chatflow-forms'),
   single_choice: __('Single choice', 'chatflow-forms'),
   multi_choice: __('Multiple choice', 'chatflow-forms'),
@@ -59,6 +66,7 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
   return (
     <section>
       <h1>{__('ChatFlow Forms', 'chatflow-forms')}</h1>
+      <Templates api={api} onOpen={onOpen} />
       <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
         {__('New blank form', 'chatflow-forms')}
       </Button>
@@ -119,17 +127,11 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
                 <Button onClick={() => onOpen(form)}>{__('Edit', 'chatflow-forms')}</Button>
                 <Button onClick={() => downloadForm(form)}>{__('Export form JSON', 'chatflow-forms')}</Button>
                 <Button
-                  onClick={() => {
-                    const copy = structuredClone(form);
-                    onOpen({
-                      ...copy,
-                      id: 0,
-                      slug: '',
-                      version: 0,
-                      draftRevision: 0,
-                      status: 'draft',
-                      title: `${form.title} (${__('Copy', 'chatflow-forms')})`,
-                    });
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true); setError('');
+                    try {onOpen(await api.request<FormDTO>(`admin/forms/${form.id}/duplicate`, 'POST', {}));}
+                    catch (err) {setError(errorMessage(err));} finally {setBusy(false);}
                   }}
                 >
                   {__('Duplicate', 'chatflow-forms')}
@@ -414,7 +416,6 @@ function BuilderView({
               {api.config.features.fieldTypes
                 .filter(
                   (type) =>
-                    v1Types.includes(type) &&
                     (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase()),
                 )
                 .map((type) => (
@@ -610,6 +611,15 @@ function BuilderView({
       {tab === 'design' && (
         <section className="cff-card">
           <h2>{__('Design basics', 'chatflow-forms')}</h2>
+          <Select label={__('Theme preset', 'chatflow-forms')} value="" choices={[
+            {value:'',label:__('Choose a preset', 'chatflow-forms')},
+            {value:'neutral',label:__('Neutral light', 'chatflow-forms')},
+            {value:'dark',label:__('Neutral dark', 'chatflow-forms')},
+          ]} onChange={(preset)=>{if (!preset) return; edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,
+            theme:preset === 'dark' ? 'dark' : 'light', primary:preset === 'dark' ? '#d4d4d4' : '#262626',botBubbleBackground:preset === 'dark' ? '#262626' : '#f5f5f5',userBubbleBackground:preset === 'dark' ? '#404040' : '#e5e5e5',textColor:preset === 'dark' ? '#fafafa' : '#171717',radius:8,
+          }}}));}} />
+          <Check label={__('Confetti on completion (off by default)', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
+            onChange={(confetti)=>edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,confetti}}}))} />
           <Field
             label={__('Bot name', 'chatflow-forms')}
             value={schema.bot.name}
@@ -690,7 +700,7 @@ function BuilderView({
           />
           <p>
             {__(
-              'Check colour contrast in the real preview. Optional custom effects are not enabled.',
+              'Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.',
               'chatflow-forms',
             )}
           </p>

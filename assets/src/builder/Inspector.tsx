@@ -301,6 +301,13 @@ export function Inspector({
               onChange={(country) => patchSettings({ country: country.toUpperCase() })}
             />
           )}
+          {step.type === 'address' && (['street','city','postcode','country'] as const).map((field) => <Check key={field} label={field} value={(settings.addressFields ?? ['street','city','postcode','country']).some((value)=>value===field)}
+            onChange={(checked)=>{const fields=settings.addressFields ?? ['street','city','postcode','country'];const next=checked ? [...fields.filter((value)=>value!==field),field] : fields.filter((value)=>value!==field);patchSettings({addressFields:next as NonNullable<Step['settings']>['addressFields'] & {length:number}});}} />)}
+          {step.type === 'media' && <Fragment>
+            <Select label={__('Media type','chatflow-forms')} value={settings.media?.type ?? 'image'} choices={['image','video','gif'].map((value)=>({value,label:value}))} onChange={(type)=>patchSettings({media:{url:settings.media?.url ?? '',...settings.media,type:type as 'image'|'video'|'gif'}})} />
+            <Field label={__('HTTPS media URL','chatflow-forms')} value={settings.media?.url ?? ''} onChange={(url)=>patchSettings({media:{type:'image',...settings.media,url}})} />
+            <Field label={__('Alternative text','chatflow-forms')} value={settings.media?.alt ?? ''} onChange={(alt)=>patchSettings({media:{type:'image',url:'',...settings.media,alt}})} />
+          </Fragment>}
           <Field
             label={__('Autocomplete', 'chatflow-forms')}
             value={settings.autocomplete}
@@ -376,6 +383,10 @@ export function Inspector({
       )}
       {tab === 'validation' && (
         <Fragment>
+          {step.type === 'file_upload' && <Fragment>
+            <Field label={__('Maximum bytes per file','chatflow-forms')} type="number" value={validation.maxBytes ?? ''} onChange={(value)=>onChange({...step,validation:{...validation,maxBytes:Number(value)}})} />
+            <Field label={__('Allowed MIME types (comma separated)','chatflow-forms')} value={(validation.mimeTypes ?? []).join(',')} onChange={(value)=>onChange({...step,validation:{...validation,mimeTypes:value.split(',').map((mime)=>mime.trim()).filter(Boolean)}})} />
+          </Fragment>}
           {['short_text', 'long_text', 'email', 'phone'].includes(step.type) && (
             <Fragment>
               {(['minLength', 'maxLength'] as const).map((key) => (
@@ -414,7 +425,7 @@ export function Inspector({
               />
             </Fragment>
           )}
-          {['number', 'date'].includes(step.type) && (
+          {['number', 'date', 'rating', 'scale', 'slider'].includes(step.type) && (
             <Fragment>
               {(['min', 'max'] as const).map((key) => (
                 <Field
@@ -448,7 +459,7 @@ export function Inspector({
               />
             </Fragment>
           )}
-          {step.type === 'number' && (
+              {['number','slider'].includes(step.type) && (
             <Field
               label={__('Unit suffix', 'chatflow-forms')}
               value={settings.unit}

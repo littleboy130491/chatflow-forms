@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
+import { EngagementSettings } from './EngagementSettings';
 import { errorMessage } from './api';
 import type { AdminApi, FormDTO, FormSettings, FormSchema, Ending } from './api';
 import type { Notification, Webhook } from '../shared/settings.generated';
@@ -679,8 +680,13 @@ export function SettingsEditor({
             onChange={(value) => set('spam', { ...settings.spam, [item.key]: Number(value) })}
           />
         ))}
-        <p>{__('Captcha and Akismet are optional later features, not enabled here.', 'chatflow-forms')}</p>
+        <Select label={__('Optional captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
+          choices={['none','turnstile','hcaptcha','recaptcha'].map((value)=>({value,label:value}))}
+          onChange={(captcha)=>set('spam',{...settings.spam,captcha:captcha as NonNullable<NonNullable<FormSettings['spam']>['captcha']>})} />
+        <Check label={__('Use optional Akismet check', 'chatflow-forms')} value={settings.spam?.akismetEnabled ?? false} onChange={(akismetEnabled)=>set('spam',{...settings.spam,akismetEnabled})} />
+        <p>{__('Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
       </section>
+      <EngagementSettings form={form} onChange={(next)=>onChange(next.settings)} />
       <section className="cff-card">
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>
         {(notifications.admin ?? []).map((notification) => (

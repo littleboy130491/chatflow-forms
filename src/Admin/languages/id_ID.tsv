@@ -437,3 +437,102 @@ Resume stores answers on this device. Disclose personal-data storage in your pri
 Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings.|Langkah: %d ditambahkan, %d diubah, %d dihapus. Versi baru membekukan skema dan pengaturan pribadi.
 Tracking is off by default. Connect your consent manager before enabling it.|Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya.
 Uninstall will permanently delete this site’s plugin data. Enable this?|Penghapusan plugin akan menghapus data plugin situs ini secara permanen. Aktifkan?
+Display and site-wide launcher rules|Aturan tampilan dan tombol pembuka di seluruh situs
+Default embed mode|Mode penyematan bawaan
+Enable site-wide launcher|Aktifkan tombol pembuka di seluruh situs
+Launcher position|Posisi tombol pembuka
+Auto-open after seconds (blank = off)|Buka otomatis setelah detik (kosong = nonaktif)
+Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
+Include page IDs (comma-separated; blank = all)|Sertakan ID halaman (dipisahkan koma; kosong = semua)
+Exclude page IDs (exclusions win)|Kecualikan ID halaman (pengecualian diprioritaskan)
+Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
+Optional captcha provider|Penyedia captcha opsional
+Use optional Akismet check|Gunakan pemeriksaan Akismet opsional
+Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.|Atur kredensial penyedia yang sesuai di Pengaturan global. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
+Media type|Jenis media
+HTTPS media URL|URL media HTTPS
+Alternative text|Teks alternatif
+Maximum bytes per file|Batas byte per berkas
+Allowed MIME types (comma separated)|Jenis MIME yang diizinkan (dipisahkan koma)
+Template gallery and import|Galeri templat dan impor
+Create draft|Buat draf
+Import ChatFlow JSON (maximum 1 MiB)|Impor JSON ChatFlow (maksimum 1 MiB)
+Import creates a new server-validated draft. Webhooks are disabled and credentials removed. Review all destinations and publish explicitly.|Impor membuat draf baru yang divalidasi server. Webhook dinonaktifkan dan kredensial dihapus. Tinjau semua tujuan dan terbitkan secara eksplisit.
+Rating|Penilaian
+Scale|Skala
+A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
+Anything else to share?|Ada hal lain yang ingin disampaikan?
+Assistant|Asisten
+ChatFlow form|Formulir ChatFlow
+Choose a published ChatFlow form ID.|Pilih ID formulir ChatFlow yang telah diterbitkan.
+Contact enquiry|Pertanyaan kontak
+Copy the ID from ChatFlow Forms. Only published forms render.|Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan.
+Customer feedback|Umpan balik pelanggan
+Direct / unknown|Langsung / tidak diketahui
+Full page|Halaman penuh
+Great|Sangat baik
+How can we help?|Bagaimana kami dapat membantu?
+How was your experience?|Bagaimana pengalaman Anda?
+Imajiner website survey|Survei situs web Imajiner
+Indonesian lead qualification with conditional branching.|Kualifikasi calon pelanggan dalam bahasa Indonesia dengan percabangan bersyarat.
+Launcher|Tombol pembuka
+Minimum height|Tinggi minimum
+Name, email and a message; no external integrations.|Nama, email, dan pesan; tanpa integrasi eksternal.
+Needs improvement|Perlu ditingkatkan
+Okay|Cukup baik
+Popup|Jendela pop-up
+Published form ID|ID formulir yang telah diterbitkan
+Unknown|Tidak diketahui
+Your email|Email Anda
+Your name|Nama Anda
+Net promoter score|Skor rekomendasi (NPS)
+Slider|Penggeser
+File upload|Unggah berkas
+Address|Alamat
+Media|Media
+Theme preset|Prasetel tema
+Choose a preset|Pilih prasetel
+Neutral light|Netral terang
+Neutral dark|Netral gelap
+Confetti on completion (off by default)|Konfeti saat selesai (nonaktif secara bawaan)
+Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.|Periksa kontras warna pada pratinjau sesungguhnya. Konfeti saat selesai menghormati preferensi pengurangan gerakan.
+Analytics|Analitik
+Find a form|Cari formulir
+Choose a form|Pilih formulir
+Previous forms|Formulir sebelumnya
+Next forms|Formulir berikutnya
+From|Dari
+To (inclusive)|Sampai (termasuk)
+Load analytics|Muat analitik
+Loading analytics…|Memuat analitik…
+Funnel|Alur konversi
+Recorded views|Tayangan tercatat
+Server starts|Sesi dimulai menurut server
+Server completions|Penyelesaian menurut server
+Period completion/start ratio|Rasio selesai/dimulai dalam periode
+Average completion seconds|Rata-rata detik penyelesaian
+Starts and completions are independent period totals, not a cohort conversion rate; resumed sessions can make the ratio exceed 100%. Opt-out, consent, DNT/GPC and retention can reduce recorded views.|Sesi dimulai dan penyelesaian merupakan total periode yang terpisah, bukan tingkat konversi satu kelompok; sesi yang dilanjutkan dapat membuat rasio melebihi 100%. Penolakan pelacakan, persetujuan, DNT/GPC, dan retensi dapat mengurangi tayangan tercatat.
+Step engagement and drop-off|Interaksi langkah dan penurunan jumlah responden
+Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft.|Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab (minimum nol), bukan bukti sesi ditinggalkan; percabangan, penolakan pelacakan, dan riwayat tersimpan memengaruhi hitungan. Label menggunakan draf saat ini.
+Step|Langkah
+Viewed|Dilihat
+Answered|Dijawab
+Drop-off|Penurunan
+Back|Kembali
+Abandon|Ditinggalkan
+Answer distributions|Distribusi jawaban
+Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission.|Hanya kiriman yang selesai. Menggunakan label opsi saat ini; opsi yang dihapus dikelompokkan tanpa menampilkan teks Lainnya. Pilihan ganda dapat dihitung lebih dari sekali per kiriman.
+Removed / unknown options|Opsi dihapus / tidak dikenal
+Sources|Sumber
+Devices|Perangkat
+Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned.|Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri.
+Export submissions|Ekspor kiriman
+Optional captcha and Akismet credentials|Kredensial captcha dan Akismet opsional
+Captcha provider|Penyedia captcha
+Public site key|Kunci situs publik
+Private captcha key|Kunci captcha privat
+Private Akismet key|Kunci Akismet privat
+reCAPTCHA v3 minimum score (0–1)|Skor minimum reCAPTCHA v3 (0–1)
+Enable optional Akismet|Aktifkan Akismet opsional
+Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.|Rahasia hanya disimpan dalam pengaturan global privat. Pilihan per formulir mengaktifkan pemeriksaan. Pemeriksaan pihak ketiga menghubungi penyedia yang dipilih; pastikan kebijakan privasi dan persetujuan memenuhi persyaratannya. Kredensial yang tidak lengkap menyebabkan penolakan demi keamanan.
+You cannot view analytics.|Anda tidak diizinkan melihat analitik.

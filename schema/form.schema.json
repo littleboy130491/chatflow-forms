@@ -779,6 +779,10 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "confetti": {
+          "type": "boolean",
+          "default": false
+        },
         "theme": {
           "enum": [
             "light",
