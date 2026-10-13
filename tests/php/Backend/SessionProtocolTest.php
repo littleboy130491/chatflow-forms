@@ -44,6 +44,47 @@ final class SessionProtocolTest extends TestCase {
 			),
 			time()
 		); }
+	public function testSessionStartAndResumePreservePresentationTranslationOnly(): void {
+		$translate = static fn( $value, $context, $name ) => 'bot.name' === $name || str_ends_with( $name, '.label' ) ? 'Translated ' . $value : $value;
+		add_filter( 'wpml_translate_single_string', $translate, 10, 3 );
+		try {
+			$session = $this->start();
+			self::assertSame( 'Translated ' . $this->form->schema()['bot']['name'], $session['schema']['bot']['name'] );
+			self::assertSame( array_column( $this->form->schema()['steps'], 'id' ), array_column( $session['schema']['steps'], 'id' ) );
+			self::assertSame( array_column( $this->form->schema()['steps'], 'key' ), array_column( $session['schema']['steps'], 'key' ) );
+			foreach ( $this->form->schema()['steps'] as $i => $step ) {
+				self::assertSame( array_column( $step['options'] ?? array(), 'value' ), array_column( $session['schema']['steps'][ $i ]['options'] ?? array(), 'value' ) );
+				self::assertSame( $step['logic'] ?? array(), $session['schema']['steps'][ $i ]['logic'] ?? array() );
+			}
+			$resume = $this->sessions->resume( $this->form->id(), $session['resumeToken'] );
+			self::assertIsArray( $resume );
+			self::assertSame( $session['schema'], $resume['schema'] );
+		} finally {
+			remove_filter( 'wpml_translate_single_string', $translate, 10 );
+		}
+	}
+	public function testSessionRestRoutesKeepTranslatedSchemaAndNoPrivateSettings(): void {
+		$translate = static fn( $value, $context, $name ) => 'bot.name' === $name ? 'Terjemahan' : $value;
+		add_filter( 'wpml_translate_single_string', $translate, 10, 3 );
+		try {
+			$request = new \WP_REST_Request( 'POST', '/cff/v1/sessions' );
+			$request->set_header( 'Content-Type', 'application/json' );
+			$request->set_header( 'X-CFF-Start-Token', $this->token() );
+			$request->set_header( 'Idempotency-Key', wp_generate_uuid4() );
+			$request->set_body( wp_json_encode( array( 'formId' => $this->form->id(), 'version' => $this->form->version() ) ) );
+			$started = rest_do_request( $request );
+			self::assertSame( 201, $started->get_status(), wp_json_encode( $started->get_data() ) );
+			$session = $started->get_data(); self::assertSame( 'Terjemahan', $session['schema']['bot']['name'] );
+			self::assertArrayNotHasKey( 'notifications', $session ); self::assertArrayNotHasKey( 'settings', $session );
+			$resume = new \WP_REST_Request( 'POST', '/cff/v1/sessions/resume' );
+			$resume->set_header( 'Content-Type', 'application/json' );
+			$resume->set_header( 'X-CFF-Resume-Token', $session['resumeToken'] );
+			$resume->set_body( wp_json_encode( array( 'formId' => $this->form->id() ) ) );
+			$response = rest_do_request( $resume ); self::assertSame( 200, $response->get_status(), wp_json_encode( $response->get_data() ) ); self::assertSame( $session['schema'], $response->get_data()['schema'] );
+		} finally {
+			remove_filter( 'wpml_translate_single_string', $translate, 10 );
+		}
+	}
 	private function start( array $prefill = array() ): array {
 		$s = $this->sessions->start(
 			array(

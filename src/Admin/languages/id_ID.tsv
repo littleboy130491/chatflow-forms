@@ -536,3 +536,107 @@ reCAPTCHA v3 minimum score (0–1)|Skor minimum reCAPTCHA v3 (0–1)
 Enable optional Akismet|Aktifkan Akismet opsional
 Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.|Rahasia hanya disimpan dalam pengaturan global privat. Pilihan per formulir mengaktifkan pemeriksaan. Pemeriksaan pihak ketiga menghubungi penyedia yang dipilih; pastikan kebijakan privasi dan persetujuan memenuhi persyaratannya. Kredensial yang tidak lengkap menyebabkan penolakan demi keamanan.
 You cannot view analytics.|Anda tidak diizinkan melihat analitik.
+Blank|Kosong
+A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
+Lead capture|Pengumpulan prospek
+Contact details and an enquiry.|Detail kontak dan pertanyaan.
+Health intake|Permintaan konsultasi kesehatan
+Intake request and explicit consent; not medical advice or emergency care.|Permintaan konsultasi dan persetujuan eksplisit; bukan nasihat medis atau layanan darurat.
+Product recommender|Rekomendasi produk
+Usage-based recommendations with two conditional endings.|Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat.
+Feedback / NPS|Umpan balik / NPS
+A 0–10 recommendation score and optional feedback.|Skor rekomendasi 0–10 dan umpan balik opsional.
+Appointment request|Permintaan janji temu
+Requested date and contact details; no booking or availability promise.|Tanggal yang diinginkan dan detail kontak; bukan reservasi atau janji ketersediaan.
+Thank you. Your request has been received.|Terima kasih. Permintaan Anda telah diterima.
+Welcome! Add your questions in the builder.|Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir.
+Company|Perusahaan
+What would you like help with?|Apa yang dapat kami bantu?
+This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
+What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?
+Consent to process this intake request|Persetujuan untuk memproses permintaan konsultasi ini
+I agree that the information I provide may be used to respond to this intake request.|Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini.
+How likely are you to recommend us? (0–10)|Seberapa besar kemungkinan Anda merekomendasikan kami? (0–10)
+What could we improve?|Apa yang dapat kami tingkatkan?
+Preferred appointment date (subject to confirmation)|Tanggal janji temu yang diinginkan (perlu konfirmasi)
+Anything else we should know?|Adakah hal lain yang perlu kami ketahui?
+Where will you use the product?|Di mana Anda akan menggunakan produk ini?
+Home|Rumah
+Work|Pekerjaan
+Explore our home range.|Jelajahi rangkaian produk untuk rumah kami.
+Explore our professional range.|Jelajahi rangkaian produk profesional kami.
+Diff compares this draft to the current published snapshot.|Perbandingan membandingkan draf ini dengan versi terbit saat ini.
+Contrast feedback (WCAG AA normal text)|Umpan balik kontras (WCAG AA teks normal)
+Bot text|Teks bot
+User text|Teks pengguna
+Button text|Teks tombol
+Use hex colors for calculated feedback|Gunakan warna heksadesimal untuk perhitungan kontras
+Pass|Lulus
+Below 4.5:1|Di bawah 4,5:1
+Custom CSS, focus indicators and real device behavior require separate visual checks.|CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah.
+Reusable email content|Konten email yang dapat digunakan kembali
+Saved template|Templat tersimpan
+Choose template|Pilih templat
+Replace this email subject and body? Routing and recipients stay unchanged.|Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah.
+Load template|Muat templat
+Delete saved content template?|Hapus templat konten tersimpan?
+Delete template|Hapus templat
+New template name|Nama templat baru
+Save email content as template|Simpan konten email sebagai templat
+Full-page URL and QR code|URL halaman penuh dan kode QR
+Form URL QR code|Kode QR URL formulir
+Download QR code|Unduh kode QR
+Prefill URL builder|Pembuat URL isian awal
+Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.|Isian awal menyarankan jawaban yang dapat diubah; tidak melewati validasi atau memberikan persetujuan. URL dapat masuk ke riwayat dan log server: jangan sertakan data pribadi atau rahasia.
+Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.|Atur aturan peluncur dan pemicu popup seluruh situs di Pengaturan → Tampilan dan keterlibatan.
+Submissions / completion rate|Jawaban / rasio penyelesaian
+Last submission|Jawaban terakhir
+Preview / edit draft|Pratinjau / ubah draf
+Scoped custom CSS (inside the Shadow DOM)|CSS khusus terbatas (di dalam Shadow DOM)
+Print|Cetak
+Resend all matching notifications for this completed submission?|Kirim ulang semua notifikasi yang sesuai untuk jawaban selesai ini?
+Resend notifications|Kirim ulang notifikasi
+Resend all matching emails for the selected completed submissions?|Kirim ulang semua email yang sesuai untuk jawaban selesai yang dipilih?
+Type DELETE to permanently erase selected submissions, files and activity.|Ketik DELETE untuk menghapus permanen jawaban, berkas, dan aktivitas yang dipilih.
+Export filtered results|Ekspor hasil terfilter
+Export selected|Ekspor yang dipilih
+Permanently delete selected|Hapus permanen yang dipilih
+Restore selected to Completed|Pulihkan yang dipilih ke Selesai
+Experiment variants|Varian eksperimen
+Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates.|Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi.
+Variant|Varian
+Starts|Sesi dimulai
+Completions|Penyelesaian
+Ending|Penutup
+Branching flow map|Peta alur percabangan
+Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.|Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta.
+Cross-device resume links|Tautan lanjutkan di perangkat lain
+Enable one-time email resume links|Aktifkan tautan lanjutkan sekali pakai melalui email
+Allow user-initiated WhatsApp sharing|Izinkan berbagi melalui WhatsApp atas tindakan pengguna
+Recipient email field|Kolom email penerima
+Choose an email field|Pilih kolom email
+Link lifetime in minutes (5–1440)|Masa berlaku tautan dalam menit (5–1440)
+Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.|Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia.
+Arithmetic expression (answer.key, variable.key)|Ekspresi aritmetika (answer.key, variable.key)
+Scoring variables|Variabel penilaian
+Key (lowercase)|Kunci (huruf kecil)
+Type|Jenis
+Remove variable|Hapus variabel
+Add score|Tambah nilai
+Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
+Remove outcome|Hapus hasil
+Add outcome|Tambah hasil
+A/B copy and order experiment|Eksperimen A/B teks dan urutan
+Create experiment|Buat eksperimen
+Experiment ID|ID eksperimen
+Assign variants to new sessions|Tetapkan varian ke sesi baru
+Variant ID|ID varian
+Weight (1–100)|Bobot (1–100)
+Variant messages, one per line; blank inherits base|Pesan varian, satu per baris; kosong menggunakan pesan dasar
+Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
+Remove variant|Hapus varian
+Add variant|Tambah varian
+Remove experiment|Hapus eksperimen
+Variable|Variabel
+Operation|Operasi
+Calculated number|Angka terhitung

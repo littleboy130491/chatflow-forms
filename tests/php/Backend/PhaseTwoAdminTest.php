@@ -93,7 +93,7 @@ final class PhaseTwoAdminTest extends TestCase {
 		$request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
 		$gallery = rest_get_server()->dispatch( $request );
 		self::assertSame( 200, $gallery->get_status() );
-		self::assertCount( 3, $gallery->get_data()['items'] );
+		self::assertCount( 9, $gallery->get_data()['items'] );
 		foreach ( array( 'contact', 'feedback' ) as $slug ) {
 			$request = new \WP_REST_Request( 'POST', '/cff/v1/admin/templates/gallery/' . $slug );
 			$request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );

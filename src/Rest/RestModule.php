@@ -54,16 +54,30 @@ final class RestModule implements Module {
 		$this->route( '/admin/forms', 'GET', array( $this, 'formsList' ), 'cff_manage_forms' );
 		$this->route( '/admin/forms', 'POST', fn( $r ) => $this->respond( $this->forms->create( (string) ( $this->body( $r )['title'] ?? '' ), $this->body( $r )['schema'] ?? array(), $this->body( $r )['settings'] ?? array() ), 201 ), 'cff_manage_forms' );
 		$this->route( '/admin/forms/(?P<id>\d+)', 'GET', fn( $r ) => $this->respond( $this->forms->getDraft( (int) $r['id'] ) ?? Database::error( 'cff_not_found', 'Form not found.', 404 ) ), 'cff_manage_forms' );
+		$this->route( '/admin/forms/(?P<id>\d+)/published', 'GET', fn( $r ) => $this->respond( $this->forms->getPublished( (int) $r['id'] ) ?? Database::error( 'cff_not_found', 'Published form not found.', 404 ) ), 'cff_manage_forms' );
+		$this->route( '/admin/forms/(?P<id>\d+)/lock', 'POST', fn( $r ) => $this->respond( \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] ) ), 'cff_manage_forms' );
 		$this->route(
 			'/admin/forms/(?P<id>\d+)',
 			'PUT',
 			function ( $r ) {
+				$lock = \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] );
+				if ( is_wp_error( $lock ) ) {
+					return $lock;
+				}
 				$body = $this->body( $r );
 				return $this->respond( $this->forms->saveDraft( (int) $r['id'], $body['schema'] ?? array(), $body['settings'] ?? array(), (int) ( $body['draftRevision'] ?? 0 ), isset( $body['title'] ) ? (string) $body['title'] : null ) );
 			},
 			'cff_manage_forms'
 		);
-		$this->route( '/admin/forms/(?P<id>\d+)/publish', 'POST', fn( $r ) => $this->respond( $this->forms->publish( (int) $r['id'], (int) ( $this->body( $r )['draftRevision'] ?? 0 ) ) ), 'cff_manage_forms' );
+		$this->route(
+			'/admin/forms/(?P<id>\d+)/publish',
+			'POST',
+			function ( $r ) {
+				$lock = \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] );
+				return is_wp_error( $lock ) ? $lock : $this->respond( $this->forms->publish( (int) $r['id'], (int) ( $this->body( $r )['draftRevision'] ?? 0 ) ) );
+			},
+			'cff_manage_forms'
+		);
 		$this->route( '/admin/forms/(?P<id>\d+)', 'DELETE', array( $this, 'trashForm' ), 'cff_manage_forms' );
 		$this->route( '/admin/submissions', 'GET', array( $this, 'submissionsList' ), 'cff_view_submissions' );
 		$this->route( '/admin/submissions/(?P<id>\d+)', 'GET', array( $this, 'detail' ), 'cff_view_submissions' );
@@ -244,6 +258,7 @@ final class RestModule implements Module {
 	private function pagination( \WP_REST_Request $r ): array {
 		return array( max( 1, absint( $r->get_param( 'page' ) ?? 1 ) ), max( 1, min( 100, absint( $r->get_param( 'perPage' ) ?? 20 ) ) ) ); }
 	public function formsList( \WP_REST_Request $r ): \WP_REST_Response {
+		global $wpdb;
 		[$page, $per] = $this->pagination( $r );
 		$query        = new \WP_Query(
 			array(
@@ -260,7 +275,19 @@ final class RestModule implements Module {
 		foreach ( $query->posts as $post ) {
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
-				$items[] = $form->toArray(); }
+				$item               = $form->toArray();
+				$summary            = $wpdb->get_row( $wpdb->prepare( "SELECT COUNT(*) AS completed,MAX(completed_at) AS latest FROM {$wpdb->prefix}cff_submissions WHERE form_id=%d AND status='completed'", $form->id() ), ARRAY_A );
+				$started            = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_sessions WHERE form_id=%d", $form->id() ) );
+				$completed          = (int) ( $summary['completed'] ?? 0 );
+				$started            = max( $completed, $started );
+				$item['statistics'] = array(
+					'completed'        => $completed,
+					'started'          => $started,
+					'completionRate'   => $started ? round( 100 * $completed / $started, 1 ) : 0,
+					'lastSubmissionAt' => $summary['latest'] ?? null,
+				);
+				$items[]            = $item;
+			}
 		}
 		return $this->respond(
 			array(

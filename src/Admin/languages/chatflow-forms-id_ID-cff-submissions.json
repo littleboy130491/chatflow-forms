@@ -2,44 +2,6 @@
   "domain": "chatflow-forms",
   "locale_data": {
     "messages": {
-      "Experiment variants": ["Varian eksperimen"],
-      "Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates.": ["Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi."],
-      "Variant": ["Varian"],
-      "Starts": ["Sesi dimulai"],
-      "Completions": ["Penyelesaian"],
-      "Ending": ["Penutup"],
-      "Branching flow map": ["Peta alur percabangan"],
-      "Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.": ["Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta."],
-      "Cross-device resume links": ["Tautan lanjutkan di perangkat lain"],
-      "Enable one-time email resume links": ["Aktifkan tautan lanjutkan sekali pakai melalui email"],
-      "Allow user-initiated WhatsApp sharing": ["Izinkan berbagi melalui WhatsApp atas tindakan pengguna"],
-      "Recipient email field": ["Kolom email penerima"],
-      "Choose an email field": ["Pilih kolom email"],
-      "Link lifetime in minutes (5–1440)": ["Masa berlaku tautan dalam menit (5–1440)"],
-      "Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.": ["Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia."],
-      "Arithmetic expression (answer.key, variable.key)": ["Ekspresi aritmetika (answer.key, variable.key)"],
-      "Scoring variables": ["Variabel penilaian"],
-      "Key (lowercase)": ["Kunci (huruf kecil)"],
-      "Type": ["Jenis"],
-      "Remove variable": ["Hapus variabel"],
-      "Add score": ["Tambah nilai"],
-      "Outcome endings (first matching condition wins)": ["Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"],
-      "Remove outcome": ["Hapus hasil"],
-      "Add outcome": ["Tambah hasil"],
-      "A/B copy and order experiment": ["Eksperimen A/B teks dan urutan"],
-      "Create experiment": ["Buat eksperimen"],
-      "Experiment ID": ["ID eksperimen"],
-      "Assign variants to new sessions": ["Tetapkan varian ke sesi baru"],
-      "Variant ID": ["ID varian"],
-      "Weight (1–100)": ["Bobot (1–100)"],
-      "Variant messages, one per line; blank inherits base": ["Pesan varian, satu per baris; kosong menggunakan pesan dasar"],
-      "Override step order (safe independent steps only)": ["Ubah urutan langkah (hanya langkah mandiri yang aman)"],
-      "Remove variant": ["Hapus varian"],
-      "Add variant": ["Tambah varian"],
-      "Remove experiment": ["Hapus eksperimen"],
-      "Variable": ["Variabel"],
-      "Operation": ["Operasi"],
-      "Calculated number": ["Angka terhitung"],
       "": {
         "domain": "chatflow-forms",
         "lang": "id_ID",
@@ -48,11 +10,20 @@
       "%d submissions and %d files match.": [
         "%d kiriman dan %d berkas cocok."
       ],
+      "A 0–10 recommendation score and optional feedback.": [
+        "Skor rekomendasi 0–10 dan umpan balik opsional."
+      ],
       "A published conversational form.": [
         "Formulir percakapan yang telah diterbitkan."
       ],
       "A satisfaction choice and optional comment.": [
         "Pilihan kepuasan dan komentar opsional."
+      ],
+      "A welcome statement ready for your questions.": [
+        "Pernyataan sambutan yang siap dilengkapi pertanyaan Anda."
+      ],
+      "A/B copy and order experiment": [
+        "Eksperimen A/B teks dan urutan"
       ],
       "Abandon": [
         "Ditinggalkan"
@@ -102,11 +73,20 @@
       "Add option": [
         "Tambah pilihan"
       ],
+      "Add outcome": [
+        "Tambah hasil"
+      ],
       "Add private plain-text note": [
         "Tambah catatan pribadi teks biasa"
       ],
       "Add rule": [
         "Tambah aturan"
+      ],
+      "Add score": [
+        "Tambah nilai"
+      ],
+      "Add variant": [
+        "Tambah varian"
       ],
       "Add webhook": [
         "Tambah webhook"
@@ -125,6 +105,9 @@
       ],
       "All statuses": [
         "Semua status"
+      ],
+      "Allow user-initiated WhatsApp sharing": [
+        "Izinkan berbagi melalui WhatsApp atas tindakan pengguna"
       ],
       "Allowed MIME types (comma separated)": [
         "Jenis MIME yang diizinkan (dipisahkan koma)"
@@ -174,6 +157,9 @@
       "Anything else to share?": [
         "Ada hal lain yang ingin disampaikan?"
       ],
+      "Anything else we should know?": [
+        "Adakah hal lain yang perlu kami ketahui?"
+      ],
       "Append options": [
         "Tambahkan pilihan"
       ],
@@ -189,8 +175,17 @@
       "Apply filters": [
         "Terapkan filter"
       ],
+      "Appointment request": [
+        "Permintaan janji temu"
+      ],
+      "Arithmetic expression (answer.key, variable.key)": [
+        "Ekspresi aritmetika (answer.key, variable.key)"
+      ],
       "Ask before resuming": [
         "Tanya sebelum melanjutkan"
+      ],
+      "Assign variants to new sessions": [
+        "Tetapkan varian ke sesi baru"
       ],
       "Assistant": [
         "Asisten"
@@ -234,6 +229,12 @@
       "Back to submissions": [
         "Kembali ke kiriman"
       ],
+      "Below 4.5:1": [
+        "Di bawah 4,5:1"
+      ],
+      "Blank": [
+        "Kosong"
+      ],
       "Body HTML / merge tags": [
         "Isi HTML / tag penggabungan"
       ],
@@ -245,6 +246,12 @@
       ],
       "Bot name": [
         "Nama bot"
+      ],
+      "Bot text": [
+        "Teks bot"
+      ],
+      "Branching flow map": [
+        "Peta alur percabangan"
       ],
       "Brand colour": [
         "Warna merek"
@@ -264,8 +271,14 @@
       "Button label": [
         "Label tombol"
       ],
+      "Button text": [
+        "Teks tombol"
+      ],
       "CC": [
         "CC"
+      ],
+      "Calculated number": [
+        "Angka terhitung"
       ],
       "Cancel": [
         "Batal"
@@ -318,11 +331,17 @@
       "Choose a published ChatFlow form ID.": [
         "Pilih ID formulir ChatFlow yang telah diterbitkan."
       ],
+      "Choose an email field": [
+        "Pilih kolom email"
+      ],
       "Choose email field": [
         "Pilih kolom email"
       ],
       "Choose form": [
         "Pilih formulir"
+      ],
+      "Choose template": [
+        "Pilih templat"
       ],
       "Close preview": [
         "Tutup pratinjau"
@@ -339,11 +358,17 @@
       "Comma": [
         "Koma"
       ],
+      "Company": [
+        "Perusahaan"
+      ],
       "Completed": [
         "Selesai"
       ],
       "Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission.": [
         "Hanya kiriman yang selesai. Menggunakan label opsi saat ini; opsi yang dihapus dikelompokkan tanpa menampilkan teks Lainnya. Pilihan ganda dapat dihitung lebih dari sekali per kiriman."
+      ],
+      "Completions": [
+        "Penyelesaian"
       ],
       "Confetti on completion (off by default)": [
         "Konfeti saat selesai (nonaktif secara bawaan)"
@@ -351,14 +376,26 @@
       "Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.": [
         "Atur kredensial penyedia yang sesuai di Pengaturan global. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
       ],
+      "Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.": [
+        "Atur aturan peluncur dan pemicu popup seluruh situs di Pengaturan → Tampilan dan keterlibatan."
+      ],
       "Confirm publish": [
         "Konfirmasi penerbitan"
+      ],
+      "Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.": [
+        "Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta."
       ],
       "Consent": [
         "Persetujuan"
       ],
       "Consent text": [
         "Teks persetujuan"
+      ],
+      "Consent to process this intake request": [
+        "Persetujuan untuk memproses permintaan konsultasi ini"
+      ],
+      "Contact details and an enquiry.": [
+        "Detail kontak dan pertanyaan."
       ],
       "Contact enquiry": [
         "Pertanyaan kontak"
@@ -368,6 +405,9 @@
       ],
       "Continue / submit button": [
         "Tombol lanjut / kirim"
+      ],
+      "Contrast feedback (WCAG AA normal text)": [
+        "Umpan balik kontras (WCAG AA teks normal)"
       ],
       "Conversation flow": [
         "Alur percakapan"
@@ -387,11 +427,20 @@
       "Create draft": [
         "Buat draf"
       ],
+      "Create experiment": [
+        "Buat eksperimen"
+      ],
       "Create private export": [
         "Buat ekspor pribadi"
       ],
       "Criteria / count": [
         "Kriteria / jumlah"
+      ],
+      "Cross-device resume links": [
+        "Tautan lanjutkan di perangkat lain"
+      ],
+      "Custom CSS, focus indicators and real device behavior require separate visual checks.": [
+        "CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah."
       ],
       "Custom headers (private)": [
         "Header khusus (pribadi)"
@@ -426,11 +475,17 @@
       "Delete partial on start over": [
         "Hapus kiriman sebagian saat mulai ulang"
       ],
+      "Delete saved content template?": [
+        "Hapus templat konten tersimpan?"
+      ],
       "Delete selected": [
         "Hapus yang dipilih"
       ],
       "Delete selected fields? Review broken references before publishing.": [
         "Hapus kolom terpilih? Periksa referensi yang rusak sebelum menerbitkan."
+      ],
+      "Delete template": [
+        "Hapus templat"
       ],
       "Delete this site’s forms and submissions on plugin uninstall": [
         "Hapus formulir dan kiriman situs ini saat plugin dihapus"
@@ -459,8 +514,8 @@
       "Devices": [
         "Perangkat"
       ],
-      "Diff uses the draft loaded in this editor, not the historical published snapshot.": [
-        "Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya."
+      "Diff compares this draft to the current published snapshot.": [
+        "Perbandingan membandingkan draf ini dengan versi terbit saat ini."
       ],
       "Direct / unknown": [
         "Langsung / tidak diketahui"
@@ -485,6 +540,9 @@
       ],
       "Download (authenticated, expiring)": [
         "Unduh (memerlukan autentikasi, memiliki masa berlaku)"
+      ],
+      "Download QR code": [
+        "Unduh kode QR"
       ],
       "Draft preview": [
         "Pratinjau draf"
@@ -519,6 +577,9 @@
       "Email body": [
         "Isi email"
       ],
+      "Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.": [
+        "Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia."
+      ],
       "Emoji": [
         "Emoji"
       ],
@@ -527,6 +588,9 @@
       ],
       "Enable honeypot protection": [
         "Aktifkan perlindungan honeypot"
+      ],
+      "Enable one-time email resume links": [
+        "Aktifkan tautan lanjutkan sekali pakai melalui email"
       ],
       "Enable optional Akismet": [
         "Aktifkan Akismet opsional"
@@ -543,6 +607,9 @@
       "Enabled": [
         "Diaktifkan"
       ],
+      "Ending": [
+        "Penutup"
+      ],
       "Ending messages (one per line)": [
         "Pesan penutup (satu per baris)"
       ],
@@ -558,8 +625,17 @@
       "Exclusive / none of the above": [
         "Eksklusif / tidak satu pun di atas"
       ],
-      "Export": [
-        "Ekspor"
+      "Experiment ID": [
+        "ID eksperimen"
+      ],
+      "Experiment variants": [
+        "Varian eksperimen"
+      ],
+      "Explore our home range.": [
+        "Jelajahi rangkaian produk untuk rumah kami."
+      ],
+      "Explore our professional range.": [
+        "Jelajahi rangkaian produk profesional kami."
       ],
       "Export CSV": [
         "Ekspor CSV"
@@ -567,8 +643,14 @@
       "Export expired or download denied. Request a new export.": [
         "Ekspor kedaluwarsa atau unduhan ditolak. Buat ekspor baru."
       ],
+      "Export filtered results": [
+        "Ekspor hasil terfilter"
+      ],
       "Export form JSON": [
         "Ekspor JSON formulir"
+      ],
+      "Export selected": [
+        "Ekspor yang dipilih"
       ],
       "Export submissions": [
         "Ekspor kiriman"
@@ -578,6 +660,9 @@
       ],
       "Exports only selected rows and the active filters.": [
         "Mengekspor hanya baris terpilih yang cocok dengan filter aktif."
+      ],
+      "Feedback / NPS": [
+        "Umpan balik / NPS"
       ],
       "Field": [
         "Kolom"
@@ -621,6 +706,9 @@
       "Form JSON file": [
         "Berkas JSON formulir"
       ],
+      "Form URL QR code": [
+        "Kode QR URL formulir"
+      ],
       "Form file exceeds 1 MiB.": [
         "Berkas formulir melebihi 1 MiB."
       ],
@@ -657,6 +745,9 @@
       "Full page": [
         "Halaman penuh"
       ],
+      "Full-page URL and QR code": [
+        "URL halaman penuh dan kode QR"
+      ],
       "Fullpage": [
         "Halaman penuh"
       ],
@@ -684,6 +775,9 @@
       "Headers": [
         "Header"
       ],
+      "Health intake": [
+        "Permintaan konsultasi kesehatan"
+      ],
       "Height (200–2000 px)": [
         "Tinggi (200–2000 px)"
       ],
@@ -702,14 +796,23 @@
       "Hidden value source": [
         "Sumber nilai tersembunyi"
       ],
+      "Home": [
+        "Rumah"
+      ],
       "Honeypot": [
         "Honeypot"
       ],
       "How can we help?": [
         "Bagaimana kami dapat membantu?"
       ],
+      "How likely are you to recommend us? (0–10)": [
+        "Seberapa besar kemungkinan Anda merekomendasikan kami? (0–10)"
+      ],
       "How was your experience?": [
         "Bagaimana pengalaman Anda?"
+      ],
+      "I agree that the information I provide may be used to respond to this intake request.": [
+        "Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini."
       ],
       "I agree to the privacy policy.": [
         "Saya menyetujui kebijakan privasi."
@@ -762,6 +865,9 @@
       "Inspect logic path and variables": [
         "Periksa jalur logika dan variabel"
       ],
+      "Intake request and explicit consent; not medical advice or emergency care.": [
+        "Permintaan konsultasi dan persetujuan eksplisit; bukan nasihat medis atau layanan darurat."
+      ],
       "Invalid ChatFlow form file.": [
         "Berkas formulir ChatFlow tidak valid."
       ],
@@ -783,6 +889,9 @@
       "Key": [
         "Kunci"
       ],
+      "Key (lowercase)": [
+        "Kunci (huruf kecil)"
+      ],
       "Keyboard hint": [
         "Petunjuk keyboard"
       ],
@@ -792,14 +901,17 @@
       "Label": [
         "Label"
       ],
+      "Last submission": [
+        "Jawaban terakhir"
+      ],
       "Launcher": [
         "Tombol pembuka"
       ],
       "Launcher position": [
         "Posisi tombol pembuka"
       ],
-      "Launcher, popup and QR tools are optional later features.": [
-        "Peluncur, popup, dan alat QR merupakan fitur opsional mendatang."
+      "Lead capture": [
+        "Pengumpulan prospek"
       ],
       "Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers.": [
         "Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan."
@@ -813,11 +925,17 @@
       "Link (including WhatsApp)": [
         "Tautan (termasuk WhatsApp)"
       ],
+      "Link lifetime in minutes (5–1440)": [
+        "Masa berlaku tautan dalam menit (5–1440)"
+      ],
       "Live version": [
         "Versi aktif"
       ],
       "Load analytics": [
         "Muat analitik"
+      ],
+      "Load template": [
+        "Muat templat"
       ],
       "Loading analytics…": [
         "Memuat analitik…"
@@ -951,6 +1069,9 @@
       "New submission": [
         "Kiriman baru"
       ],
+      "New template name": [
+        "Nama templat baru"
+      ],
       "Next": [
         "Berikutnya"
       ],
@@ -1005,6 +1126,9 @@
       "Operand source": [
         "Sumber operand"
       ],
+      "Operation": [
+        "Operasi"
+      ],
       "Operator": [
         "Operator"
       ],
@@ -1020,6 +1144,12 @@
       "Other (free-text option)": [
         "Lainnya (pilihan teks bebas)"
       ],
+      "Outcome endings (first matching condition wins)": [
+        "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"
+      ],
+      "Override step order (safe independent steps only)": [
+        "Ubah urutan langkah (hanya langkah mandiri yang aman)"
+      ],
       "Partial": [
         "Sebagian"
       ],
@@ -1032,6 +1162,9 @@
       "Partial/abandoned retention days (blank = same)": [
         "Retensi sebagian/ditinggalkan (hari; kosong = sama)"
       ],
+      "Pass": [
+        "Lulus"
+      ],
       "Past submission ID (optional; requires submission access)": [
         "ID kiriman sebelumnya (opsional; memerlukan akses kiriman)"
       ],
@@ -1040,6 +1173,9 @@
       ],
       "Period completion/start ratio": [
         "Rasio selesai/dimulai dalam periode"
+      ],
+      "Permanently delete selected": [
+        "Hapus permanen yang dipilih"
       ],
       "Permanently deletes matching data in bounded batches. This cannot be undone. Preview first.": [
         "Menghapus data yang cocok secara permanen dalam batch terbatas. Tidak dapat dibatalkan. Lakukan pratinjau dahulu."
@@ -1065,8 +1201,20 @@
       "Popup": [
         "Jendela pop-up"
       ],
+      "Preferred appointment date (subject to confirmation)": [
+        "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
+      ],
+      "Prefill URL builder": [
+        "Pembuat URL isian awal"
+      ],
+      "Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.": [
+        "Isian awal menyarankan jawaban yang dapat diubah; tidak melewati validasi atau memberikan persetujuan. URL dapat masuk ke riwayat dan log server: jangan sertakan data pribadi atau rahasia."
+      ],
       "Preview": [
         "Pratinjau"
+      ],
+      "Preview / edit draft": [
+        "Pratinjau / ubah draf"
       ],
       "Preview count": [
         "Pratinjau jumlah"
@@ -1089,6 +1237,9 @@
       "Primary colour": [
         "Warna utama"
       ],
+      "Print": [
+        "Cetak"
+      ],
       "Privacy and retention override": [
         "Pengaturan khusus privasi dan retensi"
       ],
@@ -1103,6 +1254,9 @@
       ],
       "Private captcha key": [
         "Kunci captcha privat"
+      ],
+      "Product recommender": [
+        "Rekomendasi produk"
       ],
       "Proxy mode": [
         "Mode proxy"
@@ -1164,6 +1318,9 @@
       "Read state": [
         "Status baca"
       ],
+      "Recipient email field": [
+        "Kolom email penerima"
+      ],
       "Recipients": [
         "Penerima"
       ],
@@ -1212,14 +1369,26 @@
       "Remove ending? Update any rules that reference it.": [
         "Hapus penutup? Perbarui semua aturan yang merujuknya."
       ],
+      "Remove experiment": [
+        "Hapus eksperimen"
+      ],
       "Remove message": [
         "Hapus pesan"
       ],
       "Remove option": [
         "Hapus pilihan"
       ],
+      "Remove outcome": [
+        "Hapus hasil"
+      ],
       "Remove rule": [
         "Hapus aturan"
+      ],
+      "Remove variable": [
+        "Hapus variabel"
+      ],
+      "Remove variant": [
+        "Hapus varian"
       ],
       "Remove webhook": [
         "Hapus webhook"
@@ -1227,11 +1396,17 @@
       "Removed / unknown options": [
         "Opsi dihapus / tidak dikenal"
       ],
+      "Replace this email subject and body? Routing and recipients stay unchanged.": [
+        "Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah."
+      ],
       "Reply-To": [
         "Alamat balasan"
       ],
       "Reply-To (address or email merge tag)": [
         "Alamat balasan (alamat atau tag penggabungan email)"
+      ],
+      "Requested date and contact details; no booking or availability promise.": [
+        "Tanggal yang diinginkan dan detail kontak; bukan reservasi atau janji ketersediaan."
       ],
       "Require consent before tracking": [
         "Wajibkan persetujuan sebelum pelacakan"
@@ -1242,8 +1417,14 @@
       "Required": [
         "Wajib"
       ],
-      "Reserved scoring rule (not enabled in MVP)": [
-        "Aturan penilaian cadangan (belum diaktifkan dalam MVP)"
+      "Resend all matching emails for the selected completed submissions?": [
+        "Kirim ulang semua email yang sesuai untuk jawaban selesai yang dipilih?"
+      ],
+      "Resend all matching notifications for this completed submission?": [
+        "Kirim ulang semua notifikasi yang sesuai untuk jawaban selesai ini?"
+      ],
+      "Resend notifications": [
+        "Kirim ulang notifikasi"
       ],
       "Reset filters": [
         "Atur ulang filter"
@@ -1253,6 +1434,9 @@
       ],
       "Respondent email field": [
         "Kolom email responden"
+      ],
+      "Restore selected to Completed": [
+        "Pulihkan yang dipilih ke Selesai"
       ],
       "Resume days (1–90)": [
         "Masa melanjutkan sesi (hari; 1–90)"
@@ -1265,6 +1449,9 @@
       ],
       "Retry delivery": [
         "Ulangi pengiriman"
+      ],
+      "Reusable email content": [
+        "Konten email yang dapat digunakan kembali"
       ],
       "Rows per page": [
         "Baris per halaman"
@@ -1281,6 +1468,9 @@
       "Save draft": [
         "Simpan draf"
       ],
+      "Save email content as template": [
+        "Simpan konten email sebagai templat"
+      ],
       "Save failed.": [
         "Penyimpanan gagal."
       ],
@@ -1293,14 +1483,20 @@
       "Save this draft first to get its form ID.": [
         "Simpan draf terlebih dahulu untuk memperoleh ID formulir."
       ],
+      "Saved template": [
+        "Templat tersimpan"
+      ],
       "Saving…": [
         "Menyimpan…"
       ],
       "Scale": [
         "Skala"
       ],
-      "Scoring and visual node graphs are not enabled in MVP.": [
-        "Penilaian dan grafik simpul visual belum diaktifkan dalam MVP."
+      "Scoped custom CSS (inside the Shadow DOM)": [
+        "CSS khusus terbatas (di dalam Shadow DOM)"
+      ],
+      "Scoring variables": [
+        "Variabel penilaian"
       ],
       "Search answers / email / phone": [
         "Cari jawaban / email / telepon"
@@ -1401,8 +1597,14 @@
       "Start over": [
         "Mulai ulang"
       ],
+      "Starts": [
+        "Sesi dimulai"
+      ],
       "Starts and completions are independent period totals, not a cohort conversion rate; resumed sessions can make the ratio exceed 100%. Opt-out, consent, DNT/GPC and retention can reduce recorded views.": [
         "Sesi dimulai dan penyelesaian merupakan total periode yang terpisah, bukan tingkat konversi satu kelompok; sesi yang dilanjutkan dapat membuat rasio melebihi 100%. Penolakan pelacakan, persetujuan, DNT/GPC, dan retensi dapat mengurangi tayangan tercatat."
+      ],
+      "Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates.": [
+        "Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi."
       ],
       "Starts per rate window": [
         "Jumlah mulai per jendela pembatasan"
@@ -1449,6 +1651,9 @@
       "Submissions": [
         "Kiriman"
       ],
+      "Submissions / completion rate": [
+        "Jawaban / rasio penyelesaian"
+      ],
       "Submissions per rate window": [
         "Kiriman per jendela pembatasan"
       ],
@@ -1482,6 +1687,9 @@
       "Thank you!": [
         "Terima kasih!"
       ],
+      "Thank you. Your request has been received.": [
+        "Terima kasih. Permintaan Anda telah diterima."
+      ],
       "The frozen form snapshot is unavailable.": [
         "Snapshot formulir yang dibekukan tidak tersedia."
       ],
@@ -1496,6 +1704,9 @@
       ],
       "Theme preset": [
         "Prasetel tema"
+      ],
+      "This is an intake request, not medical advice. For urgent care, contact local emergency services.": [
+        "Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat."
       ],
       "To (inclusive)": [
         "Sampai (termasuk)"
@@ -1536,8 +1747,14 @@
       "Trusted proxy configuration": [
         "Konfigurasi proxy tepercaya"
       ],
+      "Type": [
+        "Jenis"
+      ],
       "Type DELETE to confirm": [
         "Ketik DELETE untuk konfirmasi"
+      ],
+      "Type DELETE to permanently erase selected submissions, files and activity.": [
+        "Ketik DELETE untuk menghapus permanen jawaban, berkas, dan aktivitas yang dipilih."
       ],
       "Typing speed": [
         "Kecepatan mengetik"
@@ -1578,6 +1795,12 @@
       "Untitled form": [
         "Formulir tanpa judul"
       ],
+      "Usage-based recommendations with two conditional endings.": [
+        "Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat."
+      ],
+      "Use hex colors for calculated feedback": [
+        "Gunakan warna heksadesimal untuk perhitungan kontras"
+      ],
       "Use optional Akismet check": [
         "Gunakan pemeriksaan Akismet opsional"
       ],
@@ -1590,6 +1813,9 @@
       "User bubble colour": [
         "Warna gelembung pengguna"
       ],
+      "User text": [
+        "Teks pengguna"
+      ],
       "Validation": [
         "Validasi"
       ],
@@ -1598,6 +1824,18 @@
       ],
       "Values (JSON array)": [
         "Nilai (larik JSON)"
+      ],
+      "Variable": [
+        "Variabel"
+      ],
+      "Variant": [
+        "Varian"
+      ],
+      "Variant ID": [
+        "ID varian"
+      ],
+      "Variant messages, one per line; blank inherits base": [
+        "Pesan varian, satu per baris; kosong menggunakan pesan dasar"
       ],
       "Verified proxy header": [
         "Header proxy terverifikasi"
@@ -1617,8 +1855,29 @@
       "Webhooks": [
         "Webhook"
       ],
+      "Weight (1–100)": [
+        "Bobot (1–100)"
+      ],
+      "Welcome! Add your questions in the builder.": [
+        "Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir."
+      ],
+      "What could we improve?": [
+        "Apa yang dapat kami tingkatkan?"
+      ],
+      "What would you like help with?": [
+        "Apa yang dapat kami bantu?"
+      ],
+      "What would you like to discuss at your appointment?": [
+        "Apa yang ingin Anda diskusikan saat konsultasi?"
+      ],
+      "Where will you use the product?": [
+        "Di mana Anda akan menggunakan produk ini?"
+      ],
       "Whitelisted field keys": [
         "Kunci kolom yang diizinkan"
+      ],
+      "Work": [
+        "Pekerjaan"
       ],
       "Yes": [
         "Ya"

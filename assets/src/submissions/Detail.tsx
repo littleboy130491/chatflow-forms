@@ -112,11 +112,13 @@ export function Detail({
   id,
   onClose,
   onChanged,
+  previous, next, onNavigate,
 }: {
   api: AdminApi;
   id: number;
   onClose: () => void;
   onChanged: () => void;
+  previous?: number | undefined; next?: number | undefined; onNavigate: (id: number) => void;
 }) {
   const [detail, setDetail] = useState<SubmissionDetail | null>(null),
     [error, setError] = useState(''),
@@ -151,6 +153,15 @@ export function Detail({
   return (
     <section className="cff-detail">
       <Button onClick={onClose}>{__('Back to submissions', 'chatflow-forms')}</Button>
+      <Button disabled={!previous} onClick={() => { if (previous) onNavigate(previous); }}>{__('Previous', 'chatflow-forms')}</Button>
+      <Button disabled={!next} onClick={() => { if (next) onNavigate(next); }}>{__('Next', 'chatflow-forms')}</Button>
+      <Button onClick={() => window.print()}>{__('Print', 'chatflow-forms')}</Button>
+      {detail?.status === 'completed' && can(api.config, 'edit_submissions') && <Button disabled={busy} onClick={async () => {
+        if (!window.confirm(__('Resend all matching notifications for this completed submission?', 'chatflow-forms'))) return;
+        setBusy(true); setError('');
+        try { await api.request(`admin/submissions/${id}/resend`, 'POST', { requestId: crypto.randomUUID() }); await load(); }
+        catch (err) { setError(errorMessage(err)); } finally { setBusy(false); }
+      }}>{__('Resend notifications', 'chatflow-forms')}</Button>}
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}

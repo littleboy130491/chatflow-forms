@@ -17,6 +17,7 @@ export interface ReplayResult {
 export interface FormDTO {
   id: number; title: string; slug: string; schema: FormSchema; settings: FormSettings;
   version: number; draftRevision: number; status: 'draft' | 'publish';
+  statistics?: { completed: number; started: number; completionRate: number; lastSubmissionAt: string | null };
 }
 export interface ClientMeta {
   pageUrl?: string; pageTitle?: string; referrer?: string; landingPage?: string; landingReferrer?: string;

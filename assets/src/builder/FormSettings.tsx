@@ -8,6 +8,7 @@ import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './contro
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
 import { EngagementSettings } from './EngagementSettings';
+import { EmailTemplates } from './EmailTemplates';
 import { errorMessage } from './api';
 import type { AdminApi, FormDTO, FormSettings, FormSchema, Ending } from './api';
 import type { Notification, Webhook } from '../shared/settings.generated';
@@ -68,6 +69,7 @@ export function HtmlEditor({ value, onChange }: { value: string; onChange: (valu
   );
 }
 function EmailCard({
+  api,
   notification,
   schema,
   onChange,
@@ -76,6 +78,7 @@ function EmailCard({
   test,
   preview,
 }: {
+  api: AdminApi;
   notification: Notification;
   schema: FormSchema;
   onChange: (notification: Notification) => void;
@@ -97,6 +100,7 @@ function EmailCard({
   return (
     <fieldset className="cff-card">
       <legend>{notification.id}</legend>
+      <EmailTemplates api={api} content={notification} onLoad={content => onChange({ ...notification, ...content })} />
       <Check
         label={__('Enabled', 'chatflow-forms')}
         value={notification.enabled}
@@ -697,6 +701,7 @@ export function SettingsEditor({
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>
         {(notifications.admin ?? []).map((notification) => (
           <EmailCard
+            api={api}
             key={notification.id}
             notification={notification}
             schema={form.schema}
@@ -751,6 +756,7 @@ export function SettingsEditor({
         />
         {(notifications.autoresponders ?? []).map((notification) => (
           <EmailCard
+            api={api}
             key={notification.id}
             notification={notification}
             schema={form.schema}

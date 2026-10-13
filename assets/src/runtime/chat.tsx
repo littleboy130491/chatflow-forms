@@ -111,12 +111,12 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
     </main>
     {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer aria-live="polite">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : state.dirty ? phrase('unsaved') : phrase('saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}
       {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
-        <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm('Send a one-time resume link to the email already provided in this form?')) return; void controller.magicLink('email').then(() => setMagicStatus('If an eligible email was provided, a resume link will be sent.')).catch(() => setMagicStatus('Unable to request a resume link right now.')); }}>Email me a resume link</button>
-        {form.session.magicLinks.whatsapp && <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm('Create a single-use link to share yourself? Anyone with the link can resume your form.')) return; void controller.magicLink('whatsapp').then(async result => {
-          if (!result.link) { setMagicStatus('Unable to create a link right now.'); return; }
-          try { if (navigator.share) await navigator.share({ text: result.link }); else { await navigator.clipboard.writeText(result.link); setMagicStatus('Link copied. Paste it into WhatsApp yourself.'); } }
-          catch { setMagicStatus('Share cancelled or unavailable. Request a new link to retry.'); }
-        }).catch(() => setMagicStatus('Unable to create a link right now.')); }}>Share resume link (choose WhatsApp)</button>}
+        <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicEmailConfirm'))) return; void controller.magicLink('email').then(() => setMagicStatus(phrase('magicEmailAccepted'))).catch(() => setMagicStatus(phrase('magicEmailError'))); }}>{phrase('magicEmail')}</button>
+        {form.session.magicLinks.whatsapp && <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicShareConfirm'))) return; void controller.magicLink('whatsapp').then(async result => {
+          if (!result.link) { setMagicStatus(phrase('magicShareError')); return; }
+          try { if (navigator.share) await navigator.share({ text: result.link }); else { await navigator.clipboard.writeText(result.link); setMagicStatus(phrase('magicCopied')); } }
+          catch { setMagicStatus(phrase('magicCancelled')); }
+        }).catch(() => setMagicStatus(phrase('magicShareError'))); }}>{phrase('magicShare')}</button>}
         <small role="status">{magicStatus}</small>
       </div>}</footer></>}
   </section>;

@@ -14,10 +14,10 @@ final class Calculation {
 	 *  @param array<string,mixed> $variables
 	 */
 	public static function calculate( string $expression, array $answers = array(), array $variables = array(), bool $syntax_only = false ): float|int {
-		if ( ! strlen( $expression ) || strlen( $expression ) > 512 ) {
+		if ( ! strlen( $expression ) || strlen( $expression ) > 512 || preg_match( '/[^\x09-\x0D\x20-\x7E]/', $expression ) ) {
 			throw new \InvalidArgumentException( 'Invalid calculation.' );
 		}
-		preg_match_all( '/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*\/-]|[^\s]/', $expression, $matches );
+		preg_match_all( '/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*\/-]|[^\x09-\x0D\x20]/', $expression, $matches );
 		$tokens = $matches[0];
 		if ( count( $tokens ) > 128 ) {
 			throw new \InvalidArgumentException( 'Invalid calculation.' );

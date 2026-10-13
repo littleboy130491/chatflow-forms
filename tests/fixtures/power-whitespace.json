@@ -1,0 +1,11 @@
+[
+  {"expression":"1 + 2", "value":3},
+  {"expression":"1\t+\n\r\f\u000b2", "value":3},
+  {"expression":"1\u00a0+ 2", "invalid":true},
+  {"expression":"1\u2028+ 2", "invalid":true},
+  {"expression":"1\u2029+ 2", "invalid":true},
+  {"expression":"1\ufeff+ 2", "invalid":true},
+  {"expression":"1\u0000+ 2", "invalid":true},
+  {"expression":"1\u007f+ 2", "invalid":true},
+  {"expression":"1é+ 2", "invalid":true}
+]

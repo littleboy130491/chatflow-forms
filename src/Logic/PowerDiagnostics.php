@@ -68,6 +68,9 @@ final class PowerDiagnostics {
 			$ids                          = array();
 			foreach ( $e['variants'] as $j => $v ) {
 				$path = '/experiments/' . $i . '/variants/' . $j;
+				if ( strlen( $e['id'] . ':' . $v['id'] ) > 64 ) {
+					$add( $path, 'Combined experiment and variant identifier must fit 64 ASCII characters.' );
+				}
 				if ( isset( $ids[ $v['id'] ] ) ) {
 					$add( $path, 'Variant IDs must be unique.' );
 				} $ids[ $v['id'] ] = true;

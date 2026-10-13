@@ -16,6 +16,7 @@ export interface RuntimeHandle {
   unmount(): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
+  jumpToStep(id: string): boolean;
   open(): void;
 }
 const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number; controller: RuntimeController }>();
@@ -66,6 +67,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     open: () => { if (overlay) overlay.open(); else { host.hidden = false; initialize(); host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); } },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
+    jumpToStep: id => controller.jumpToStep(id),
   };
   mounted.set(host, { handle, id, controller });
   if (!overlay) initialize();

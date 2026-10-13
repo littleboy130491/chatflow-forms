@@ -60,6 +60,7 @@ export function powerDiagnostics(schema: FormSchema): ValidationIssue[] {
     const ids = new Set<string>();
     e.variants.forEach((v, j) => {
       const path = `/experiments/${i}/variants/${j}`;
+      if (`${e.id}:${v.id}`.length > 64) add(path, 'Combined experiment and variant identifier must fit 64 ASCII characters.');
       if (ids.has(v.id)) add(path, 'Variant IDs must be unique.'); ids.add(v.id);
       const copies = new Set<string>();
       for (const c of v.copy ?? []) { if (!schema.steps.some(s => s.id === c.stepId) || copies.has(c.stepId)) add(path, 'Copy references must be unique existing steps.'); copies.add(c.stepId); }

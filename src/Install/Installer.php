@@ -108,7 +108,7 @@ final class Installer {
 				}
 			}
 		}
-		foreach ( array( 'cff_db_version', 'cff_settings', 'cff_cap_grants', 'cff_frontend_base', 'cff_flush_rewrites', 'cff_cloudflare_ranges', 'cff_abandon_cursor' ) as $option ) {
+		foreach ( array( 'cff_db_version', 'cff_settings', 'cff_cap_grants', 'cff_frontend_base', 'cff_flush_rewrites', 'cff_cloudflare_ranges', 'cff_abandon_cursor', 'cff_email_content_templates' ) as $option ) {
 			delete_option( $option );
 		}
 		foreach ( $wpdb->get_col( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( 'cff_purge_' ) . '%', $wpdb->esc_like( 'cff_cleanup_' ) . '%' ) ) as $option ) {

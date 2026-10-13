@@ -30,7 +30,15 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [actionError, setActionError] = useState(''),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0),
-    [exporting, setExporting] = useState(false);
+    [exporting, setExporting] = useState(false),
+    [exportSelected, setExportSelected] = useState(false);
+  const resend = async () => {
+    if (!selected.length || !window.confirm(__('Resend all matching emails for the selected completed submissions?', 'chatflow-forms'))) return;
+    setBusy(true); setActionError('');
+    const requestId = crypto.randomUUID();
+    try { for (const id of selected) await api.request(`admin/submissions/${id}/resend`, 'POST', { requestId }); }
+    catch (err) { setActionError(errorMessage(err)); } finally { setBusy(false); }
+  };
   useEffect(() => {
     const abort = new AbortController();
     setBusy(true);
@@ -54,25 +62,19 @@ function SubmissionList({ api }: { api: AdminApi }) {
       });
     return () => abort.abort();
   }, [api, applied, page, perPage, revision]);
-  const bulk = async (changes: { isRead?: boolean; isStarred?: boolean; status?: Status } | 'delete') => {
+  const bulk = async (changes: { isRead?: boolean; isStarred?: boolean; status?: Status } | 'delete' | 'permanent') => {
     if (!selected.length) return;
     if (changes === 'delete' && !window.confirm(__('Trash all selected submissions?', 'chatflow-forms')))
       return;
+    if (changes === 'permanent' && window.prompt(__('Type DELETE to permanently erase selected submissions, files and activity.', 'chatflow-forms')) !== 'DELETE') return;
     setBusy(true);
     setError('');
-    let changed = 0;
     setActionError('');
     try {
-      for (const id of selected) {
-        await api.request(
-          `admin/submissions/${id}`,
-          changes === 'delete' ? 'DELETE' : 'PATCH',
-          changes === 'delete' ? undefined : changes,
-        );
-        changed++;
-      }
+      await api.request('admin/submissions/bulk', 'POST', changes === 'permanent' ? { ids: selected, permanent: true, confirmation: 'DELETE' } : { ids: selected, changes: changes === 'delete' ? { status: 'trash' } : changes });
+      setSelected([]);
     } catch (err) {
-      setActionError(`${errorMessage(err)} (${changed}/${selected.length})`);
+      setActionError(errorMessage(err));
     } finally {
       setBusy(false);
       setRevision((value) => value + 1);
@@ -86,6 +88,9 @@ function SubmissionList({ api }: { api: AdminApi }) {
         id={detailId}
         onClose={() => setDetailId(null)}
         onChanged={() => setRevision((value) => value + 1)}
+        previous={list?.items[(list?.items.findIndex(row => row.id === detailId) ?? 0) - 1]?.id}
+        next={list?.items[(list?.items.findIndex(row => row.id === detailId) ?? -1) + 1]?.id}
+        onNavigate={setDetailId}
       />
     );
   return (
@@ -146,6 +151,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
         </Notice>
       )}
       <div className="cff-toolbar">
+        {can(api.config, 'edit_submissions') && applied.status === 'completed' && <Button disabled={busy || !selected.length} onClick={() => { void resend(); }}>{__('Resend notifications', 'chatflow-forms')}</Button>}
         {can(api.config, 'edit_submissions') && (
           <Fragment>
             <Button
@@ -202,11 +208,14 @@ function SubmissionList({ api }: { api: AdminApi }) {
           </Button>
         )}
         {can(api.config, 'export_submissions') && (
-          <Button onClick={() => setExporting(!exporting)}>{__('Export', 'chatflow-forms')}</Button>
+          <Button onClick={() => { setExportSelected(false); setExporting(!exporting); }}>{__('Export filtered results', 'chatflow-forms')}</Button>
         )}
+        {can(api.config, 'export_submissions') && <Button disabled={!selected.length} onClick={() => { setExportSelected(true); setExporting(true); }}>{__('Export selected', 'chatflow-forms')}</Button>}
+        {can(api.config, 'delete_submissions') && can(api.config, 'edit_submissions') && applied.status === 'trash' && <Button isDestructive disabled={!selected.length || busy} onClick={() => { void bulk('permanent'); }}>{__('Permanently delete selected', 'chatflow-forms')}</Button>}
+        {can(api.config, 'edit_submissions') && ['trash', 'spam'].includes(applied.status ?? '') && <Button disabled={!selected.length || busy} onClick={() => { void bulk({ status: 'completed' }); }}>{__('Restore selected to Completed', 'chatflow-forms')}</Button>}
       </div>
       {exporting && can(api.config, 'export_submissions') && (
-        <Export api={api} filters={applied} ids={selected} />
+        <Export api={api} filters={applied} ids={exportSelected ? selected : []} />
       )}
       <div className="cff-table-scroll">
         <table className="widefat striped">

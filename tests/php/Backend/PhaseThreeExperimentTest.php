@@ -13,6 +13,31 @@ use ChatFlow\Templates\Imajiner;
 use PHPUnit\Framework\TestCase;
 
 final class PhaseThreeExperimentTest extends TestCase {
+	public function testMaximumCombinedIdentifiersAreValidatedAndStoredWithoutTruncation(): void {
+		global $wpdb;
+		$fixture = json_decode( file_get_contents( dirname( __DIR__, 2 ) . '/fixtures/logic/power-variant-order.json' ), true, 512, JSON_THROW_ON_ERROR );
+		$settings = array( 'completion' => array( 'defaultEndingId' => 'done' ), 'sessions' => array( 'savePartial' => false ) );
+		$forms = new FormRepository();
+		foreach ( array( array( 32, 31 ), array( 31, 32 ) ) as [$experiment_length, $variant_length] ) {
+			$schema = $fixture['schema'];
+			$schema['experiments'][0]['id'] = str_repeat( 'e', $experiment_length );
+			foreach ( $schema['experiments'][0]['variants'] as $index => &$variant ) $variant['id'] = str_repeat( $index ? 'w' : 'v', $variant_length );
+			unset( $variant );
+			$draft = $forms->create( 'Boundary fixture', $schema, $settings ); self::assertInstanceOf( Form::class, $draft );
+			$form = $forms->publish( $draft->id(), $draft->draftRevision() ); self::assertInstanceOf( Form::class, $form );
+			try {
+				$token = ( new TokenSigner( wp_salt( 'auth' ), get_current_blog_id() ) )->issue( 'start', array( 'formId' => $form->id(), 'version' => $form->version() ), time() );
+				$session = ( new SessionService( $forms, new Engine(), new Registry() ) )->start( array( 'formId' => $form->id(), 'version' => $form->version() ), $token, wp_generate_uuid4() );
+				self::assertIsArray( $session ); self::assertSame( 64, strlen( $session['variantId'] ) );
+				self::assertSame( $session['variantId'], $wpdb->get_var( $wpdb->prepare( "SELECT variant_id FROM {$wpdb->prefix}cff_sessions WHERE public_id=%s", $session['sessionId'] ) ) );
+			} finally {
+				$wpdb->delete( $wpdb->prefix . 'cff_sessions', array( 'form_id' => $form->id() ) ); $wpdb->delete( $wpdb->prefix . 'cff_form_versions', array( 'form_id' => $form->id() ) ); wp_delete_post( $form->id(), true );
+			}
+		}
+		$schema['experiments'][0]['id'] = str_repeat( 'e', 32 );
+		$schema['experiments'][0]['variants'][0]['id'] = str_repeat( 'v', 32 );
+		self::assertInstanceOf( \WP_Error::class, $forms->create( 'Rejected 65-byte identifier', $schema, $settings ) );
+	}
 	public function testBuilderDependenciesExistOnSupportedWordPress(): void {
 		$asset = require CFF_PATH . 'build/admin/builder.asset.php';
 		foreach ( $asset['dependencies'] as $dependency ) {

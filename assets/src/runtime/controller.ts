@@ -1,4 +1,5 @@
 import { replay } from '../shared/logic';
+import { readPrefill } from '../shared/prefill';
 import { collectMeta } from '../tracking';
 import { ApiClient, ApiError, uuid } from './api';
 import { SessionStorage, type SavedSession } from './persistence';
@@ -18,6 +19,7 @@ const display = (step: Step) => ['statement', 'summary', 'media'].includes(step.
 export class RuntimeController {
   state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
   private listeners = new Set<() => void>();
+  private renewal: Promise<void> | null = null;
   private session: Session | null = null;
   private context: ReplayContext = { hidden: {}, url: {}, meta: {}, now: new Date().toISOString() };
   private pending: Mutation | null = null;
@@ -55,7 +57,7 @@ export class RuntimeController {
   close(): void { if (this.session && this.state.phase !== 'done') { this.analytics?.add({ event: 'abandon', ...(this.state.activeId && this.state.form?.form.session.savePartial !== false ? { stepId: this.state.activeId } : {}) }); void this.analytics?.flush(this.session); } }
   async upload(step: Step, file: File) {
     if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new ApiError('cff_upload_unavailable', 0);
-    return this.api.upload(this.session, step.id, file);
+    return this.ownerOperation(() => this.api!.upload(this.session!, step.id, file));
   }
 
   async initialize(): Promise<void> {
@@ -69,6 +71,7 @@ export class RuntimeController {
       if (this.disposed) return;
       this.latest = this.state.form;
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
+      this.prefill = { ...readPrefill(globalThis.location?.search ?? '', this.state.form.form.schema), ...this.prefill };
       await this.loadEngagement();
       const form = this.state.form.form;
       if (magic) {
@@ -217,6 +220,12 @@ export class RuntimeController {
     this.prefill = { ...this.prefill, ...answers };
     this.notify();
   }
+  jumpToStep(id: string): boolean {
+    const step = this.state.form?.form.schema.steps.find(step => step.id === id);
+    if (!this.options.preview || !step || step.type === 'hidden' || step.type === 'calculated') return false;
+    this.editing = id; this.state.activeId = id; this.state.phase = 'ready';
+    this.state.error = null; this.state.fieldError = null; this.notify(); return true;
+  }
   inputValue(step: Step): unknown { return this.state.answers[step.key] ?? this.prefill[step.key] ?? step.defaultValue; }
   private inputAnswers(): AnswerMap {
     const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden' && step.type !== 'calculated').map(step => step.key));
@@ -225,7 +234,7 @@ export class RuntimeController {
   async magicLink(channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
     if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new ApiError('cff_magic_unavailable', 0);
     if (this.state.dirty) await this.flush();
-    return this.api.magicLink(this.session, channel);
+    return this.ownerOperation(() => this.api!.magicLink(this.session!, channel));
   }
   private persist(): void {
     if (!this.session && this.saved && this.state.offline && !this.options.preview) {
@@ -237,18 +246,34 @@ export class RuntimeController {
   }
   private async mutate<T>(operation: Mutation): Promise<T> {
     if (!this.session) throw new ApiError('cff_session_expired', 401);
-    if (!(operation.method === 'POST' && this.submittedOnce) && Date.parse(this.session.requestExpiresAt) <= Date.now() + 5000 && this.session.resumeToken) {
-      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
-      if (this.disposed) throw new ApiError('cff_cancelled', 0);
-      this.session = { ...fresh, answers: this.session.answers };
-    }
+    if (!(operation.method === 'POST' && this.submittedOnce)) await this.renewCredential();
     try { if (operation.method === 'POST') this.submittedOnce = true; return await this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key); }
     catch (error) {
       if (!(error instanceof ApiError) || error.status !== 401 || !this.session.resumeToken) throw error;
-      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
-      if (this.disposed) throw new ApiError('cff_cancelled', 0);
-      this.session = { ...fresh, answers: this.session.answers };
+      await this.renewCredential(true);
       return this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key);
+    }
+  }
+  private async renewCredential(force = false): Promise<void> {
+    if (!this.session || !this.api) throw new ApiError('cff_session_expired', 401);
+    if (!force && Date.parse(this.session.requestExpiresAt) > Date.now() + 5000) return;
+    if (!this.session.resumeToken) throw new ApiError('cff_session_expired', 401);
+    if (!this.renewal) {
+      const current = this.session;
+      this.renewal = this.api.resume(current.formId, current.resumeToken!).then(fresh => {
+        if (this.disposed) throw new ApiError('cff_cancelled', 0);
+        if (fresh.status !== 'active') throw new ApiError('cff_session_expired', 401);
+        this.session = { ...fresh, answers: current.answers }; this.persist();
+      }).finally(() => { this.renewal = null; });
+    }
+    await this.renewal;
+  }
+  private async ownerOperation<T>(call: () => Promise<T>): Promise<T> {
+    await this.renewCredential();
+    try { return await call(); }
+    catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 401 || !this.session?.resumeToken) throw error;
+      await this.renewCredential(true); return call();
     }
   }
   async flush(): Promise<void> {

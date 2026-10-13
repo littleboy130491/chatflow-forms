@@ -17,6 +17,16 @@ final class NotificationsModule implements Module {
 	}
 
 	public function routes(): void {
+		( new ContentTemplates() )->register();
+		register_rest_route(
+			'cff/v1',
+			'/admin/submissions/(?P<id>\d+)/resend',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'resend' ),
+				'permission_callback' => fn( \WP_REST_Request $request ) => $this->authorize( $request, 'cff_edit_submissions' ),
+			)
+		);
 		foreach ( array( 'test', 'preview' ) as $operation ) {
 			register_rest_route(
 				'cff/v1',
@@ -102,6 +112,36 @@ final class NotificationsModule implements Module {
 		}
 	}
 
+	public function resend( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
+		$submission = ( new Repository() )->get( (int) $request['id'] );
+		$request_id = $request->get_param( 'requestId' );
+		if ( ! is_string( $request_id ) || ! wp_is_uuid( $request_id ) ) {
+			return \ChatFlow\Submissions\Database::error( 'cff_resend_invalid', 'An idempotent request ID is required.', 422 );
+		}
+		if ( ! $submission || 'completed' !== $submission->status() ) {
+			return \ChatFlow\Submissions\Database::error( 'cff_resend_unavailable', 'Only completed submissions can resend notifications.', 422 );
+		}
+		$form = $this->forms->getVersion( $submission->formId(), $submission->formVersion() );
+		if ( ! $form ) {
+			return \ChatFlow\Submissions\Database::error( 'cff_form_missing', 'Submission form version unavailable.', 404 );
+		}
+		$outbox = new Outbox();
+		$ids    = array();
+		try {
+			\ChatFlow\Submissions\Database::transaction(
+				static function () use ( &$ids, $outbox, $submission, $form, $request_id ): void {
+					$payload = Payload::build( $submission, $form, 'submission.completed' );
+					foreach ( ( new Planner() )->plan( $submission, $form, 'submission.completed' ) as $plan ) {
+						$ids[] = $outbox->insert( $submission->id(), $form->version(), 'notification.resend', $plan['channel'], $plan['id'], $payload, $request_id );
+					}
+				}
+			);
+		} catch ( \Throwable $error ) {
+			return \ChatFlow\Submissions\Database::error( 'cff_resend_failed', 'Could not queue notifications.', 500 );
+		}
+		$outbox->schedule( $ids );
+		return new \WP_REST_Response( array( 'queued' => count( $ids ) ), 202 );
+	}
 	public function retry( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		$id         = (int) $request->get_param( 'id' );
 		$submission = ( new Repository() )->get( $id );

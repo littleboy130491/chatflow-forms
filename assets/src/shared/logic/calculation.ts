@@ -8,8 +8,8 @@ export function bounded(value: number): number {
 
 // A deliberately small arithmetic grammar, shared with PHP; never executable code.
 export function calculate(expression: string, answers: AnswerMap = {}, variables: AnswerMap = {}, syntaxOnly = false): number {
-  if (!expression.length || expression.length > 512) throw new Error('Invalid calculation.');
-  const tokens = expression.match(/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*/-]|[^\s]/g) ?? [];
+  if (!expression.length || expression.length > 512 || /[^\t\n\r\f\v -~]/.test(expression)) throw new Error('Invalid calculation.');
+  const tokens = expression.match(/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*/-]|[^\t\n\r\f\v ]/g) ?? [];
   if (tokens.length > 128) throw new Error('Invalid calculation.');
   let cursor = 0;
   const parse = (minimum = 0, depth = 0): number => {

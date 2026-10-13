@@ -33,6 +33,7 @@ final class TemplatesController {
 		return $this->respond(
 			array(
 				'items' => array(
+					...\ChatFlow\Templates\Starter::gallery(),
 					array(
 						'slug'        => 'imajiner-survey',
 						'title'       => __( 'Imajiner website survey', 'chatflow-forms' ),
@@ -55,6 +56,9 @@ final class TemplatesController {
 
 	/** @return array{title:string,schema:array<string,mixed>,settings:array<string,mixed>} */
 	public static function definition( string $slug ): array {
+		if ( in_array( $slug, array_column( \ChatFlow\Templates\Starter::gallery(), 'slug' ), true ) ) {
+			return \ChatFlow\Templates\Starter::definition( $slug );
+		}
 		if ( 'imajiner-survey' === $slug ) {
 			return Imajiner::definition(); }
 		if ( ! in_array( $slug, array( 'contact', 'feedback' ), true ) ) {

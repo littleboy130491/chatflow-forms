@@ -401,7 +401,7 @@ final class SessionService {
 			'progress'         => $replay['progress'],
 			'context'          => $context,
 			'variantId'        => $variant_id,
-			'schema'           => \ChatFlow\Forms\PublicProjection::build( $form )['form']['schema'],
+			'schema'           => ( new \ChatFlow\Admin\Translations() )->display( \ChatFlow\Forms\PublicProjection::build( $form ) )['form']['schema'],
 			'requestToken'     => $this->signer->issue(
 				'request',
 				array(

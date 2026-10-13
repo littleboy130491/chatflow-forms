@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { diagnoseSchema } from '../shared/logic/index';
-import { Button, Check, Field, Notice, Select } from './controls';
+import { Area, Button, Check, Field, Notice, Select } from './controls';
 import { AdminApi, can, errorMessage } from './api';
 import type { AdminConfig, FormDTO, FormSchema, Page, Step } from './api';
 import {
@@ -27,6 +27,8 @@ import { downloadForm } from './formIO';
 import { Templates } from './Templates';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
+import { Share } from './Share';
+import { Contrast } from './Contrast';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -99,6 +101,8 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
           <tr>
             <th>{__('Name', 'chatflow-forms')}</th>
             <th>{__('Status / version', 'chatflow-forms')}</th>
+            <th>{__('Submissions / completion rate', 'chatflow-forms')}</th>
+            <th>{__('Last submission', 'chatflow-forms')}</th>
             <th>{__('Shortcode', 'chatflow-forms')}</th>
             <th>{__('Actions', 'chatflow-forms')}</th>
           </tr>
@@ -114,6 +118,8 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
               <td>
                 {form.status} / {form.version}
               </td>
+              <td>{form.statistics?.completed ?? 0} · {form.statistics?.completionRate ?? 0}%</td>
+              <td>{form.statistics?.lastSubmissionAt ?? '—'}</td>
               <td>
                 <code>{`[chatflow id="${form.id}"]`}</code>
                 <Button
@@ -128,6 +134,7 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
               </td>
               <td>
                 <Button onClick={() => onOpen(form)}>{__('Edit', 'chatflow-forms')}</Button>
+                <Button onClick={() => onOpen(form)}>{__('Preview / edit draft', 'chatflow-forms')}</Button>
                 <Button onClick={() => downloadForm(form)}>{__('Export form JSON', 'chatflow-forms')}</Button>
                 <Button
                   disabled={busy}
@@ -228,7 +235,16 @@ function BuilderView({
     [preview, setPreview] = useState(false),
     [search, setSearch] = useState(''),
     [publishConfirm, setPublishConfirm] = useState(false);
-  const [baseline, setBaseline] = useState<FormSchema | null>(form.version ? structuredClone(schema) : null);
+  const [baseline, setBaseline] = useState<FormSchema | null>(null);
+  const [baselineError, setBaselineError] = useState('');
+  useEffect(() => {
+    if (!form.version || !form.id) return;
+    let active = true;
+    void api.request<FormDTO>(`admin/forms/${form.id}/published`).then(live => {
+      if (active) { setBaseline(live.schema); setBaselineError(''); }
+    }).catch(err => { if (active) { setBaseline(null); setBaselineError(errorMessage(err)); } });
+    return () => { active = false; };
+  }, [api, form.id, form.version]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -243,13 +259,21 @@ function BuilderView({
     setSelected(next.id);
   };
   const dirty = controller.dirty();
+  const [lockError, setLockError] = useState('');
+  useEffect(() => {
+    if (!form.id) return;
+    let active = true;
+    const acquire = () => { void api.request(`admin/forms/${form.id}/lock`, 'POST', {}).then(() => { if (active) setLockError(''); }).catch(err => { if (active) setLockError(errorMessage(err)); }); };
+    acquire(); const timer = setInterval(acquire, 60000);
+    return () => { active = false; clearInterval(timer); };
+  }, [api, form.id]);
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!controller.state.conflict && controller.dirty() && !controller.state.saving)
+      if (!lockError && !controller.state.conflict && controller.dirty() && !controller.state.saving)
         void controller.save().catch(() => undefined);
     }, 10000);
     return () => clearInterval(timer);
-  }, [controller]);
+  }, [controller, lockError]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => {
       if (controller.dirty()) {
@@ -291,7 +315,7 @@ function BuilderView({
           {__('Redo', 'chatflow-forms')}
         </Button>
         <Button
-          disabled={state.saving || Boolean(state.conflict)}
+          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError)}
           onClick={() => {
             void controller.save().catch(() => undefined);
           }}
@@ -301,7 +325,7 @@ function BuilderView({
         <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
         <Button
           variant="primary"
-          disabled={state.saving || Boolean(state.conflict)}
+          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
           onClick={() => setPublishConfirm(true)}
         >
           {__('Publish', 'chatflow-forms')}
@@ -312,6 +336,8 @@ function BuilderView({
           {state.error}
         </Notice>
       )}
+      {lockError && <Notice status="warning" isDismissible={false}>{lockError}</Notice>}
+      {baselineError && <Notice status="error" isDismissible={false}>{baselineError}</Notice>}
       {state.conflict && (
         <Notice status="warning" isDismissible={false}>
           <p>
@@ -361,7 +387,7 @@ function BuilderView({
           {form.version > 0 && (
             <p>
               {__(
-                'Diff uses the draft loaded in this editor, not the historical published snapshot.',
+                'Diff compares this draft to the current published snapshot.',
                 'chatflow-forms',
               )}
             </p>
@@ -369,7 +395,7 @@ function BuilderView({
           <Button onClick={() => setPublishConfirm(false)}>{__('Cancel', 'chatflow-forms')}</Button>
           <Button
             variant="primary"
-            disabled={state.saving}
+            disabled={state.saving || Boolean(lockError) || (form.version > 0 && !baseline)}
             onClick={async () => {
               try {
                 const published = await controller.publish();
@@ -615,6 +641,8 @@ function BuilderView({
       {tab === 'design' && (
         <section className="cff-card">
           <h2>{__('Design basics', 'chatflow-forms')}</h2>
+          <Contrast appearance={form.settings.appearance} />
+          <Area label={__('Scoped custom CSS (inside the Shadow DOM)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
           <Select label={__('Theme preset', 'chatflow-forms')} value="" choices={[
             {value:'',label:__('Choose a preset', 'chatflow-forms')},
             {value:'neutral',label:__('Neutral light', 'chatflow-forms')},
@@ -740,7 +768,7 @@ function BuilderView({
           ) : (
             <p>{__('Save this draft first to get its form ID.', 'chatflow-forms')}</p>
           )}
-          <p>{__('Launcher, popup and QR tools are optional later features.', 'chatflow-forms')}</p>
+          {form.id > 0 && <Share form={form} config={api.config} />}
         </section>
       )}
       {preview && <Preview form={form} config={api.config} onClose={() => setPreview(false)} />}

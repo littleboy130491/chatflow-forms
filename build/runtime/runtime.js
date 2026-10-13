@@ -9959,8 +9959,8 @@ function vi(e) {
 	return e;
 }
 function yi(e, t = {}, n = {}, r = !1) {
-	if (!e.length || e.length > 512) throw Error("Invalid calculation.");
-	let i = e.match(/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*/-]|[^\s]/g) ?? [];
+	if (!e.length || e.length > 512 || /[^\t\n\r\f\v -~]/.test(e)) throw Error("Invalid calculation.");
+	let i = e.match(/(?:answer|variable)\.[a-z][a-z0-9_]{0,63}|[0-9]+(?:\.[0-9]+)?|[()+*/-]|[^\t\n\r\f\v ]/g) ?? [];
 	if (i.length > 128) throw Error("Invalid calculation.");
 	let a = 0, o = (e = 0, s = 0) => {
 		if (s > 16) throw Error("Invalid calculation.");
@@ -10052,28 +10052,28 @@ function Si(e) {
 	return (e.experiments ?? []).forEach((t, n) => {
 		c.has(t.id) && o(`/experiments/${n}`, "Experiment IDs must be unique."), c.add(t.id);
 		let r = /* @__PURE__ */ new Set();
-		t.variants.forEach((t, i) => {
-			let a = `/experiments/${n}/variants/${i}`;
-			r.has(t.id) && o(a, "Variant IDs must be unique."), r.add(t.id);
-			let s = /* @__PURE__ */ new Set();
-			for (let n of t.copy ?? []) (!e.steps.some((e) => e.id === n.stepId) || s.has(n.stepId)) && o(a, "Copy references must be unique existing steps."), s.add(n.stepId);
-			if (t.stepOrder) {
-				let n = /* @__PURE__ */ new Set([
+		t.variants.forEach((i, a) => {
+			let s = `/experiments/${n}/variants/${a}`;
+			`${t.id}:${i.id}`.length > 64 && o(s, "Combined experiment and variant identifier must fit 64 ASCII characters."), r.has(i.id) && o(s, "Variant IDs must be unique."), r.add(i.id);
+			let c = /* @__PURE__ */ new Set();
+			for (let t of i.copy ?? []) (!e.steps.some((e) => e.id === t.stepId) || c.has(t.stepId)) && o(s, "Copy references must be unique existing steps."), c.add(t.stepId);
+			if (i.stepOrder) {
+				let t = /* @__PURE__ */ new Set([
 					"hidden",
 					"summary",
 					"calculated"
-				]), r = new Set(e.steps.flatMap((e) => [...e.logic ?? [], ...(e.options ?? []).flatMap((e) => e.logic ?? [])].filter((e) => e.then.action === "jump").map((e) => "to" in e.then ? e.then.to : "")));
-				e.steps.forEach((i, s) => {
-					if (i.logic?.length || i.options?.some((e) => e.logic?.length) || i.hiddenByDefault || n.has(i.type) || r.has(i.id)) {
-						t.stepOrder[s] !== i.id && o(a, "Order variants must keep branching, hidden, summary and calculated steps fixed.");
-						let n = new Set(e.steps.slice(0, s).map((e) => e.id));
-						t.stepOrder.slice(0, s).some((e) => !n.has(e)) && o(a, "Order variants cannot cross a dependency boundary.");
+				]), n = new Set(e.steps.flatMap((e) => [...e.logic ?? [], ...(e.options ?? []).flatMap((e) => e.logic ?? [])].filter((e) => e.then.action === "jump").map((e) => "to" in e.then ? e.then.to : "")));
+				e.steps.forEach((r, a) => {
+					if (r.logic?.length || r.options?.some((e) => e.logic?.length) || r.hiddenByDefault || t.has(r.type) || n.has(r.id)) {
+						i.stepOrder[a] !== r.id && o(s, "Order variants must keep branching, hidden, summary and calculated steps fixed.");
+						let t = new Set(e.steps.slice(0, a).map((e) => e.id));
+						i.stepOrder.slice(0, a).some((e) => !t.has(e)) && o(s, "Order variants cannot cross a dependency boundary.");
 					}
 				});
 				try {
-					xi(e, t);
+					xi(e, i);
 				} catch {
-					o(a, "Step order must be an exact permutation of all steps.");
+					o(s, "Step order must be an exact permutation of all steps.");
 				}
 			}
 		});
@@ -10953,6 +10953,15 @@ function qi(e) {
 //#endregion
 //#region assets/src/runtime/i18n.ts
 var Ji = {
+	magicEmailConfirm: "Send a one-time resume link to the email already provided in this form?",
+	magicEmailAccepted: "If an eligible email was provided, a resume link will be sent.",
+	magicEmailError: "Unable to request a resume link right now.",
+	magicEmail: "Email me a resume link",
+	magicShareConfirm: "Create a single-use link to share yourself? Anyone with the link can resume your form.",
+	magicShareError: "Unable to create a link right now.",
+	magicCopied: "Link copied. Paste it into WhatsApp yourself.",
+	magicCancelled: "Share cancelled or unavailable. Request a new link to retry.",
+	magicShare: "Share resume link (choose WhatsApp)",
 	openChat: "Open chat",
 	address_street: "Street address",
 	address_city: "City",
@@ -11014,6 +11023,15 @@ var Ji = {
 	imageUnavailable: "Option image",
 	botAvatar: "Assistant"
 }, Yi = {
+	magicEmailConfirm: "Kirim tautan sekali pakai untuk melanjutkan ke email yang sudah Anda isi?",
+	magicEmailAccepted: "Jika email yang memenuhi syarat sudah diisi, tautan untuk melanjutkan akan dikirim.",
+	magicEmailError: "Belum dapat meminta tautan untuk melanjutkan.",
+	magicEmail: "Kirim tautan untuk melanjutkan via email",
+	magicShareConfirm: "Buat tautan sekali pakai untuk Anda bagikan? Siapa pun yang memiliki tautan dapat melanjutkan formulir Anda.",
+	magicShareError: "Belum dapat membuat tautan.",
+	magicCopied: "Tautan disalin. Tempelkan ke WhatsApp sendiri.",
+	magicCancelled: "Berbagi dibatalkan atau tidak tersedia. Minta tautan baru untuk mencoba lagi.",
+	magicShare: "Bagikan tautan untuk melanjutkan (pilih WhatsApp)",
 	openChat: "Buka percakapan",
 	address_street: "Alamat jalan",
 	address_city: "Kota",
@@ -11415,23 +11433,23 @@ function Qi({ controller: e, onClose: t }) {
 							/* @__PURE__ */ Y("button", {
 								disabled: h.busy || h.offline || h.conflict,
 								onClick: () => {
-									window.confirm("Send a one-time resume link to the email already provided in this form?") && e.magicLink("email").then(() => u("If an eligible email was provided, a resume link will be sent.")).catch(() => u("Unable to request a resume link right now."));
+									window.confirm(_("magicEmailConfirm")) && e.magicLink("email").then(() => u(_("magicEmailAccepted"))).catch(() => u(_("magicEmailError")));
 								},
-								children: "Email me a resume link"
+								children: _("magicEmail")
 							}),
 							g.session.magicLinks.whatsapp && /* @__PURE__ */ Y("button", {
 								disabled: h.busy || h.offline || h.conflict,
 								onClick: () => {
-									window.confirm("Create a single-use link to share yourself? Anyone with the link can resume your form.") && e.magicLink("whatsapp").then(async (e) => {
-										if (!e.link) u("Unable to create a link right now.");
+									window.confirm(_("magicShareConfirm")) && e.magicLink("whatsapp").then(async (e) => {
+										if (!e.link) u(_("magicShareError"));
 										else try {
-											navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), u("Link copied. Paste it into WhatsApp yourself."));
+											navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), u(_("magicCopied")));
 										} catch {
-											u("Share cancelled or unavailable. Request a new link to retry.");
+											u(_("magicCancelled"));
 										}
-									}).catch(() => u("Unable to create a link right now."));
+									}).catch(() => u(_("magicShareError")));
 								},
-								children: "Share resume link (choose WhatsApp)"
+								children: _("magicShare")
 							}),
 							/* @__PURE__ */ Y("small", {
 								role: "status",
@@ -11445,9 +11463,34 @@ function Qi({ controller: e, onClose: t }) {
 	});
 }
 //#endregion
+//#region assets/src/shared/prefill.ts
+function $i(e, t) {
+	let n = new URLSearchParams(e), r = {};
+	for (let e of t.steps) {
+		if ([
+			"hidden",
+			"calculated",
+			"file_upload",
+			"consent",
+			"statement",
+			"summary",
+			"media"
+		].includes(e.type)) continue;
+		let t = n.get(`cff_prefill[${e.key}]`);
+		t === null || t.length > 2e3 || (e.type === "yes_no" ? (t === "true" || t === "false") && (r[e.key] = t === "true") : [
+			"number",
+			"rating",
+			"scale",
+			"nps",
+			"slider"
+		].includes(e.type) ? t.trim() && Number.isFinite(Number(t)) && (r[e.key] = Number(t)) : e.type === "multi_choice" ? r[e.key] = t.split(",").map((e) => e.trim()).filter((t) => e.options?.some((e) => e.value === t)) : e.type !== "address" && (r[e.key] = t));
+	}
+	return r;
+}
+//#endregion
 //#region assets/src/runtime/persistence.ts
-var $i = class {
-	constructor(e = ea(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
+var ea = class {
+	constructor(e = ta(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
 		M(this, "store", void 0), M(this, "doc", void 0), M(this, "secure", void 0), M(this, "now", void 0), this.store = e, this.doc = t, this.secure = n, this.now = r;
 	}
 	key(e, t) {
@@ -11461,7 +11504,7 @@ var $i = class {
 				let r = this.store.key(n);
 				if (!r?.startsWith(`cff:session:${e}:`)) continue;
 				let i = JSON.parse(this.store.getItem(r) ?? "null");
-				!ta(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
+				!na(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
 			}
 			return t;
 		} catch {
@@ -11501,31 +11544,31 @@ var $i = class {
 		} catch {}
 	}
 };
-function ea() {
+function ta() {
 	try {
 		return globalThis.localStorage;
 	} catch {
 		return;
 	}
 }
-function ta(e) {
+function na(e) {
 	if (!e || typeof e != "object") return !1;
 	let t = e;
 	return Number.isSafeInteger(t.formId) && Number.isSafeInteger(t.version) && typeof t.sessionId == "string" && typeof t.resumeToken == "string" && /^r1\.[A-Za-z0-9_-]+\.\d+\.[A-Za-z0-9_-]+$/.test(t.resumeToken) && typeof t.expiresAt == "string" && Number.isFinite(Date.parse(t.expiresAt)) && Number.isSafeInteger(t.revision) && !!t.answers && typeof t.answers == "object" && !Array.isArray(t.answers) && Array.isArray(t.acknowledged) && t.acknowledged.every((e) => typeof e == "string") && typeof t.dirty == "boolean" && !!t.stepTimings && typeof t.stepTimings == "object";
 }
 //#endregion
 //#region assets/src/tracking/index.ts
-var na = "cff_ft";
-function ra(e) {
+var ra = "cff_ft";
+function ia(e) {
 	return !!e.enabled && !(e.consentRequired && !e.consentGranted) && (e.respectDnt === !1 || globalThis.navigator?.doNotTrack !== "1");
 }
-var ia = [
+var aa = [
 	"source",
 	"medium",
 	"campaign",
 	"term",
 	"content"
-], aa = [
+], oa = [
 	"gclid",
 	"fbclid",
 	"msclkid",
@@ -11539,14 +11582,14 @@ function Z(e) {
 		return "";
 	}
 }
-function oa(e = {}, t = ea(), n = {
+function sa(e = {}, t = ta(), n = {
 	href: globalThis.location?.href ?? "",
 	referrer: globalThis.document?.referrer ?? ""
 }, r = Date.now()) {
-	if (!ra(e)) return la(t), {};
+	if (!ia(e)) return ua(t), {};
 	try {
 		let e = JSON.parse(t?.getItem("cff_ft") ?? "null");
-		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return sa(e);
+		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return ca(e);
 	} catch {}
 	let i;
 	try {
@@ -11556,11 +11599,11 @@ function oa(e = {}, t = ea(), n = {
 	}
 	if (!["http:", "https:"].includes(i.protocol)) return {};
 	let a = {}, o = {};
-	for (let e of ia) {
+	for (let e of aa) {
 		let t = i.searchParams.get(`utm_${e}`);
 		t && (a[e] = t.slice(0, 255));
 	}
-	for (let e of aa) {
+	for (let e of oa) {
 		let t = i.searchParams.get(e);
 		t && (o[e] = t.slice(0, 255));
 	}
@@ -11572,14 +11615,14 @@ function oa(e = {}, t = ea(), n = {
 		expiresAt: r + Math.min(90, Math.max(1, Number.isFinite(e.days) ? e.days : 30)) * 864e5
 	};
 	try {
-		t?.setItem(na, JSON.stringify(s));
+		t?.setItem(ra, JSON.stringify(s));
 	} catch {}
-	return sa(s);
+	return ca(s);
 }
-function sa(e) {
+function ca(e) {
 	let t = {}, n = {};
-	for (let n of ia) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
-	for (let t of aa) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
+	for (let n of aa) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
+	for (let t of oa) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
 	return {
 		landingPage: Z(e.landingPage ?? ""),
 		landingReferrer: Z(e.landingReferrer ?? ""),
@@ -11587,39 +11630,39 @@ function sa(e) {
 		clickIds: n
 	};
 }
-function ca(e = {}) {
-	return ra(e) ? {
-		...oa(e),
+function la(e = {}) {
+	return ia(e) ? {
+		...sa(e),
 		pageTitle: globalThis.document?.title?.slice(0, 500) ?? "",
 		pageUrl: Z(globalThis.location?.href ?? ""),
 		referrer: Z(globalThis.document?.referrer ?? ""),
 		locale: globalThis.navigator?.language?.slice(0, 35) ?? "",
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		screen: globalThis.screen ? `${screen.width}x${screen.height}` : ""
-	} : (la(), {});
+	} : (ua(), {});
 }
-function la(e = ea()) {
+function ua(e = ta()) {
 	try {
-		e?.removeItem(na);
+		e?.removeItem(ra);
 	} catch {}
 }
-typeof window < "u" && window.cffTracking?.enabled && oa(window.cffTracking);
+typeof window < "u" && window.cffTracking?.enabled && sa(window.cffTracking);
 //#endregion
 //#region assets/src/runtime/engagement.ts
-function ua(e, t, n) {
+function da(e, t, n) {
 	let r = globalThis.navigator;
 	return e.enabled && !n && !r?.globalPrivacyControl && !(e.respectDnt && r?.doNotTrack === "1") && (!e.consentRequired || t);
 }
-var da = class {
+var fa = class {
 	constructor(e, t, n, r) {
 		M(this, "api", void 0), M(this, "config", void 0), M(this, "consent", void 0), M(this, "optOut", void 0), M(this, "events", []), M(this, "sent", 0), M(this, "busy", !1), this.api = e, this.config = t, this.consent = n, this.optOut = r;
 	}
 	add(e) {
-		ua(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
+		da(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
 	}
 	async flush(e) {
 		if (!this.busy) {
-			if (!ua(this.config, this.consent(), this.optOut())) this.events = [];
+			if (!da(this.config, this.consent(), this.optOut())) this.events = [];
 			else {
 				this.busy = !0;
 				try {
@@ -11643,9 +11686,9 @@ var da = class {
 	"statement",
 	"summary",
 	"media"
-].includes(e.type), fa = class {
+].includes(e.type), pa = class {
 	async loadEngagement() {
-		this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version && (this.engagement = null, this.analytics = null, this.state.form.features.engagement && (this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version), this.analytics = new da(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
+		this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version && (this.engagement = null, this.analytics = null, this.state.form.features.engagement && (this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version), this.analytics = new fa(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
 			try {
 				return this.options.analyticsOptOut === !0 || localStorage.getItem("cff_analytics_optout") === "1";
 			} catch {
@@ -11653,7 +11696,7 @@ var da = class {
 			}
 		})), this.engagementVersion = this.state.form.form.version);
 	}
-	constructor(e, t, n = new $i(), r = () => {}) {
+	constructor(e, t, n = new ea(), r = () => {}) {
 		M(this, "options", void 0), M(this, "api", void 0), M(this, "storage", void 0), M(this, "emit", void 0), M(this, "state", {
 			phase: "loading",
 			form: null,
@@ -11670,7 +11713,7 @@ var da = class {
 			newerVersion: !1,
 			storageUnavailable: !1,
 			completion: null
-		}), M(this, "listeners", /* @__PURE__ */ new Set()), M(this, "session", null), M(this, "context", {
+		}), M(this, "listeners", /* @__PURE__ */ new Set()), M(this, "renewal", null), M(this, "session", null), M(this, "context", {
 			hidden: {},
 			url: {},
 			meta: {},
@@ -11704,7 +11747,7 @@ var da = class {
 	}
 	async upload(e, t) {
 		if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new N("cff_upload_unavailable", 0);
-		return this.api.upload(this.session, e.id, t);
+		return this.ownerOperation(() => this.api.upload(this.session, e.id, t));
 	}
 	async initialize() {
 		let e = (this.options.preview ? null : globalThis.location?.hash.match(/^#cff-magic=([A-Za-z0-9_-]{43})$/))?.[1];
@@ -11716,7 +11759,10 @@ var da = class {
 				this.state.phase = "ready", this.compute();
 				return;
 			}
-			await this.loadEngagement();
+			this.prefill = {
+				...$i(globalThis.location?.search ?? "", this.state.form.form.schema),
+				...this.prefill
+			}, await this.loadEngagement();
 			let n = this.state.form.form;
 			if (e) {
 				await this.adopt(await this.api.magicResume(n.id, e)), this.state.acknowledged = this.displayBeforeCurrent(), this.compute(), this.state.phase = "ready";
@@ -11772,7 +11818,7 @@ var da = class {
 						this.pendingStart = {
 							token: t.startToken,
 							key: _e(),
-							meta: ca(this.options.tracking ?? globalThis.window?.cffTracking),
+							meta: la(this.options.tracking ?? globalThis.window?.cffTracking),
 							prefill: {},
 							version: e.version
 						};
@@ -11863,6 +11909,10 @@ var da = class {
 			...e
 		}, this.notify());
 	}
+	jumpToStep(e) {
+		let t = this.state.form?.form.schema.steps.find((t) => t.id === e);
+		return !this.options.preview || !t || t.type === "hidden" || t.type === "calculated" ? !1 : (this.editing = e, this.state.activeId = e, this.state.phase = "ready", this.state.error = null, this.state.fieldError = null, this.notify(), !0);
+	}
 	inputValue(e) {
 		return this.state.answers[e.key] ?? this.prefill[e.key] ?? e.defaultValue;
 	}
@@ -11872,7 +11922,7 @@ var da = class {
 	}
 	async magicLink(e) {
 		if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new N("cff_magic_unavailable", 0);
-		return this.state.dirty && await this.flush(), this.api.magicLink(this.session, e);
+		return this.state.dirty && await this.flush(), this.ownerOperation(() => this.api.magicLink(this.session, e));
 	}
 	persist() {
 		!this.session && this.saved && this.state.offline && !this.options.preview ? (this.saved = {
@@ -11898,24 +11948,41 @@ var da = class {
 	}
 	async mutate(e) {
 		if (!this.session) throw new N("cff_session_expired", 401);
-		if (!(e.method === "POST" && this.submittedOnce) && Date.parse(this.session.requestExpiresAt) <= Date.now() + 5e3 && this.session.resumeToken) {
-			let e = await this.api.resume(this.session.formId, this.session.resumeToken);
-			if (this.disposed) throw new N("cff_cancelled", 0);
-			this.session = {
-				...e,
-				answers: this.session.answers
-			};
-		}
+		e.method === "POST" && this.submittedOnce || await this.renewCredential();
 		try {
 			return e.method === "POST" && (this.submittedOnce = !0), await this.api.mutate(this.session, e.method, e.body, e.key);
 		} catch (t) {
 			if (!(t instanceof N) || t.status !== 401 || !this.session.resumeToken) throw t;
-			let n = await this.api.resume(this.session.formId, this.session.resumeToken);
-			if (this.disposed) throw new N("cff_cancelled", 0);
-			return this.session = {
-				...n,
-				answers: this.session.answers
-			}, this.api.mutate(this.session, e.method, e.body, e.key);
+			return await this.renewCredential(!0), this.api.mutate(this.session, e.method, e.body, e.key);
+		}
+	}
+	async renewCredential(e = !1) {
+		if (!this.session || !this.api) throw new N("cff_session_expired", 401);
+		if (!(!e && Date.parse(this.session.requestExpiresAt) > Date.now() + 5e3)) {
+			if (!this.session.resumeToken) throw new N("cff_session_expired", 401);
+			if (!this.renewal) {
+				let e = this.session;
+				this.renewal = this.api.resume(e.formId, e.resumeToken).then((t) => {
+					if (this.disposed) throw new N("cff_cancelled", 0);
+					if (t.status !== "active") throw new N("cff_session_expired", 401);
+					this.session = {
+						...t,
+						answers: e.answers
+					}, this.persist();
+				}).finally(() => {
+					this.renewal = null;
+				});
+			}
+			await this.renewal;
+		}
+	}
+	async ownerOperation(e) {
+		await this.renewCredential();
+		try {
+			return await e();
+		} catch (t) {
+			if (!(t instanceof N) || t.status !== 401 || !this.session?.resumeToken) throw t;
+			return await this.renewCredential(!0), e();
 		}
 	}
 	async flush() {
@@ -12061,7 +12128,7 @@ var da = class {
 		}
 		this.session || (this.state.phase = "error"), this.pending?.method === "POST" && (t.status === 0 || t.status >= 500 || t.code.includes("pending")) && (this.state.error = "submissionPending"), this.state.error !== "expired" && this.persist(), this.notify();
 	}
-}, pa = /* @__PURE__ */ new Set([
+}, ma = /* @__PURE__ */ new Set([
 	"color",
 	"background-color",
 	"border-color",
@@ -12087,17 +12154,17 @@ var da = class {
 	"width",
 	"height",
 	"opacity"
-]), ma = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
-function ha(e) {
-	if (!e || ma.test(e) || /var\s*\(/i.test(e)) return;
+]), ha = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
+function ga(e) {
+	if (!e || ha.test(e) || /var\s*\(/i.test(e)) return;
 	let t = document.createElement("span").style;
 	return t.color = e, t.color || void 0;
 }
-function ga(e) {
+function _a(e) {
 	return e && /^[\w\s,"'-]{1,255}$/.test(e) ? e : void 0;
 }
-function _a(e) {
-	if (!e || e.length > 2e4 || ma.test(e)) return "";
+function va(e) {
+	if (!e || e.length > 2e4 || ha.test(e)) return "";
 	let t = e.replace(/\/\*[\s\S]*?\*\//g, ""), n = [...t.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
 	return t.replace(/([^{}]+)\{([^{}]*)\}/g, "").trim() ? "" : n.map(([, e, t]) => {
 		if (!e || !t || !/^[\w\s.#,:>-]+$/.test(e) || /:(?!(?:hover|focus-visible|focus|disabled|active|checked)(?:\b|$))/i.test(e)) return "";
@@ -12105,7 +12172,7 @@ function _a(e) {
 			let t = e.indexOf(":");
 			if (t < 1) return [];
 			let n = e.slice(0, t).trim().toLowerCase(), r = e.slice(t + 1).trim();
-			if (!pa.has(n) || !r || ma.test(r) || /var\s*\(/i.test(r)) return [];
+			if (!ma.has(n) || !r || ha.test(r) || /var\s*\(/i.test(r)) return [];
 			let i = document.createElement("span").style;
 			return i.setProperty(n, r), i.getPropertyValue(n) ? [`${n}:${i.getPropertyValue(n)}`] : [];
 		});
@@ -12114,7 +12181,7 @@ function _a(e) {
 }
 //#endregion
 //#region assets/src/runtime/overlay.ts
-function va(e, t, n, r, i, a, o) {
+function ya(e, t, n, r, i, a, o) {
 	let s = Xi(a), c = document.createElement("dialog");
 	c.className = `overlay ${n}`, c.setAttribute("aria-label", t.dataset.title ?? "ChatFlow");
 	let l = document.createElement("button");
@@ -12163,9 +12230,9 @@ function va(e, t, n, r, i, a, o) {
 }
 //#endregion
 //#region assets/src/runtime/captcha.ts
-var ya = /* @__PURE__ */ new Map();
-function ba(e) {
-	let t = ya.get(e);
+var ba = /* @__PURE__ */ new Map();
+function xa(e) {
+	let t = ba.get(e);
 	if (t) return t;
 	let n = new Promise((t, n) => {
 		let r = document.createElement("script"), i = setTimeout(() => {
@@ -12177,12 +12244,12 @@ function ba(e) {
 			clearTimeout(i), r.remove(), n(/* @__PURE__ */ Error("captchaUnavailable"));
 		}, document.head.append(r);
 	});
-	return ya.set(e, n), n.catch(() => ya.delete(e)), n;
+	return ba.set(e, n), n.catch(() => ba.delete(e)), n;
 }
-async function xa(e, t) {
+async function Sa(e, t) {
 	if (e.provider === "none") return "";
 	if (!e.siteKey) throw Error("captchaUnavailable");
-	if (e.provider === "recaptcha") return await ba(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`), new Promise((t, n) => {
+	if (e.provider === "recaptcha") return await xa(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`), new Promise((t, n) => {
 		let r = setTimeout(() => n(/* @__PURE__ */ Error("captchaUnavailable")), 12e4);
 		window.grecaptcha?.ready(() => {
 			window.grecaptcha.execute(e.siteKey, { action: "cff_submit" }).then((e) => {
@@ -12193,7 +12260,7 @@ async function xa(e, t) {
 		});
 	});
 	let n = e.provider;
-	await ba(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
+	await xa(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
 	let r = n === "turnstile" ? window.turnstile : window.hcaptcha;
 	if (!r) throw Error("captchaUnavailable");
 	return new Promise((n, i) => {
@@ -12216,7 +12283,7 @@ async function xa(e, t) {
 //#endregion
 //#region assets/src/runtime/index.tsx
 var $ = /* @__PURE__ */ new Map();
-function Sa(e) {
+function Ca(e) {
 	return {
 		phase: e.state.phase,
 		visited: [...e.state.path?.visited ?? []],
@@ -12226,7 +12293,7 @@ function Sa(e) {
 		errors: [...e.state.path?.errors ?? []]
 	};
 }
-function Ca(e, t = {}) {
+function wa(e, t = {}) {
 	$.get(e)?.handle.unmount();
 	let n = t.form?.form.id ?? t.formId ?? Number(e.dataset.formId);
 	if (!Number.isSafeInteger(n) || n <= 0) throw TypeError("Invalid form ID");
@@ -12255,14 +12322,14 @@ function Ca(e, t = {}) {
 		locale: t.locale ?? e.dataset.locale ?? document.documentElement.lang ?? "en",
 		mode: c
 	}, u = document.createElement("div");
-	u.className = "captcha", l.captcha ?? (l.captcha = (e) => xa(e, u));
-	let d = new fa(l, t.preview ? null : new ve(r), void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
+	u.className = "captcha", l.captcha ?? (l.captcha = (e) => Sa(e, u));
+	let d = new pa(l, t.preview ? null : new ve(r), void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
 		detail: n,
 		bubbles: !0,
 		composed: !0
 	}))), f = !1, p = () => {
 		f || (f = !0, v(), d.initialize().then(h));
-	}, m = !t.preview && (c === "launcher" || c === "popup") ? va(i, e, c, t.launcher ?? {}, () => {
+	}, m = !t.preview && (c === "launcher" || c === "popup") ? ya(i, e, c, t.launcher ?? {}, () => {
 		p();
 	}, l.locale ?? "en", () => d.close()) : null;
 	m && (s.remove(), m.content.append(s)), s.after(u);
@@ -12270,17 +12337,17 @@ function Ca(e, t = {}) {
 		let e = d.state.form?.form.appearance;
 		if (!e) return;
 		let t = {
-			"--cff-primary": ha(e.primary),
-			"--cff-bubble-bot-bg": ha(e.botBubbleBackground),
-			"--cff-user-bg": ha(e.userBubbleBackground),
-			"--cff-text": ha(e.textColor),
-			"--cff-font": e.inheritFont ? "inherit" : ga(e.font),
+			"--cff-primary": ga(e.primary),
+			"--cff-bubble-bot-bg": ga(e.botBubbleBackground),
+			"--cff-user-bg": ga(e.userBubbleBackground),
+			"--cff-text": ga(e.textColor),
+			"--cff-font": e.inheritFont ? "inherit" : _a(e.font),
 			"--cff-radius": Number.isFinite(e.radius) ? `${Math.max(0, Math.min(128, e.radius))}px` : void 0,
 			"--cff-width": Number.isFinite(e.width) ? `${Math.max(280, Math.min(2e3, e.width))}px` : void 0
 		};
 		for (let [e, n] of Object.entries(t)) n ? s.style.setProperty(e, n) : s.style.removeProperty(e);
 		let n = e.theme === "dark" || e.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches;
-		s.querySelector(".chat")?.classList.toggle("dark", !!n), o.textContent = _a(e.customCss);
+		s.querySelector(".chat")?.classList.toggle("dark", !!n), o.textContent = va(e.customCss);
 	}, g = d.subscribe(h), _ = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
 	_?.addEventListener("change", h);
 	let v = () => d.setOffline(navigator.onLine === !1), y = (e) => {
@@ -12303,7 +12370,8 @@ function Ca(e, t = {}) {
 			}), e.shadowRoot?.querySelector("input,button,textarea,select")?.focus({ preventScroll: !0 }));
 		},
 		prefill: (e) => d.prefillAnswers(e),
-		getState: () => Sa(d)
+		getState: () => Ca(d),
+		jumpToStep: (e) => d.jumpToStep(e)
 	};
 	return $.set(e, {
 		handle: b,
@@ -12311,7 +12379,7 @@ function Ca(e, t = {}) {
 		controller: d
 	}), m || p(), b;
 }
-function wa(e = document) {
+function Ta(e = document) {
 	for (let t of e.querySelectorAll("cff-chat[data-form-id]")) {
 		if ($.has(t)) continue;
 		let e = {};
@@ -12323,7 +12391,7 @@ function wa(e = document) {
 			e.form = JSON.parse(n.textContent ?? "");
 		} catch {}
 		try {
-			Ca(t, e);
+			wa(t, e);
 		} catch {
 			t.textContent = "ChatFlow: configuration error";
 		}
@@ -12337,7 +12405,7 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { controller: t } of $.values()) t.options.analyticsOptOut = e;
 	},
 	open: (e) => {
-		wa();
+		Ta();
 		let t = [...$.keys()].find((t) => $.get(t)?.id === Number(e));
 		return t ? ($.get(t).handle.open(), !0) : !1;
 	},
@@ -12345,6 +12413,6 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { handle: n, id: r } of $.values()) (t === void 0 || Number(t) === r) && n.prefill(e);
 	},
 	registerField: Fi
-}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => wa(), { once: !0 }) : wa());
+}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ta(), { once: !0 }) : Ta());
 //#endregion
-export { wa as autoMount, Ca as mountRuntime, Fi as registerField };
+export { Ta as autoMount, wa as mountRuntime, Fi as registerField };
