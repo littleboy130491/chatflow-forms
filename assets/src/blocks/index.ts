@@ -13,12 +13,13 @@ registerBlockType(blockName, {
   attributes: {
     formId: { type: 'integer', default: 0 },
     mode: { type: 'string', default: 'inline' },
+    position: { type: 'string', default: 'right' },
     height: { type: 'integer', default: 600 },
     theme: { type: 'string', default: 'auto' },
   },
   edit: (props) =>
     createElement(BlockEditor, {
-      attributes: props.attributes as { formId: number; mode: string; height: number; theme: string },
+      attributes: props.attributes as { formId: number; mode: string; position: string; height: number; theme: string },
       setAttributes: props.setAttributes,
     }),
   save: () => null,
