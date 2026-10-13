@@ -1,0 +1,19 @@
+.cff-admin { color: #1d2327; }
+.cff-toolbar, .cff-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
+.cff-toolbar { position: sticky; top: 32px; background: #f0f0f1; padding: 12px; border-bottom: 1px solid #c3c4c7; z-index: 5; }
+.cff-toolbar .components-base-control { margin: 0; }
+.cff-builder-grid { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(320px, 3fr) minmax(300px, 2fr); gap: 18px; }
+.cff-palette, .cff-inspector, .cff-flow { min-width: 0; padding: 14px; background: white; border: 1px solid #dcdcde; }
+.cff-card, .cff-rule, .cff-option { background: #fff; border: 1px solid #dcdcde; padding: 16px; margin: 12px 0; border-radius: 4px; }
+.cff-card.is-selected { outline: 2px solid #2271b1; }
+.cff-card small { display: block; margin: 8px 0; }
+.cff-drag { touch-action: none; padding: 6px 10px; margin: 4px; background: #f6f7f7; border: 1px solid #8c8f94; cursor: grab; }
+.cff-drag:focus-visible, .cff-admin button:focus-visible { outline: 2px solid #2271b1; outline-offset: 2px; }
+.cff-settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.cff-settings-grid textarea { width: 100%; }
+.cff-preview { position: fixed; right: 0; top: 32px; bottom: 0; width: min(560px, 95vw); overflow: auto; background: white; padding: 18px; z-index: 20; box-shadow: -8px 0 24px #0002; }
+.cff-admin pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+[dir=rtl] .cff-preview { left: 0; right: auto; }
+@media (max-width: 1100px) { .cff-builder-grid { grid-template-columns: 170px 1fr; } .cff-inspector { grid-column: 1 / -1; } }
+@media (max-width: 700px) { .cff-builder-grid { display: block; } .cff-toolbar { position: static; } }
+@media (prefers-reduced-motion: reduce) { .cff-admin * { transition: none !important; animation: none !important; } }
