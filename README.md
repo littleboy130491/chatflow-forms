@@ -21,7 +21,7 @@ There is no licence system, telemetry, native CRM connector, payment or AI chat.
    public/document root** and set `CFF_PRIVATE_DIR` in server configuration:
    `define( 'CFF_PRIVATE_DIR', '/srv/chatflow-private' );`
    The plugin does not create or expose an insecure uploads fallback.
-3. In **ChatFlow → Forms**, create a blank form or use the Imajiner survey
+3. In **ChatFlow → Forms**, create a blank form, import a ChatFlow form JSON export as a new unpublished draft, or use the Imajiner survey
    template. Edit steps, options, rules, endings, appearance and notification
    settings. Draft autosaves use revision conflict checks; **Publish** makes a
    new immutable visitor version. Draft preview does not save visitor answers.

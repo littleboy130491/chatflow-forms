@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { FormDTO, FormSchema, FormSettings } from './api';
+import type { AdminApi, FormDTO, FormSchema, FormSettings } from './api';
 export interface FormFile {
   format: 'chatflow/form';
   version: 1;
@@ -51,7 +51,25 @@ export function parseFormFile(json: string): FormFile {
     Array.isArray(data.settings)
   )
     throw new Error(__('Invalid ChatFlow form file.', 'chatflow-forms'));
-  return data as FormFile;
+  const form = data as FormFile;
+  // Imported JSON is untrusted: never activate or preserve outbound webhook credentials.
+  const settings = structuredClone(form.settings);
+  if (Array.isArray(settings.integrations?.webhooks))
+    settings.integrations.webhooks = settings.integrations.webhooks.map((hook) => ({
+      ...hook,
+      secret: '',
+      enabled: false,
+    }));
+  return { ...form, settings };
+}
+/** Import as a new unpublished draft, using server-side schema and settings validation. */
+export async function importForm(json: string, api: Pick<AdminApi, 'request'>): Promise<FormDTO> {
+  const file = parseFormFile(json);
+  return api.request<FormDTO>('admin/forms', 'POST', {
+    title: file.title,
+    schema: file.schema,
+    settings: file.settings,
+  });
 }
 export function downloadForm(form: FormDTO): void {
   const url = URL.createObjectURL(
