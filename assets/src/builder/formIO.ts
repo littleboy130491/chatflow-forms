@@ -59,7 +59,7 @@ export function parseFormFile(json: string): FormFile {
       ...hook,
       secret: '',
       enabled: false,
-    }));
+    })) as NonNullable<NonNullable<FormSettings['integrations']>['webhooks']>;
   return { ...form, settings };
 }
 /** Import as a new unpublished draft, using server-side schema and settings validation. */

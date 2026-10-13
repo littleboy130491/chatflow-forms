@@ -18,6 +18,7 @@ final class FrontendModule implements Module {
 						'height' => 600,
 						'mode'   => 'inline',
 						'theme'  => 'auto',
+						'position' => 'right',
 					),
 					$attributes,
 					'chatflow'

@@ -110,6 +110,29 @@ describe('Shadow DOM mount and global API', () => {
     expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'popup' as 'inline' })).toThrow('Unsupported display mode');
     expect(() => mountRuntime(host, { formId: 42, restUrl: 'https://third-party.test/wp-json/cff/v1/' })).toThrow('cff_unsafe_endpoint');
   });
+  it('keeps launcher collapsed until clicked and supports Escape, focus and programmatic open', async () => {
+    const fetcher = vi.fn(); vi.stubGlobal('fetch', fetcher);
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(), preview: true, mode: 'launcher', locale: 'id' }); });
+    const shadow = host.shadowRoot!;
+    const panel = shadow.querySelector<HTMLDivElement>('.launcher-panel')!;
+    const toggle = shadow.querySelector<HTMLButtonElement>('.launcher-toggle')!;
+    expect(panel.hidden).toBe(true);
+    expect(toggle.textContent).toBe('Buka chat');
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(fetcher).not.toHaveBeenCalled();
+    await act(() => toggle.click());
+    expect(panel.hidden).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    await vi.waitFor(() => expect(shadow.textContent).toContain('Hello'));
+    await act(() => panel.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
+    expect(panel.hidden).toBe(true);
+    expect(shadow.activeElement).toBe(toggle);
+    expect(window.ChatFlow.open(42)).toBe(true);
+    expect(panel.hidden).toBe(false);
+    await act(() => handle!.unmount());
+    expect(shadow.childElementCount).toBe(0);
+  });
   it('provides a guarded custom-field registration and open/prefill API', async () => {
     expect(window.ChatFlow.open(9999)).toBe(false);
     const disposer = window.ChatFlow.registerField('custom_test', () => createElement('p', {}, 'Custom'));

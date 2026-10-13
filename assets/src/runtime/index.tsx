@@ -6,6 +6,7 @@ import { Chat } from './chat';
 import { RuntimeController } from './controller';
 import { registerField } from './registry';
 import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
+import { phrases } from './i18n';
 import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
 export type { RuntimeOptions, FieldProps, PublicForm } from './types';
 export { registerField } from './registry';
@@ -14,6 +15,7 @@ export interface RuntimeHandle {
   unmount(): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
+  open?(): void;
 }
 const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number }>();
 function previewState(controller: RuntimeController) {
@@ -25,7 +27,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const id = options.form?.form.id ?? options.formId ?? Number(host.dataset.formId);
   if (!Number.isSafeInteger(id) || id <= 0) throw new TypeError('Invalid form ID');
   if (options.preview && !options.form) throw new TypeError('Preview requires a public form envelope');
-  if (options.mode && !['inline', 'fullpage'].includes(options.mode)) throw new TypeError('Unsupported display mode');
+  if (options.mode && !['inline', 'fullpage', 'launcher'].includes(options.mode)) throw new TypeError('Unsupported display mode');
   const restUrl = options.restUrl ?? host.dataset.restUrl;
   if (!options.preview && !restUrl) throw new TypeError('Missing REST endpoint');
   const shadow = host.shadowRoot ?? host.attachShadow({ mode: 'open' });
@@ -33,7 +35,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const style = document.createElement('style'); style.textContent = css;
   const customization = document.createElement('style');
   const root = document.createElement('div'); shadow.replaceChildren(style, customization, root);
-  const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode: options.mode ?? (host.dataset.mode === 'fullpage' ? 'fullpage' : 'inline') };
+  const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode: options.mode ?? (['fullpage', 'launcher'].includes(host.dataset.mode ?? '') ? host.dataset.mode as 'fullpage' | 'launcher' : 'inline') };
   const controller = new RuntimeController(config, options.preview ? null : new ApiClient(restUrl!), undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
   const appearance = () => {
     const value = controller.state.form?.form.appearance;
@@ -49,14 +51,66 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const connection = () => controller.setOffline(navigator.onLine === false);
   const externalChange = (event: StorageEvent) => { if (event.key?.startsWith(`cff:session:${id}:`)) controller.markConflict(); };
   if (!options.preview) { window.addEventListener('online', connection); window.addEventListener('offline', connection); window.addEventListener('storage', externalChange); }
-  render(<Chat controller={controller} onClose={() => { if (!options.preview) host.hidden = true; }} />, root);
+  const isLauncher = config.mode === 'launcher';
+  let chatRoot = root;
+  let toggle: HTMLButtonElement | null = null;
+  let panel: HTMLDivElement | null = null;
+  let initialized = false;
+  const label = phrases(config.locale);
+  const setOpen = (value: boolean) => {
+    if (!toggle || !panel) return;
+    host.hidden = false;
+    panel.hidden = !value;
+    toggle.textContent = label(value ? 'closeChat' : 'openChat');
+    toggle.setAttribute('aria-expanded', String(value));
+    if (value) {
+      if (!initialized) {
+        initialized = true;
+        connection();
+        void controller.initialize().then(appearance);
+      }
+      panel.focus({ preventScroll: true });
+    } else {
+      toggle.focus({ preventScroll: true });
+    }
+  };
+  if (isLauncher) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'launcher-root';
+    if (host.dataset.position === 'left') wrapper.classList.add('is-left');
+    toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'launcher-toggle';
+    toggle.textContent = label('openChat');
+    toggle.setAttribute('aria-controls', 'cff-launcher-panel');
+    toggle.setAttribute('aria-expanded', 'false');
+    panel = document.createElement('div');
+    panel.className = 'launcher-panel';
+    panel.id = 'cff-launcher-panel';
+    panel.role = 'dialog';
+    panel.setAttribute('aria-label', label('formDialog'));
+    panel.tabIndex = -1;
+    panel.hidden = true;
+    wrapper.append(panel, toggle);
+    root.append(wrapper);
+    chatRoot = panel;
+    toggle.addEventListener('click', () => setOpen(panel!.hidden));
+    root.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && panel && !panel.hidden) {
+        event.preventDefault();
+        setOpen(false);
+      }
+    });
+  }
+  render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) host.hidden = true; }} />, chatRoot);
   const handle: RuntimeHandle = {
-    unmount: () => { unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, root); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
+    ...(isLauncher ? { open: () => setOpen(true) } : {}),
   };
   mounted.set(host, { handle, id });
-  connection(); void controller.initialize().then(appearance);
+  if (!isLauncher) { connection(); void controller.initialize().then(appearance); }
   return handle;
 }
 
@@ -81,6 +135,8 @@ if (typeof window !== 'undefined') {
       autoMount(); const host = [...mounted.keys()].find(h => mounted.get(h)?.id === Number(id));
       if (!host) return false;
       host.hidden = false;
+      const handle = mounted.get(host)?.handle;
+      if (handle?.open) { handle.open(); return true; }
       host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
       host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); return true;
     },

@@ -110,7 +110,10 @@ final class SessionProtocolTest extends TestCase {
 		$first = $this->sessions->start( $body, $token, $key );
 		self::assertIsArray( $first );
 		$this->locators[] = $first['sessionId'];
-		self::assertSame( $first, $this->sessions->start( $body, $token, $key ) );
+		$retry = $this->sessions->start( $body, $token, $key );
+		self::assertIsArray( $retry );
+		self::assertSame( $first['sessionId'], $retry['sessionId'] );
+		self::assertSame( $first['resumeToken'], $retry['resumeToken'] );
 		$limited = $this->sessions->start( $body, $token, wp_generate_uuid4() );
 		self::assertInstanceOf( \WP_Error::class, $limited );
 		self::assertSame( 'cff_rate_limit', $limited->get_error_code() );
