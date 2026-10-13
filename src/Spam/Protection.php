@@ -16,6 +16,15 @@ final class Protection {
 		if ( time() - $started < ( $settings['minSeconds'] ?? 3 ) ) {
 			$reasons[] = 'time_trap';
 		}
+		$global   = \ChatFlow\Rest\Settings::get();
+		$provider = $form->settings()['spam']['captcha'] ?? $global['spam']['captcha'] ?? 'none';
+		if ( ! $reasons && ! ( new Captcha() )->verify( $provider, $body['captchaToken'] ?? null, $global['spam'] ) ) {
+			$reasons[] = 'captcha_failed'; }
+		if ( ! $reasons && ( $settings['akismetEnabled'] ?? $global['spam']['akismetEnabled'] ?? false ) ) {
+			$result = ( new Akismet() )->check( $form, is_array( $body['answers'] ?? null ) ? $body['answers'] : array(), $global, $_SERVER );
+			if ( false !== $result ) {
+				$reasons[] = null === $result ? 'akismet_unavailable' : 'akismet_spam'; }
+		}
 		return $reasons;
 	}
 }

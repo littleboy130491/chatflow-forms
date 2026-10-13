@@ -6,6 +6,7 @@ import type { FieldProps, Step } from './types';
 import { Markdown, safeLink } from './content';
 import type { PublicForm } from './types';
 import { fieldRenderer } from './registry';
+import { AddressInput, MediaInput, ScaleInput, UploadInput } from './phase2-inputs';
 
 export function toggleChoice(current: string[], value: string, options: NonNullable<Step['options']>): string[] {
   if (current.includes(value)) return current.filter(v => v !== value);
@@ -96,6 +97,10 @@ export function FieldInput(props: FieldProps & { media?: PublicForm['form']['med
   const type = props.step.type;
   const Registered = fieldRenderer(type);
   if (Registered) return <Registered {...props} />;
+  if (['rating', 'scale', 'nps', 'slider'].includes(type)) return <ScaleInput {...props} />;
+  if (type === 'address') return <AddressInput {...props} />;
+  if (type === 'media') return <MediaInput {...props} />;
+  if (type === 'file_upload') return <UploadInput {...props} />;
   if (['single_choice', 'multi_choice', 'yes_no'].includes(type)) return <ChipInput {...props} />;
   if (type === 'consent') return <ConsentInput {...props} />;
   if (['short_text', 'long_text', 'email', 'phone', 'number', 'date'].includes(type)) return <TextInput {...props} />;
