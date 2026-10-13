@@ -26,7 +26,7 @@ export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnv
         resumeDays: session.resumeDays ?? 30,
       },
     },
-    features: config.features,
+    features: { ...config.features, engagement: false },
   };
 }
 export interface PreviewHandle {

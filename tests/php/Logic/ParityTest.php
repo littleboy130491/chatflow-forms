@@ -13,6 +13,14 @@ final class ParityTest extends TestCase {
 	public static function replays(): iterable {
 		foreach ( glob( dirname( __DIR__, 2 ) . '/fixtures/logic/*.json' ) as $file ) {
 			$f = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+			foreach ( $f['schema']['steps'] as $step ) {
+				if ( 'address' === $step['type'] ) {
+					$raw = json_decode( file_get_contents( $file ), false, 512, JSON_THROW_ON_ERROR );
+					if ( property_exists( $raw->answers, $step['key'] ) && $raw->answers->{$step['key']} instanceof \stdClass ) {
+						$f['answers'][ $step['key'] ] = $raw->answers->{$step['key']};
+					}
+				}
+			}
 			yield $f['name'] => array( $f );
 		}
 	}
@@ -24,7 +32,7 @@ final class ParityTest extends TestCase {
 		$engine = new Engine( new Registry() );
 		$actual = $engine->replay( $fixture['schema'], $fixture['answers'], $fixture['context'], $fixture['mode'] );
 		$this->assertSame( $fixture['expected'], json_decode( json_encode( $actual, JSON_THROW_ON_ERROR ), true, 512, JSON_THROW_ON_ERROR ) );
-		$this->assertSame( $actual, $engine->replay( $fixture['schema'], $fixture['answers'], $fixture['context'], $fixture['mode'] ) );
+		$this->assertSame( json_encode( $actual, JSON_THROW_ON_ERROR ), json_encode( $engine->replay( $fixture['schema'], $fixture['answers'], $fixture['context'], $fixture['mode'] ), JSON_THROW_ON_ERROR ) );
 	}
 
 	/** @return iterable<string,array{array<string,mixed>}> */
@@ -71,7 +79,7 @@ final class ParityTest extends TestCase {
 	}
 
 	public function testRegistryRejectsUnknownTypes(): void {
-		$this->assertCount( 13, ( new Registry() )->types() );
+		$this->assertCount( 20, ( new Registry() )->types() );
 		$this->expectException( \InvalidArgumentException::class );
 		( new Registry() )->get( 'invented' );
 	}

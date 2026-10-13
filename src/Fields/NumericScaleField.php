@@ -29,6 +29,18 @@ final class NumericScaleField extends AbstractField {
 	public function sanitize( mixed $value, array $step, array $context = array() ): mixed {
 		return ( new NumberField() )->sanitize( $value, $step, $context );
 	}
+	/** @param array<string,mixed> $step */
+	public static function validConfig( array $step ): bool {
+		$v = $step['validation'] ?? array();
+		if ( 'nps' !== $step['type'] ) {
+			foreach ( array( 'min', 'max' ) as $key ) {
+				if ( isset( $v[ $key ] ) && ! Values::numeric( $v[ $key ] ) ) {
+					return false; }
+			}
+		}
+		$b = self::bounds( $step['type'], $step );
+		return $b['min'] <= $b['max'] && ( 'slider' === $step['type'] || floor( $b['min'] ) === $b['min'] && floor( $b['max'] ) === $b['max'] );
+	}
 
 	public function validate( mixed $value, array $step, array $context = array() ): array {
 		if ( null === $value ) {

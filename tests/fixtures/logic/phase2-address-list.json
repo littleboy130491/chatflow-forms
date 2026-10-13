@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-nps",
+  "name": "phase2-address-list",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -9,7 +9,7 @@
       {
         "id": "answer",
         "key": "answer",
-        "type": "nps",
+        "type": "address",
         "messages": [
           "Silakan isi"
         ],
@@ -26,23 +26,32 @@
       }
     ]
   },
-  "answers": {},
+  "answers": {
+    "answer": [
+      "Street"
+    ]
+  },
   "context": {},
   "mode": "complete",
   "expected": {
-    "visited": [],
+    "visited": [
+      "answer"
+    ],
     "answers": {},
     "variables": {},
-    "currentStepId": null,
+    "currentStepId": "answer",
     "endingId": null,
     "progress": 0,
     "errors": [
       {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
+        "path": "/answers/answer",
+        "code": "type_mismatch",
+        "message": "Enter a valid configured address.",
+        "fieldKey": "answer"
       }
     ],
-    "discardedKeys": []
+    "discardedKeys": [
+      "answer"
+    ]
   }
 }

@@ -1,0 +1,59 @@
+{
+  "name": "phase2-address-sanitized",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "address",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": true
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": {
+      "street": " <b>Jalan</b>\r\n 123 ",
+      "city": "Jakarta",
+      "postcode": " 10110 ",
+      "country": " Indonesia "
+    }
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": {
+        "street": "Jalan 123",
+        "city": "Jakarta",
+        "postcode": "10110",
+        "country": "Indonesia"
+      }
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

@@ -27,6 +27,10 @@ final class PrivateFiles {
 		if ( '' === $key ) {
 			return; }
 		$path = $this->path( $key );
+		if ( preg_match( '/^export-[a-f0-9]{64}\.bin$/D', $key ) ) {
+			\ChatFlow\Submissions\Xlsx::cleanupWorkspace( $key );
+			$this->remove( substr( $key, 0, -4 ) . '.csv' );
+		}
 		if ( file_exists( $path ) && ! unlink( $path ) ) {
 			throw new \RuntimeException( 'Unable to remove private file.' ); }
 	}

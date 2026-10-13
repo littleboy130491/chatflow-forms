@@ -107,6 +107,6 @@ final class EngagementFieldsTest extends TestCase {
 		self::assertSame( 'required', $field->validate( null, $step )[0]['code'] );
 		self::assertNull( $this->field( 'media' )->sanitize( 'forged', $step ) );
 		self::assertSame( array(), $this->field( 'media' )->validate( null, $step ) );
-		self::assertNotContains( 'file_upload', ( new Registry() )->types() );
+		self::assertContains( 'file_upload', ( new Registry() )->types() );
 	}
 }

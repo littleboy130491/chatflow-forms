@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-rating",
+  "name": "phase2-address-empty-object",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -9,7 +9,7 @@
       {
         "id": "answer",
         "key": "answer",
-        "type": "rating",
+        "type": "address",
         "messages": [
           "Silakan isi"
         ],
@@ -26,23 +26,23 @@
       }
     ]
   },
-  "answers": {},
+  "answers": {
+    "answer": {}
+  },
   "context": {},
   "mode": "complete",
   "expected": {
-    "visited": [],
-    "answers": {},
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": {}
+    },
     "variables": {},
     "currentStepId": null,
-    "endingId": null,
-    "progress": 0,
-    "errors": [
-      {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
-      }
-    ],
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
     "discardedKeys": []
   }
 }

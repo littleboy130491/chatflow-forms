@@ -7,6 +7,7 @@ final class Registry {
 
 	public function __construct() {
 		$fields = array( new ShortTextField(), new LongTextField(), new EmailField(), new PhoneField(), new NumberField(), new DateField(), new SingleChoiceField(), new MultiChoiceField(), new YesNoField(), new ConsentField(), new HiddenField(), new StatementField(), new SummaryField() );
+		$fields = array_merge( $fields, self::engagementFields() );
 		if ( function_exists( 'apply_filters' ) ) {
 			$fields = apply_filters( 'cff_field_types', $fields );
 		}
@@ -20,7 +21,7 @@ final class Registry {
 			$this->register( $field );
 		}
 	}
-	/** Enable only when canonical TS parity and upload ownership checks are integrated.
+	/**
 	 * @return list<FieldType> */
 	public static function engagementFields(): array {
 		return array( new NumericScaleField( 'rating' ), new NumericScaleField( 'scale' ), new NumericScaleField( 'nps' ), new NumericScaleField( 'slider' ), new AddressField(), new MediaField(), new FileUploadField() );

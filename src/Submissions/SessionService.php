@@ -233,6 +233,9 @@ final class SessionService {
 					$replay = $this->replay( $form, $answers, $context, 'submit' === $operation ? 'complete' : 'partial' );
 					if ( is_wp_error( $replay ) ) {
 						return $replay; }
+					$upload_error = ( new \ChatFlow\Frontend\Uploads() )->validateAnswers( $form, (int) $row['id'], $replay['answers'] );
+					if ( $upload_error ) {
+						return $upload_error; }
 					$timings = $this->timings( $body['stepTimings'] ?? array(), $replay['visited'] );
 					if ( is_wp_error( $timings ) ) {
 						return $timings; }
@@ -248,7 +251,9 @@ final class SessionService {
 						$ip   = ( new IpResolver() )->resolve( $_SERVER, get_option( 'cff_settings', array() )['proxy'] ?? array() );
 						if ( ! ( new RateLimiter() )->consume( 'submit:' . $form->id() . ':' . $ip, $spam['rateLimit'] ?? 10, $spam['rateWindowSeconds'] ?? 600 ) ) {
 							return Database::error( 'cff_rate_limit', 'Please wait before submitting again.', 429, array( 'retryAfter' => $spam['rateWindowSeconds'] ?? 600 ) ); }
-						$reasons                     = ( new Protection() )->reasons( $form, $body, strtotime( $row['started_at'] . ' UTC' ) );
+						$reasons = ( new Protection() )->reasons( $form, $body, strtotime( $row['started_at'] . ' UTC' ) );
+						if ( in_array( 'captcha_failed', $reasons, true ) || in_array( 'akismet_unavailable', $reasons, true ) ) {
+							return Database::error( 'cff_spam_verification', 'Spam verification failed. Please try again.', 422 ); }
 						$data['status']              = $reasons ? 'spam' : 'completed';
 						$data['spam_reasons']        = $reasons;
 						$data['completed_at']        = Database::now();
@@ -282,6 +287,8 @@ final class SessionService {
 					$changes['context']  = Database::json( $context ); }
 				$changes['last_seen_at'] = Database::now();
 				Database::check( $wpdb->update( $wpdb->prefix . 'cff_sessions', $changes, array( 'id' => $row['id'] ) ) );
+				if ( 'delete' !== $operation && $submission ) {
+					( new \ChatFlow\Frontend\Uploads() )->bindSubmission( (int) $row['id'], $submission->id() ); }
 				$this->requests->finish( $guard['id'], $response );
 				return $response;
 			}

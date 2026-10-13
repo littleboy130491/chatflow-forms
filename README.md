@@ -9,7 +9,7 @@ signed generic webhooks. English and Indonesian UI are included.
 The **shell integration gate passes**, not the complete product acceptance gate:
 the under-15-minute builder exercise, mobile/browser journey, live SMTP/webhook
 receipt and hosting/cache compatibility matrix remain untested. See
-[phase coverage and actual checks](docs/mvp-checks.md). PLAN.md is unchanged.
+[MVP checks](docs/mvp-checks.md) and [integrated Phase 2 coverage](docs/phase2-integration.md). PLAN.md is unchanged.
 There is no licence system, telemetry, native CRM connector, payment or AI chat.
 
 ## Install and use
@@ -71,8 +71,11 @@ day through the recovery worker.
 
 See [hooks](docs/hooks.md), [canonical payload](docs/payload.md),
 [runtime API](assets/src/runtime/README.md) and [architecture](docs/architecture.md).
-Uploads, scoring widgets, popup/drawer modes, advanced analytics and later-phase
-features are not claimed as implemented.
+Phase 2 adds private uploads, rating/scale/NPS/slider/address/media fields,
+accessible popup/drawer/launcher modes, optional CAPTCHA/Akismet, stored analytics,
+safe JSON template tools and private XLSX exports. Configure an outside-web-root
+private directory before uploads/exports, and provider credentials before enabling
+CAPTCHA or Akismet. See [the integration checks and acceptance gaps](docs/phase2-integration.md).
 
 ## Development
 

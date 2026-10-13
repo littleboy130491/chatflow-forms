@@ -9,7 +9,7 @@ final class AddressField extends AbstractField {
 	}
 
 	public function sanitize( mixed $value, array $step, array $context = array() ): mixed {
-		if ( ! is_array( $value ) && ! $value instanceof \stdClass ) {
+		if ( is_array( $value ) && array_is_list( $value ) || ! is_array( $value ) && ! $value instanceof \stdClass ) {
 			return $value;
 		}
 		return (object) array_map( static fn( $item ) => is_string( $item ) ? self::plainText( $item ) : $item, (array) $value );

@@ -5,7 +5,8 @@ use ChatFlow\Vendor\Opis\JsonSchema\Validator;
 use ChatFlow\Vendor\Opis\JsonSchema\Errors\ErrorFormatter;
 
 final class SchemaValidator {
-	public const V1_TYPES = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
+	public const V1_TYPES      = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
+	public const ENABLED_TYPES = array( ...self::V1_TYPES, 'rating', 'scale', 'nps', 'slider', 'address', 'media', 'file_upload' );
 
 	/** @param array<string,mixed> $schema
 	 *  @return list<array{path:string,code:string,message:string}>
@@ -37,6 +38,9 @@ final class SchemaValidator {
 				$this->checkRules( $option['logic'] ?? array(), $schema, $path . '/options/' . $oi . '/logic', $errors );
 			}
 			$v = $step['validation'] ?? array();
+			if ( in_array( $step['type'], array( 'rating', 'scale', 'nps', 'slider' ), true ) && ! \ChatFlow\Fields\NumericScaleField::validConfig( $step ) ) {
+				$errors[] = $this->error( $path . '/validation', 'invalid_range', 'Scale bounds and increments must be numeric and compatible.' );
+			}
 			foreach ( array( array( 'minLength', 'maxLength' ), array( 'minSelections', 'maxSelections' ), array( 'min', 'max' ) ) as $pair ) {
 				if ( isset( $v[ $pair[0] ], $v[ $pair[1] ] ) && $v[ $pair[0] ] > $v[ $pair[1] ] ) {
 					$errors[] = $this->error( $path . '/validation', 'invalid_range', 'Minimum must not exceed maximum.' );
@@ -91,7 +95,7 @@ final class SchemaValidator {
 	 *  @param list<string> $enabled_types
 	 *  @return list<array{path:string,code:string,message:string}>
 	 */
-	public function validatePublishable( array $schema, array $enabled_types = self::V1_TYPES ): array {
+	public function validatePublishable( array $schema, array $enabled_types = self::ENABLED_TYPES ): array {
 		$errors = $this->validate( $schema );
 		if ( $errors ) {
 			return $errors;

@@ -81,7 +81,7 @@ const config: AdminConfig = {
   screen: 'builder',
   locale: 'en_US',
   capabilities: { manage_forms: true, purge_submissions: true },
-  features: { fieldTypes: v1Types, uploads: false },
+  features: { fieldTypes: v1Types, uploads: false, xlsx: false },
 };
 let container: HTMLDivElement, root: ReturnType<typeof createRoot>;
 beforeEach(() => {

@@ -21,7 +21,7 @@ const config: AdminConfig = {
   pluginUrl: 'https://example.org/plugin/',
   screen: 'builder',
   locale: 'en_US',
-  features: { fieldTypes: v1Types, uploads: false },
+  features: { fieldTypes: v1Types, uploads: false, xlsx: false },
   capabilities: { manage_forms: true },
 };
 function stored(): FormDTO {

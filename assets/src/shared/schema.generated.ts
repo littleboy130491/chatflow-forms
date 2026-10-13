@@ -150,10 +150,10 @@ export interface Step {
       alt?: string;
     };
     /**
+     * @minItems 1
      * @maxItems 4
      */
     addressFields?:
-      | []
       | ["street" | "city" | "postcode" | "country"]
       | ["street" | "city" | "postcode" | "country", "street" | "city" | "postcode" | "country"]
       | [

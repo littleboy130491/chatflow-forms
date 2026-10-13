@@ -84,7 +84,7 @@
     "publishable": false
   },
   {
-    "name": "known optional draft only",
+    "name": "phase2 rating publishable",
     "schema": {
       "schemaVersion": 1,
       "bot": {
@@ -123,7 +123,7 @@
       ]
     },
     "valid": true,
-    "publishable": false
+    "publishable": true
   },
   {
     "name": "unknown properties rejected",

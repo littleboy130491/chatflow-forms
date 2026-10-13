@@ -1,0 +1,51 @@
+{
+  "name": "phase2-slider-default-inverted",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "slider",
+        "label": "answer",
+        "messages": [
+          "Silakan isi"
+        ],
+        "validation": {
+          "max": -1
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [],
+    "answers": {},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/steps/0/validation",
+        "code": "invalid_range",
+        "message": "Scale bounds and increments must be numeric and compatible."
+      }
+    ],
+    "discardedKeys": []
+  }
+}

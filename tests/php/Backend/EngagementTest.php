@@ -28,7 +28,12 @@ final class EngagementTest extends TestCase {
 	private array $ids = array();
 	private mixed $settings;
 	private array $files = array();
+	private mixed $network_mimes;
 	protected function setUp(): void {
+		$this->network_mimes = get_site_option( 'upload_filetypes' );
+		if ( is_multisite() ) {
+			update_site_option( 'upload_filetypes', trim( (string) $this->network_mimes . ' txt' ) );
+		}
 		$this->settings                      = get_option( 'cff_settings', array() );
 		$d                                   = Imajiner::definition();
 		$d['settings']['spam']['minSeconds'] = 0;
@@ -69,6 +74,9 @@ final class EngagementTest extends TestCase {
 		$wpdb->delete( $wpdb->prefix . 'cff_form_versions', array( 'form_id' => $this->form->id() ) );
 		wp_delete_post( $this->form->id(), true );
 		update_option( 'cff_settings', $this->settings );
+		if ( is_multisite() ) {
+			update_site_option( 'upload_filetypes', $this->network_mimes );
+		}
 		remove_all_filters( 'pre_http_request' );
 	}
 	private function start(): array {
@@ -355,10 +363,8 @@ final class EngagementTest extends TestCase {
 	}
 	public function testRealMultipartUploadIdempotencyAndSelectedBinding(): void {
 		global $wpdb;
-		$s      = $this->start();
 		$schema = $this->form->schema();
-		// Service fixture only: publish remains gated until canonical TS parity is integrated.
-		$schema['steps'][] = array(
+		$schema['steps'] = array( array(
 			'id'         => 'file',
 			'key'        => 'file',
 			'type'       => 'file_upload',
@@ -368,20 +374,22 @@ final class EngagementTest extends TestCase {
 				'maxBytes'  => 1000,
 				'mimeTypes' => array( 'text/plain' ),
 			),
-		);
-		$wpdb->update(
-			$wpdb->prefix . 'cff_form_versions',
-			array( 'schema' => Database::json( $schema ) ),
-			array(
-				'form_id' => $this->form->id(),
-				'version' => $this->form->version(),
-			)
-		);
+		) );
+		$draft = $this->forms->saveDraft( $this->form->id(), $schema, $this->form->settings(), $this->form->draftRevision() );
+		self::assertInstanceOf( Form::class, $draft );
+		$this->form = $this->forms->publish( $draft->id(), $draft->draftRevision() );
+		self::assertInstanceOf( Form::class, $this->form );
+		$s = $this->start();
 		$socket = stream_socket_server( 'tcp://127.0.0.1:0', $code, $message );
 		self::assertIsResource( $socket );
 		$address = stream_socket_get_name( $socket, false );
 		fclose( $socket );
 		$log     = tempnam( sys_get_temp_dir(), 'cff-http-' );
+		$environment = array_merge( getenv(), array(
+			'CFF_UPLOAD_TEST_PREFIX' => $wpdb->prefix,
+			'CFF_UPLOAD_TEST_PRIVATE' => CFF_PRIVATE_DIR,
+			'CFF_UPLOAD_TEST_MULTISITE' => is_multisite() ? '1' : '',
+		) );
 		$process = proc_open(
 			array( PHP_BINARY, '-d', 'upload_max_filesize=2M', '-d', 'post_max_size=3M', '-S', $address, __DIR__ . '/upload-router.php' ),
 			array(
@@ -389,7 +397,9 @@ final class EngagementTest extends TestCase {
 				1 => array( 'file', $log, 'a' ),
 				2 => array( 'file', $log, 'a' ),
 			),
-			$pipes
+			$pipes,
+			null,
+			$environment
 		);
 		self::assertIsResource( $process );
 		fclose( $pipes[0] );
@@ -400,7 +410,7 @@ final class EngagementTest extends TestCase {
 					$ready = true;
 					break;
 				} usleep( 50000 ); }
-			self::assertTrue( $ready, 'Loopback multipart fixture did not start.' );
+			self::assertTrue( $ready, 'Loopback multipart fixture did not start: ' . file_get_contents( $log ) );
 			$send  = static function ( string $field, string $content, string $name, string $key, string $token ) use ( $s, $address ): array {
 				$boundary = 'cff-' . bin2hex( random_bytes( 12 ) );
 				$body     = '--' . $boundary . "\r\nContent-Disposition: form-data; name=\"fieldId\"\r\n\r\n" . $field . "\r\n--" . $boundary . "\r\nContent-Disposition: form-data; name=\"file\"; filename=\"" . $name . "\"\r\nContent-Type: text/plain\r\n\r\n" . $content . "\r\n--" . $boundary . "--\r\n";
@@ -420,7 +430,7 @@ final class EngagementTest extends TestCase {
 			};
 			$key   = wp_generate_uuid4();
 			$first = $send( 'file', 'Genuine multipart content.', 'test.txt', $key, $s['requestToken'] );
-			self::assertArrayHasKey( 'uploadId', $first );
+			self::assertArrayHasKey( 'uploadId', $first, json_encode( $first ) );
 			self::assertSame( 'text/plain', $first['mime'] );
 			$duplicate = $send( 'file', 'Genuine multipart content.', 'test.txt', $key, $s['requestToken'] );
 			self::assertSame( $first, $duplicate );
@@ -441,13 +451,8 @@ final class EngagementTest extends TestCase {
 				self::assertSame( 0600, fileperms( $path ) & 0777 );
 				self::assertStringNotContainsString( 'wp-content', $path );
 				self::assertNull( $row['submission_id'] ); }
-			Database::transaction(
-				static function () use ( $wpdb, $s, $session, $first ) {
-					UploadSession::lock( $s['sessionId'], $s['requestToken'] );
-					$wpdb->update( $wpdb->prefix . 'cff_submissions', array( 'answers' => Database::json( array( 'file' => $first['uploadId'] ) ) ), array( 'id' => $session['submission_id'] ) );
-					( new Uploads() )->bindSubmission( (int) $session['id'], (int) $session['submission_id'] );
-				}
-			);
+			$patched = $this->sessions->mutate( 'patch', $s['sessionId'], array( 'version' => $s['version'], 'revision' => $s['revision'], 'answers' => array( 'file' => $first['uploadId'] ) ), $s['requestToken'], wp_generate_uuid4() );
+			self::assertIsArray( $patched );
 			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}cff_uploads WHERE session_id=%d ORDER BY id", $session['id'] ), ARRAY_A );
 			self::assertSame( $session['submission_id'], $rows[0]['submission_id'] );
 			self::assertNull( $rows[0]['expires_at'] );

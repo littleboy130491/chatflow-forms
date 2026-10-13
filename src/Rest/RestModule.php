@@ -27,7 +27,19 @@ final class RestModule implements Module {
 		add_filter( 'rest_pre_dispatch', array( $this, 'requestBoundary' ), 10, 3 );
 	}
 	public function routes(): void {
+		( new UploadController() )->register();
+		( new AnalyticsController( $this->forms ) )->register();
+		( new TemplatesController( $this->forms ) )->register();
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
+		$this->route( '/forms/(?P<id>\d+)/engagement', 'GET', array( $this, 'engagement' ) );
+		$this->route(
+			'/sessions/(?P<id>[a-f0-9-]{36})/events',
+			'POST',
+			function ( $r ) {
+				$guard = UploadSession::guard( $r );
+				return is_wp_error( $guard ) ? $guard : $this->respond( ( new \ChatFlow\Frontend\EventCollector() )->collect( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ?? '', $this->body( $r ), $_SERVER ) );
+			}
+		);
 		$this->route( '/forms/(?P<id>\d+)/start-token', 'POST', array( $this, 'startToken' ) );
 		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ), 201 ) );
 		$this->route( '/sessions/resume', 'POST', fn( $r ) => $this->respond( $this->sessions->resume( absint( $this->body( $r )['formId'] ?? 0 ), $r->get_header( 'X-CFF-Resume-Token' ) ?? '' ) ) );
@@ -155,12 +167,19 @@ final class RestModule implements Module {
 		$form = $this->forms->getPublished( (int) $r['id'], null === $version ? null : (int) $version );
 		if ( ! $form ) {
 			return Database::error( 'cff_not_found', 'Published form not found.', 404 ); }
-		$envelope = PublicProjection::build( $form, $this->fields->types() );
+		$envelope = apply_filters( 'cff_public_display', PublicProjection::build( $form, $this->fields->types() ) );
 		$etag     = '"' . hash( 'sha256', Database::json( $envelope ) ) . '"';
 		$response = new \WP_REST_Response( $r->get_header( 'If-None-Match' ) === $etag ? null : $envelope, $r->get_header( 'If-None-Match' ) === $etag ? 304 : 200 );
 		$response->header( 'ETag', $etag );
 		$response->header( 'Cache-Control', 'public,max-age=60,must-revalidate' );
 		return $response;
+	}
+	public function engagement( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
+		$version = $r->get_param( 'version' );
+		if ( null !== $version && ( ! ctype_digit( (string) $version ) || (int) $version < 1 ) ) {
+			return Database::error( 'cff_invalid_version', 'Invalid version.', 422 ); }
+		$form = $this->forms->getPublished( (int) $r['id'], null === $version ? null : (int) $version );
+		return $form ? $this->respond( \ChatFlow\Frontend\Engagement::config( $form ) ) : Database::error( 'cff_not_found', 'Published form not found.', 404 );
 	}
 	public function startToken( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id      = (int) $r['id'];
@@ -383,7 +402,7 @@ final class RestModule implements Module {
 					'ip'             => ( new IpResolver() )->resolve( $_SERVER, Settings::get()['proxy'] ),
 					'smtpDetected'   => defined( 'WPMS_ON' ) || defined( 'FLUENTMAIL' ) || class_exists( 'Postman' ),
 					'fieldTypes'     => $this->fields->types(),
-					'uploads'        => false,
+					'uploads'        => in_array( 'file_upload', $this->fields->types(), true ),
 				)
 			);
 	}

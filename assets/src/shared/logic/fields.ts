@@ -3,6 +3,7 @@ import type { JSONValue, Step, ReplayContext, ValidationIssue } from '../contrac
 import { age, choiceValue, dateParts, empty, isOtherAnswer, issue, matches, numeric, pointer, regex } from './value';
 
 export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
+export const ENABLED_FIELD_TYPES = [...V1_FIELD_TYPES, 'rating', 'scale', 'nps', 'slider', 'address', 'media', 'file_upload'] as const;
 export const isDisplay = (type: string): boolean => ['statement', 'summary', 'media'].includes(type);
 export function plainText(value: string, multiline = false): string {
   let text = value.replace(/\r\n?/g, '\n').replace(/<[^>]*>/g, '');
@@ -29,10 +30,11 @@ export function sanitizeAnswer(step: Step, value: JSONValue, context: ReplayCont
     case 'short_text': case 'long_text': case 'email': case 'date':
       return typeof value === 'string' ? plainText(value, step.type === 'long_text') : value;
     case 'phone': return typeof value === 'string' ? phone(value, step.settings?.country ?? 'ID') : value;
-    case 'number':
+    case 'number': case 'rating': case 'scale': case 'nps': case 'slider':
       if (typeof value === 'string' && /^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/.test(value) && Number.isFinite(Number(value))) return Number(value);
       return value;
-    case 'statement': case 'summary': return null;
+    case 'address': return value && typeof value === 'object' && !Array.isArray(value) ? Object.fromEntries(Object.entries(value).map(([key, text]) => [key, typeof text === 'string' ? plainText(text) : text])) : value;
+    case 'statement': case 'summary': case 'media': return null;
     default: return value;
   }
 }
@@ -45,11 +47,37 @@ const url = (v: string): boolean => /^(?:https?:\/\/)?[A-Za-z0-9](?:[A-Za-z0-9.-
 export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayContext = {}): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
   const add = (code: string, message: string): void => { errors.push(issue('/answers/' + pointer(step.key), code, message, step.key)); };
-  if (!(V1_FIELD_TYPES as readonly string[]).includes(step.type)) { add('unsupported_type', 'This field type is not supported.'); return errors; }
+  if (!(ENABLED_FIELD_TYPES as readonly string[]).includes(step.type)) { add('unsupported_type', 'This field type is not supported.'); return errors; }
   if (isDisplay(step.type)) return errors;
   const value = sanitizeAnswer(step, rawValue, context);
   const required = step.required === true || step.type === 'consent';
   if (value === null) { if (required) add('required', 'An answer is required.'); return errors; }
+  if (['rating', 'scale', 'nps', 'slider'].includes(step.type)) {
+    const v = step.validation ?? {};
+    const min = step.type === 'nps' ? 0 : Number(v.min ?? (['rating', 'scale'].includes(step.type) ? 1 : 0));
+    const max = step.type === 'nps' ? 10 : Number(v.max ?? (step.type === 'rating' ? 5 : step.type === 'scale' ? 10 : 100));
+    const increment = step.type === 'slider' ? v.step ?? 1 : 1;
+    const code = !numeric(value) ? 'type_mismatch' : value < min ? 'min' : value > max ? 'max' : increment <= 0 || Math.abs((value - min) / increment - Math.round((value - min) / increment)) > 1e-8 || step.type !== 'slider' && !Number.isInteger(value) ? 'step' : null;
+    if (code) add(code, 'Enter a configured scale value.');
+    return errors;
+  }
+  if (step.type === 'file_upload') {
+    if (typeof value !== 'string' || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(value)) add('type_mismatch', 'Select an owned upload.');
+    return errors;
+  }
+  if (step.type === 'address') {
+    const fields: readonly string[] = step.settings?.addressFields ?? ['street', 'city', 'postcode', 'country'];
+    let code: string | null = null;
+    if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => !fields.includes(key))) code = 'type_mismatch';
+    else for (const field of fields) {
+      const text = value[field] ?? '';
+      if (typeof text !== 'string') { code = 'type_mismatch'; break; }
+      if ([...text].length > 500) { code = 'max_length'; break; }
+      if (required && text === '') { code = 'required'; break; }
+    }
+    if (code) add(code, 'Enter a valid configured address.');
+    return errors;
+  }
   let typed = false;
   switch (step.type) {
     case 'number': typed = numeric(value); break;

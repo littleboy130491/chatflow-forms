@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-file_upload",
+  "name": "phase2-rating-fraction-bounds",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -9,11 +9,15 @@
       {
         "id": "answer",
         "key": "answer",
-        "type": "file_upload",
+        "type": "rating",
+        "label": "answer",
         "messages": [
           "Silakan isi"
         ],
-        "label": "answer"
+        "validation": {
+          "min": 1.5,
+          "max": 5
+        }
       }
     ],
     "endings": [
@@ -38,9 +42,9 @@
     "progress": 0,
     "errors": [
       {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
+        "path": "/steps/0/validation",
+        "code": "invalid_range",
+        "message": "Scale bounds and increments must be numeric and compatible."
       }
     ],
     "discardedKeys": []

@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-slider",
+  "name": "phase2-nps-fixed",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -9,11 +9,15 @@
       {
         "id": "answer",
         "key": "answer",
-        "type": "slider",
+        "type": "nps",
         "messages": [
           "Silakan isi"
         ],
-        "label": "answer"
+        "label": "answer",
+        "validation": {
+          "min": 1,
+          "max": 2
+        }
       }
     ],
     "endings": [
@@ -26,23 +30,23 @@
       }
     ]
   },
-  "answers": {},
+  "answers": {
+    "answer": 10
+  },
   "context": {},
   "mode": "complete",
   "expected": {
-    "visited": [],
-    "answers": {},
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": 10
+    },
     "variables": {},
     "currentStepId": null,
-    "endingId": null,
-    "progress": 0,
-    "errors": [
-      {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
-      }
-    ],
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
     "discardedKeys": []
   }
 }

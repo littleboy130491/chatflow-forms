@@ -130,7 +130,7 @@ final class AdminModule implements Module {
 			'tools'        => 'cff-tools' === $this->pageSlug(),
 			'features'     => array(
 				'fieldTypes' => $types,
-				'uploads'    => false,
+				'uploads'    => in_array( 'file_upload', $types, true ),
 				'xlsx'       => \ChatFlow\Submissions\Xlsx::available(),
 			),
 		);

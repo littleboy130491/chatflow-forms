@@ -9788,8 +9788,6 @@ function si() {
 function ci() {
 	return Ze(vt, arguments);
 }
-//#endregion
-//#region assets/src/shared/logic/fields.ts
 var li = [
 	"short_text",
 	"long_text",
@@ -9803,7 +9801,14 @@ var li = [
 	"consent",
 	"hidden",
 	"statement",
-	"summary"
+	"summary",
+	"rating",
+	"scale",
+	"nps",
+	"slider",
+	"address",
+	"media",
+	"file_upload"
 ], ui = (e) => [
 	"statement",
 	"summary",
@@ -9835,9 +9840,15 @@ function pi(e, t, n = {}) {
 		case "email":
 		case "date": return typeof t == "string" ? di(t, e.type === "long_text") : t;
 		case "phone": return typeof t == "string" ? fi(t, e.settings?.country ?? "ID") : t;
-		case "number": return typeof t == "string" && /^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/.test(t) && Number.isFinite(Number(t)) ? Number(t) : t;
+		case "number":
+		case "rating":
+		case "scale":
+		case "nps":
+		case "slider": return typeof t == "string" && /^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/.test(t) && Number.isFinite(Number(t)) ? Number(t) : t;
+		case "address": return t && typeof t == "object" && !Array.isArray(t) ? Object.fromEntries(Object.entries(t).map(([e, t]) => [e, typeof t == "string" ? di(t) : t])) : t;
 		case "statement":
-		case "summary": return null;
+		case "summary":
+		case "media": return null;
 		default: return t;
 	}
 }
@@ -9850,6 +9861,41 @@ function gi(e, t, n = {}) {
 	if (ui(e.type)) return r;
 	let a = pi(e, t, n), o = e.required === !0 || e.type === "consent";
 	if (a === null) return o && i("required", "An answer is required."), r;
+	if ([
+		"rating",
+		"scale",
+		"nps",
+		"slider"
+	].includes(e.type)) {
+		let t = e.validation ?? {}, n = e.type === "nps" ? 0 : Number(t.min ?? +!!["rating", "scale"].includes(e.type)), o = e.type === "nps" ? 10 : Number(t.max ?? (e.type === "rating" ? 5 : e.type === "scale" ? 10 : 100)), s = e.type === "slider" ? t.step ?? 1 : 1, c = H(a) ? a < n ? "min" : a > o ? "max" : s <= 0 || Math.abs((a - n) / s - Math.round((a - n) / s)) > 1e-8 || e.type !== "slider" && !Number.isInteger(a) ? "step" : null : "type_mismatch";
+		return c && i(c, "Enter a configured scale value."), r;
+	}
+	if (e.type === "file_upload") return (typeof a != "string" || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(a)) && i("type_mismatch", "Select an owned upload."), r;
+	if (e.type === "address") {
+		let t = e.settings?.addressFields ?? [
+			"street",
+			"city",
+			"postcode",
+			"country"
+		], n = null;
+		if (!a || typeof a != "object" || Array.isArray(a) || Object.keys(a).some((e) => !t.includes(e))) n = "type_mismatch";
+		else for (let e of t) {
+			let t = a[e] ?? "";
+			if (typeof t != "string") {
+				n = "type_mismatch";
+				break;
+			}
+			if ([...t].length > 500) {
+				n = "max_length";
+				break;
+			}
+			if (o && t === "") {
+				n = "required";
+				break;
+			}
+		}
+		return n && i(n, "Enter a valid configured address."), r;
+	}
 	let s = !1;
 	switch (e.type) {
 		case "number":
@@ -9963,7 +10009,16 @@ function _i(e) {
 			[o.minSelections, o.maxSelections],
 			[o.min, o.max]
 		]) e !== void 0 && t !== void 0 && typeof e == typeof t && e > t && n(i + "/validation", "invalid_range", "Minimum must not exceed maximum.");
-		if (o.step !== void 0 && (!H(o.step) || o.step <= 0) && n(i + "/validation/step", "invalid_range", "The numeric increment must be positive."), t.type !== "single_choice" && t.options?.some((e) => e.isOther) && n(i + "/options", "unsupported_other", "Other free text is only supported for single-choice fields."), e.steps[r + 1] && (m.has(t.id) || !t.logic?.some((e) => ["jump", "end"].includes(e.then.action) && "all" in e.if && !e.if.all.length))) {
+		if (o.step !== void 0 && (!H(o.step) || o.step <= 0) && n(i + "/validation/step", "invalid_range", "The numeric increment must be positive."), [
+			"rating",
+			"scale",
+			"nps",
+			"slider"
+		].includes(t.type)) {
+			let e = t.type === "nps" ? 0 : o.min ?? +!!["rating", "scale"].includes(t.type), r = t.type === "nps" ? 10 : o.max ?? (t.type === "rating" ? 5 : t.type === "scale" ? 10 : 100);
+			(!H(e) || !H(r) || e > r || t.type !== "slider" && (!Number.isInteger(e) || !Number.isInteger(r))) && n(i + "/validation", "invalid_range", "Scale bounds and increments must be numeric and compatible.");
+		}
+		if (t.type !== "single_choice" && t.options?.some((e) => e.isOther) && n(i + "/options", "unsupported_other", "Other free text is only supported for single-choice fields."), e.steps[r + 1] && (m.has(t.id) || !t.logic?.some((e) => ["jump", "end"].includes(e.then.action) && "all" in e.if && !e.if.all.length))) {
 			let n = f.get(t.id) ?? /* @__PURE__ */ new Set();
 			n.add(e.steps[r + 1].id), f.set(t.id, n);
 		}

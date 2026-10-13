@@ -29,7 +29,7 @@ export interface PublicSchemaEnvelope {
     appearance: NonNullable<FormSettings['appearance']>; phrases: NonNullable<FormSettings['phrases']>;
     media?: Record<string, { url: string; alt?: string }>;
     session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean } };
-  features: { fieldTypes: string[]; uploads: boolean };
+  features: { fieldTypes: string[]; uploads: boolean; engagement: boolean };
 }
 export interface SessionEnvelope {
   sessionId: string; formId: number; version: number; revision: number;
@@ -44,8 +44,8 @@ export interface SubmitResponse {
   redirectUrl?: string;
 }
 export interface AdminConfig {
-  restUrl: string; nonce: string; pluginUrl: string; screen: 'builder' | 'submissions' | 'settings';
-  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean };
+  restUrl: string; nonce: string; pluginUrl: string; screen: 'builder' | 'submissions' | 'settings' | 'analytics';
+  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean; xlsx: boolean };
 }
 export interface RestError { code: string; message: string; data: { status: number; errors?: ValidationIssue[];
   retryAfter?: number; draftRevision?: number; revision?: number } }
@@ -55,7 +55,8 @@ export interface GlobalSettings {
   tracking: { enabled: boolean; consentRequired: boolean; days: number };
   privacy: { ip: 'anonymized' | 'full' | 'none'; storeUserAgent: boolean; storeMeta: boolean; respectDnt: boolean };
   retention: { enabled: boolean; days: number; partialDays: number | null };
-  spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
+  spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number;
+    captcha: 'none' | 'turnstile' | 'hcaptcha' | 'recaptcha'; siteKey: string; secretKey: string; minScore: number; akismetEnabled: boolean; akismetKey: string };
   proxy: { mode: 'automatic' | 'direct' | 'cloudflare' | 'custom'; trustedRanges: string[]; header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP' };
   email: { fromName: string; fromEmail: string; replyTo: string; logoUrl: string; brandColor: string; footerText: string };
 }

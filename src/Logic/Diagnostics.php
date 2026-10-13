@@ -141,6 +141,9 @@ final class Diagnostics {
 			if ( isset( $v['step'] ) && ( ! Values::numeric( $v['step'] ) || $v['step'] <= 0 ) ) {
 				$add( $path . '/validation/step', 'invalid_range', 'The numeric increment must be positive.' );
 			}
+			if ( in_array( $s['type'], array( 'rating', 'scale', 'nps', 'slider' ), true ) && ! \ChatFlow\Fields\NumericScaleField::validConfig( $s ) ) {
+				$add( $path . '/validation', 'invalid_range', 'Scale bounds and increments must be numeric and compatible.' );
+			}
 			if ( 'single_choice' !== $s['type'] && array_filter( $s['options'] ?? array(), static fn( $o ) => ! empty( $o['isOther'] ) ) ) {
 				$add( $path . '/options', 'unsupported_other', 'Other free text is only supported for single-choice fields.' );
 			}

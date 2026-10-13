@@ -1,0 +1,42 @@
+{
+  "name": "phase2-slider-missing-optional",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "slider",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": ["answer"],
+    "answers": {"answer": null},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

@@ -1,6 +1,6 @@
 import type { Action, Condition, FormSchema, ValidationIssue } from '../contracts';
 import { issue, numeric, regex } from './value';
-import { V1_FIELD_TYPES } from './fields';
+import { ENABLED_FIELD_TYPES } from './fields';
 
 export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
@@ -54,7 +54,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const skippable = new Set([...schema.steps.filter(s => s.hiddenByDefault).map(s => s.id), ...allRules.filter(r => r.then.action === 'hide').map(r => (r.then as { to: string }).to)]);
   schema.steps.forEach((s, i) => {
     const path = `/steps/${i}`;
-    if (!(V1_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
+    if (!(ENABLED_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
     if (s.validation?.pattern !== undefined && !regex(s.validation.pattern)) add(path + '/validation/pattern', 'invalid_pattern', 'The validation pattern is not supported.');
     if (s.validation?.mxCheck) add(path + '/validation/mxCheck', 'unsupported_validation', 'MX checking is not enabled.');
     if (['single_choice', 'multi_choice'].includes(s.type) && !s.options?.length) add(path + '/options', 'missing_options', 'Choice fields need at least one option.');
@@ -72,6 +72,11 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
       if (min !== undefined && max !== undefined && typeof min === typeof max && min > max) add(path + '/validation', 'invalid_range', 'Minimum must not exceed maximum.');
     }
     if (v.step !== undefined && (!numeric(v.step) || v.step <= 0)) add(path + '/validation/step', 'invalid_range', 'The numeric increment must be positive.');
+    if (['rating', 'scale', 'nps', 'slider'].includes(s.type)) {
+      const min = s.type === 'nps' ? 0 : v.min ?? (['rating','scale'].includes(s.type) ? 1 : 0);
+      const max = s.type === 'nps' ? 10 : v.max ?? (s.type === 'rating' ? 5 : s.type === 'scale' ? 10 : 100);
+      if (!numeric(min) || !numeric(max) || min > max || s.type !== 'slider' && (!Number.isInteger(min) || !Number.isInteger(max))) add(path + '/validation', 'invalid_range', 'Scale bounds and increments must be numeric and compatible.');
+    }
     if (s.type !== 'single_choice' && s.options?.some(o => o.isOther)) add(path + '/options', 'unsupported_other', 'Other free text is only supported for single-choice fields.');
     if (schema.steps[i + 1] && (skippable.has(s.id) || !s.logic?.some(r => ['jump', 'end'].includes(r.then.action) && 'all' in r.if && !r.if.all.length))) {
       const set = edges.get(s.id) ?? new Set<string>(); set.add(schema.steps[i + 1]!.id); edges.set(s.id, set);
