@@ -4,7 +4,7 @@ import { render, createElement } from 'preact';
 import { act } from 'preact/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FieldInput, normalizePhone, toggleChoice } from '../../../assets/src/runtime/inputs';
-import { Markdown, safeLink } from '../../../assets/src/runtime/content';
+import { interpolateLink, Markdown, reactions, safeLink } from '../../../assets/src/runtime/content';
 import { phrases } from '../../../assets/src/runtime/i18n';
 import { mountRuntime } from '../../../assets/src/runtime';
 import { typingDelay } from '../../../assets/src/runtime/chat';
@@ -73,6 +73,10 @@ describe('Phase 1 inputs and accessible keyboard interaction', () => {
   });
 });
 describe('safe content, translations and motion', () => {
+  it('URL-encodes merge tags and renders configured choice reactions only for selected values', () => {
+    expect(interpolateLink('https://example.test/?q={{name}}', { name: 'Ada & X=1' })).toBe('https://example.test/?q=Ada%20%26%20X%3D1');
+    const step = { ...choice, options: [{ ...choice.options![0]!, reaction: 'Good {{name}}!' }] }; expect(reactions(step, 'a')).toEqual(['Good {{name}}!']); expect(reactions(step, { value: 'a', other: 'Other' })).toEqual(['Good {{name}}!']); expect(reactions(step, ['a'])).toEqual(['Good {{name}}!']); expect(reactions(step, 'b')).toEqual([]);
+  });
   it('allows static appearance styling without CSS imports/images/answer selectors or resource-bearing colors', () => {
     expect(scopedAppearanceCss('.bubble { color: #123456; padding: 12px; background-image: none }')).toContain('padding:12px');
     for (const css of ['@import "https://evil.test";', '.bubble{background:url(https://evil.test)}', 'input[value="PII"]{color:red}', '.bubble{color:var(--secret)}', '.bubble{color:\\72 ed}']) expect(scopedAppearanceCss(css)).toBe('');

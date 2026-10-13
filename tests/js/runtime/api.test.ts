@@ -5,6 +5,17 @@ import type { Session } from '../../../assets/src/runtime/types';
 const session: Session = { sessionId: '12345678-1234-4234-8234-123456789abc', formId: 42, version: 2, revision: 1, status: 'active', answers: {}, visited: [], currentStepId: null, progress: 0, requestToken: 'request-test', requestExpiresAt: '2099-01-01T00:00:00Z', context: { now: '2026-10-13T00:00:00Z' } };
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 describe('session API', () => {
+  it('supports WordPress plain-permalink REST endpoints without exposing credentials in route/query', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => json(session)); const api = new ApiClient('https://localhost/?rest_route=/cff/v1/', fetcher);
+    await api.form(42, 2); await api.submit(session, {}, 'submit-key');
+    const first = new URL(String(fetcher.mock.calls[0]?.[0])); expect(first.searchParams.get('rest_route')).toBe('/cff/v1/forms/42'); expect(first.searchParams.get('version')).toBe('2');
+    expect(new URL(String(fetcher.mock.calls[1]?.[0])).searchParams.get('rest_route')).toBe(`/cff/v1/sessions/${session.sessionId}/submit`); expect(String(fetcher.mock.calls[1]?.[0])).not.toContain('request-test');
+  });
+  it('retries non-JSON proxy failures but never parses or displays their raw body', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('<html>private proxy error</html>', { status: 503 })).mockResolvedValueOnce(new Response('busy', { status: 429, headers: { 'Retry-After': '1' } })).mockResolvedValueOnce(json(session));
+    const pause = vi.fn().mockResolvedValue(undefined); const api = new ApiClient('https://localhost/api/', fetcher, pause); await api.mutate(session, 'PATCH', {}, 'same-key');
+    expect(fetcher).toHaveBeenCalledTimes(3); expect(pause.mock.calls).toEqual([[500], [1000]]); expect(fetcher.mock.calls[0]?.[1]?.body).toBe(fetcher.mock.calls[2]?.[1]?.body);
+  });
   it('uses the exact handshake, credential headers, optimistic body and pinned schema query', async () => {
     const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => json(session));
     const api = new ApiClient('https://localhost/wp-json/cff/v1/', fetcher);
