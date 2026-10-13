@@ -30,8 +30,11 @@ final class Operators {
 			'url'      => $context['url'] ?? array(),
 		);
 		$left    = $sources[ $condition['source'] ?? 'answer' ][ $condition['field'] ?? '' ] ?? null;
-		$right   = $condition['value'] ?? null;
-		$op      = $condition['op'] ?? '';
+		if ( 'answer' === ( $condition['source'] ?? 'answer' ) ) {
+			$left = Values::choiceValue( $left );
+		}
+		$right = $condition['value'] ?? null;
+		$op    = $condition['op'] ?? '';
 		if ( in_array( $op, array( 'eq', 'neq' ), true ) ) {
 			return 'eq' === $op ? Values::equal( $left, $right ) : ! Values::equal( $left, $right );
 		}

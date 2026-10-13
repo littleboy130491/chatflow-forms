@@ -1,0 +1,65 @@
+{
+  "name": "hidden-by-default",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "hiddenByDefault": true
+      },
+      {
+        "id": "review",
+        "key": "review",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "review"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "fake"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "review"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "unvisited_answer",
+        "message": "Answers to unvisited steps are not accepted.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

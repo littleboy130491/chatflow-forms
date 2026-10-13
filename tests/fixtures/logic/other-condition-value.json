@@ -1,0 +1,101 @@
+{
+  "name": "other-condition-value",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "choice",
+        "key": "choice",
+        "type": "single_choice",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "choice",
+        "options": [
+          {
+            "id": "opt-a",
+            "value": "a",
+            "label": "Opsi A"
+          },
+          {
+            "id": "opt-b",
+            "value": "b",
+            "label": "Opsi B"
+          },
+          {
+            "id": "opt-none",
+            "value": "none",
+            "label": "Tidak ada",
+            "isExclusive": true
+          },
+          {
+            "id": "opt-other",
+            "value": "other",
+            "label": "Lainnya",
+            "isOther": true
+          }
+        ],
+        "logic": [
+          {
+            "if": {
+              "field": "choice",
+              "op": "eq",
+              "value": "other"
+            },
+            "then": {
+              "action": "end",
+              "to": "done"
+            }
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "key": "detail",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "detail",
+        "required": true
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "choice": {
+      "value": "other",
+      "other": "Maintenance"
+    }
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "choice"
+    ],
+    "answers": {
+      "choice": {
+        "value": "other",
+        "other": "Maintenance"
+      }
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

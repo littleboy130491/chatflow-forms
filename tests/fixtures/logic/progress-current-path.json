@@ -1,0 +1,97 @@
+{
+  "name": "progress-current-path",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "name",
+        "key": "name",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "name"
+      },
+      {
+        "id": "branch",
+        "key": "branch",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "branch",
+        "logic": [
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "jump",
+              "to": "contact"
+            }
+          }
+        ]
+      },
+      {
+        "id": "unused",
+        "key": "unused",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "unused"
+      },
+      {
+        "id": "contact",
+        "key": "contact",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "contact"
+      },
+      {
+        "id": "review",
+        "key": "review",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "review"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "name": "Adi"
+  },
+  "context": {},
+  "mode": "partial",
+  "expected": {
+    "visited": [
+      "name",
+      "branch",
+      "contact"
+    ],
+    "answers": {
+      "name": "Adi"
+    },
+    "variables": {},
+    "currentStepId": "contact",
+    "endingId": null,
+    "progress": 50,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "hidden-merge",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "name",
+        "key": "name",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "name"
+      },
+      {
+        "id": "merge",
+        "key": "merge",
+        "type": "hidden",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "merge",
+        "defaultValue": "Halo {{name}}!",
+        "settings": {
+          "source": "merge"
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "name": "Adi"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "name",
+      "merge"
+    ],
+    "answers": {
+      "name": "Adi",
+      "merge": "Halo Adi!"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

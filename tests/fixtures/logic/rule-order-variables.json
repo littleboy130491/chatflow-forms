@@ -1,0 +1,97 @@
+{
+  "name": "rule-order-variables",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "intro",
+        "logic": [
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "set_variable",
+              "key": "total",
+              "operation": "add",
+              "value": 3
+            }
+          },
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "set_variable",
+              "key": "total",
+              "operation": "subtract",
+              "value": 1
+            }
+          },
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "end",
+              "to": "done"
+            }
+          },
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "set_variable",
+              "key": "total",
+              "operation": "set",
+              "value": 99
+            }
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ],
+    "variables": [
+      {
+        "key": "total",
+        "type": "number",
+        "default": 2
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro"
+    ],
+    "answers": {},
+    "variables": {
+      "total": 4
+    },
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

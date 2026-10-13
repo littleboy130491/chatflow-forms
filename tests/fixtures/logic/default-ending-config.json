@@ -1,0 +1,53 @@
+{
+  "name": "default-ending-config",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "intro"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      },
+      {
+        "id": "alternate",
+        "type": "message",
+        "messages": [
+          "Alternatif"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {
+    "defaultEndingId": "alternate"
+  },
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "alternate",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

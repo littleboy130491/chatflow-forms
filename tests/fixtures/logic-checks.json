@@ -1,0 +1,1957 @@
+{
+  "operators": [
+    {
+      "name": "eq-number",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": 1
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "eq-not-string",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": "1"
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "eq-not-bool",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": false
+      },
+      "answers": {
+        "test": 0
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "neq-not-string",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "neq",
+        "value": "1"
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "eq-array-ordered",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": [
+          "b",
+          "a"
+        ]
+      },
+      "answers": {
+        "test": [
+          "a",
+          "b"
+        ]
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "eq-array-strict",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": [
+          1,
+          2
+        ]
+      },
+      "answers": {
+        "test": [
+          1,
+          "2"
+        ]
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "eq-null",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": null
+      },
+      "answers": {
+        "test": null
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "contains-text",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "contains",
+        "value": "Imajiner"
+      },
+      "answers": {
+        "test": "Website Imajiner"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "contains-case",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "contains",
+        "value": "website"
+      },
+      "answers": {
+        "test": "Website"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "contains-array",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "contains",
+        "value": "b"
+      },
+      "answers": {
+        "test": [
+          "a",
+          "b"
+        ]
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "not-contains-array",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "not_contains",
+        "value": "1"
+      },
+      "answers": {
+        "test": [
+          1,
+          2
+        ]
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "in-array",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "in",
+        "value": [
+          "a",
+          "b"
+        ]
+      },
+      "answers": {
+        "test": "a"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "not-in-strict",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "not_in",
+        "value": [
+          "1"
+        ]
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "in-not-scalar",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "in",
+        "value": "a"
+      },
+      "answers": {
+        "test": "a"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "gt",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "gt",
+        "value": 1
+      },
+      "answers": {
+        "test": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "gt-strict",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "gt",
+        "value": 1
+      },
+      "answers": {
+        "test": "2"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "gte",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "gte",
+        "value": 2
+      },
+      "answers": {
+        "test": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "lt",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "lt",
+        "value": 2
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "lte",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "lte",
+        "value": 2
+      },
+      "answers": {
+        "test": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "between-inclusive",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "between",
+        "value": [
+          2,
+          3
+        ]
+      },
+      "answers": {
+        "test": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "between-range",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "between",
+        "value": [
+          2,
+          3
+        ]
+      },
+      "answers": {
+        "test": 1
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "between-invalid",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "between",
+        "value": [
+          "1",
+          3
+        ]
+      },
+      "answers": {
+        "test": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "empty-array",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "is_empty",
+        "value": null
+      },
+      "answers": {
+        "test": []
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "empty-object",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "is_empty",
+        "value": null
+      },
+      "answers": {
+        "test": {}
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "false-not-empty",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "is_empty",
+        "value": null
+      },
+      "answers": {
+        "test": false
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "zero-not-empty",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "is_not_empty",
+        "value": null
+      },
+      "answers": {
+        "test": 0
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "null-empty",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "is_empty",
+        "value": null
+      },
+      "answers": {
+        "test": null
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "starts-with",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "starts_with",
+        "value": "ab"
+      },
+      "answers": {
+        "test": "abcd"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "starts-with-strict",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "starts_with",
+        "value": "1"
+      },
+      "answers": {
+        "test": 123
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-ascii",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^[a-z]+$"
+      },
+      "answers": {
+        "test": "abc"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-fail",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^[a-z]+$"
+      },
+      "answers": {
+        "test": "ABC"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-unsafe",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^(a+)+$"
+      },
+      "answers": {
+        "test": "aaaa"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-many-optionals",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^a?a?a?a?$"
+      },
+      "answers": {
+        "test": "aaa"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-alternation",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^(abc|def)$"
+      },
+      "answers": {
+        "test": "abc"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-newline-anchor",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^abc$"
+      },
+      "answers": {
+        "test": "abc\n"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-unicode-dot",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^.$"
+      },
+      "answers": {
+        "test": "😀"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-digit-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\d$"
+      },
+      "answers": {
+        "test": "١"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-word-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\w$"
+      },
+      "answers": {
+        "test": "é"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-space-ascii",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\s$"
+      },
+      "answers": {
+        "test": "\t"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-space-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\s$"
+      },
+      "answers": {
+        "test": " "
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-too-long",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^a+$"
+      },
+      "answers": {
+        "test": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-unanchored-repeat",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "a+"
+      },
+      "answers": {
+        "test": "abc"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "date-before",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "date_before",
+        "value": "2026-01-01"
+      },
+      "answers": {
+        "test": "2025-01-01"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "date-after",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "date_after",
+        "value": "2025-01-01"
+      },
+      "answers": {
+        "test": "2026-01-01"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "date-invalid-comparison",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "date_before",
+        "value": "2026-01-01"
+      },
+      "answers": {
+        "test": "2025-02-29"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "date-equal",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "date_before",
+        "value": "2025-01-01"
+      },
+      "answers": {
+        "test": "2025-01-01"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "other-choice-eq",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": "other"
+      },
+      "answers": {
+        "test": {
+          "value": "other",
+          "other": "Detail"
+        }
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "other-choice-extra-key",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "eq",
+        "value": "other"
+      },
+      "answers": {
+        "test": {
+          "value": "other",
+          "other": "Detail",
+          "extra": 1
+        }
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "variable-source",
+      "condition": {
+        "field": "test",
+        "source": "variable",
+        "op": "eq",
+        "value": 42
+      },
+      "answers": {},
+      "variables": {
+        "test": 42
+      },
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "hidden-source",
+      "condition": {
+        "field": "test",
+        "source": "hidden",
+        "op": "eq",
+        "value": "ID"
+      },
+      "answers": {},
+      "variables": {},
+      "context": {
+        "hidden": {
+          "test": "ID"
+        }
+      },
+      "expected": true
+    },
+    {
+      "name": "url-source",
+      "condition": {
+        "field": "test",
+        "source": "url",
+        "op": "contains",
+        "value": "imaj"
+      },
+      "answers": {},
+      "variables": {},
+      "context": {
+        "url": {
+          "test": "imajiner"
+        }
+      },
+      "expected": true
+    },
+    {
+      "name": "age-today",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2008-10-13"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-10-13T00:00:00Z"
+      },
+      "expected": true
+    },
+    {
+      "name": "age-tomorrow",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2008-10-14"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-10-13T00:00:00Z"
+      },
+      "expected": false
+    },
+    {
+      "name": "age-leap-day",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2008-02-29"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-02-28T00:00:00Z"
+      },
+      "expected": false
+    },
+    {
+      "name": "age-leap-next",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2008-02-29"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-03-01T00:00:00Z"
+      },
+      "expected": true
+    },
+    {
+      "name": "age-future",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2027-01-01"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-10-13T00:00:00Z"
+      },
+      "expected": false
+    },
+    {
+      "name": "age-invalid-clock",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2000-01-01"
+      },
+      "variables": {},
+      "context": {
+        "now": "2026-02-30T00:00:00Z"
+      },
+      "expected": false
+    },
+    {
+      "name": "age-no-clock",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "age_gte",
+        "value": 18
+      },
+      "answers": {
+        "test": "2000-01-01"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "empty-all",
+      "condition": {
+        "all": []
+      },
+      "answers": {},
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "empty-any",
+      "condition": {
+        "any": []
+      },
+      "answers": {},
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "nested-all-any",
+      "condition": {
+        "all": [
+          {
+            "any": [
+              {
+                "field": "v",
+                "op": "eq",
+                "value": 1
+              },
+              {
+                "field": "v",
+                "op": "eq",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "field": "v",
+            "op": "gte",
+            "value": 1
+          }
+        ]
+      },
+      "answers": {
+        "v": 2
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-digit-class",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^[\\d]$"
+      },
+      "answers": {
+        "test": "5"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-digit-class-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^[\\d]$"
+      },
+      "answers": {
+        "test": "١"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-vertical-ascii",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\s$"
+      },
+      "answers": {
+        "test": "\u000b"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-vertical-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^\\s$"
+      },
+      "answers": {
+        "test": ""
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-dot-unicode",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^.$"
+      },
+      "answers": {
+        "test": "💡"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-dot-separator",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^.$"
+      },
+      "answers": {
+        "test": " "
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-fixed",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^a{3}$"
+      },
+      "answers": {
+        "test": "aaa"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-bounded",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^a{1,3}$"
+      },
+      "answers": {
+        "test": "aa"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    },
+    {
+      "name": "regex-malformed",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "a{foo}"
+      },
+      "answers": {
+        "test": "a{foo}"
+      },
+      "variables": {},
+      "context": {},
+      "expected": false
+    },
+    {
+      "name": "regex-escaped-quantifier",
+      "condition": {
+        "field": "test",
+        "source": "answer",
+        "op": "matches",
+        "value": "^a\\+$"
+      },
+      "answers": {
+        "test": "a+"
+      },
+      "variables": {},
+      "context": {},
+      "expected": true
+    }
+  ],
+  "interpolation": [
+    {
+      "name": "text-basic",
+      "text": "Halo {{nama}}, {{answer:layanan}}",
+      "answers": {
+        "nama": "Adi",
+        "layanan": "Website"
+      },
+      "meta": {},
+      "url": false,
+      "expected": "Halo Adi, Website"
+    },
+    {
+      "name": "text-missing",
+      "text": "A{{missing}}B{{meta:missing}}C",
+      "answers": {},
+      "meta": {},
+      "url": false,
+      "expected": "ABC"
+    },
+    {
+      "name": "text-unknown-tag",
+      "text": "{{unknown:key}}/{{Name}}/{{ not a key }}",
+      "answers": {},
+      "meta": {},
+      "url": false,
+      "expected": "//"
+    },
+    {
+      "name": "text-literal-not-html-safe",
+      "text": "{{answer:value}}",
+      "answers": {
+        "value": "<script>alert(1)</script>"
+      },
+      "meta": {},
+      "url": false,
+      "expected": "<script>alert(1)</script>"
+    },
+    {
+      "name": "text-nonrecursive",
+      "text": "{{value}}",
+      "answers": {
+        "value": "{{another}}",
+        "another": "secret"
+      },
+      "meta": {},
+      "url": false,
+      "expected": "{{another}}"
+    },
+    {
+      "name": "text-array",
+      "text": "{{array}}",
+      "answers": {
+        "array": [
+          "a",
+          1,
+          true,
+          null
+        ]
+      },
+      "meta": {},
+      "url": false,
+      "expected": "a, 1, true, "
+    },
+    {
+      "name": "text-object-order",
+      "text": "{{obj}}",
+      "answers": {
+        "obj": {
+          "z": 2,
+          "a": {
+            "y": false,
+            "b": "c"
+          }
+        }
+      },
+      "meta": {},
+      "url": false,
+      "expected": "a: b: c, y: false, z: 2"
+    },
+    {
+      "name": "text-other",
+      "text": "{{choice}}",
+      "answers": {
+        "choice": {
+          "value": "other",
+          "other": "Maintenance"
+        }
+      },
+      "meta": {},
+      "url": false,
+      "expected": "other: Maintenance"
+    },
+    {
+      "name": "text-meta",
+      "text": "{{meta:country}} {{name}}",
+      "answers": {
+        "name": "Adi"
+      },
+      "meta": {
+        "country": "ID"
+      },
+      "url": false,
+      "expected": "ID Adi"
+    },
+    {
+      "name": "text-number-format",
+      "text": "{{a}},{{b}},{{c}},{{d}},{{e}}",
+      "answers": {
+        "a": 1e+21,
+        "b": 1e+20,
+        "c": 1e-07,
+        "d": 1e-06,
+        "e": -0.0
+      },
+      "meta": {},
+      "url": false,
+      "expected": "1e+21,100000000000000000000,1e-7,0.000001,0"
+    },
+    {
+      "name": "url-encoded",
+      "text": "https://example.com/?q={{q}}&other={{missing}}",
+      "answers": {
+        "q": "A B/&!'()*😀"
+      },
+      "meta": {},
+      "url": true,
+      "expected": "https://example.com/?q=A%20B%2F%26%21%27%28%29%2A%F0%9F%98%80&other="
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "diagnostics-valid",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": []
+    },
+    {
+      "name": "diagnostics-empty",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "",
+          "code": "invalid_schema",
+          "message": "The schema needs 1–500 steps and an ending."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-duplicate-id",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "same",
+            "key": "same",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "same"
+          },
+          {
+            "id": "same",
+            "key": "other",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "other"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/1/id",
+          "code": "duplicate_id",
+          "message": "IDs must be globally unique."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-duplicate-key",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "first",
+            "key": "first",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "first"
+          },
+          {
+            "id": "second",
+            "key": "first",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "second"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/1/key",
+          "code": "duplicate_key",
+          "message": "Field keys must be unique."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-missing-target",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer",
+            "logic": [
+              {
+                "if": {
+                  "all": []
+                },
+                "then": {
+                  "action": "jump",
+                  "to": "missing"
+                }
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic/0/then/to",
+          "code": "missing_reference",
+          "message": "The navigation or visibility target does not exist."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-later-answer",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "first",
+            "key": "first",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "first",
+            "logic": [
+              {
+                "if": {
+                  "field": "last",
+                  "op": "eq",
+                  "value": "yes"
+                },
+                "then": {
+                  "action": "end",
+                  "to": "done"
+                }
+              }
+            ]
+          },
+          {
+            "id": "last",
+            "key": "last",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "last"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic/0/if/field",
+          "code": "later_reference",
+          "message": "This condition references a later answer."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-missing-answer",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer",
+            "logic": [
+              {
+                "if": {
+                  "field": "unknown",
+                  "op": "eq",
+                  "value": "yes"
+                },
+                "then": {
+                  "action": "end",
+                  "to": "done"
+                }
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic/0/if/field",
+          "code": "missing_reference",
+          "message": "The referenced answer does not exist."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-unsafe-pattern",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer",
+            "validation": {
+              "pattern": "^(a+)+$"
+            }
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/validation/pattern",
+          "code": "invalid_pattern",
+          "message": "The validation pattern is not supported."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-mx-disabled",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "mail",
+            "key": "mail",
+            "type": "email",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "mail",
+            "validation": {
+              "mxCheck": true
+            }
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/validation/mxCheck",
+          "code": "unsupported_validation",
+          "message": "MX checking is not enabled."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-no-choice-options",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "single_choice",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/options",
+          "code": "missing_options",
+          "message": "Choice fields need at least one option."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-variable-wrong-type",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "intro",
+            "key": "intro",
+            "type": "statement",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "intro",
+            "logic": [
+              {
+                "if": {
+                  "all": []
+                },
+                "then": {
+                  "action": "set_variable",
+                  "key": "counter",
+                  "operation": "add",
+                  "value": "1"
+                }
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ],
+        "variables": [
+          {
+            "key": "counter",
+            "type": "number",
+            "default": 0
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic/0/then",
+          "code": "invalid_variable",
+          "message": "The variable action has an invalid type."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-loop",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "intro",
+            "key": "intro",
+            "type": "statement",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "intro",
+            "logic": [
+              {
+                "if": {
+                  "all": []
+                },
+                "then": {
+                  "action": "jump",
+                  "to": "intro"
+                }
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic",
+          "code": "potential_loop",
+          "message": "Navigation rules may revisit this step."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-unreachable",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "intro",
+            "key": "intro",
+            "type": "statement",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "intro",
+            "logic": [
+              {
+                "if": {
+                  "all": []
+                },
+                "then": {
+                  "action": "end",
+                  "to": "done"
+                }
+              }
+            ]
+          },
+          {
+            "id": "unused",
+            "key": "unused",
+            "type": "short_text",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "unused"
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/1",
+          "code": "unreachable_step",
+          "message": "No possible navigation path reaches this step."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-backward-loop",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "intro",
+            "key": "intro",
+            "type": "statement",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "intro"
+          },
+          {
+            "id": "review",
+            "key": "review",
+            "type": "summary",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "review",
+            "logic": [
+              {
+                "if": {
+                  "all": []
+                },
+                "then": {
+                  "action": "jump",
+                  "to": "intro"
+                }
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/logic",
+          "code": "potential_loop",
+          "message": "Navigation rules may revisit this step."
+        },
+        {
+          "path": "/steps/1/logic",
+          "code": "potential_loop",
+          "message": "Navigation rules may revisit this step."
+        }
+      ]
+    },
+    {
+      "name": "diagnostics-other-multi-unsupported",
+      "schema": {
+        "schemaVersion": 1,
+        "bot": {
+          "name": "Imajiner"
+        },
+        "steps": [
+          {
+            "id": "answer",
+            "key": "answer",
+            "type": "multi_choice",
+            "messages": [
+              "Silakan isi"
+            ],
+            "label": "answer",
+            "options": [
+              {
+                "id": "opt-a",
+                "value": "a",
+                "label": "Opsi A"
+              },
+              {
+                "id": "opt-b",
+                "value": "b",
+                "label": "Opsi B"
+              },
+              {
+                "id": "opt-none",
+                "value": "none",
+                "label": "Tidak ada",
+                "isExclusive": true
+              },
+              {
+                "id": "opt-other",
+                "value": "other",
+                "label": "Lainnya",
+                "isOther": true
+              }
+            ]
+          }
+        ],
+        "endings": [
+          {
+            "id": "done",
+            "type": "message",
+            "messages": [
+              "Selesai"
+            ]
+          }
+        ]
+      },
+      "expected": [
+        {
+          "path": "/steps/0/options",
+          "code": "unsupported_other",
+          "message": "Other free text is only supported for single-choice fields."
+        }
+      ]
+    }
+  ]
+}

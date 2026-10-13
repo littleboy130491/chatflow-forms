@@ -1,0 +1,61 @@
+{
+  "name": "loop-self",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "intro",
+        "logic": [
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "jump",
+              "to": "intro"
+            }
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "intro",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/steps/0",
+        "code": "cff_logic_loop",
+        "message": "The logic path revisits a step."
+      }
+    ],
+    "discardedKeys": []
+  }
+}

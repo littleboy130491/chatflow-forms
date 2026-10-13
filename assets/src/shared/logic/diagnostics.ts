@@ -1,5 +1,5 @@
 import type { Action, Condition, FormSchema, ValidationIssue } from '../contracts';
-import { issue, regex } from './value';
+import { issue, numeric, regex } from './value';
 import { V1_FIELD_TYPES } from './fields';
 
 export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
@@ -10,6 +10,12 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   }
   const ids = new Set<string>(), keys = new Map<string, number>(), stepIds = new Map<string, number>();
   const variables = new Map((schema.variables ?? []).map(v => [v.key, v.type]));
+  const variableKeys = new Set<string>();
+  (schema.variables ?? []).forEach((v, i) => {
+    if (variableKeys.has(v.key)) add(`/variables/${i}/key`, 'duplicate_key', 'Variable keys must be unique.');
+    variableKeys.add(v.key);
+    if (v.type === 'number' ? !numeric(v.default) : typeof v.default !== v.type) add(`/variables/${i}/default`, 'invalid_variable', 'The variable default has an invalid type.');
+  });
   const endings = new Set(schema.endings.map(e => e.id));
   const unique = (id: string, path: string): void => { if (ids.has(id)) add(path, 'duplicate_id', 'IDs must be globally unique.'); ids.add(id); };
   schema.steps.forEach((s, i) => {
@@ -44,6 +50,8 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
     } else if (!(a.action === 'end' ? endings : stepIds).has(a.to)) add(path + '/to', 'missing_reference', 'The navigation or visibility target does not exist.');
   };
   const edges = new Map<string, Set<string>>();
+  const allRules = schema.steps.flatMap(s => [...(s.logic ?? []), ...(s.options ?? []).flatMap(o => o.logic ?? [])]);
+  const skippable = new Set([...schema.steps.filter(s => s.hiddenByDefault).map(s => s.id), ...allRules.filter(r => r.then.action === 'hide').map(r => (r.then as { to: string }).to)]);
   schema.steps.forEach((s, i) => {
     const path = `/steps/${i}`;
     if (!(V1_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
@@ -58,8 +66,19 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
     };
     inspect(s.logic ?? [], path + '/logic');
     (s.options ?? []).forEach((o, j) => inspect(o.logic ?? [], `${path}/options/${j}/logic`));
+    if (s.options && s.options.length > 200) add(path + '/options', 'invalid_schema', 'A field may have at most 200 options.');
+    const v = s.validation ?? {};
+    for (const [min, max] of [[v.minLength, v.maxLength], [v.minSelections, v.maxSelections], [v.min, v.max]]) {
+      if (min !== undefined && max !== undefined && typeof min === typeof max && min > max) add(path + '/validation', 'invalid_range', 'Minimum must not exceed maximum.');
+    }
+    if (v.step !== undefined && (!numeric(v.step) || v.step <= 0)) add(path + '/validation/step', 'invalid_range', 'The numeric increment must be positive.');
+    if (s.type !== 'single_choice' && s.options?.some(o => o.isOther)) add(path + '/options', 'unsupported_other', 'Other free text is only supported for single-choice fields.');
+    if (schema.steps[i + 1] && (skippable.has(s.id) || !s.logic?.some(r => ['jump', 'end'].includes(r.then.action) && 'all' in r.if && !r.if.all.length))) {
+      const set = edges.get(s.id) ?? new Set<string>(); set.add(schema.steps[i + 1]!.id); edges.set(s.id, set);
+    }
   });
   schema.steps.forEach((s, i) => {
+    if (errors.some(e => e.code === 'duplicate_id')) return;
     const queue = [...(edges.get(s.id) ?? [])], seen = new Set<string>();
     while (queue.length) {
       const id = queue.shift()!;
@@ -81,7 +100,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
       if ((rule.then.action === 'jump' || rule.then.action === 'end') && 'all' in rule.if && !rule.if.all.length) { fallsThrough = false; break; }
     }
     for (const o of s.options ?? []) for (const r of o.logic ?? []) if (r.then.action === 'jump') { const target = stepIds.get(r.then.to); if (target !== undefined) queue.push(target); }
-    if (fallsThrough) queue.push(i + 1);
+    if (fallsThrough || skippable.has(s.id)) queue.push(i + 1);
   }
   schema.steps.forEach((_s, i) => { if (!reachable.has(i)) add(`/steps/${i}`, 'unreachable_step', 'No possible navigation path reaches this step.'); });
   return errors;

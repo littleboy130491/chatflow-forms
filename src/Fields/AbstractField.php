@@ -11,6 +11,13 @@ abstract class AbstractField implements FieldType {
 	 */
 	public function sanitize( mixed $value, array $step, array $context = array() ): mixed {
 		$type = $this->type();
+		if ( 'single_choice' === $type && Values::isOtherAnswer( $value ) ) {
+			$answer = (array) $value;
+			return array(
+				'value' => $answer['value'],
+				'other' => self::plainText( $answer['other'] ),
+			);
+		}
 		if ( in_array( $type, array( 'short_text', 'long_text', 'email', 'date' ), true ) && is_string( $value ) ) {
 			return self::plainText( $value, 'long_text' === $type );
 		}
@@ -58,6 +65,7 @@ abstract class AbstractField implements FieldType {
 			'number' => Values::numeric( $value ),
 			'yes_no', 'consent' => is_bool( $value ),
 			'multi_choice' => is_array( $value ) && array_is_list( $value ) && count( array_filter( $value, 'is_string' ) ) === count( $value ),
+			'single_choice' => is_string( $value ) || Values::isOtherAnswer( $value ),
 			'hidden' => is_string( $value ) || is_bool( $value ) || Values::numeric( $value ),
 			default => is_string( $value ),
 		};
@@ -134,12 +142,34 @@ abstract class AbstractField implements FieldType {
 			}
 		}
 		if ( in_array( $type, array( 'single_choice', 'multi_choice' ), true ) ) {
-			$selected = is_array( $value ) ? $value : array( $value );
+			$selected = 'multi_choice' === $type ? $value : array( Values::choiceValue( $value ) );
 			$options  = $step['options'] ?? array();
 			foreach ( $selected as $item ) {
 				if ( ! in_array( $item, array_column( $options, 'value' ), true ) ) {
 					$add( 'invalid_choice', 'Choose a configured option value.' );
 					break;
+				}
+			}
+			if ( 'single_choice' === $type ) {
+				$other = false;
+				foreach ( $options as $option ) {
+					if ( $option['value'] === $selected[0] ) {
+						$other = $option['isOther'] ?? false;
+					}
+				}
+				if ( Values::isOtherAnswer( $value ) ) {
+					$answer = (array) $value;
+					if ( ! $other ) {
+						$add( 'invalid_other', 'Free text is only accepted for an Other option.' );
+					}
+					if ( '' === $answer['other'] ) {
+						$add( 'required_other', 'Enter text for the Other option.' );
+					}
+					if ( mb_strlen( $answer['other'], 'UTF-8' ) > 1000 ) {
+						$add( 'max_length', 'The answer is too long.' );
+					}
+				} elseif ( $other ) {
+					$add( 'required_other', 'Enter text for the Other option.' );
 				}
 			}
 			if ( count( array_unique( $selected, SORT_STRING ) ) !== count( $selected ) ) {

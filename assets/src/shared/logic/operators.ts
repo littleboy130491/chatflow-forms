@@ -1,12 +1,13 @@
 import type { AnswerMap, Condition, ReplayContext } from '../contracts';
-import { age, dateParts, empty, equal, matches, numeric, own } from './value';
+import { age, choiceValue, dateParts, empty, equal, matches, numeric, own } from './value';
 
 export function evaluateCondition(condition: Condition, answers: AnswerMap = {}, variables: AnswerMap = {}, context: ReplayContext = {}, depth = 0): boolean {
   if (depth > 64) return false;
   if ('all' in condition) return condition.all.every(c => evaluateCondition(c, answers, variables, context, depth + 1));
   if ('any' in condition) return condition.any.some(c => evaluateCondition(c, answers, variables, context, depth + 1));
   const source = { answer: answers, variable: variables, hidden: context.hidden ?? {}, url: context.url ?? {} }[condition.source ?? 'answer'];
-  const left = own(source, condition.field) ? source[condition.field] : null;
+  const raw = own(source, condition.field) ? source[condition.field] ?? null : null;
+  const left = (condition.source ?? 'answer') === 'answer' ? choiceValue(raw) : raw;
   const right = condition.value ?? null;
   const contains = (): boolean => typeof left === 'string' && typeof right === 'string' ? left.includes(right) :
     Array.isArray(left) && left.some(v => equal(v, right));
