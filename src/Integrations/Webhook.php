@@ -51,10 +51,12 @@ final class Webhook {
 			}
 			$ip = $addresses[0];
 			$ip = str_contains( $ip, ':' ) ? '[' . $ip . ']' : $ip;
-			curl_setopt( $handle, CURLOPT_RESOLVE, array( $host . ':443:' . $ip ) );
-			curl_setopt( $handle, CURLOPT_PROXY, '' );
-			curl_setopt( $handle, CURLOPT_FOLLOWLOCATION, false );
-			curl_setopt( $handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS );
+			if ( ! curl_setopt( $handle, CURLOPT_RESOLVE, array( $host . ':443:' . $ip ) )
+				|| ! curl_setopt( $handle, CURLOPT_PROXY, '' )
+				|| ! curl_setopt( $handle, CURLOPT_FOLLOWLOCATION, false )
+				|| ! curl_setopt( $handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS ) ) {
+				throw new \RuntimeException( 'Secure transport configuration failed.' );
+			}
 			$pinned = true;
 		};
 		add_action( 'requests-requests.before_request', $transport, PHP_INT_MAX, 5 );
@@ -135,6 +137,7 @@ final class Webhook {
 		return ( ord( $packed[0] ) & 0xe0 ) === 0x20
 			&& ! ( 0x20 === ord( $packed[0] ) && 0x02 === ord( $packed[1] ) )
 			&& ! ( 0x20 === ord( $packed[0] ) && 0x01 === ord( $packed[1] ) && ord( $packed[2] ) < 2 )
+			&& ! ( 0x3f === ord( $packed[0] ) && 0xff === ord( $packed[1] ) && ( ord( $packed[2] ) & 0xf0 ) === 0 )
 			&& ! str_starts_with( strtolower( $ip ), '2001:db8:' );
 	}
 }

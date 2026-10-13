@@ -233,7 +233,7 @@ final class DeliveryTest extends \WP_UnitTestCase {
 	}
 
 	public function testRejectsUnsafeWebhookDestinationsBeforeNetworkIo(): void {
-		foreach ( array( '127.0.0.1', '10.0.0.1', '172.16.4.1', '192.168.1.4', '169.254.169.254', '100.64.2.1', '0.0.0.0', '224.0.0.1', '::1', 'fc00::1', 'fe80::1', '::ffff:127.0.0.1', '64:ff9b::7f00:1', '2001:db8::1' ) as $ip ) {
+		foreach ( array( '127.0.0.1', '10.0.0.1', '172.16.4.1', '192.168.1.4', '169.254.169.254', '100.64.2.1', '0.0.0.0', '224.0.0.1', '192.0.2.1', '198.18.0.1', '203.0.113.1', '::1', 'fc00::1', 'fe80::1', '::ffff:127.0.0.1', '64:ff9b::7f00:1', '2001:db8::1', '3fff::1', '2001::1', '2002:7f00:1::1' ) as $ip ) {
 			$this->assertFalse( Webhook::publicIp( $ip ), $ip );
 		}
 		$this->assertTrue( Webhook::publicIp( '8.8.8.8' ) );
