@@ -28,6 +28,8 @@ final class FrontendModule implements Module {
 		add_filter( 'template_include', array( $this, 'template' ) );
 		add_filter( 'script_loader_tag', array( $this, 'moduleTag' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'tracking' ) );
+		foreach ( array( 'rocket_delay_js_exclusions', 'rocket_exclude_defer_js', 'litespeed_optm_js_defer_exc', 'autoptimize_filter_js_exclude' ) as $filter ) {
+			add_filter( $filter, array( $this, 'optimizerExclusions' ) ); }
 	}
 	public function rewrite(): void {
 		$base = Settings::get()['fullpageBase'];
@@ -47,23 +49,31 @@ final class FrontendModule implements Module {
 			global $wp_query;
 			$wp_query->set_404();
 			status_header( 404 );
-			return get_404_template() ?: $template; }
+			$fallback = get_404_template();
+			return $fallback ? $fallback : $template; }
 		$GLOBALS['cff_fullpage_form'] = $form;
-		( new Renderer( $this->forms ) )->render( $form->id() );
+		wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true );
 		status_header( 200 );
 		return CFF_PATH . 'templates/fullpage.php';
 	}
 	public function moduleTag( string $tag, string $handle, string $src ): string {
 		if ( ! in_array( $handle, array( 'cff-runtime', 'cff-tracking' ), true ) ) {
 			return $tag; }
-		return '<script type="module" src="' . esc_url( $src ) . '" id="' . esc_attr( $handle ) . '-js"></script>';
+		return '<script type="module" data-no-optimize="1" data-cfasync="false" src="' . esc_url( $src ) . '" id="' . esc_attr( $handle ) . '-js"></script>';
 	}
+	public function optimizerExclusions( mixed $excluded ): mixed {
+		$assets = array( '/build/runtime/runtime.js', '/build/runtime/tracking.js' );
+		if ( is_array( $excluded ) ) {
+			return array_values( array_unique( array_merge( $excluded, $assets ) ) );
+		} if ( is_string( $excluded ) ) {
+			return implode( ',', array_filter( array_merge( array( $excluded ), $assets ) ) );
+		} return $excluded; }
 	public function tracking(): void {
 		$settings = Settings::get();
 		$tracking = $settings['tracking'];
 		if ( ! $tracking['enabled'] || $settings['privacy']['respectDnt'] && '1' === ( $_SERVER['HTTP_DNT'] ?? '' ) ) {
 			return; }
-		wp_enqueue_script( 'cff-tracking', CFF_URL . 'build/runtime/tracking.js', array(), CFF_VERSION, true );
+		wp_enqueue_script( 'cff-tracking', plugins_url( 'build/runtime/tracking.js', CFF_FILE ), array(), CFF_VERSION, true );
 		wp_add_inline_script( 'cff-tracking', 'window.cffTracking=' . wp_json_encode( array_merge( $tracking, array( 'consentGranted' => false ) ) ) . ';', 'before' );
 	}
 }

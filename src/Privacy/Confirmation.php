@@ -4,6 +4,9 @@ namespace ChatFlow\Privacy;
 use ChatFlow\Submissions\Database;
 
 final class Confirmation {
+	/**
+	 * @param array<string,mixed> $context
+	 */
 	public static function issue( array $context ): string {
 		$body = rtrim(
 			strtr(
@@ -22,6 +25,10 @@ final class Confirmation {
 		);
 		return $body . '.' . self::mac( $body );
 	}
+	/**
+	 * @param array<string,mixed> $expected
+	 * @return array<string,mixed>|null
+	 */
 	public static function verify( string $token, array $expected ): ?array {
 		if ( strlen( $token ) > 4096 ) {
 			return null; }

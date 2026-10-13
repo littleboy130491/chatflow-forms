@@ -8,6 +8,10 @@ use ChatFlow\Submissions\Submission;
 
 final class Export {
 	public function __construct( private FormRepository $forms = new FormRepository(), private Repository $submissions = new Repository() ) {}
+	/**
+	 * @param array<string,mixed> $options
+	 * @return array<string,mixed>|\WP_Error
+	 */
 	public function create( array $options ): array|\WP_Error {
 		global $wpdb;
 		if ( array_diff( array_keys( $options ), array( 'formId', 'filters', 'ids', 'columns', 'headerStyle', 'delimiter', 'format' ) ) || ! is_int( $options['formId'] ?? null ) || 'csv' !== ( $options['format'] ?? 'csv' ) || ! in_array( $options['delimiter'] ?? ',', array( ',', ';' ), true ) || ! in_array( $options['headerStyle'] ?? 'labels', array( 'labels', 'keys' ), true ) || ! is_array( $options['filters'] ?? array() ) || ! is_array( $options['columns'] ?? array() ) ) {
@@ -34,7 +38,8 @@ final class Export {
 				if ( ! in_array( $step['type'], array( 'statement', 'summary', 'media' ), true ) ) {
 					$columns[ $step['key'] ] = $step['label']; }
 			}
-			$where    = $this->submissions->where( $filters );
+			$where = $this->submissions->where( $filters );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 			$historic = $wpdb->get_col( "SELECT DISTINCT v.field_key FROM {$wpdb->prefix}cff_submission_values v JOIN {$wpdb->prefix}cff_submissions s ON s.id=v.submission_id WHERE {$where} ORDER BY v.field_key" );
 			foreach ( $historic as $key ) {
 				$columns[ $key ] ??= $key; }
@@ -93,6 +98,9 @@ final class Export {
 				}
 			} return Database::error( 'cff_export_storage', 'Export unavailable. Configure writable CFF_PRIVATE_DIR outside the web root.', 503 ); }
 	}
+	/**
+	 * @return array<string,mixed>|\WP_Error
+	 */
 	public function progress( int $id ): array|\WP_Error {
 		$row = $this->row( $id );
 		if ( ! $row || (int) $row['user_id'] !== get_current_user_id() ) {
@@ -209,11 +217,20 @@ final class Export {
 				)
 			); }
 	}
+	/**
+	 * @return array<string,mixed>|null
+	 */
 	private function row( int $id ): ?array {
 		global $wpdb;
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}cff_exports WHERE id=%d", $id ), ARRAY_A ); }
+	/**
+	 * @param array<string,mixed> $row
+	 */
 	private function ticket( array $row ): string {
 		return hash_hmac( 'sha256', 'cff-export:' . get_current_blog_id() . ':' . $row['id'] . ':' . $row['user_id'] . ':' . $row['expires_at'], wp_salt( 'auth' ) ); }
+	/**
+	 * @param array<string,mixed> $row
+	 */
 	private function downloadUrl( array $row ): string {
 		return add_query_arg(
 			array(

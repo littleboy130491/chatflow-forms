@@ -4,7 +4,9 @@ namespace ChatFlow\Spam;
 use ChatFlow\Forms\Form;
 
 final class Protection {
-	/** @param array<string,mixed> $body @return list<string> */
+	/**
+	 * @param array<string,mixed> $body
+	 * @return list<string> */
 	public function reasons( Form $form, array $body, int $started ): array {
 		$settings = array_merge( \ChatFlow\Rest\Settings::get()['spam'], $form->settings()['spam'] ?? array() );
 		$reasons  = array();

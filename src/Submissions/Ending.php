@@ -9,7 +9,7 @@ final class Ending {
 	/** @return array<string,mixed>|\WP_Error */
 	public function build( Submission $submission, Form $form, ?string $id ): array|\WP_Error {
 		$endings = $form->schema()['endings'];
-		$id      = $id ?: ( $form->settings()['completion']['defaultEndingId'] ?? ( $endings[0]['id'] ?? '' ) );
+		$id      = $id ? $id : ( $form->settings()['completion']['defaultEndingId'] ?? ( $endings[0]['id'] ?? '' ) );
 		$ending  = null;
 		foreach ( $endings as $candidate ) {
 			if ( $candidate['id'] === $id ) {

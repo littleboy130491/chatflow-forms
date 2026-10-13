@@ -17,9 +17,11 @@ final class SessionService {
 	private TokenSigner $signer;
 	private Repository $submissions;
 	private Idempotency $requests;
-	/** @var list<array{hook:string,args:array<mixed>,id:int}> */
+	/**
+	 * @var list<array{hook:string,args:array<mixed>,id:int}> */
 	private array $hooks = array();
-	/** @var list<int> */
+	/**
+	 * @var list<int> */
 	private array $deliveries = array();
 	public function __construct( private FormRepository $forms, private Engine $engine, private Registry $fields ) {
 		$this->signer      = new TokenSigner( wp_salt( 'auth' ), get_current_blog_id() );
@@ -27,7 +29,9 @@ final class SessionService {
 		$this->requests    = new Idempotency();
 	}
 
-	/** @param array<string,mixed> $body @return array<string,mixed>|\WP_Error */
+	/**
+	 * @param array<string,mixed> $body
+	 * @return array<string,mixed>|\WP_Error */
 	public function start( array $body, string $token, string $key ): array|\WP_Error {
 		$form_id = $body['formId'] ?? 0;
 		$version = $body['version'] ?? 0;
@@ -128,7 +132,8 @@ final class SessionService {
 		return $result;
 	}
 
-	/** @return array<string,mixed>|\WP_Error */
+	/**
+	 * @return array<string,mixed>|\WP_Error */
 	public function resume( int $form_id, string $credential ): array|\WP_Error {
 		global $wpdb;
 		if ( ! $this->signer->verifyResume( $credential, time() ) ) {
@@ -150,7 +155,8 @@ final class SessionService {
 		return $envelope;
 	}
 
-	/** @return array<string,mixed>|\WP_Error */
+	/**
+	 * @return array<string,mixed>|\WP_Error */
 	public function get( string $id, string $token ): array|\WP_Error {
 		global $wpdb;
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}cff_sessions WHERE public_id=%s", $id ), ARRAY_A );
@@ -163,7 +169,9 @@ final class SessionService {
 		return is_wp_error( $replay ) ? $replay : $this->envelope( $row, $form, $replay );
 	}
 
-	/** @param array<string,mixed> $body @return array<string,mixed>|\WP_Error */
+	/**
+	 * @param array<string,mixed> $body
+	 * @return array<string,mixed>|\WP_Error */
 	public function mutate( string $operation, string $id, array $body, string $token, string $key ): array|\WP_Error {
 		$this->reset();
 		$result = Database::transaction(
@@ -282,7 +290,8 @@ final class SessionService {
 		return $result;
 	}
 
-	/** @param array<string,mixed> $row */
+	/**
+	 * @param array<string,mixed> $row */
 	private function verify( array $row, string $token ): bool {
 		return null !== $this->signer->verify(
 			$token,
@@ -295,6 +304,9 @@ final class SessionService {
 			time()
 		);
 	}
+	/**
+	 * @param array<string,mixed> $row
+	 */
 	private function verifyReceiptToken( array $row, string $token ): bool {
 		$parts = explode( '.', $token );
 		if ( count( $parts ) !== 3 || strlen( $token ) > 2048 ) {
@@ -313,7 +325,8 @@ final class SessionService {
 			$claims['iat']
 		);
 	}
-	/** @param array<string,mixed> $row */
+	/**
+	 * @param array<string,mixed> $row */
 	private function snapshot( array $row ): Form|\WP_Error {
 		if ( ! $this->forms->getPublished( (int) $row['form_id'] ) ) {
 			return Database::error( 'cff_form_not_found', 'Published form not found.', 404 ); }
@@ -324,18 +337,24 @@ final class SessionService {
 		$wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID=%d AND post_type='cff_form' FOR UPDATE", $id ) );
 		clean_post_cache( $id );
 	}
-	/** @param array<string,mixed> $row @return array<string,mixed>|\WP_Error */
+	/**
+	 * @param array<string,mixed> $row
+	 * @return array<string,mixed>|\WP_Error */
 	private function storedReplay( array $row, Form $form ): array|\WP_Error {
 		$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
 		$context    = Database::decode( $row['context'] );
 		return $this->replay( $form, $submission?->answers() ?? $context['_answers'] ?? array(), $context, 'partial' );
 	}
-	/** @param array<string,mixed> $answers @param array<string,mixed> $context @return array<string,mixed>|\WP_Error */
+	/**
+	 * @param array<string,mixed> $answers
+	 * @param array<string,mixed> $context
+	 * @return array<string,mixed>|\WP_Error */
 	private function replay( Form $form, array $answers, array $context, string $mode ): array|\WP_Error {
 		$replay = $this->engine->replay( $form->schema(), $answers, $context, $mode );
 		$issues = $replay['errors'];
 		foreach ( $form->schema()['steps'] as $step ) {
 			if ( in_array( $step['id'], $replay['visited'], true ) && array_key_exists( $step['key'], $replay['answers'] ) ) {
+				$this->fields->get( $step['type'] );
 				$extra = HookDispatcher::filter( 'cff_validate_answer', array(), array( $step, $replay['answers'][ $step['key'] ], $form ) );
 				if ( is_array( $extra ) ) {
 					$issues = array_merge( $issues, $extra ); }
@@ -343,10 +362,15 @@ final class SessionService {
 		}
 		return $issues || $replay['discardedKeys'] ? Database::error( 'cff_validation_failed', 'Please check your answers.', 422, array( 'errors' => $issues ) ) : $replay;
 	}
-	/** @param array<string,mixed> $row @param array<string,mixed> $replay @return array<string,mixed> */
+	/**
+	 * @param array<string,mixed> $row
+	 * @param array<string,mixed> $replay
+	 * @return array<string,mixed> */
 	private function envelope( array $row, Form $form, array $replay ): array {
 		$context = Database::decode( $row['context'] );
 		unset( $context['_meta'], $context['_answers'], $context['_startScope'] );
+		foreach ( array( 'hidden', 'url', 'meta' ) as $key ) {
+			$context[ $key ] = (object) ( $context[ $key ] ?? array() ); }
 		return array(
 			'sessionId'        => $row['public_id'],
 			'formId'           => $form->id(),
@@ -370,7 +394,10 @@ final class SessionService {
 			'requestExpiresAt' => gmdate( 'c', time() + 900 ),
 		);
 	}
-	/** @param array<string,mixed> $replay @param array<string,mixed> $meta @return array<string,mixed> */
+	/**
+	 * @param array<string,mixed> $replay
+	 * @param array<string,mixed> $meta
+	 * @return array<string,mixed> */
 	private function data( Form $form, array $replay, array $meta ): array {
 		$data = array(
 			'form_id'         => $form->id(),
@@ -400,7 +427,7 @@ final class SessionService {
 				$data[ $key ] = $meta[ $key ]; }
 		}
 		if ( isset( $meta['ip'] ) ) {
-			$data['ip'] = inet_pton( $meta['ip'] ) ?: null; }
+			$data['ip'] = inet_pton( $meta['ip'] ) ? inet_pton( $meta['ip'] ) : null; }
 		foreach ( $meta['utm'] ?? array() as $key => $value ) {
 			$data[ 'utm_' . $key ] = $value; }
 		$data['click_ids'] = $meta['click_ids'] ?? array();
@@ -423,7 +450,10 @@ final class SessionService {
 		}
 		return null;
 	}
-	/** @param mixed $timings @param list<string> $visited @return array<string,int>|\WP_Error */
+	/**
+	 * @param mixed $timings
+	 * @param list<string> $visited
+	 * @return array<string,int>|\WP_Error */
 	private function timings( mixed $timings, array $visited ): array|\WP_Error {
 		if ( is_object( $timings ) ) {
 			$timings = (array) $timings; }
@@ -435,7 +465,9 @@ final class SessionService {
 		}
 		return $timings;
 	}
-	/** @param array<string,mixed> $meta @return array<string,mixed> */
+	/**
+	 * @param array<string,mixed> $meta
+	 * @return array<string,mixed> */
 	private function safeMeta( array $meta ): array {
 		$allowed = array( 'ip', 'user_id', 'user_agent', 'browser', 'browser_version', 'os', 'os_version', 'device_type', 'device_brand', 'page_url', 'referrer', 'landing_page', 'landing_referrer', 'utm', 'click_ids', 'locale', 'timezone', 'screen', 'country' );
 		$meta    = array_intersect_key( $meta, array_flip( $allowed ) );
