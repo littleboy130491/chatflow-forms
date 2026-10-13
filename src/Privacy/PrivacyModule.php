@@ -22,6 +22,7 @@ final class PrivacyModule implements Module {
 		add_action( 'cff_retention', array( $this, 'retention' ) );
 		add_action( 'cff_abandon_sessions', array( $this, 'abandon' ) );
 		add_action( 'cff_cleanup_private_files', array( new PrivateFiles(), 'cleanupSite' ) );
+		add_action( 'cff_private_cleanup', array( new PrivateFiles(), 'runCleanup' ) );
 		add_action( 'init', array( $this, 'schedule' ) );
 	}
 	public function schedule(): void {
@@ -30,6 +31,9 @@ final class PrivacyModule implements Module {
 				wp_schedule_event( time() + 300, 'daily', $hook ); }
 		}
 		global $wpdb;
+		$pending = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'cff_cleanup_%' LIMIT 20" );
+		foreach ( $pending as $name ) {
+			Scheduler::enqueue( 'cff_private_cleanup', array( substr( $name, 12 ) ), 5 ); }
 		foreach ( array( 'purge', 'export' ) as $kind ) {
 			if ( 'export' === $kind ) {
 				$ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}cff_exports WHERE status IN ('queued','running') ORDER BY id LIMIT 20" ); } else {
@@ -45,18 +49,29 @@ final class PrivacyModule implements Module {
 					Scheduler::enqueue( 'cff_' . $kind . '_batch', array( 'export' === $kind ? (int) $id : $id ), 5 ); }
 		}
 	}
+	/**
+	 * @param array<string,mixed> $items
+	 * @return array<string,mixed>
+	 */
 	public function exporters( array $items ): array {
 		$items['chatflow'] = array(
 			'exporter_friendly_name' => __( 'ChatFlow Forms', 'chatflow-forms' ),
 			'callback'               => array( $this, 'exportPersonal' ),
 		);
 		return $items; }
+	/**
+	 * @param array<string,mixed> $items
+	 * @return array<string,mixed>
+	 */
 	public function erasers( array $items ): array {
 		$items['chatflow'] = array(
 			'eraser_friendly_name' => __( 'ChatFlow Forms', 'chatflow-forms' ),
 			'callback'             => array( $this, 'erasePersonal' ),
 		);
 		return $items; }
+	/**
+	 * @return array<string,mixed>
+	 */
 	public function exportPersonal( string $email, int $page = 1 ): array {
 		$ids  = $this->emailIds( $email, max( 1, $page ) );
 		$data = array();
@@ -98,6 +113,9 @@ final class PrivacyModule implements Module {
 			'done' => count( $ids ) < 100,
 		);
 	}
+	/**
+	 * @return array<string,mixed>
+	 */
 	public function erasePersonal( string $email, int $page = 1 ): array {
 		// Always consume the first surviving batch: deletion must not shift an offset.
 		$ids      = $this->emailIds( $email, 1 );
@@ -122,6 +140,9 @@ final class PrivacyModule implements Module {
 			'done'           => $retained || count( $ids ) < 100,
 		);
 	}
+	/**
+	 * @return list<int>
+	 */
 	private function emailIds( string $email, int $page ): array {
 		global $wpdb;
 		if ( ! is_email( $email ) ) {

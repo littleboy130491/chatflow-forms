@@ -4,7 +4,9 @@ namespace ChatFlow\Forms;
 use ChatFlow\Integrations\HookDispatcher;
 
 final class PublicProjection {
-	/** @param list<string> $types @return array<string,mixed> */
+	/**
+	 * @param list<string> $types
+	 * @return array<string,mixed> */
 	public static function build( Form $form, array $types = SchemaValidator::V1_TYPES ): array {
 		$schema = $form->schema();
 		// Cookie/default hidden sources stay on the server until an uncached handshake.

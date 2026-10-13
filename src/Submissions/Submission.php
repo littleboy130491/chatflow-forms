@@ -53,7 +53,7 @@ final class Submission {
 			'isRead'        => (bool) $this->row['is_read'],
 			'isStarred'     => (bool) $this->row['is_starred'],
 			'visited'       => Database::decode( $this->row['visited'] ),
-			'currentStepId' => $this->row['current_step_id'] ?: null,
+			'currentStepId' => $this->row['current_step_id'] ? $this->row['current_step_id'] : null,
 			'progress'      => (int) $this->row['progress'],
 			'consent'       => Database::decode( $this->row['consent'] ),
 		);

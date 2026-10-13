@@ -29,15 +29,15 @@ final class RestModule implements Module {
 	public function routes(): void {
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
 		$this->route( '/forms/(?P<id>\d+)/start-token', 'POST', array( $this, 'startToken' ) );
-		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ), $r->get_header( 'Idempotency-Key' ) ), 201 ) );
-		$this->route( '/sessions/resume', 'POST', fn( $r ) => $this->respond( $this->sessions->resume( absint( $this->body( $r )['formId'] ?? 0 ), $r->get_header( 'X-CFF-Resume-Token' ) ) ) );
-		$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( $this->sessions->get( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ) ) );
+		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ), 201 ) );
+		$this->route( '/sessions/resume', 'POST', fn( $r ) => $this->respond( $this->sessions->resume( absint( $this->body( $r )['formId'] ?? 0 ), $r->get_header( 'X-CFF-Resume-Token' ) ?? '' ) ) );
+		$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( $this->sessions->get( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ?? '' ) ) );
 		foreach ( array(
 			'PATCH'  => 'patch',
 			'DELETE' => 'delete',
 			'POST'   => 'submit',
 		) as $method => $operation ) {
-			$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})' . ( 'submit' === $operation ? '/submit' : '' ), $method, fn( $r ) => $this->respond( $this->sessions->mutate( $operation, $r['id'], $this->body( $r ), $r->get_header( 'X-CFF-Request-Token' ), $r->get_header( 'Idempotency-Key' ) ) ) );
+			$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})' . ( 'submit' === $operation ? '/submit' : '' ), $method, fn( $r ) => $this->respond( $this->sessions->mutate( $operation, $r['id'], $this->body( $r ), $r->get_header( 'X-CFF-Request-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ) ) );
 		}
 		$this->route( '/admin/forms', 'GET', array( $this, 'formsList' ), 'cff_manage_forms' );
 		$this->route( '/admin/forms', 'POST', fn( $r ) => $this->respond( $this->forms->create( (string) ( $this->body( $r )['title'] ?? '' ), $this->body( $r )['schema'] ?? array(), $this->body( $r )['settings'] ?? array() ), 201 ), 'cff_manage_forms' );
@@ -134,7 +134,7 @@ final class RestModule implements Module {
 		$parts = wp_parse_url( $origin );
 		foreach ( array( home_url(), site_url() ) as $url ) {
 			$site = wp_parse_url( $url );
-			if ( is_array( $parts ) && ! isset( $parts['user'], $parts['pass'] ) && ( $parts['scheme'] ?? '' ) === ( $site['scheme'] ?? '' ) && strtolower( $parts['host'] ?? '' ) === strtolower( $site['host'] ?? '' ) && ( $parts['port'] ?? null ) === ( $site['port'] ?? null ) ) {
+			if ( is_array( $parts ) && ! isset( $parts['user'] ) && ! isset( $parts['pass'] ) && ( $parts['scheme'] ?? '' ) === ( $site['scheme'] ?? '' ) && strtolower( $parts['host'] ?? '' ) === strtolower( $site['host'] ?? '' ) && ( $parts['port'] ?? null ) === ( $site['port'] ?? null ) ) {
 				return true; }
 		}
 		return false;
@@ -187,10 +187,17 @@ final class RestModule implements Module {
 			)
 		);
 	}
+	/**
+	 * @return array<string,mixed>
+	 */
 	private function body( \WP_REST_Request $r ): array {
 		$raw = json_decode( $r->get_body(), false, 64, JSON_THROW_ON_ERROR );
 		if ( ! is_object( $raw ) ) {
 			throw new \InvalidArgumentException( 'JSON object body required.' ); }
+		foreach ( array( 'schema', 'settings', 'answers', 'meta', 'prefill', 'filters', 'criteria' ) as $key ) {
+			if ( property_exists( $raw, $key ) && ! is_object( $raw->$key ) ) {
+				throw new \InvalidArgumentException( 'JSON map required.' ); }
+		}
 		$convert = function ( mixed $value ) use ( &$convert ): mixed {
 			if ( is_object( $value ) ) {
 				if ( ! get_object_vars( $value ) ) {
@@ -211,8 +218,11 @@ final class RestModule implements Module {
 		} if ( $value instanceof \ChatFlow\Forms\Form ) {
 			$value = $value->toArray();
 		} return new \WP_REST_Response( $value, $status ); }
+	/**
+	 * @return array{int,int}
+	 */
 	private function pagination( \WP_REST_Request $r ): array {
-		return array( max( 1, absint( $r->get_param( 'page' ) ?: 1 ) ), max( 1, min( 100, absint( $r->get_param( 'perPage' ) ?: 20 ) ) ) ); }
+		return array( max( 1, absint( $r->get_param( 'page' ) ?? 1 ) ), max( 1, min( 100, absint( $r->get_param( 'perPage' ) ?? 20 ) ) ) ); }
 	public function formsList( \WP_REST_Request $r ): \WP_REST_Response {
 		[$page, $per] = $this->pagination( $r );
 		$query        = new \WP_Query(
@@ -288,6 +298,10 @@ final class RestModule implements Module {
 		);
 		return $this->respond( $data );
 	}
+	/**
+	 * @param array<string,mixed> $body
+	 * @return array<string,mixed>|\WP_Error
+	 */
 	private function changes( array $body ): array|\WP_Error {
 		if ( ! $body || array_diff( array_keys( $body ), array( 'isRead', 'isStarred', 'status', 'note' ) ) ) {
 			return Database::error( 'cff_invalid_changes', 'Unknown or empty changes.', 422 ); }

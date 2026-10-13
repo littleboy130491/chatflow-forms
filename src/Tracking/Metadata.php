@@ -5,7 +5,9 @@ use ChatFlow\Forms\Form;
 use ChatFlow\Submissions\Database;
 
 final class Metadata {
-	/** @param array<string,mixed> $input @return array<string,mixed>|\WP_Error */
+	/**
+	 * @param array<string,mixed> $input
+	 * @return array<string,mixed>|\WP_Error */
 	public function validate( array $input ): array|\WP_Error {
 		$allowed = array( 'pageUrl', 'pageTitle', 'referrer', 'landingPage', 'landingReferrer', 'utm', 'clickIds', 'locale', 'timezone', 'screen', 'stepTimings' );
 		if ( array_diff( array_keys( $input ), $allowed ) ) {
@@ -66,7 +68,10 @@ final class Metadata {
 		return $result;
 	}
 
-	/** @param array<string,mixed> $client @param array<string,mixed> $server @return array<string,mixed> */
+	/**
+	 * @param array<string,mixed> $client
+	 * @param array<string,mixed> $server
+	 * @return array<string,mixed> */
 	public function collect( Form $form, array $client, array $server ): array {
 		$global  = get_option( 'cff_settings', array() );
 		$privacy = array_merge( $global['privacy'] ?? array(), $form->settings()['privacy'] ?? array() );
@@ -93,7 +98,9 @@ final class Metadata {
 		return $meta;
 	}
 
-	/** @param array<string,mixed> $meta @return array<string,mixed> */
+	/**
+	 * @param array<string,mixed> $meta
+	 * @return array<string,mixed> */
 	public function context( Form $form, array $meta ): array {
 		$url = array();
 		parse_str( (string) wp_parse_url( $meta['page_url'] ?? '', PHP_URL_QUERY ), $query );
@@ -136,7 +143,8 @@ final class Metadata {
 		return is_array( $parts ) && isset( $parts['host'], $parts['scheme'] ) && in_array( strtolower( $parts['scheme'] ), array( 'http', 'https' ), true ) && ! isset( $parts['user'] ) && ! isset( $parts['pass'] );
 	}
 
-	/** @return array<string,string> */
+	/**
+	 * @return array<string,string> */
 	private function parseAgent( string $ua ): array {
 		if ( class_exists( '\ChatFlow\Vendor\DeviceDetector\DeviceDetector' ) ) {
 			$detector = new \ChatFlow\Vendor\DeviceDetector\DeviceDetector( $ua );
@@ -148,8 +156,8 @@ final class Metadata {
 				'browser_version' => $client['version'] ?? '',
 				'os'              => $os['name'] ?? '',
 				'os_version'      => $os['version'] ?? '',
-				'device_type'     => $detector->getDeviceName() ?: 'desktop',
-				'device_brand'    => $detector->getBrandName() ?: '',
+				'device_type'     => $detector->getDeviceName() ? $detector->getDeviceName() : 'desktop',
+				'device_brand'    => $detector->getBrandName() ? $detector->getBrandName() : '',
 			);
 		}
 		return array(

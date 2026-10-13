@@ -33,7 +33,7 @@ final class Settings {
 				'rateWindowSeconds' => 600,
 			),
 			'proxy'                    => array(
-				'mode'          => 'direct',
+				'mode'          => 'automatic',
 				'trustedRanges' => array(),
 				'header'        => 'HTTP_X_FORWARDED_FOR',
 			),
@@ -50,7 +50,9 @@ final class Settings {
 	/** @return array<string,mixed> */
 	public static function get(): array {
 		return array_replace_recursive( self::defaults(), (array) get_option( 'cff_settings', array() ) ); }
-	/** @return array<string,mixed>|\WP_Error */
+	/** @return array<string,mixed>|\WP_Error
+	 * @param array<string,mixed> $input
+	 */
 	public static function save( array $input ): array|\WP_Error {
 		$defaults = self::defaults();
 		if ( array_diff( array_keys( $input ), array_keys( $defaults ) ) ) {
@@ -66,7 +68,7 @@ final class Settings {
 		}
 		if ( ! is_bool( $result['delete_data_on_uninstall'] ) || ! in_array( $result['privacy']['ip'], array( 'full', 'anonymized', 'none' ), true ) || ! in_array( $result['defaultTheme'], array( 'light', 'dark', 'auto' ), true ) || ! is_string( $result['fullpageBase'] ) || ! preg_match( '/^[a-z0-9][a-z0-9-]{0,49}$/D', $result['fullpageBase'] ) || ! is_int( $result['retention']['days'] ) || $result['retention']['days'] < 1 || $result['retention']['days'] > 36500 || ! is_int( $result['tracking']['days'] ) || $result['tracking']['days'] < 1 || $result['tracking']['days'] > 90 ) {
 			return Database::error( 'cff_settings_invalid', 'Invalid general/privacy settings.', 422 ); }
-		if ( ! in_array( $result['proxy']['mode'], array( 'direct', 'cloudflare', 'custom' ), true ) || ! in_array( $result['proxy']['header'], array( 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP' ), true ) || ! is_array( $result['proxy']['trustedRanges'] ) || count( $result['proxy']['trustedRanges'] ) > 100 ) {
+		if ( ! in_array( $result['proxy']['mode'], array( 'automatic', 'direct', 'cloudflare', 'custom' ), true ) || ! in_array( $result['proxy']['header'], array( 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP' ), true ) || ! is_array( $result['proxy']['trustedRanges'] ) || count( $result['proxy']['trustedRanges'] ) > 100 ) {
 			return Database::error( 'cff_settings_invalid', 'Invalid trusted proxy settings.', 422 ); }
 		foreach ( $result['proxy']['trustedRanges'] as $range ) {
 			if ( ! is_string( $range ) ) {

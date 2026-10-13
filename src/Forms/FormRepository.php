@@ -124,6 +124,7 @@ final class FormRepository {
 				/** @var list<string> $types */
 				$types  = apply_filters( 'cff_publishable_field_types', SchemaValidator::V1_TYPES );
 				$errors = array_merge( $this->validator->validatePublishable( $draft->schema(), $types ), $this->validator->validateSettings( $draft->settings(), $draft->schema() ) );
+				$errors = array_merge( $errors, $this->phaseOneSettingsIssues( $draft->settings() ) );
 				if ( $errors ) {
 					return $this->invalid( $errors );
 				}
@@ -178,13 +179,39 @@ final class FormRepository {
 		);
 		if ( $result instanceof Form ) {
 			wp_cache_delete( 'public:' . $id, 'cff' );
-			try {
-				do_action( 'cff_form_published', $result );
-			} catch ( \Throwable $e ) {
-				error_log( 'ChatFlow: a form-published listener failed after commit.' );
-			}
+			\ChatFlow\Integrations\HookDispatcher::action( 'cff_form_published', array( $result ) );
 		}
 		return $result;
+	}
+	/** @param array<string,mixed> $settings
+	 * @return list<array{path:string,code:string,message:string}>
+	 */
+	private function phaseOneSettingsIssues( array $settings ): array {
+		$issues = array();
+		foreach ( array(
+			'/spam/captcha'        => ! in_array( $settings['spam']['captcha'] ?? 'none', array( 'none', '' ), true ),
+			'/spam/akismetEnabled' => ! empty( $settings['spam']['akismetEnabled'] ),
+			'/display/mode'        => ! in_array( $settings['display']['mode'] ?? 'inline', array( 'inline', 'fullpage' ), true ),
+		) as $path => $unsupported ) {
+			if ( $unsupported ) {
+				$issues[] = array(
+					'path'    => $path,
+					'code'    => 'unsupported_feature',
+					'message' => 'This optional feature is not enabled in Phase 1.',
+				); }
+		}
+		foreach ( $settings['integrations']['webhooks'] ?? array() as $index => $webhook ) {
+			if ( empty( $webhook['enabled'] ) ) {
+				continue;
+			} $parts = wp_parse_url( $webhook['url'] );
+			if ( ! is_array( $parts ) || 'https' !== ( $parts['scheme'] ?? '' ) || isset( $parts['user'] ) || isset( $parts['pass'] ) || ( $parts['port'] ?? 443 ) !== 443 || strlen( $webhook['secret'] ?? '' ) < 16 ) {
+				$issues[] = array(
+					'path'    => '/integrations/webhooks/' . $index,
+					'code'    => 'invalid_webhook',
+					'message' => 'Enabled webhooks require HTTPS on port 443 without credentials and a signing secret of at least 16 characters.',
+				); }
+		}
+		return $issues;
 	}
 
 	/** @param callable(Form):(Form|\WP_Error) $callback */

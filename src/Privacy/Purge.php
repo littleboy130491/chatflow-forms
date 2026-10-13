@@ -7,7 +7,9 @@ use ChatFlow\Integrations\HookDispatcher;
 
 final class Purge {
 	public function __construct( private Repository $submissions = new Repository() ) {}
-	/** @return array<string,mixed>|\WP_Error */
+	/** @return array<string,mixed>|\WP_Error
+	 * @param array<string,mixed> $input
+	 */
 	public function criteria( array $input ): array|\WP_Error {
 		if ( array_diff( array_keys( $input ), array( 'formId', 'status', 'from', 'to', 'olderThanDays' ) ) ) {
 			return Database::error( 'cff_purge_invalid', 'Invalid purge criteria.', 422 ); }
@@ -39,16 +41,20 @@ final class Purge {
 		ksort( $result );
 		return $result;
 	}
-	/** @return array<string,mixed>|\WP_Error */
+	/** @param array<string,mixed> $input
+	 * @return array<string,mixed>|\WP_Error */
 	public function preview( array $input ): array|\WP_Error {
 		global $wpdb;
 		$criteria = $this->criteria( $input );
 		if ( is_wp_error( $criteria ) ) {
 			return $criteria; }
 		$bounds = $this->bounds( $criteria );
-		$where  = $this->submissions->where( $bounds );
-		$count  = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_submissions s WHERE {$where}" );
-		$files  = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_uploads WHERE submission_id IN (SELECT s.id FROM {$wpdb->prefix}cff_submissions s WHERE {$where})" );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+		$where = $this->submissions->where( $bounds );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+		$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_submissions s WHERE {$where}" );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+		$files = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_uploads WHERE submission_id IN (SELECT s.id FROM {$wpdb->prefix}cff_submissions s WHERE {$where})" );
 		return array(
 			'count'             => $count,
 			'fileCount'         => $files,
@@ -62,7 +68,8 @@ final class Purge {
 			),
 		);
 	}
-	/** @return array<string,mixed>|\WP_Error */
+	/** @param array<string,mixed> $input
+	 * @return array<string,mixed>|\WP_Error */
 	public function start( array $input, string $token, string $confirmation ): array|\WP_Error {
 		$criteria = $this->criteria( $input );
 		if ( is_wp_error( $criteria ) ) {
@@ -85,6 +92,11 @@ final class Purge {
 		);
 		return $this->queue( $bounds, $criteria, get_current_user_id() );
 	}
+	/**
+	 * @param array<string,mixed> $bounds
+	 * @param array<string,mixed> $criteria
+	 * @return array<string,mixed>
+	 */
 	public function queue( array $bounds, array $criteria, int $user ): array {
 		$id = wp_generate_uuid4();
 		add_option(
@@ -107,12 +119,19 @@ final class Purge {
 			'status' => 'queued',
 		);
 	}
+	/**
+	 * @param array<string,mixed> $criteria
+	 * @return array<string,mixed>
+	 */
 	public function bounds( array $criteria ): array {
 		global $wpdb;
 		$criteria['before'] = isset( $criteria['olderThanDays'] ) ? gmdate( 'Y-m-d H:i:s', time() - $criteria['olderThanDays'] * DAY_IN_SECONDS ) : Database::now();
 		$criteria['maxId']  = (int) $wpdb->get_var( "SELECT COALESCE(MAX(id),0) FROM {$wpdb->prefix}cff_submissions" );
 		return $criteria;
 	}
+	/**
+	 * @return array<string,mixed>|\WP_Error
+	 */
 	public function progress( string $id ): array|\WP_Error {
 		$job = get_option( 'cff_purge_' . $id );
 		if ( ! is_array( $job ) ) {
@@ -128,16 +147,18 @@ final class Purge {
 		try {
 			$job = get_option( 'cff_purge_' . $id );
 			if ( ! is_array( $job ) || ! in_array( $job['status'], array( 'queued', 'running' ), true ) ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				return; }
-			$where   = $this->submissions->where( $job['filters'] );
-			$ids     = array_map( 'intval', $wpdb->get_col( "SELECT s.id FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY s.id LIMIT 100" ) );
+			$where = $this->submissions->where( $job['filters'] );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+			$ids     = array_map( 'intval', $wpdb->get_col( "SELECT s.id FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY s.id LIMIT 500" ) );
 			$deleted = array();
 			foreach ( $ids as $submission ) {
 				if ( $this->submissions->delete( $submission ) ) {
 					$deleted[] = $submission; }
 			}
 			$job['deleted'] += count( $deleted );
-			$job['status']   = count( $ids ) === 100 ? 'running' : 'completed';
+			$job['status']   = count( $ids ) === 500 ? 'running' : 'completed';
 			update_option( 'cff_purge_' . $id, $job, false );
 			HookDispatcher::action( 'cff_submissions_purged', array( $deleted, $job['criteria'] ) );
 			Database::check(

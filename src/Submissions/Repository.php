@@ -12,27 +12,32 @@ final class Repository {
 		return $row ? new Submission( $row, $this->forms->getVersion( (int) $row['form_id'], (int) $row['form_version'] ) ) : null;
 	}
 
-	/** @param array<string,mixed> $filters @return array{items:list<Submission>,total:int} */
-	public function find( array $filters, int $page = 1, int $perPage = 20 ): array {
+	/**
+	 * @param array<string,mixed> $filters
+	 * @return array{items:list<Submission>,total:int} */
+	public function find( array $filters, int $page = 1, int $per_page = 20 ): array {
 		global $wpdb;
-		$where   = $this->where( $filters );
-		$perPage = max( 1, min( 1000, $perPage ) );
-		$sorts   = array(
+		$where    = $this->where( $filters );
+		$per_page = max( 1, min( 1000, $per_page ) );
+		$sorts    = array(
 			'id'        => 's.id',
 			'createdAt' => 's.created_at',
 			'status'    => 's.status',
 		);
-		$sort    = $sorts[ $filters['sort'] ?? 'createdAt' ] ?? 's.created_at';
-		$order   = 'asc' === strtolower( $filters['order'] ?? 'desc' ) ? 'ASC' : 'DESC';
-		$rows    = $wpdb->get_results( $wpdb->prepare( "SELECT s.* FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY {$sort} {$order},s.id {$order} LIMIT %d OFFSET %d", $perPage, ( max( 1, $page ) - 1 ) * $perPage ), ARRAY_A );
-		$total   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_submissions s WHERE {$where}" );
+		$sort     = $sorts[ $filters['sort'] ?? 'createdAt' ] ?? 's.created_at';
+		$order    = 'asc' === strtolower( $filters['order'] ?? 'desc' ) ? 'ASC' : 'DESC';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT s.* FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY {$sort} {$order},s.id {$order} LIMIT %d OFFSET %d", $per_page, ( max( 1, $page ) - 1 ) * $per_page ), ARRAY_A );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
+		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_submissions s WHERE {$where}" );
 		return array(
 			'items' => array_map( fn( $row ) => new Submission( $row, $this->forms->getVersion( (int) $row['form_id'], (int) $row['form_version'] ) ), $rows ),
 			'total' => $total,
 		);
 	}
 
-	/** @param array<string,mixed> $filters */
+	/**
+	 * @param array<string,mixed> $filters */
 	public function where( array $filters ): string {
 		global $wpdb;
 		$allowed = array( 'formId', 'status', 'from', 'to', 'search', 'isRead', 'isStarred', 'utmSource', 'utmCampaign', 'device', 'fieldKey', 'operator', 'value', 'sort', 'order', 'ids', 'afterId', 'beforeId', 'before', 'maxId', 'olderThanDays' );
@@ -51,7 +56,8 @@ final class Repository {
 			if ( isset( $filters[ $key ] ) ) {
 				if ( ! is_numeric( $filters[ $key ] ) || (int) $filters[ $key ] < 0 ) {
 					throw new \InvalidArgumentException( 'Invalid identifier.' ); }
-				$op      = 'afterId' === $key ? '>' : ( 'beforeId' === $key ? '<=' : '=' );
+				$op = 'afterId' === $key ? '>' : ( 'beforeId' === $key ? '<=' : '=' );
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.{$column}{$op}%d", $filters[ $key ] );
 			}
 		}
@@ -68,7 +74,8 @@ final class Repository {
 				$value = $filters[ $key ];
 				if ( ! is_string( $value ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?)?$/D', $value ) || false === strtotime( $value . ( 10 === strlen( $value ) ? ' UTC' : '' ) ) ) {
 					throw new \InvalidArgumentException( 'Invalid date.' ); }
-				$date    = gmdate( 'Y-m-d H:i:s', strtotime( $value . ( 10 === strlen( $value ) ? ( 'to' === $key ? ' 23:59:59 UTC' : ' 00:00:00 UTC' ) : '' ) ) );
+				$date = gmdate( 'Y-m-d H:i:s', strtotime( $value . ( 10 === strlen( $value ) ? ( 'to' === $key ? ' 23:59:59 UTC' : ' 00:00:00 UTC' ) : '' ) ) );
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.created_at{$op}%s", $date );
 			}
 		}
@@ -80,6 +87,7 @@ final class Repository {
 				$value = filter_var( $filters[ $key ], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
 				if ( null === $value ) {
 					throw new \InvalidArgumentException( 'Invalid boolean.' ); }
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.{$column}=%d", $value ? 1 : 0 );
 			}
 		}
@@ -91,6 +99,7 @@ final class Repository {
 			if ( isset( $filters[ $key ] ) ) {
 				if ( ! is_string( $filters[ $key ] ) || strlen( $filters[ $key ] ) > 255 ) {
 					throw new \InvalidArgumentException( 'Invalid metadata filter.' ); }
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.{$column}=%s", $filters[ $key ] );
 			}
 		}
@@ -139,10 +148,12 @@ final class Repository {
 			'lt'  => '<',
 			'lte' => '<=',
 		)[ $op ];
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 		return $wpdb->prepare( "v.value_num{$symbol}%f", (float) $value );
 	}
 
-	/** Internal transactional write; caller supplies replay-normalized data. @param array<string,mixed> $data */
+	/** Internal transactional write; caller supplies replay-normalized data.
+	 * @param array<string,mixed> $data */
 	public function savePartial( array $data ): Submission {
 		global $wpdb;
 		$now  = Database::now();
@@ -165,13 +176,15 @@ final class Repository {
 		return $this->get( $id ) ?? throw new \RuntimeException( 'Submission missing.' );
 	}
 
-	/** @param array<string,mixed> $data */
+	/**
+	 * @param array<string,mixed> $data */
 	public function complete( int $id, array $data ): Submission {
 		$this->write( $id, array_merge( $data, array( 'updated_at' => Database::now() ) ) );
 		return $this->get( $id ) ?? throw new \RuntimeException( 'Submission missing.' );
 	}
 
-	/** @param array<string,mixed> $data */
+	/**
+	 * @param array<string,mixed> $data */
 	private function write( ?int $id, array $data ): int {
 		global $wpdb;
 		$form    = $this->forms->getVersion( (int) ( $data['form_id'] ?? $this->get( (int) $id )?->formId() ), (int) ( $data['form_version'] ?? $this->get( (int) $id )?->formVersion() ) );
@@ -205,7 +218,8 @@ final class Repository {
 		return $id;
 	}
 
-	/** @param array<string,mixed> $changes */
+	/**
+	 * @param array<string,mixed> $changes */
 	public function update( int $id, array $changes ): ?Submission {
 		global $wpdb;
 		$result = Database::transaction(
@@ -261,10 +275,10 @@ final class Repository {
 		return $this->deleteInternal( $id, false ); }
 	public function removeForRestart( int $id ): bool {
 		return $this->deleteInternal( $id, true ); }
-	private function deleteInternal( int $id, bool $preserveSession ): bool {
+	private function deleteInternal( int $id, bool $preserve_session ): bool {
 		global $wpdb;
 		$result = Database::transaction(
-			function () use ( $wpdb, $id, $preserveSession ) {
+			function () use ( $wpdb, $id, $preserve_session ) {
 				$wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}cff_submissions WHERE id=%d FOR UPDATE", $id ) );
 				$submission = $this->get( $id );
 				if ( ! $submission ) {
@@ -279,12 +293,15 @@ final class Repository {
 						Database::check( $wpdb->delete( $wpdb->prefix . 'cff_requests', array( 'scope_hash' => $context['_startScope'] ) ) ); }
 					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_events', array( 'session_id' => $session['id'] ) ) );
 					foreach ( array( 'patch', 'delete', 'submit' ) as $op ) {
-						if ( $preserveSession && 'delete' === $op ) {
+						if ( $preserve_session && 'delete' === $op ) {
 							continue; }
 						Database::check( $wpdb->delete( $wpdb->prefix . 'cff_requests', array( 'scope_hash' => hash( 'sha256', get_current_blog_id() . ':session:' . $session['public_id'] . ':' . $op ) ) ) ); }
 				}
-				( new \ChatFlow\Privacy\PrivateFiles() )->deleteSubmission( $id );
-				if ( $preserveSession ) {
+				$files = new \ChatFlow\Privacy\PrivateFiles();
+				$job   = $files->queueSubmission( $id );
+				if ( $job ) {
+					Database::afterCommit( fn() => $files->runCleanup( $job ) ); }
+				if ( $preserve_session ) {
 					Database::check(
 						$wpdb->update(
 							$wpdb->prefix . 'cff_sessions',
@@ -295,7 +312,7 @@ final class Repository {
 							array( 'submission_id' => $id )
 						)
 					); }
-				foreach ( $preserveSession ? array( 'submission_values', 'submission_notes', 'deliveries', 'uploads' ) : array( 'submission_values', 'submission_notes', 'deliveries', 'uploads', 'sessions' ) as $table ) {
+				foreach ( $preserve_session ? array( 'submission_values', 'submission_notes', 'deliveries', 'uploads' ) : array( 'submission_values', 'submission_notes', 'deliveries', 'uploads', 'sessions' ) as $table ) {
 					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_' . $table, array( 'submission_id' => $id ) ) ); }
 				Database::check( $wpdb->delete( $wpdb->prefix . 'cff_submissions', array( 'id' => $id ) ) );
 				return true;
