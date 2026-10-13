@@ -41,10 +41,11 @@ export class ApiClient {
       }
       clearTimeout(timer);
       let data: unknown;
-      try { data = await response.json(); } catch { throw new ApiError('cff_invalid_response', response.status); }
+      try { data = await response.json(); } catch { if (response.status < 500 && response.status !== 429) throw new ApiError('cff_invalid_response', response.status); data = {}; }
       if (response.ok) return data as T;
       const error = (data && typeof data === 'object' ? data : {}) as { code?: string; data?: { retryAfter?: number; errors?: ApiError['issues'] } };
-      const retryAfter = Math.max(0, Number(error.data?.retryAfter ?? response.headers.get('Retry-After') ?? 0) || 0);
+      const rawRetry = error.data?.retryAfter ?? response.headers.get('Retry-After') ?? 0;
+      const retryAfter = Math.max(0, (Number.isFinite(Number(rawRetry)) ? Number(rawRetry) : (Date.parse(String(rawRetry)) - Date.now()) / 1000) || 0);
       const code = typeof error.code === 'string' ? error.code : 'cff_request_failed';
       const retryable = response.status >= 500 || response.status === 429 || code === 'cff_request_pending' || code === 'cff_idempotency_pending';
       if (retryable && attempt < 2 && retryAfter <= 30) { await this.pause(Math.max(retryAfter * 1000, 500 * 2 ** attempt)); continue; }

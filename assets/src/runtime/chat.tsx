@@ -2,7 +2,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { interpolate } from '../shared/logic';
 import { RuntimeController } from './controller';
-import { answerLabel, Markdown, safeLink } from './content';
+import { answerLabel, interpolateLink, Markdown, reactions, safeLink } from './content';
 import { FieldInput } from './inputs';
 import { phrases } from './i18n';
 import type { Step } from './types';
@@ -70,7 +70,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
   const media = form?.schema.bot.avatar ? form.media?.[form.schema.bot.avatar] : null;
   const avatar = media ? safeLink(media.url) : null;
   return <section className={`chat ${controller.options.mode === 'fullpage' ? 'fullpage' : ''}`} dir={globalThis.document?.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'} aria-label={form?.title ?? 'ChatFlow'} aria-busy={state.busy}>
-    <header><div className="identity">{avatar && /^https?:/.test(avatar) && <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} />}<div><strong>{form?.schema.bot.name ?? 'ChatFlow'}</strong><small><span className="online-dot" aria-hidden="true" />{phrase('online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav></header>
+    <header><div className="identity">{avatar && /^https?:/.test(avatar) && <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} />}<div><strong>{form?.schema.bot.name ?? 'ChatFlow'}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav></header>
     <div className="progress" role="progressbar" aria-label={phrase('progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(state.phase === 'done' ? 100 : state.path?.progress ?? 0)}><span style={{ width: `${state.phase === 'done' ? 100 : state.path?.progress ?? 0}%` }} /></div>
     {controller.options.preview && <p className="notice">{phrase('preview')}</p>}
     {!controller.options.preview && globalThis.location?.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(location.hostname) && <p className="notice" role="alert">{phrase('insecure')}</p>}
@@ -81,6 +81,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
       {state.phase !== 'resume' && controller.visibleSteps.map(s => <section key={s.id} className="step" aria-label={s.label}>
         {(s.id === state.activeId && state.phase === 'ready' ? s.messages.slice(0, shown) : s.messages).map((message, index) => bot(message, index))}
         {s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key) && <button className="bubble user" disabled={state.busy || state.phase !== 'ready'} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}: ${answerLabel(s, state.answers[s.key], phrase)}`}>{answerLabel(s, state.answers[s.key], phrase)}<small>{phrase('edit')}</small></button>}
+        {s.id !== state.activeId && reactions(s, state.answers[s.key]).map((message, index) => bot(message, `reaction-${index}`))}
       </section>)}
       <div className="sr-only" aria-live="polite" aria-atomic="true">{state.phase === 'ready' ? interpolateText(messages[shown - 1] ?? '') : state.phase === 'done' ? phrase('complete') : ''}</div>
       {state.phase === 'ready' && step && <div ref={active} className="active" key={step.id}>
@@ -89,7 +90,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
           {step.helpText && <p id={`help-${step.id}`} className="help"><Markdown text={interpolateText(step.helpText)} /></p>}
           {state.fieldError && <p id={`error-${step.id}`} className="bubble bot" role="alert">{phrase(state.fieldError)}</p>}
           {step.type === 'summary' && summary()}
-          {['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={step} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
+          {['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateText(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
           {controller.canSkip && <button className="link-button" disabled={state.busy || state.conflict} onClick={() => void controller.answer(null)}>{phrase('skip')}</button>}
         </>}
       </div>}
@@ -98,12 +99,15 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
       {state.phase === 'done' && state.completion && <section className="ending" aria-label={phrase('complete')}>
         {state.completion.ending.messages.map((message, index) => bot(message, index))}
         {state.completion.redirectUrl && !controller.options.preview && <p role="status">{phrase('redirecting')}</p>}
-        {state.completion.ending.buttons.map(button => button.action === 'restart' ? <button key={button.id} onClick={() => setConfirm(true)}>{button.label}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{button.label}</button> : button.action === 'link' && button.url && safeLink(button.url) ? <a className="button" key={button.id} href={safeLink(button.url)!} target="_blank" rel="noopener noreferrer">{button.label}</a> : null)}
+        {state.completion.ending.buttons.map(button => {
+          const url = button.url ? safeLink(interpolateLink(button.url, state.answers, controller.meta)) : null;
+          return button.action === 'restart' ? <button key={button.id} onClick={() => setConfirm(true)}>{interpolateText(button.label)}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{interpolateText(button.label)}</button> : button.action === 'link' && url ? <a className="button" key={button.id} href={url} target="_blank" rel="noopener noreferrer">{interpolateText(button.label)}</a> : null;
+        })}
       </section>}
       {state.conflict && <section className="notice" role="alert"><p>{phrase('conflict')}</p><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(false)}>{phrase('useServer')}</button><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(true)}>{phrase('useLocal')}</button></section>}
       {error}
       <div ref={last} />
     </main>
-    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer aria-live="polite">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : state.dirty ? phrase('unsaved') : phrase('saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}</footer></>}
+    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer aria-live="polite">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : state.dirty ? phrase('unsaved') : phrase('saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}</footer></>}
   </section>;
 }

@@ -36,7 +36,8 @@ and multi-choice string[]. Deploy only with the matching real shared/PHP logic.
 ## Sessions and privacy
 
 Credentials travel only in `X-CFF-*` headers. Immutable operation bodies/UUID
-idempotency keys survive retries. A possibly accepted submit cannot be edited or
+idempotency keys survive retries while the mounted tab remains open. Submit
+requests are not queued across reloads. A possibly accepted submit cannot be edited or
 restarted until an identical retry confirms the result. Lost-response retries
 first reuse the old request token so the server can return its committed dedupe
 response after expiry. Requests are same-origin and disallow redirects.
@@ -57,7 +58,8 @@ edited, but reconnect must authenticate before saving; submit is never auto-queu
 
 Attribution is OFF by default. The tracking entry reads
 `window.cffTracking={enabled,consentRequired,consentGranted,days}`; runtime
-`tracking` overrides it. Consent is required when configured. First-touch
+`tracking` overrides it. Consent is required when configured; Do Not Track is
+respected by default (`respectDnt:false` explicitly disables that preference). First-touch
 `cff_ft` localStorage lasts 30 days by default (max90), preserving the first
 landing/referrer/UTM/click IDs. URLs lose query/fragment/credentials and individual
 campaign/click values are capped. Disable/revoke clears this entry. No telemetry.

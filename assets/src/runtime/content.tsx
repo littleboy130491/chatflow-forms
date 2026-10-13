@@ -1,9 +1,18 @@
 /** @jsxImportSource preact */
 import type { ComponentChildren } from 'preact';
 import type { Step } from './types';
+import { interpolate } from '../shared/logic';
+import type { AnswerMap } from '../shared/contracts';
 
 export function safeLink(raw: string, base = globalThis.location?.href ?? 'https://localhost/'): string | null {
   try { const url = new URL(raw, base); return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol) && !url.username && !url.password ? url.href : null; } catch { return null; }
+}
+export function interpolateLink(template: string, answers: AnswerMap, meta: AnswerMap = {}): string {
+  return template.replace(/\{\{[^{}]+\}\}/g, tag => encodeURIComponent(interpolate(tag, answers, meta)));
+}
+export function reactions(step: Step, value: unknown): string[] {
+  const selected = value && typeof value === 'object' && !Array.isArray(value) ? (value as { value?: unknown }).value : value;
+  return (step.options ?? []).filter(option => option.reaction && (Array.isArray(selected) ? selected.includes(option.value) : selected === option.value)).map(option => option.reaction!);
 }
 export function Markdown({ text }: { text: string }) {
   const parts: ComponentChildren[] = [];

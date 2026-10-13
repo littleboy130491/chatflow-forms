@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SessionStorage, type SavedSession } from '../../../assets/src/runtime/persistence';
 import { captureFirstTouch, clearFirstTouch, collectMeta, firstTouchKey, safePageUrl } from '../../../assets/src/tracking';
 
@@ -50,5 +50,15 @@ describe('consent-aware first-touch attribution', () => {
     expect(JSON.parse(localStorage.getItem(firstTouchKey) ?? '{}').expiresAt).toBe(now + 90 * 86400000);
     expect(safePageUrl('https://user:password@example.test/path?credential=secret#hash')).toBe('https://example.test/path'); expect(safePageUrl('data:text/html,secret')).toBe('');
     clearFirstTouch(localStorage); expect(localStorage.getItem(firstTouchKey)).toBeNull();
+  });
+  it('removes prior attribution after revocation and respects Do Not Track by default', () => {
+    captureFirstTouch({ enabled: true }, localStorage, landing, now); expect(localStorage.getItem(firstTouchKey)).not.toBeNull();
+    captureFirstTouch({ enabled: true, consentRequired: true, consentGranted: false }, localStorage, landing, now); expect(localStorage.getItem(firstTouchKey)).toBeNull();
+    vi.stubGlobal('navigator', { doNotTrack: '1' });
+    expect(captureFirstTouch({ enabled: true }, localStorage, landing, now)).toEqual({}); expect(captureFirstTouch({ enabled: true, respectDnt: false }, localStorage, landing, now).utm?.source).toBe('original'); vi.unstubAllGlobals();
+  });
+  it('reprojects stored attribution instead of forwarding injected/private metadata', () => {
+    localStorage.setItem(firstTouchKey, JSON.stringify({ expiresAt: now + 86400000, landingPage: 'https://localhost/start?token=secret', ip: 'private', requestToken: 'private', utm: { source: 'a'.repeat(300), extra: 'private' }, clickIds: { gclid: 'click', secret: 'private' } }));
+    const meta = captureFirstTouch({ enabled: true }, localStorage, landing, now); expect(meta.landingPage).toBe('https://localhost/start'); expect(meta.utm?.source?.length).toBe(255); expect(meta).not.toHaveProperty('ip'); expect(meta).not.toHaveProperty('requestToken'); expect(meta.utm).not.toHaveProperty('extra'); expect(meta.clickIds).not.toHaveProperty('secret');
   });
 });

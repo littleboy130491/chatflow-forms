@@ -23,11 +23,52 @@ function server() {
       if (deny === 'conflict') return response({ code: 'cff_revision_conflict', data: { revision: remote.revision } }, 409);
       remote = { ...remote, revision: remote.revision + 1, answers: body.answers ?? {} };
     }
-    return response(remote);
+    const envelope = { ...remote }; delete envelope.resumeToken; delete envelope.resumeExpiresAt;
+    return response(envelope);
   });
   return { fetcher, api: new ApiClient('/cff/v1/', fetcher, async () => {}), setRemote: (answers: AnswerMap, revision: number) => { remote = session(answers, revision); }, deny: (mode: typeof deny) => { deny = mode; } };
 }
 describe('replay-driven visitor controller', () => {
+  it('clears expired resume data without rewriting credentials from the stale in-memory session', async () => {
+    const network = server(); const controller = new RuntimeController({ form: form() }, network.api);
+    await controller.initialize(); await controller.answer(null); expect(localStorage.length).toBe(1);
+    network.fetcher.mockImplementation(async () => response({ code: 'cff_invalid_credential' }, 401)); await controller.answer('Ada');
+    expect(controller.state.error).toBe('expired'); expect(localStorage.length).toBe(0); expect(document.cookie).not.toContain('cff_s_42');
+  });
+  it('passes all v1 answer types and summary through the actual shared replay', async () => {
+    const inputs: [import('../../../assets/src/runtime/types').Step['type'], import('../../../assets/src/runtime/types').AnswerMap[string]][] = [
+      ['short_text', 'Ada'], ['long_text', 'Line one\nLine two'], ['email', 'ada@example.test'], ['phone', '+6281234567890'], ['number', 12], ['date', '2000-01-01'], ['single_choice', 'a'], ['multi_choice', ['a']], ['yes_no', false], ['consent', true],
+    ];
+    const steps = inputs.map(([type], i) => ({ id: `step-${i}`, key: `field_${i}`, type, messages: [], label: type, required: true, ...(['single_choice', 'multi_choice'].includes(type) ? { options: [{ id: `option-${i}`, value: 'a', label: 'A' }] } : {}) }));
+    const envelope = form([{ id: 'hidden', key: 'hidden', type: 'hidden', label: 'Hidden', messages: [], settings: { source: 'default' }, defaultValue: 'trusted' }, ...steps, { id: 'review', key: 'review', type: 'summary', label: 'Review', messages: [] }]);
+    const controller = new RuntimeController({ form: envelope, preview: true }, null); await controller.initialize();
+    for (const [, value] of inputs) { await controller.answer(value); expect(controller.state.fieldError).toBeNull(); }
+    expect(controller.state.activeId).toBe('review'); expect(controller.state.answers.hidden).toBe('trusted'); expect(controller.state.path?.progress).toBe(100);
+    await controller.answer(null); await controller.submit(); expect(controller.state.phase).toBe('done');
+  });
+  it('validates, sanitizes and replays the canonical Other object through actual shared logic', async () => {
+    const envelope = form([{ id: 'choice', key: 'choice', type: 'single_choice', required: true, label: 'Choice', messages: [], options: [{ id: 'normal', value: 'normal', label: 'Normal' }, { id: 'other', value: 'other', label: 'Other', isOther: true }] }, { id: 'summary', key: 'summary', type: 'summary', label: 'Summary', messages: [] }]);
+    const controller = new RuntimeController({ form: envelope, preview: true }, null); await controller.initialize();
+    await controller.answer({ value: 'normal', other: 'Injected' }); expect(controller.state.activeId).toBe('choice'); expect(controller.state.fieldError).toBe('invalid');
+    await controller.answer({ value: 'other', other: '' }); expect(controller.state.activeId).toBe('choice'); expect(controller.state.fieldError).toBe('invalid');
+    await controller.answer({ value: 'other', other: '<b>Custom response</b>' }); expect(controller.state.fieldError).toBeNull(); expect(controller.state.answers.choice).toEqual({ value: 'other', other: 'Custom response' }); expect(controller.state.activeId).toBe('summary');
+    await controller.answer(null); await controller.submit(); expect(controller.state.phase).toBe('done');
+  });
+  it('keeps durable resume credentials after PATCH envelopes omit them, including later offline edits', async () => {
+    const network = server(); const controller = new RuntimeController({ form: form() }, network.api);
+    await controller.initialize(); await controller.answer(null); await controller.answer('Ada');
+    expect(JSON.parse(localStorage.getItem('cff:session:42:1') ?? '{}').answers).toEqual({ name: 'Ada' });
+    controller.edit('name'); controller.setOffline(true); await controller.answer('Local edit');
+    const saved = JSON.parse(localStorage.getItem('cff:session:42:1') ?? '{}'); expect(saved.answers).toEqual({ name: 'Local edit' }); expect(saved.resumeToken).toBe(session().resumeToken); expect(saved.revision).toBe(2);
+  });
+  it('does not create a session after unmount while a start-token request is still in flight', async () => {
+    let release!: (response: Response) => void;
+    const pending = new Promise<Response>(resolve => { release = resolve; });
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(() => pending);
+    const controller = new RuntimeController({ form: form() }, new ApiClient('/cff/v1/', fetcher));
+    const initialized = controller.initialize(); controller.dispose(); release(response({ version: 1, startToken: 'test-start' })); await initialized;
+    expect(fetcher).toHaveBeenCalledTimes(1); expect(localStorage.length).toBe(0);
+  });
   it('never PATCHes when partial saving is disabled, but submits confirmed answers', async () => {
     const network = server(); const envelope = form(); envelope.form.session.savePartial = false;
     const controller = new RuntimeController({ form: envelope }, network.api);

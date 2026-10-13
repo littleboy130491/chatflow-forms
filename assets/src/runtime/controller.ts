@@ -40,6 +40,7 @@ export class RuntimeController {
       const formId = this.options.form?.form.id ?? this.options.formId;
       if (!this.options.preview && formId) this.saved = this.storage.read(formId);
       this.state.form = this.options.form ?? await this.api!.form(this.options.formId!);
+      if (this.disposed) return;
       this.latest = this.state.form;
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
       const form = this.state.form.form;
@@ -76,11 +77,13 @@ export class RuntimeController {
     return ids.filter(id => id !== this.session?.currentStepId && steps.some(s => s.id === id && display(s)));
   }
   private async adopt(session: Session): Promise<void> {
+    if (this.disposed) return;
     if (!this.state.form || session.formId !== this.state.form.form.id) throw new ApiError('cff_invalid_response', 0);
     if (!session.context?.now || !Number.isFinite(Date.parse(session.context.now))) throw new ApiError('cff_invalid_response', 0);
     if (session.status !== 'active') { this.storage.clear(session.formId); throw new ApiError('cff_session_expired', 401); }
     if (session.version !== this.state.form.form.version) {
       const pinned = await this.api!.form(session.formId, session.version);
+      if (this.disposed) return;
       if (pinned.form.version !== session.version) throw new ApiError('cff_version_conflict', 409);
       this.state.form = pinned;
     }
@@ -97,11 +100,13 @@ export class RuntimeController {
       if (!this.options.preview) {
         if (!this.pendingStart) {
           const token = await this.api!.startToken(form.id, form.version);
+          if (this.disposed) return;
           if (token.version !== form.version) throw new ApiError('cff_version_conflict', 409);
           this.pendingStart = { token: token.startToken, key: uuid(), meta: collectMeta(this.options.tracking ?? globalThis.window?.cffTracking), prefill: {}, version: form.version };
         }
         const operation = this.pendingStart;
         await this.adopt(await this.api!.start(form.id, operation.version, operation.meta, operation.prefill, operation.token, operation.key));
+        if (this.disposed) return;
         this.pendingStart = null;
       } else { this.compute(); }
       this.state.phase = this.state.path?.errors.length ? 'error' : 'ready'; this.persist(); this.event('cff:start');
@@ -193,25 +198,28 @@ export class RuntimeController {
     if (!this.session) throw new ApiError('cff_session_expired', 401);
     if (!(operation.method === 'POST' && this.submittedOnce) && Date.parse(this.session.requestExpiresAt) <= Date.now() + 5000 && this.session.resumeToken) {
       const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
+      if (this.disposed) throw new ApiError('cff_cancelled', 0);
       this.session = { ...fresh, answers: this.session.answers };
     }
     try { if (operation.method === 'POST') this.submittedOnce = true; return await this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key); }
     catch (error) {
       if (!(error instanceof ApiError) || error.status !== 401 || !this.session.resumeToken) throw error;
       const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
+      if (this.disposed) throw new ApiError('cff_cancelled', 0);
       this.session = { ...fresh, answers: this.session.answers };
       return this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key);
     }
   }
   async flush(): Promise<void> {
-    if (this.options.preview || this.state.form?.form.session.savePartial === false || this.state.offline || this.state.busy || this.state.conflict || this.pending?.method === 'POST' || !this.session || !this.state.dirty) return;
+    if (this.disposed || this.options.preview || this.state.form?.form.session.savePartial === false || this.state.offline || this.state.busy || this.state.conflict || this.pending?.method === 'POST' || !this.session || !this.state.dirty) return;
     this.state.busy = true; this.notify();
     const desired = this.inputAnswers();
     try {
       if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: { ...this.timings } } };
       const response = await this.mutate<Session>(this.pending);
+      if (this.disposed) return;
       const newer = JSON.stringify(desired) !== JSON.stringify(this.pending.body.answers);
-      this.pending = null; this.session = response;
+      this.pending = null; this.session = { ...this.session, ...response };
       this.context = response.context ?? this.context;
       if (!newer) this.state.answers = response.answers;
       this.state.dirty = newer; this.state.error = null; this.compute(); this.persist();
@@ -220,7 +228,7 @@ export class RuntimeController {
     if (this.state.dirty && !this.state.error && !this.state.offline) await this.flush();
   }
   async submit(honeypot = ''): Promise<void> {
-    if (this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
+    if (this.disposed || this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
     if (this.state.activeId && !this.pending) return;
     const validation = replay(this.state.form!.form.schema, this.state.answers, this.context, 'complete');
     if (validation.errors.length && !this.pending) { this.state.fieldError = 'invalid'; this.notify(); return; }
@@ -234,6 +242,7 @@ export class RuntimeController {
     try {
       if (!this.pending) this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot } };
       this.state.completion = await this.mutate<Completion>(this.pending);
+      if (this.disposed) return;
       this.pending = null; this.state.phase = 'done'; this.state.dirty = false;
       this.storage.clear(this.state.form!.form.id);
       this.event('cff:complete', { submissionId: this.state.completion.submission.uuid, endingId: this.state.completion.ending.id });
@@ -241,13 +250,14 @@ export class RuntimeController {
     finally { this.state.busy = false; this.notify(); }
   }
   async restart(): Promise<void> {
-    if (this.state.busy || this.pending?.method === 'POST' || this.pendingStart || this.state.offline) return;
+    if (this.disposed || this.state.busy || this.pending?.method === 'POST' || this.pendingStart || this.state.offline) return;
     this.state.busy = true; this.notify();
     try {
       if (this.session && this.state.phase !== 'done' && this.state.error !== 'expired' && !this.options.preview) {
         if (this.pending?.method === 'PATCH') { this.state.busy = false; await this.flush(); this.state.busy = true; if (this.pending) return; }
         this.pending ??= { method: 'DELETE', key: uuid(), body: { version: this.session.version, revision: this.session.revision } };
         await this.mutate(this.pending);
+        if (this.disposed) return;
       }
       if (!this.options.preview) this.storage.clear(this.state.form!.form.id);
       this.session = null; this.saved = null; this.pending = null; this.pendingStart = null; this.submittedOnce = false;
@@ -308,6 +318,6 @@ export class RuntimeController {
     }
     if (!this.session) this.state.phase = 'error';
     if (this.pending?.method === 'POST' && (api.status === 0 || api.status >= 500 || api.code.includes('pending'))) this.state.error = 'submissionPending';
-    this.persist(); this.notify();
+    if (this.state.error !== 'expired') this.persist(); this.notify();
   }
 }
