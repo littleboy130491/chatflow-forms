@@ -1,0 +1,59 @@
+{
+  "name": "number-step",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "number",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "validation": {
+          "step": 0.5
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": 1.25
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "step",
+        "message": "The answer does not match the allowed increment.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

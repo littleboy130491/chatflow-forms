@@ -1,0 +1,59 @@
+{
+  "name": "unicode-length",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "validation": {
+          "maxLength": 2
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "😀😀😀"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "max_length",
+        "message": "The answer is too long.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

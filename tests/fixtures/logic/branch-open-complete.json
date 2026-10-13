@@ -1,0 +1,84 @@
+{
+  "name": "branch-open-complete",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "route",
+        "key": "route",
+        "type": "yes_no",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "route",
+        "logic": [
+          {
+            "if": {
+              "field": "route",
+              "op": "eq",
+              "value": false
+            },
+            "then": {
+              "action": "jump",
+              "to": "review"
+            }
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "key": "detail",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "detail",
+        "required": true
+      },
+      {
+        "id": "review",
+        "key": "review",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "review"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "route": true,
+    "detail": "new"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "route",
+      "detail",
+      "review"
+    ],
+    "answers": {
+      "route": true,
+      "detail": "new"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

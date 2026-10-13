@@ -1,0 +1,68 @@
+{
+  "name": "unknown-answer",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "valid",
+    "unknown": "fake",
+    "__proto__": {
+      "admin": true
+    }
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": "valid"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [
+      {
+        "path": "/answers/__proto__",
+        "code": "unknown_answer",
+        "message": "The answer key does not exist.",
+        "fieldKey": "__proto__"
+      },
+      {
+        "path": "/answers/unknown",
+        "code": "unknown_answer",
+        "message": "The answer key does not exist.",
+        "fieldKey": "unknown"
+      }
+    ],
+    "discardedKeys": [
+      "__proto__",
+      "unknown"
+    ]
+  }
+}

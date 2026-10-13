@@ -3,6 +3,20 @@ namespace ChatFlow\Logic;
 
 final class Values {
 
+	public static function isOtherAnswer( mixed $value ): bool {
+		if ( ! is_array( $value ) && ! is_object( $value ) ) {
+			return false;
+		}
+		$answer = (array) $value;
+		$keys   = array_keys( $answer );
+		sort( $keys, SORT_STRING );
+		return array( 'other', 'value' ) === $keys && is_string( $answer['value'] ) && is_string( $answer['other'] );
+	}
+
+	public static function choiceValue( mixed $value ): mixed {
+		return self::isOtherAnswer( $value ) ? ( (array) $value )['value'] : $value;
+	}
+
 	public static function equal( mixed $a, mixed $b ): bool {
 		if ( self::numeric( $a ) && self::numeric( $b ) ) {
 			return (float) $a === (float) $b;

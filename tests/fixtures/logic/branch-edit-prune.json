@@ -1,0 +1,91 @@
+{
+  "name": "branch-edit-prune",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "route",
+        "key": "route",
+        "type": "yes_no",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "route",
+        "logic": [
+          {
+            "if": {
+              "field": "route",
+              "op": "eq",
+              "value": false
+            },
+            "then": {
+              "action": "jump",
+              "to": "review"
+            }
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "key": "detail",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "detail",
+        "required": true
+      },
+      {
+        "id": "review",
+        "key": "review",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "review"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "route": false,
+    "detail": "old branch"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "route",
+      "review"
+    ],
+    "answers": {
+      "route": false
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [
+      {
+        "path": "/answers/detail",
+        "code": "unvisited_answer",
+        "message": "Answers to unvisited steps are not accepted.",
+        "fieldKey": "detail"
+      }
+    ],
+    "discardedKeys": [
+      "detail"
+    ]
+  }
+}

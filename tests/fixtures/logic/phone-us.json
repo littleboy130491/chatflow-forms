@@ -1,0 +1,52 @@
+{
+  "name": "phone-us",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "phone",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "settings": {
+          "country": "US"
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "(202) 555-0199"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": "+12025550199"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

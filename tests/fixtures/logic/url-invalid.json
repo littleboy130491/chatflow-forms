@@ -1,0 +1,59 @@
+{
+  "name": "url-invalid",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "validation": {
+          "format": "url"
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "javascript:alert(1)"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "invalid_url",
+        "message": "Enter a valid website address.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

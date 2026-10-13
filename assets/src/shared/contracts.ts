@@ -7,6 +7,7 @@ export type FormSettings = ChatFlowPrivateFormSettingsV1;
 export type Field = Step;
 export type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };
 export type AnswerMap = Record<string, JSONValue>;
+export type ChoiceOtherAnswer = { value: string; other: string };
 export interface ValidationIssue { path: string; code: string; message: string; fieldKey?: string }
 export interface ReplayContext { hidden?: AnswerMap; url?: AnswerMap; meta?: AnswerMap; now?: string; defaultEndingId?: string }
 export interface ReplayResult {
@@ -18,7 +19,7 @@ export interface FormDTO {
   version: number; draftRevision: number; status: 'draft' | 'publish';
 }
 export interface ClientMeta {
-  pageUrl?: string; referrer?: string; landingPage?: string; landingReferrer?: string;
+  pageUrl?: string; pageTitle?: string; referrer?: string; landingPage?: string; landingReferrer?: string;
   utm?: { source?: string; medium?: string; campaign?: string; term?: string; content?: string };
   clickIds?: { gclid?: string; fbclid?: string; msclkid?: string; ttclid?: string };
   locale?: string; timezone?: string; screen?: string; stepTimings?: Record<string, number>;
@@ -26,6 +27,7 @@ export interface ClientMeta {
 export interface PublicSchemaEnvelope {
   form: { id: number; title: string; slug: string; version: number; schema: FormSchema;
     appearance: NonNullable<FormSettings['appearance']>; phrases: NonNullable<FormSettings['phrases']>;
+    media?: Record<string, { url: string; alt?: string }>;
     session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean } };
   features: { fieldTypes: string[]; uploads: boolean };
 }
@@ -48,3 +50,20 @@ export interface AdminConfig {
 export interface RestError { code: string; message: string; data: { status: number; errors?: ValidationIssue[];
   retryAfter?: number; draftRevision?: number; revision?: number } }
 export interface Page<T> { items: T[]; total: number; page: number; perPage: number }
+export interface GlobalSettings {
+  delete_data_on_uninstall: boolean; fullpageBase: string; defaultTheme: 'light' | 'dark' | 'auto';
+  tracking: { enabled: boolean; consentRequired: boolean; days: number };
+  privacy: { ip: 'anonymized' | 'full' | 'none'; storeUserAgent: boolean; storeMeta: boolean; respectDnt: boolean };
+  retention: { enabled: boolean; days: number; partialDays: number | null };
+  spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
+  proxy: { mode: 'direct' | 'cloudflare' | 'custom'; trustedRanges: string[]; header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP' };
+  email: { fromName: string; fromEmail: string; replyTo: string; logoUrl: string; brandColor: string; footerText: string };
+}
+export interface SubmissionDTO {
+  id: number; uuid: string; formId: number; formVersion: number;
+  status: 'partial' | 'completed' | 'abandoned' | 'spam' | 'trash'; answers: AnswerMap; meta: AnswerMap;
+  endingId: string; createdAt: string; updatedAt: string; durationMs: number; isRead: boolean; isStarred: boolean;
+  visited: string[]; currentStepId: string | null; progress: number; consent: AnswerMap;
+}
+export interface SubmissionNote { id: number; kind: string; message: string; userId: number; createdAt: string }
+export interface SubmissionDetail extends SubmissionDTO { form: FormDTO; notes: SubmissionNote[] }

@@ -1,0 +1,64 @@
+{
+  "name": "partial-unvisited-future",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "first",
+        "key": "first",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "first"
+      },
+      {
+        "id": "last",
+        "key": "last",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "last"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "last": "tamper"
+  },
+  "context": {},
+  "mode": "partial",
+  "expected": {
+    "visited": [
+      "first"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "first",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/last",
+        "code": "unvisited_answer",
+        "message": "Answers to unvisited steps are not accepted.",
+        "fieldKey": "last"
+      }
+    ],
+    "discardedKeys": [
+      "last"
+    ]
+  }
+}

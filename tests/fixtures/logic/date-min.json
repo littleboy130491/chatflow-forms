@@ -1,0 +1,59 @@
+{
+  "name": "date-min",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "date",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "validation": {
+          "min": "2021-01-01"
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "2020-01-01"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "min",
+        "message": "The answer is below the minimum.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

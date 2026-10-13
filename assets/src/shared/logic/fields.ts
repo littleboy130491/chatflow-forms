@@ -1,6 +1,6 @@
 import { getCountryCallingCode, isSupportedCountry, type CountryCode } from 'libphonenumber-js';
 import type { JSONValue, Step, ReplayContext, ValidationIssue } from '../contracts';
-import { age, dateParts, empty, issue, matches, numeric, pointer, regex } from './value';
+import { age, choiceValue, dateParts, empty, isOtherAnswer, issue, matches, numeric, pointer, regex } from './value';
 
 export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
 export const isDisplay = (type: string): boolean => ['statement', 'summary', 'media'].includes(type);
@@ -25,6 +25,7 @@ function phone(value: string, country: string): string {
 export function sanitizeAnswer(step: Step, value: JSONValue, context: ReplayContext = {}): JSONValue {
   void context;
   switch (step.type) {
+    case 'single_choice': return isOtherAnswer(value) ? { value: value.value, other: plainText(value.other) } : value;
     case 'short_text': case 'long_text': case 'email': case 'date':
       return typeof value === 'string' ? plainText(value, step.type === 'long_text') : value;
     case 'phone': return typeof value === 'string' ? phone(value, step.settings?.country ?? 'ID') : value;
@@ -54,6 +55,7 @@ export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayC
     case 'number': typed = numeric(value); break;
     case 'yes_no': case 'consent': typed = typeof value === 'boolean'; break;
     case 'multi_choice': typed = Array.isArray(value) && value.every(v => typeof v === 'string'); break;
+    case 'single_choice': typed = typeof value === 'string' || isOtherAnswer(value); break;
     case 'hidden': typed = typeof value === 'string' || typeof value === 'boolean' || numeric(value); break;
     default: typed = typeof value === 'string';
   }
@@ -95,9 +97,17 @@ export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayC
     }
   }
   if (step.type === 'single_choice' || step.type === 'multi_choice') {
-    const selected = (Array.isArray(value) ? value : [value]) as string[];
+    const selected = (Array.isArray(value) ? value : [choiceValue(value)]) as string[];
     const options = step.options ?? [];
     if (selected.some(item => !options.some(o => o.value === item))) add('invalid_choice', 'Choose a configured option value.');
+    if (step.type === 'single_choice') {
+      const option = options.find(o => o.value === selected[0]);
+      if (isOtherAnswer(value)) {
+        if (!option?.isOther) add('invalid_other', 'Free text is only accepted for an Other option.');
+        if (!value.other) add('required_other', 'Enter text for the Other option.');
+        if ([...value.other].length > 1000) add('max_length', 'The answer is too long.');
+      } else if (option?.isOther) add('required_other', 'Enter text for the Other option.');
+    }
     if (new Set(selected).size !== selected.length) add('duplicate_choice', 'Choose each option only once.');
     if (selected.length > 1 && options.some(o => o.isExclusive && selected.includes(o.value))) add('exclusive_choice', 'An exclusive option cannot be combined.');
     if (step.type === 'multi_choice') {

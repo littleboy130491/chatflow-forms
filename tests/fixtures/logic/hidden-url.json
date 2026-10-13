@@ -1,0 +1,54 @@
+{
+  "name": "hidden-url",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "hidden",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "settings": {
+          "source": "url",
+          "sourceKey": "utm"
+        }
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {
+    "url": {
+      "utm": "campaign"
+    }
+  },
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": "campaign"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

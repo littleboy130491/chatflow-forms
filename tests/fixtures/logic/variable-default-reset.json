@@ -1,0 +1,53 @@
+{
+  "name": "variable-default-reset",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "intro"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ],
+    "variables": [
+      {
+        "key": "total",
+        "type": "number",
+        "default": 2
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro"
+    ],
+    "answers": {},
+    "variables": {
+      "total": 2
+    },
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

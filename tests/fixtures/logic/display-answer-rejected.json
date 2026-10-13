@@ -1,0 +1,55 @@
+{
+  "name": "display-answer-rejected",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "review",
+        "key": "review",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "review"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "review": "fake"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "review"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [
+      {
+        "path": "/answers/review",
+        "code": "display_answer",
+        "message": "Display steps do not store answers.",
+        "fieldKey": "review"
+      }
+    ],
+    "discardedKeys": [
+      "review"
+    ]
+  }
+}

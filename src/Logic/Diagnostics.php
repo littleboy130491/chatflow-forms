@@ -17,12 +17,22 @@ final class Diagnostics {
 			$add( '', 'invalid_schema', 'The schema needs 1–500 steps and an ending.' );
 			return $errors;
 		}
-		$ids       = array();
-		$keys      = array();
-		$step_ids  = array();
-		$variables = array_column( $schema['variables'] ?? array(), 'type', 'key' );
-		$endings   = array_column( $schema['endings'], 'id' );
-		$unique    = static function ( string $id, string $path ) use ( &$ids, $add ): void {
+		$ids           = array();
+		$keys          = array();
+		$step_ids      = array();
+		$variables     = array_column( $schema['variables'] ?? array(), 'type', 'key' );
+		$variable_keys = array();
+		foreach ( $schema['variables'] ?? array() as $i => $v ) {
+			if ( isset( $variable_keys[ $v['key'] ] ) ) {
+				$add( '/variables/' . $i . '/key', 'duplicate_key', 'Variable keys must be unique.' );
+			}
+			$variable_keys[ $v['key'] ] = true;
+			if ( ! self::variableType( $v['default'], $v['type'] ) ) {
+				$add( '/variables/' . $i . '/default', 'invalid_variable', 'The variable default has an invalid type.' );
+			}
+		}
+		$endings = array_column( $schema['endings'], 'id' );
+		$unique  = static function ( string $id, string $path ) use ( &$ids, $add ): void {
 			if ( isset( $ids[ $id ] ) ) {
 				$add( $path, 'duplicate_id', 'IDs must be globally unique.' );
 			}
@@ -58,7 +68,22 @@ final class Diagnostics {
 				}
 			}
 		}
-		$edges = array();
+		$edges     = array();
+		$skippable = array();
+		foreach ( $schema['steps'] as $s ) {
+			if ( ! empty( $s['hiddenByDefault'] ) ) {
+				$skippable[ $s['id'] ] = true;
+			}
+			$rules = $s['logic'] ?? array();
+			foreach ( $s['options'] ?? array() as $o ) {
+				$rules = array_merge( $rules, $o['logic'] ?? array() );
+			}
+			foreach ( $rules as $r ) {
+				if ( 'hide' === $r['then']['action'] ) {
+					$skippable[ $r['then']['to'] ] = true;
+				}
+			}
+		}
 		$types = ( $registry ?? new Registry() )->types();
 		foreach ( $schema['steps'] as $i => $s ) {
 			$path = '/steps/' . $i;
@@ -105,8 +130,35 @@ final class Diagnostics {
 			foreach ( $s['options'] ?? array() as $j => $o ) {
 				$inspect( $o['logic'] ?? array(), $path . '/options/' . $j . '/logic' );
 			}
+			if ( count( $s['options'] ?? array() ) > 200 ) {
+				$add( $path . '/options', 'invalid_schema', 'A field may have at most 200 options.' );
+			}
+			foreach ( array( array( 'minLength', 'maxLength' ), array( 'minSelections', 'maxSelections' ), array( 'min', 'max' ) ) as $pair ) {
+				if ( isset( $v[ $pair[0] ], $v[ $pair[1] ] ) && ( gettype( $v[ $pair[0] ] ) === gettype( $v[ $pair[1] ] ) || ( Values::numeric( $v[ $pair[0] ] ) && Values::numeric( $v[ $pair[1] ] ) ) ) && $v[ $pair[0] ] > $v[ $pair[1] ] ) {
+					$add( $path . '/validation', 'invalid_range', 'Minimum must not exceed maximum.' );
+				}
+			}
+			if ( isset( $v['step'] ) && ( ! Values::numeric( $v['step'] ) || $v['step'] <= 0 ) ) {
+				$add( $path . '/validation/step', 'invalid_range', 'The numeric increment must be positive.' );
+			}
+			if ( 'single_choice' !== $s['type'] && array_filter( $s['options'] ?? array(), static fn( $o ) => ! empty( $o['isOther'] ) ) ) {
+				$add( $path . '/options', 'unsupported_other', 'Other free text is only supported for single-choice fields.' );
+			}
+			$falls_through = true;
+			foreach ( $s['logic'] ?? array() as $r ) {
+				if ( in_array( $r['then']['action'], array( 'jump', 'end' ), true ) && isset( $r['if']['all'] ) && ! $r['if']['all'] ) {
+					$falls_through = false;
+					break;
+				}
+			}
+			if ( isset( $schema['steps'][ $i + 1 ] ) && ( $falls_through || isset( $skippable[ $s['id'] ] ) ) ) {
+				$edges[ $s['id'] ][] = $schema['steps'][ $i + 1 ]['id'];
+			}
 		}
 		foreach ( $schema['steps'] as $i => $s ) {
+			if ( in_array( 'duplicate_id', array_column( $errors, 'code' ), true ) ) {
+				break;
+			}
 			$queue = $edges[ $s['id'] ] ?? array();
 			$seen  = array();
 			while ( $queue ) {
@@ -147,7 +199,7 @@ final class Diagnostics {
 					}
 				}
 			}
-			if ( $falls_through ) {
+			if ( $falls_through || isset( $skippable[ $s['id'] ] ) ) {
 				$queue[] = $i + 1;
 			}
 		}

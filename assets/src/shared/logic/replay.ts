@@ -3,7 +3,7 @@ import { diagnoseSchema } from './diagnostics';
 import { isDisplay, sanitizeAnswer, validateAnswer } from './fields';
 import { interpolate } from './interpolate';
 import { evaluateCondition } from './operators';
-import { equal, issue, map, numeric, own, pointer } from './value';
+import { choiceValue, equal, issue, map, numeric, own, pointer } from './value';
 
 export function hiddenValue(step: Step, answers: AnswerMap, context: ReplayContext): JSONValue {
   if (own(context.hidden ?? {}, step.key)) return context.hidden![step.key] ?? null;
@@ -18,11 +18,9 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
   const result: ReplayResult = { visited: [], answers: map(), variables: map(), currentStepId: null, endingId: null, progress: 0, errors: [], discardedKeys: [] };
   const errors = diagnoseSchema(schema).filter(e => !['potential_loop', 'unreachable_step', 'later_reference'].includes(e.code));
   result.errors.push(...errors);
+  if (errors.some(e => e.code === 'invalid_schema')) { result.discardedKeys = Object.keys(supplied).sort(); return result; }
   if (mode !== 'partial' && mode !== 'complete') result.errors.push(issue('/mode', 'invalid_mode', 'Replay mode must be partial or complete.'));
-  for (const v of schema.variables ?? []) {
-    if (v.default !== null && typeof v.default !== v.type) result.errors.push(issue('/variables', 'invalid_variable', 'The variable default has an invalid type.'));
-    result.variables[v.key] = v.default;
-  }
+  for (const v of schema.variables ?? []) result.variables[v.key] = v.default;
   const steps = schema.steps ?? [], byId = new Map(steps.map((s, i) => [s.id, i]));
   const byKey = new Map(steps.map(s => [s.key, s]));
   const visible = new Map(steps.map(s => [s.id, !s.hiddenByDefault]));
@@ -30,7 +28,7 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
   const seen = new Set<string>(), processed = new Set<string>(), discard = new Set<string>();
   const defaultEnding = schema.endings.some(e => e.id === context.defaultEndingId) ? context.defaultEndingId! : schema.endings[0]?.id ?? null;
   let index = 0, answeredInputs = 0;
-  const apply = (action: Action, vars: AnswerMap, visibility: Map<string, boolean>, requirements: Map<string, boolean>): void => {
+  const apply = (action: Action, vars: AnswerMap, visibility: Map<string, boolean>, requirements: Map<string, boolean>, actionErrors = result.errors): void => {
     switch (action.action) {
       case 'show': case 'hide': visibility.set(action.to, action.action === 'show'); break;
       case 'require': case 'unrequire': requirements.set(action.to, action.action === 'require'); break;
@@ -41,13 +39,13 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
           const next = current + (action.operation === 'add' ? action.value : -action.value);
           if (Number.isFinite(next)) vars[action.key] = next;
           else result.errors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable value is not finite.'));
-        } else result.errors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable action has an invalid type.'));
+        } else actionErrors.push(issue('/variables/' + pointer(action.key), 'invalid_variable', 'The variable action has an invalid type.'));
         break;
       }
     }
   };
   const rulesFor = (s: Step) => [...(s.logic ?? []), ...(s.options ?? []).filter(o => {
-    const answer = result.answers[s.key]; return Array.isArray(answer) ? answer.includes(o.value) : answer === o.value;
+    const answer = choiceValue(result.answers[s.key]); return Array.isArray(answer) ? answer.includes(o.value) : answer === o.value;
   }).flatMap(o => o.logic ?? [])];
   if (!result.errors.length) {
     while (index < steps.length) {
@@ -64,12 +62,13 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
           if (mode === 'complete') result.errors.push(issue('/answers/' + pointer(step.key), 'required', 'An answer is required.', step.key));
           break;
         }
-        const value = sanitizeAnswer(step, hidden ? hiddenValue(step, result.answers, context) : exists ? supplied[step.key] ?? null : null, context);
+        const rawValue = hidden ? hiddenValue(step, result.answers, context) : exists ? supplied[step.key] ?? null : null;
+        const value = sanitizeAnswer(step, rawValue, context);
         processed.add(step.key);
         if (hidden && exists && !equal(supplied[step.key], value)) {
           discard.add(step.key); result.errors.push(issue('/answers/' + pointer(step.key), 'hidden_answer_tampered', 'Hidden answers are server-derived.', step.key));
         }
-        const validation = validateAnswer({ ...step, required: required.get(step.id) === true }, value, context);
+        const validation = validateAnswer({ ...step, required: required.get(step.id) === true }, rawValue, context);
         if (validation.length) { result.errors.push(...validation); result.currentStepId = step.id; if (exists) discard.add(step.key); break; }
         result.answers[step.key] = value;
         if (!hidden) answeredInputs++;
@@ -110,7 +109,7 @@ export function replay(schema: FormSchema, supplied: AnswerMap, context: ReplayC
         if (!known(r.if) || !evaluateCondition(r.if, result.answers, vars, context)) continue;
         if (r.then.action === 'jump') { next = byId.get(r.then.to)!; break; }
         if (r.then.action === 'end') { end = true; break; }
-        apply(r.then, vars, visibility, new Map(required));
+        apply(r.then, vars, visibility, new Map(required), []);
       }
       if (end) break;
       cursor = next;

@@ -1,0 +1,70 @@
+{
+  "name": "show-hidden-step",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "intro",
+        "logic": [
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "show",
+              "to": "detail"
+            }
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "key": "detail",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "detail",
+        "hiddenByDefault": true
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "detail": "shown"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro",
+      "detail"
+    ],
+    "answers": {
+      "detail": "shown"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}
