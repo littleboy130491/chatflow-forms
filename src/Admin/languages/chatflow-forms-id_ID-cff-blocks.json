@@ -457,6 +457,9 @@
       "First-touch attribution": [
         "Atribusi kunjungan pertama"
       ],
+      "Floating launcher": [
+        "Tombol chat mengambang"
+      ],
       "Font stack": [
         "Daftar font"
       ],
@@ -559,6 +562,9 @@
       "Import form JSON": [
         "Impor JSON formulir"
       ],
+      "Import form JSON (creates a draft)": [
+        "Impor JSON formulir (membuat draf)"
+      ],
       "Import new draft": [
         "Impor sebagai draf baru"
       ],
@@ -610,6 +616,9 @@
       "Label": [
         "Label"
       ],
+      "Launcher position": [
+        "Posisi tombol chat"
+      ],
       "Launcher, popup and QR tools are optional later features.": [
         "Peluncur, popup, dan alat QR merupakan fitur opsional mendatang."
       ],
@@ -618,6 +627,9 @@
       ],
       "Leave with unsaved changes?": [
         "Keluar dengan perubahan yang belum disimpan?"
+      ],
+      "Left": [
+        "Kiri"
       ],
       "Limits": [
         "Batasan"
@@ -996,6 +1008,9 @@
       ],
       "Retry delivery": [
         "Ulangi pengiriman"
+      ],
+      "Right": [
+        "Kanan"
       ],
       "Rows per page": [
         "Baris per halaman"

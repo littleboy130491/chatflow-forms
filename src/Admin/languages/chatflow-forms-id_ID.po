@@ -451,6 +451,9 @@ msgstr "Pesan bot pertama"
 msgid "First-touch attribution"
 msgstr "Atribusi kunjungan pertama"
 
+msgid "Floating launcher"
+msgstr "Tombol chat mengambang"
+
 msgid "Font stack"
 msgstr "Daftar font"
 
@@ -553,6 +556,9 @@ msgstr "Impor formulir"
 msgid "Import form JSON"
 msgstr "Impor JSON formulir"
 
+msgid "Import form JSON (creates a draft)"
+msgstr "Impor JSON formulir (membuat draf)"
+
 msgid "Import new draft"
 msgstr "Impor sebagai draf baru"
 
@@ -604,6 +610,9 @@ msgstr "Kunci digunakan dalam ekspor dan integrasi. Mengganti nama tidak menguba
 msgid "Label"
 msgstr "Label"
 
+msgid "Launcher position"
+msgstr "Posisi tombol chat"
+
 msgid "Launcher, popup and QR tools are optional later features."
 msgstr "Peluncur, popup, dan alat QR merupakan fitur opsional mendatang."
 
@@ -612,6 +621,9 @@ msgstr "Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi l
 
 msgid "Leave with unsaved changes?"
 msgstr "Keluar dengan perubahan yang belum disimpan?"
+
+msgid "Left"
+msgstr "Kiri"
 
 msgid "Limits"
 msgstr "Batasan"
@@ -990,6 +1002,9 @@ msgstr "Masa retensi (hari)"
 
 msgid "Retry delivery"
 msgstr "Ulangi pengiriman"
+
+msgid "Right"
+msgstr "Kanan"
 
 msgid "Rows per page"
 msgstr "Baris per halaman"
