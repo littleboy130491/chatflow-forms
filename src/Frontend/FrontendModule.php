@@ -14,10 +14,10 @@ final class FrontendModule implements Module {
 			function ( $attributes ) {
 				$attributes = shortcode_atts(
 					array(
-						'id'     => 0,
-						'height' => 600,
-						'mode'   => 'inline',
-						'theme'  => 'auto',
+						'id'       => 0,
+						'height'   => 600,
+						'mode'     => 'inline',
+						'theme'    => 'auto',
 						'position' => 'right',
 					),
 					$attributes,
