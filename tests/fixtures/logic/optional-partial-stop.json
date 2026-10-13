@@ -1,0 +1,44 @@
+{
+  "name": "optional-partial-stop",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "partial",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

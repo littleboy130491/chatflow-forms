@@ -1,0 +1,68 @@
+{
+  "name": "conditional-unrequire",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "route",
+        "key": "route",
+        "type": "statement",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "route",
+        "logic": [
+          {
+            "if": {
+              "all": []
+            },
+            "then": {
+              "action": "unrequire",
+              "to": "detail"
+            }
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "key": "detail",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "detail",
+        "required": true
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {},
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "route",
+      "detail"
+    ],
+    "answers": {
+      "detail": null
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

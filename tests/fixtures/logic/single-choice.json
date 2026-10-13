@@ -1,0 +1,73 @@
+{
+  "name": "single-choice",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "single_choice",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "options": [
+          {
+            "id": "opt-a",
+            "value": "a",
+            "label": "Opsi A"
+          },
+          {
+            "id": "opt-b",
+            "value": "b",
+            "label": "Opsi B"
+          },
+          {
+            "id": "opt-none",
+            "value": "none",
+            "label": "Tidak ada",
+            "isExclusive": true
+          },
+          {
+            "id": "opt-other",
+            "value": "other",
+            "label": "Lainnya",
+            "isOther": true
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "a"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {
+      "answer": "a"
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

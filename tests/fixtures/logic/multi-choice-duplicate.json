@@ -1,0 +1,82 @@
+{
+  "name": "multi-choice-duplicate",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "multi_choice",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": false,
+        "options": [
+          {
+            "id": "opt-a",
+            "value": "a",
+            "label": "Opsi A"
+          },
+          {
+            "id": "opt-b",
+            "value": "b",
+            "label": "Opsi B"
+          },
+          {
+            "id": "opt-none",
+            "value": "none",
+            "label": "Tidak ada",
+            "isExclusive": true
+          },
+          {
+            "id": "opt-other",
+            "value": "other",
+            "label": "Lainnya"
+          }
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": [
+      "a",
+      "a"
+    ]
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "duplicate_choice",
+        "message": "Choose each option only once.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

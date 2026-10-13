@@ -1,0 +1,132 @@
+{
+  "name": "imajiner-survey-summary",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "intro",
+        "key": "intro",
+        "type": "statement",
+        "messages": [
+          "Halo, mari diskusikan website Anda."
+        ],
+        "label": "intro"
+      },
+      {
+        "id": "nama",
+        "key": "nama",
+        "type": "short_text",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "nama",
+        "required": true
+      },
+      {
+        "id": "jenis_website",
+        "key": "jenis_website",
+        "type": "single_choice",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "jenis_website",
+        "options": [
+          {
+            "id": "company-opt",
+            "value": "company_profile",
+            "label": "Company Profile"
+          },
+          {
+            "id": "shop-opt",
+            "value": "online_shop",
+            "label": "Online Shop"
+          }
+        ]
+      },
+      {
+        "id": "email",
+        "key": "email",
+        "type": "email",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "email"
+      },
+      {
+        "id": "whatsapp",
+        "key": "whatsapp",
+        "type": "phone",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "whatsapp"
+      },
+      {
+        "id": "persetujuan",
+        "key": "persetujuan",
+        "type": "consent",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "persetujuan",
+        "settings": {
+          "consentText": "Saya setuju data digunakan untuk konsultasi."
+        }
+      },
+      {
+        "id": "ringkasan",
+        "key": "ringkasan",
+        "type": "summary",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "ringkasan"
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "nama": "Adi",
+    "jenis_website": "company_profile",
+    "email": "adi@example.com",
+    "whatsapp": "081234567890",
+    "persetujuan": true
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "intro",
+      "nama",
+      "jenis_website",
+      "email",
+      "whatsapp",
+      "persetujuan",
+      "ringkasan"
+    ],
+    "answers": {
+      "nama": "Adi",
+      "jenis_website": "company_profile",
+      "email": "adi@example.com",
+      "whatsapp": "+6281234567890",
+      "persetujuan": true
+    },
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

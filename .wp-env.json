@@ -1,0 +1,7 @@
+{
+  "core": "https://wordpress.org/wordpress-6.4.5.zip",
+  "phpVersion": "8.1",
+  "plugins": ["."],
+  "config": { "WP_DEBUG": true, "SCRIPT_DEBUG": true },
+  "mappings": { "wp-content/plugins/chatflow-forms": "." }
+}

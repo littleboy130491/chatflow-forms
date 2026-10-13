@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="tests/php/bootstrap.php" colors="true" cacheResultFile=".phpunit.result.cache" failOnWarning="true" failOnRisky="true">
+  <testsuites><testsuite name="Unit and shared logic parity"><directory>tests/php/Foundation/Unit</directory><directory>tests/php/Logic</directory></testsuite></testsuites>
+</phpunit>
