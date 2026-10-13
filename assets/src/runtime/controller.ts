@@ -59,6 +59,9 @@ export class RuntimeController {
   }
 
   async initialize(): Promise<void> {
+    const fragment = this.options.preview ? null : globalThis.location?.hash.match(/^#cff-magic=([A-Za-z0-9_-]{43})$/);
+    const magic = fragment?.[1];
+    if (globalThis.location?.hash.startsWith('#cff-magic=')) globalThis.history.replaceState(globalThis.history.state, '', globalThis.location.pathname + globalThis.location.search);
     try {
       const formId = this.options.form?.form.id ?? this.options.formId;
       if (!this.options.preview && formId) this.saved = this.storage.read(formId);
@@ -68,6 +71,11 @@ export class RuntimeController {
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
       await this.loadEngagement();
       const form = this.state.form.form;
+      if (magic) {
+        await this.adopt(await this.api!.magicResume(form.id, magic));
+        this.state.acknowledged = this.displayBeforeCurrent();
+        this.compute(); this.state.phase = 'ready'; return;
+      }
       this.saved = form.session.resumeEnabled ? this.storage.read(form.id) : null;
       const token = form.session.resumeEnabled ? this.storage.credential(form.id) : null;
       if (token) {
@@ -111,6 +119,7 @@ export class RuntimeController {
       if (pinned.form.version !== session.version) throw new ApiError('cff_version_conflict', 409);
       this.state.form = pinned;
     }
+    if (session.schema) this.state.form = { ...this.state.form, form: { ...this.state.form.form, schema: session.schema } };
     await this.loadEngagement();
     if (this.disposed) return;
     this.session = session;
@@ -169,7 +178,7 @@ export class RuntimeController {
   get visibleSteps(): Step[] {
     const form = this.state.form; if (!form || !this.state.path) return [];
     const index = this.state.path.visited.indexOf(this.state.activeId ?? '');
-    return this.state.path.visited.slice(0, index < 0 ? undefined : index + 1).map(id => form.form.schema.steps.find(step => step.id === id)!).filter(step => step && step.type !== 'hidden');
+    return this.state.path.visited.slice(0, index < 0 ? undefined : index + 1).map(id => form.form.schema.steps.find(step => step.id === id)!).filter(step => step && step.type !== 'hidden' && step.type !== 'calculated');
   }
   async answer(value: unknown): Promise<void> {
     const step = this.activeStep;
@@ -193,7 +202,7 @@ export class RuntimeController {
   edit(id: string): void {
     if (this.state.busy || this.state.phase !== 'ready' || this.pending?.method === 'POST') return;
     const path = this.state.path; const step = this.state.form?.form.schema.steps.find(step => step.id === id);
-    if (!path?.visited.includes(id) || !step || display(step) || step.type === 'hidden') return;
+    if (!path?.visited.includes(id) || !step || display(step) || step.type === 'hidden' || step.type === 'calculated') return;
     this.editing = id; this.state.fieldError = null;
     const cut = path.visited.indexOf(id);
     this.state.acknowledged = this.state.acknowledged.filter(key => path.visited.indexOf(key) < cut);
@@ -210,8 +219,13 @@ export class RuntimeController {
   }
   inputValue(step: Step): unknown { return this.state.answers[step.key] ?? this.prefill[step.key] ?? step.defaultValue; }
   private inputAnswers(): AnswerMap {
-    const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden').map(step => step.key));
+    const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden' && step.type !== 'calculated').map(step => step.key));
     return Object.fromEntries(Object.entries(this.state.answers).filter(([key]) => keys.has(key))) as AnswerMap;
+  }
+  async magicLink(channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
+    if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new ApiError('cff_magic_unavailable', 0);
+    if (this.state.dirty) await this.flush();
+    return this.api.magicLink(this.session, channel);
   }
   private persist(): void {
     if (!this.session && this.saved && this.state.offline && !this.options.preview) {
@@ -257,7 +271,7 @@ export class RuntimeController {
   async submit(honeypot = ''): Promise<void> {
     if (this.disposed || this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
     if (this.state.activeId && !this.pending) return;
-    const validation = replay(this.state.form!.form.schema, this.state.answers, this.context, 'complete');
+    const validation = replay(this.state.form!.form.schema, this.inputAnswers(), this.context, 'complete');
     if (validation.errors.length && !this.pending) { this.state.fieldError = 'invalid'; this.notify(); return; }
     if (this.options.preview) {
       const ending = this.state.form!.form.schema.endings.find(e => e.id === validation.endingId) ?? this.state.form!.form.schema.endings[0];

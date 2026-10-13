@@ -2,17 +2,20 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { diagnoseSchema, evaluateCondition, interpolate, interpolateUrl, replay, V1_FIELD_TYPES, ENABLED_FIELD_TYPES } from '../../../assets/src/shared/logic';
+import { applyVariant } from '../../../assets/src/shared/logic/power';
 import type { AnswerMap, Condition, FormSchema, ReplayContext, ReplayResult } from '../../../assets/src/shared/contracts';
 
 const fixtureDir = resolve('tests/fixtures/logic');
 const fixtures = readdirSync(fixtureDir).filter(f => f.endsWith('.json')).map(f => JSON.parse(readFileSync(resolve(fixtureDir, f), 'utf8')) as {
-  name: string; schema: FormSchema; answers: AnswerMap; context: ReplayContext; mode: 'partial' | 'complete'; expected: ReplayResult;
+  name: string; schema: FormSchema; variant?: string; answers: AnswerMap; context: ReplayContext; mode: 'partial' | 'complete'; expected: ReplayResult;
 });
 
 describe('shared PHP/TS authoritative replay fixtures', () => {
   for (const fixture of fixtures) it(fixture.name, () => {
-    expect(replay(fixture.schema, fixture.answers, fixture.context, fixture.mode)).toEqual(fixture.expected);
-    expect(replay(fixture.schema, fixture.answers, fixture.context, fixture.mode)).toEqual(fixture.expected);
+    const schema = fixture.variant ? applyVariant(fixture.schema, fixture.schema.experiments![0]!.variants.find(v => v.id === fixture.variant)!) : fixture.schema;
+    if (fixture.variant) { expect(diagnoseSchema(fixture.schema)).toEqual([]); expect(schema.steps[0]?.messages[0]).toBe('Variant age'); }
+    expect(replay(schema, fixture.answers, fixture.context, fixture.mode)).toEqual(fixture.expected);
+    expect(replay(schema, fixture.answers, fixture.context, fixture.mode)).toEqual(fixture.expected);
   });
 });
 
@@ -32,7 +35,7 @@ describe('shared diagnostics', () => {
 });
 it('covers every enabled v1 field and freezes variables independently', () => {
   expect(V1_FIELD_TYPES).toHaveLength(13);
-  expect(ENABLED_FIELD_TYPES).toHaveLength(20);
+  expect(ENABLED_FIELD_TYPES).toHaveLength(21);
   for (const type of ENABLED_FIELD_TYPES) expect(fixtures.some(f => f.schema.steps.some(s => s.type === type))).toBe(true);
   for (const type of V1_FIELD_TYPES) expect(fixtures.some(f => f.schema.steps.some(s => s.type === type))).toBe(true);
   const f = fixtures.find(f => f.name === 'rule-order-variables')!;

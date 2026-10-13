@@ -1,6 +1,7 @@
 import type { Action, Condition, FormSchema, ValidationIssue } from '../contracts';
 import { issue, numeric, regex } from './value';
 import { ENABLED_FIELD_TYPES } from './fields';
+import { powerDiagnostics } from './power';
 
 export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
@@ -108,5 +109,5 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
     if (fallsThrough || skippable.has(s.id)) queue.push(i + 1);
   }
   schema.steps.forEach((_s, i) => { if (!reachable.has(i)) add(`/steps/${i}`, 'unreachable_step', 'No possible navigation path reaches this step.'); });
-  return errors;
+  return [...errors, ...powerDiagnostics(schema)];
 }

@@ -57,6 +57,10 @@ export class ApiClient {
   startToken(id: number, version: number): Promise<{ startToken: string; expiresAt: string; version: number }> { return this.request(`forms/${id}/start-token`, 'POST', { version }); }
   start(formId: number, version: number, meta: ClientMeta, prefill: AnswerMap, token: string, key: string): Promise<Session> { return this.request('sessions', 'POST', { formId, version, meta, prefill }, { 'X-CFF-Start-Token': token, 'Idempotency-Key': key }); }
   resume(formId: number, token: string): Promise<Session> { return this.request('sessions/resume', 'POST', { formId }, { 'X-CFF-Resume-Token': token }); }
+  magicResume(formId: number, token: string): Promise<Session> { return this.request('sessions/magic-resume', 'POST', { formId }, { 'X-CFF-Magic-Token': token }); }
+  magicLink(session: Session, channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
+    return this.request(`sessions/${session.sessionId}/magic-link`, 'POST', { channel, consent: true }, { 'X-CFF-Request-Token': session.requestToken });
+  }
   get(session: Session): Promise<Session> {
     if (!/^[a-f0-9-]{36}$/i.test(session.sessionId)) throw new ApiError('cff_invalid_session', 0);
     return this.request(`sessions/${session.sessionId}`, 'GET', undefined, { 'X-CFF-Request-Token': session.requestToken });

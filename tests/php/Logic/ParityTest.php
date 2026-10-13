@@ -30,9 +30,16 @@ final class ParityTest extends TestCase {
 	 */
 	public function testReplay( array $fixture ): void {
 		$engine = new Engine( new Registry() );
-		$actual = $engine->replay( $fixture['schema'], $fixture['answers'], $fixture['context'], $fixture['mode'] );
+		$schema = $fixture['schema'];
+		if ( isset( $fixture['variant'] ) ) {
+			$this->assertSame( array(), \ChatFlow\Logic\Diagnostics::diagnoseSchema( $schema ) );
+			$variant = array_values( array_filter( $schema['experiments'][0]['variants'], static fn( $v ) => $fixture['variant'] === $v['id'] ) )[0];
+			$schema  = \ChatFlow\Logic\Experiments::applyVariant( $schema, $variant );
+			$this->assertSame( 'Variant age', $schema['steps'][0]['messages'][0] );
+		}
+		$actual = $engine->replay( $schema, $fixture['answers'], $fixture['context'], $fixture['mode'] );
 		$this->assertSame( $fixture['expected'], json_decode( json_encode( $actual, JSON_THROW_ON_ERROR ), true, 512, JSON_THROW_ON_ERROR ) );
-		$this->assertSame( json_encode( $actual, JSON_THROW_ON_ERROR ), json_encode( $engine->replay( $fixture['schema'], $fixture['answers'], $fixture['context'], $fixture['mode'] ), JSON_THROW_ON_ERROR ) );
+		$this->assertSame( json_encode( $actual, JSON_THROW_ON_ERROR ), json_encode( $engine->replay( $schema, $fixture['answers'], $fixture['context'], $fixture['mode'] ), JSON_THROW_ON_ERROR ) );
 	}
 
 	/** @return iterable<string,array{array<string,mixed>}> */
@@ -79,7 +86,7 @@ final class ParityTest extends TestCase {
 	}
 
 	public function testRegistryRejectsUnknownTypes(): void {
-		$this->assertCount( 20, ( new Registry() )->types() );
+		$this->assertCount( 21, ( new Registry() )->types() );
 		$this->expectException( \InvalidArgumentException::class );
 		( new Registry() )->get( 'invented' );
 	}

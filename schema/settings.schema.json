@@ -44,6 +44,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "magicLinks": { "type": "object", "additionalProperties": false, "properties": {
+          "enabled": { "type": "boolean" }, "whatsapp": { "type": "boolean" },
+          "emailField": { "type": "string", "maxLength": 64 },
+          "ttlMinutes": { "type": "integer", "minimum": 5, "maximum": 1440 }
+        } },
         "savePartial": {
           "type": "boolean"
         },

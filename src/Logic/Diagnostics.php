@@ -211,7 +211,7 @@ final class Diagnostics {
 				$add( '/steps/' . $i, 'unreachable_step', 'No possible navigation path reaches this step.' );
 			}
 		}
-		return $errors;
+		return array_merge( $errors, PowerDiagnostics::diagnose( $schema ) );
 	}
 
 	public static function variableType( mixed $value, string $type ): bool {

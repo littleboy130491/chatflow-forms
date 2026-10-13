@@ -1,7 +1,7 @@
 # ChatFlow Forms
 
 Private conversational-form plugin for WordPress 6.4+, PHP 8.1+ with OpenSSL.
-The Phase 1 implementation includes a React WordPress builder, Preact/TypeScript
+The implementation includes a React WordPress builder, Preact/TypeScript
 Shadow DOM chat, deterministic PHP/TS logic, versioned publishing, durable
 sessions, custom-table submissions, CSV/purge/privacy tools, notifications and
 signed generic webhooks. English and Indonesian UI are included.
@@ -28,7 +28,7 @@ There is no licence system, telemetry, native CRM connector, payment or AI chat.
 4. Embed the published form using the **ChatFlow Form** Gutenberg block,
    `[chatflow id="123" mode="inline" theme="auto" height="600"]`, or trusted PHP
    `cff_render_form(123)`. The shortcode also fits Elementor's Shortcode widget.
-   Full-page URLs default to `/f/{form-slug}`; the base is configurable in Settings.
+   Full-page URLs default to `/chat/{form-slug}/`; the base is configurable in Settings.
 5. **Submissions** provides status/filter/search, details, notes, read/star, bulk
    actions, protected CSV exports, activity and delivery retries. **Tools** has
    preview-token-bound purge: preview the exact criteria, then type `DELETE`.
@@ -76,6 +76,12 @@ accessible popup/drawer/launcher modes, optional CAPTCHA/Akismet, stored analyti
 safe JSON template tools and private XLSX exports. Configure an outside-web-root
 private directory before uploads/exports, and provider credentials before enabling
 CAPTCHA or Akismet. See [the integration checks and acceptance gaps](docs/phase2-integration.md).
+
+Phase 3 provides bounded calculations, variables/scoring, outcome endings,
+an editable branching map, server-assigned copy/order experiments with variant
+analytics, and consent-aware single-use resume links. See [Phase 3 usage and
+security](docs/phase3-power.md). The optional AI builder assist and native CRM
+connectors are deferred; no AI chat or telemetry is included.
 
 ## Development
 

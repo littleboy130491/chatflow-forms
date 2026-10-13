@@ -71,23 +71,34 @@ final class Engine {
 				}
 				$result['visited'][] = $s['id'];
 				$hidden              = 'hidden' === $s['type'];
+				$computed            = 'calculated' === $s['type'];
 				if ( ! self::isDisplay( $s['type'] ) ) {
 					$exists = array_key_exists( $s['key'], $supplied );
-					if ( ! $hidden && ! $exists && ( 'partial' === $mode || $required[ $s['id'] ] ) ) {
+					if ( ! $hidden && ! $computed && ! $exists && ( 'partial' === $mode || $required[ $s['id'] ] ) ) {
 						$result['currentStepId'] = $s['id'];
 						if ( 'complete' === $mode ) {
 							$result['errors'][] = Values::issue( '/answers/' . Values::pointer( $s['key'] ), 'required', 'An answer is required.', $s['key'] );
 						}
 						break;
 					}
-					$field                  = $this->registry->get( $s['type'] );
-					$value                  = $field->sanitize( $hidden ? self::hiddenValue( $s, $result['answers'], $context ) : ( $supplied[ $s['key'] ] ?? null ), $s, $context );
+					$field = $this->registry->get( $s['type'] );
+					try {
+						$value = $computed ? Calculation::calculate( $s['settings']['expression'] ?? '', $result['answers'], $result['variables'] ) : $field->sanitize( $hidden ? self::hiddenValue( $s, $result['answers'], $context ) : ( $supplied[ $s['key'] ] ?? null ), $s, $context );
+					} catch ( \InvalidArgumentException $e ) {
+						$result['currentStepId'] = $s['id'];
+						$result['errors'][]      = Values::issue( '/answers/' . Values::pointer( $s['key'] ), 'calculation_error', 'The calculation is invalid or outside its limits.', $s['key'] );
+						break;
+					}
 					$processed[ $s['key'] ] = true;
+					if ( $computed && $exists ) {
+						$discard[ $s['key'] ] = true;
+						$result['errors'][]   = Values::issue( '/answers/' . Values::pointer( $s['key'] ), 'computed_answer_tampered', 'Calculated answers cannot be supplied by visitors.', $s['key'] );
+					}
 					if ( $hidden && $exists && ! Values::equal( $supplied[ $s['key'] ], $value ) ) {
 						$discard[ $s['key'] ] = true;
 						$result['errors'][]   = Values::issue( '/answers/' . Values::pointer( $s['key'] ), 'hidden_answer_tampered', 'Hidden answers are server-derived.', $s['key'] );
 					}
-					$validation = $field->validate( $value, array_merge( $s, array( 'required' => $required[ $s['id'] ] ) ), $context );
+					$validation = $computed ? array() : $field->validate( $value, array_merge( $s, array( 'required' => $required[ $s['id'] ] ) ), $context );
 					if ( $validation ) {
 						$result['errors']        = array_merge( $result['errors'], $validation );
 						$result['currentStepId'] = $s['id'];
@@ -97,7 +108,7 @@ final class Engine {
 						break;
 					}
 					$result['answers'][ $s['key'] ] = $value;
-					if ( ! $hidden ) {
+					if ( ! $hidden && ! $computed ) {
 						++$answered_inputs;
 					}
 				}
@@ -124,6 +135,13 @@ final class Engine {
 			}
 			if ( ! $result['currentStepId'] && ! $result['endingId'] ) {
 				$result['endingId'] = $default_ending;
+			}
+			if ( $result['endingId'] && ! $result['errors'] ) {
+				foreach ( $schema['outcomes'] ?? array() as $outcome ) {
+					if ( Operators::evaluateCondition( $outcome['if'], $result['answers'], $result['variables'], $context ) ) {
+						$result['endingId'] = $outcome['endingId'];
+						break; }
+				}
 			}
 		}
 		$keys = array_keys( $supplied );
@@ -161,7 +179,7 @@ final class Engine {
 					++$cursor;
 					continue;
 				}
-				if ( ! self::isDisplay( $s['type'] ) && 'hidden' !== $s['type'] ) {
+				if ( ! self::isDisplay( $s['type'] ) && ! in_array( $s['type'], array( 'hidden', 'calculated' ), true ) ) {
 					++$remaining;
 				}
 				$next = $cursor + 1;
@@ -247,10 +265,10 @@ final class Engine {
 				$vars[ $a['key'] ] = $a['value'];
 			} elseif ( Values::numeric( $vars[ $a['key'] ] ?? null ) && Values::numeric( $a['value'] ) ) {
 				$next = $vars[ $a['key'] ] + ( 'add' === $a['operation'] ? $a['value'] : -$a['value'] );
-				if ( is_finite( (float) $next ) ) {
+				if ( is_finite( (float) $next ) && abs( $next ) <= Calculation::LIMIT ) {
 					$vars[ $a['key'] ] = $next;
 				} else {
-					$errors[] = Values::issue( '/variables/' . Values::pointer( $a['key'] ), 'invalid_variable', 'The variable value is not finite.' );
+					$errors[] = Values::issue( '/variables/' . Values::pointer( $a['key'] ), 'invalid_variable', 'The variable value exceeds the finite calculation limit.' );
 				}
 			} else {
 				$errors[] = Values::issue( '/variables/' . Values::pointer( $a['key'] ), 'invalid_variable', 'The variable action has an invalid type.' );

@@ -5,6 +5,9 @@ import { ApiClient } from '../../../assets/src/runtime/api';
 import { SessionStorage } from '../../../assets/src/runtime/persistence';
 import { form, session } from './helpers';
 import type { AnswerMap } from '../../../assets/src/runtime/types';
+import type { FormSchema } from '../../../assets/src/shared/contracts';
+import { applyVariant } from '../../../assets/src/shared/logic/power';
+import powerFixture from '../../fixtures/logic/power-variant-order.json';
 
 beforeEach(() => { localStorage.clear(); document.cookie = 'cff_s_42=; Path=/; Max-Age=0'; });
 const response = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status });
@@ -29,6 +32,54 @@ function server() {
   return { fetcher, api: new ApiClient('/cff/v1/', fetcher, async () => {}), setRemote: (answers: AnswerMap, revision: number) => { remote = session(answers, revision); }, deny: (mode: typeof deny) => { deny = mode; } };
 }
 describe('replay-driven visitor controller', () => {
+  it('recomputes the shared score/outcome fixture on edit and submits without supplying computed answers', async () => {
+    const original = powerFixture.schema as unknown as FormSchema;
+    const schema = applyVariant(original, original.experiments![0]!.variants[1]!);
+    const envelope = form(); envelope.form.schema = schema;
+    const controller = new RuntimeController({ form: envelope, preview: true }, null);
+    await controller.initialize();
+    expect(controller.state.activeId).toBe('age');
+    await controller.answer(20); await controller.answer(4);
+    expect(controller.state.answers.bonus).toBe(13);
+    expect(controller.state.path?.variables.score).toBe(5);
+    expect(controller.state.path?.endingId).toBe('vip');
+    await controller.answer(null);
+    expect(controller.state.activeId).toBe('review');
+    controller.edit('bonus');
+    expect(controller.state.activeId).toBe('review');
+    controller.edit('amount'); await controller.answer(1);
+    expect(controller.state.answers.bonus).toBe(4);
+    expect(controller.state.path?.variables.score).toBe(2);
+    await controller.answer(null); await controller.answer(null);
+    await controller.submit();
+    expect(controller.state.phase).toBe('done');
+    expect(controller.state.completion?.ending.id).toBe('done');
+  });
+  it('renders the server-frozen variant order and copy instead of the cached public schema', async () => {
+    const publicForm = form([
+      { id: 'intro', key: 'intro', type: 'statement', label: 'Intro', messages: ['Welcome'] },
+      { id: 'first', key: 'first', type: 'short_text', label: 'First', messages: ['First?'] },
+      { id: 'second', key: 'second', type: 'short_text', label: 'Second', messages: ['Second?'] },
+      { id: 'review', key: 'review', type: 'summary', label: 'Review', messages: ['Review'] },
+    ]);
+    const schema = { ...publicForm.form.schema, steps: [
+      publicForm.form.schema.steps[0]!,
+      { ...publicForm.form.schema.steps[2]!, messages: ['Variant second?'] },
+      publicForm.form.schema.steps[1]!, publicForm.form.schema.steps[3]!,
+    ] } as typeof publicForm.form.schema;
+    const assigned = { ...session(), schema, variantId: 'order:b' };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async input => {
+      if (String(input).endsWith('/start-token')) return response({ version: 1, startToken: 'test-start', expiresAt: '2099-01-01T00:00:00Z' });
+      return response(assigned);
+    });
+    const controller = new RuntimeController({ form: publicForm }, new ApiClient('/cff/v1/', fetcher));
+    await controller.initialize();
+    expect(controller.state.form?.form.schema.steps.map(s => s.id)).toEqual(['intro', 'second', 'first', 'review']);
+    expect(controller.state.form?.form.schema.steps[1]?.messages).toEqual(['Variant second?']);
+    await controller.answer(null);
+    expect(controller.state.activeId).toBe('second');
+    expect(controller.state.path?.visited).toContain('second');
+  });
   it('clears expired resume data without rewriting credentials from the stale in-memory session', async () => {
     const network = server(); const controller = new RuntimeController({ form: form() }, network.api);
     await controller.initialize(); await controller.answer(null); expect(localStorage.length).toBe(1);
