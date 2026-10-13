@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="tests/php/bootstrap.php" colors="true" cacheResultFile=".phpunit.result.cache" failOnWarning="true" failOnRisky="true">
+  <testsuites><testsuite name="Foundation unit"><directory>tests/php/Foundation/Unit</directory></testsuite></testsuites>
+</phpunit>

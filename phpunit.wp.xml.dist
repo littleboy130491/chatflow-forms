@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="tests/php/bootstrap-wp.php" colors="true" cacheResultFile=".phpunit.result.cache" failOnWarning="true" failOnRisky="true">
+  <testsuites><testsuite name="WordPress"><directory>tests/php/Foundation/WordPress</directory><directory>tests/php/Backend</directory><directory>tests/php/Logic</directory><directory>tests/php/Integrations</directory></testsuite></testsuites>
+</phpunit>

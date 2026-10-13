@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "jsx": "react-jsx", "types": ["node", "react"] },
+  "include": ["assets/src/shared/**/*", "assets/src/builder/**/*", "assets/src/submissions/**/*", "assets/src/blocks/**/*", "tests/js/foundation/**/*", "tests/js/logic/**/*", "tests/js/admin/**/*"]
+}

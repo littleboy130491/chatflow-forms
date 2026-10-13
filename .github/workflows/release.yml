@@ -1,0 +1,43 @@
+name: Tagged plugin release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '8.1'
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.19.0'
+          cache: npm
+      - run: php tools/check-version.php
+      - run: npx --yes npm@11.16.0 --version
+      - run: composer install --no-interaction --prefer-dist && npx --yes npm@11.16.0 ci --no-audit --no-fund
+      - run: npm run build && composer scope && composer install --no-dev --no-interaction --prefer-dist && php tools/package.php && php tools/verify-package.php
+      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const tag = process.env.GITHUB_REF_NAME;
+            const release = await github.rest.repos.createRelease({
+              ...context.repo, tag_name: tag, name: tag, draft: false, prerelease: false,
+              body: 'Install the chatflow-forms.zip asset; source archives omit runtime dependencies and compiled assets.'
+            });
+            await github.rest.repos.uploadReleaseAsset({
+              ...context.repo, release_id: release.data.id, name: 'chatflow-forms.zip',
+              data: fs.readFileSync('build/chatflow-forms.zip'),
+              headers: { 'content-type': 'application/zip' }
+            });

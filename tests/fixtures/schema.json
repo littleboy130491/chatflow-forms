@@ -1,0 +1,171 @@
+[
+  {
+    "name": "v1 summary survey",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "short_text",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": true
+  },
+  {
+    "name": "unknown types rejected",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "invented",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": false,
+    "publishable": false
+  },
+  {
+    "name": "known optional draft only",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "rating",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": false
+  },
+  {
+    "name": "unknown properties rejected",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "short_text",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ],
+      "telemetry": true
+    },
+    "valid": false,
+    "publishable": false
+  }
+]

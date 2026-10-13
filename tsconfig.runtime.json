@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact", "types": ["node"] },
+  "include": ["assets/src/shared/**/*", "assets/src/runtime/**/*", "assets/src/tracking/**/*", "tests/js/runtime/**/*"]
+}

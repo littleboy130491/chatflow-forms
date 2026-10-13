@@ -1,0 +1,22 @@
+[
+  {
+    "label": "logic/fields",
+    "scope": "Own src/Logic/**, src/Fields/**, assets/src/shared/**, tests/fixtures/**, tests/php/Logic/**, tests/js/logic/**. Implement pure PHP/TS replay/operator/interpolation/diagnostics parity, field Registry/FieldType sanitization and validation, shared exact DTO types and fixtures, including v1 survey summary and all supported v1 fields. Maintain generated TS schema contracts without changing canonical schema/build config; reject unknown/unsupported fields and unvisited answers. Run PHP tests/php/Logic and Vitest tests/js/logic. No edits to Plugin.php, Install/Installer.php or any foundation/build files."
+  },
+  {
+    "label": "server/storage/security",
+    "scope": "Own src/Forms/**, src/Rest/**, src/Submissions/**, src/Tracking/**, src/Spam/**, src/Privacy/**, src/Frontend/**, templates/fullpage.php, tests/php/Backend/**. Reuse/extend real form repository/schema publishing; implement public/admin REST with nonce+caps, fresh start-token handshake, 30-day durable resume vs short request tokens, atomic partial/submit/idempotency/versioning, tracking/proxy/spam protection, embedding/fullpage, query/filter/CSV/purge/privacy repositories and secure owned downloads. Consume foundation TokenSigner and migrated tables; coordinate module wiring with integrator. Run tests/php/Backend for REST/storage/security/privacy. No edits to Plugin.php, Install/Installer.php or foundation/build files."
+  },
+  {
+    "label": "visitor runtime",
+    "scope": "Own assets/src/runtime/**, assets/src/tracking/**, tests/js/runtime/**. Implement Preact/TypeScript Shadow DOM chat, all v1 inputs plus summary, replay/back/edit/progress/accessibility/reduced-motion, endings, API handshake/session headers/idempotency/retries/resume/start-over/localStorage/offline safety, first-touch tracking and global ChatFlow API. Use shared logic/contracts without editing them. Only real inline/fullpage MVP; optional modes remain optional. Run Vitest tests/js/runtime. No edits to Plugin.php, Install/Installer.php, shared/ or foundation/build files."
+  },
+  {
+    "label": "admin builder/submissions/block",
+    "scope": "Own src/Admin/**, assets/src/builder/**, assets/src/submissions/**, assets/src/blocks/**, tests/js/admin/**. Implement capability-aware PHP menus/config/enqueues and block PHP registration, React WordPress/dnd-kit builder with draft/autosave/conflict/publish, real runtime draft preview, submissions list/detail/read/star/notes/export/purge/settings, chatflow/form block editor and i18n. Consume exact server DTO/routes and shared logic, do not redefine public REST or frontend embedding. Run Vitest tests/js/admin. No edits to Plugin.php, Install/Installer.php or foundation/build files."
+  },
+  {
+    "label": "jobs/email/webhooks",
+    "scope": "Own src/Integrations/**, src/Notifications/**, templates/emails/**, docs/hooks.md, docs/payload.md, tests/php/Integrations/**. Implement documented synchronous/async hook dispatch with safe exceptions, transactional delivery outbox consumption/recovery/dedupe, Action Scheduler cff jobs and three-attempt backoff, HTML wp_mail admin/autoresponder templates/merge tags/test/resend, signed SSRF-safe generic webhooks and redacted activity logging. Publish exact stable Submission/Form payload contract and hook examples; no native connectors/telemetry/licence/AI/payments. Run tests/php/Integrations. No edits to Plugin.php, Install/Installer.php or foundation/build files."
+  }
+]
