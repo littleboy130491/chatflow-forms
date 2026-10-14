@@ -4,7 +4,7 @@ function active(chat: Locator): Locator {
   return chat.locator('.active');
 }
 
-async function advance(chat: Locator, name: string) {
+async function advance(chat: Locator, name: string | RegExp) {
   await active(chat).getByRole('button', { name, exact: true }).click();
 }
 
@@ -22,7 +22,7 @@ test('a visitor can branch, resume on the same device, complete and receive a co
   // A real navigation, not an in-memory controller rerender, exercises durable resume.
   await page.reload();
   await expect(chat.getByText(/Selamat datang kembali/)).toBeVisible();
-  await chat.locator('.notice').getByRole('button', { name: 'Lanjut' }).click();
+  await chat.locator('.notice').getByRole('button', { name: /^(Continue|Lanjut)$/ }).click();
   await expect(chat.getByRole('group', { name: 'Layanan' })).toBeVisible();
 
   await chat.getByRole('group', { name: 'Layanan' }).getByRole('button', { name: 'Membuat website baru' }).click();
@@ -32,9 +32,9 @@ test('a visitor can branch, resume on the same device, complete and receive a co
   await chat.getByRole('group', { name: 'Budget' }).getByRole('button', { name: 'Rp10–25 jt' }).click();
 
   await active(chat).getByRole('textbox', { name: 'Nama' }).fill(`E2E ${isMobile ? 'Mobile' : 'Desktop'}`);
-  await advance(chat, 'Lanjut');
+  await advance(chat, /^(Continue|Lanjut)$/);
   await active(chat).getByRole('textbox', { name: 'WhatsApp' }).fill('081234567890');
-  await advance(chat, 'Lanjut');
+  await advance(chat, /^(Continue|Lanjut)$/);
   await expect(active(chat).getByRole('textbox', { name: 'Email' })).toBeVisible();
   await advance(chat, 'Lewati');
   await chat.getByRole('group', { name: 'Boleh ditelepon' }).getByRole('button', { name: 'Tidak, chat saja' }).click();
@@ -55,7 +55,7 @@ test('launcher defers the session handshake until opened and restores focus when
   await page.goto('/chatflow-e2e-launcher/');
   const chat = page.locator('cff-chat');
   await expect(chat).toHaveAttribute('data-position', 'left');
-  const toggle = chat.getByRole('button', { name: 'Buka chat' });
+  const toggle = chat.getByRole('button', { name: /^(Open chat|Buka chat)$/ });
   await expect(toggle).toBeVisible();
   await expect(chat.locator('.launcher-panel')).toBeHidden();
   expect(handshake).toHaveLength(0);
@@ -75,15 +75,15 @@ test('popup supports backdrop close and a timed trigger without creating a sessi
   await page.goto('/chatflow-e2e-popup/');
   const chat = page.locator('cff-chat');
   await expect(chat.locator('.launcher-panel')).toBeHidden();
-  await chat.getByRole('button', { name: 'Buka chat' }).click();
-  const dialog = chat.getByRole('dialog', { name: 'Formulir chat' });
+  await chat.getByRole('button', { name: /^(Open chat|Buka chat)$/ }).click();
+  const dialog = chat.getByRole('dialog', { name: /^(Chat form|Formulir chat)$/ });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('aria-modal', 'true');
   await chat.locator('.popup-backdrop').click({ position: { x: 2, y: 2 } });
   await expect(dialog).toBeHidden();
 
   await page.goto('/chatflow-e2e-popup-auto/');
-  await expect(page.locator('cff-chat').getByRole('dialog', { name: 'Formulir chat' })).toBeVisible();
+  await expect(page.locator('cff-chat').getByRole('dialog', { name: /^(Chat form|Formulir chat)$/ })).toBeVisible();
 });
 
 test('site-wide targeting renders a single launcher on a matching page', async ({ page }) => {
@@ -91,5 +91,5 @@ test('site-wide targeting renders a single launcher on a matching page', async (
   const chat = page.locator('cff-chat');
   await expect(chat).toHaveCount(1);
   await expect(chat).toHaveAttribute('data-mode', 'launcher');
-  await expect(chat.getByRole('button', { name: 'Buka chat' })).toBeVisible();
+  await expect(chat.getByRole('button', { name: /^(Open chat|Buka chat)$/ })).toBeVisible();
 });
