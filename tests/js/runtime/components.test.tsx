@@ -7,6 +7,8 @@ import { FieldInput, normalizePhone, toggleChoice } from '../../../assets/src/ru
 import { interpolateLink, Markdown, reactions, safeLink } from '../../../assets/src/runtime/content';
 import { phrases } from '../../../assets/src/runtime/i18n';
 import { mountRuntime } from '../../../assets/src/runtime';
+import { ApiClient } from '../../../assets/src/runtime/api';
+import { RuntimeController } from '../../../assets/src/runtime/controller';
 import { typingDelay } from '../../../assets/src/runtime/chat';
 import { safeColor, safeFont, scopedAppearanceCss } from '../../../assets/src/runtime/appearance';
 import { form } from './helpers';
@@ -94,6 +96,23 @@ describe('safe content, translations and motion', () => {
   });
 });
 describe('Shadow DOM mount and global API', () => {
+  it('tracks a real launcher impression on first open, never on closed mounts or repeat opens', async () => {
+    const view = vi.spyOn(ApiClient.prototype, 'view').mockResolvedValue({ recorded: true });
+    vi.spyOn(RuntimeController.prototype, 'initialize').mockImplementation(async function () {
+      this.state.form = form();
+      this.state.phase = 'ready';
+    });
+    const url = new URL('/wp-json/cff/v1/', window.location.href).href;
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(), mode: 'launcher', restUrl: url }); });
+    expect(view).not.toHaveBeenCalled();
+    await act(() => handle!.open?.());
+    await vi.waitFor(() => expect(view).toHaveBeenCalledWith(42, form().form.version));
+    await act(() => { host.shadowRoot!.querySelector<HTMLButtonElement>('.launcher-toggle')!.click(); });
+    await act(() => handle!.open?.());
+    expect(view).toHaveBeenCalledTimes(1);
+    await act(() => handle!.unmount());
+  });
   it('mounts a real preview synchronously, isolates CSS, supports prefill/debug and unmount without IO', async () => {
     const fetcher = vi.fn(); vi.stubGlobal('fetch', fetcher);
     const writes = vi.spyOn(Storage.prototype, 'setItem'); const clears = vi.spyOn(Storage.prototype, 'removeItem');
