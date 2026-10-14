@@ -34,16 +34,20 @@ final class ViewCounter {
 		}
 		$dimension = '{}';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prepared scalar values, trusted WP table prefix and fixed SQL.
-		Database::check( $wpdb->query( $wpdb->prepare(
-			"INSERT INTO {$wpdb->prefix}cff_stats_daily (form_id,form_version,day,metric,dimension_hash,dimension,value)
-			VALUES (%d,%d,UTC_DATE(),%s,%s,%s,1)
-			ON DUPLICATE KEY UPDATE value=value+1",
-			$form_id,
-			$version,
-			'view',
-			hash( 'sha256', $dimension ),
-			$dimension
-		) ) );
+		Database::check(
+			$wpdb->query(
+				$wpdb->prepare(
+					"INSERT INTO {$wpdb->prefix}cff_stats_daily (form_id,form_version,day,metric,dimension_hash,dimension,value)
+					VALUES (%d,%d,UTC_DATE(),%s,%s,%s,1)
+					ON DUPLICATE KEY UPDATE value=value+1",
+					$form_id,
+					$version,
+					'view',
+					hash( 'sha256', $dimension ),
+					$dimension
+				)
+			)
+		);
 		return array( 'recorded' => true );
 	}
 }
