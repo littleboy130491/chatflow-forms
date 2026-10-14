@@ -517,9 +517,15 @@ export function SettingsEditor({
       spam: { ...api.config.defaults?.spam, ...form.settings.spam },
     },
     notifications = settings.notifications ?? {},
-    integrations = settings.integrations ?? {};
+    integrations = settings.integrations ?? {},
+    display = settings.display ?? {},
+    launcher = display.launcher ?? {};
   const set = <K extends keyof FormSettings>(key: K, value: FormSettings[K]) =>
     onChange({ ...settings, [key]: value });
+  const setLauncher = (changes: Partial<typeof launcher>) =>
+    set('display', { ...display, launcher: { ...launcher, ...changes } });
+  const pageIds = (input: string) =>
+    [...new Set(input.split(',').map((value) => value.trim()).filter((value) => /^\d+$/.test(value)).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0))].slice(0, 500);
   const test = async (notificationId: string, to: string) => {
     if (!form.id || !form.version)
       throw new Error(__('Publish the form before sending test mail.', 'chatflow-forms'));
@@ -579,6 +585,60 @@ export function SettingsEditor({
           value={notifications.notifyAbandoned}
           onChange={(notifyAbandoned) => set('notifications', { ...notifications, notifyAbandoned })}
         />
+      </section>
+
+      <section className="cff-card">
+        <h2>{__('Display and engagement', 'chatflow-forms')}</h2>
+        <Select
+          label={__('Display mode', 'chatflow-forms')}
+          value={display.mode ?? 'inline'}
+          choices={[
+            { value: 'inline', label: __('Inline', 'chatflow-forms') },
+            { value: 'fullpage', label: __('Fullpage', 'chatflow-forms') },
+            { value: 'launcher', label: __('Floating launcher', 'chatflow-forms') },
+            { value: 'popup', label: __('Popup', 'chatflow-forms') },
+          ]}
+          onChange={(mode) => set('display', { ...display, mode: mode as NonNullable<typeof display.mode> })}
+        />
+        {(['launcher', 'popup'].includes(display.mode ?? '') && <>
+          <Check
+            label={__('Show automatically on matching pages', 'chatflow-forms')}
+            value={launcher.enabled ?? false}
+            onChange={(enabled) => setLauncher({ enabled })}
+          />
+          <Select
+            label={__('Launcher position', 'chatflow-forms')}
+            value={launcher.position ?? 'right'}
+            choices={[
+              { value: 'left', label: __('Left', 'chatflow-forms') },
+              { value: 'right', label: __('Right', 'chatflow-forms') },
+            ]}
+            onChange={(position) => setLauncher({ position: position as 'left' | 'right' })}
+          />
+          <Field
+            label={__('Auto-open after seconds (blank = off)', 'chatflow-forms')}
+            type="number"
+            value={launcher.autoOpenSeconds ?? ''}
+            onChange={(value) => setLauncher({ autoOpenSeconds: value === '' ? null : Math.max(0, Math.min(3600, Number(value) || 0)) })}
+          />
+          <Field
+            label={__('Auto-open at scroll percent (blank = off)', 'chatflow-forms')}
+            type="number"
+            value={launcher.scrollPercent ?? ''}
+            onChange={(value) => setLauncher({ scrollPercent: value === '' ? null : Math.max(0, Math.min(100, Number(value) || 0)) })}
+          />
+          <Field
+            label={__('Include page IDs (comma-separated; blank = all)', 'chatflow-forms')}
+            value={(launcher.includePageIds ?? []).join(',')}
+            onChange={(value) => setLauncher({ includePageIds: pageIds(value) as NonNullable<typeof launcher.includePageIds> })}
+          />
+          <Field
+            label={__('Exclude page IDs (comma-separated)', 'chatflow-forms')}
+            value={(launcher.excludePageIds ?? []).join(',')}
+            onChange={(value) => setLauncher({ excludePageIds: pageIds(value) as NonNullable<typeof launcher.excludePageIds> })}
+          />
+          <p>{__('Page exclusions take precedence. A published form is required for automatic placement.', 'chatflow-forms')}</p>
+        </>)}
       </section>
       <section className="cff-card">
         <h2>{__('Limits', 'chatflow-forms')}</h2>
