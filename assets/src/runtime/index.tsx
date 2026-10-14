@@ -37,7 +37,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const customization = document.createElement('style');
   const root = document.createElement('div'); shadow.replaceChildren(style, customization, root);
   const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode: options.mode ?? (['fullpage', 'launcher', 'popup'].includes(host.dataset.mode ?? '') ? host.dataset.mode as 'fullpage' | 'launcher' | 'popup' : 'inline') };
-  const controller = new RuntimeController(config, options.preview ? null : new ApiClient(restUrl!), undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
+  const api = options.preview ? null : new ApiClient(restUrl!);
+  const controller = new RuntimeController(config, api, undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
   const appearance = () => {
     const value = controller.state.form?.form.appearance;
     if (!value) return;
@@ -62,6 +63,15 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   let toggle: HTMLButtonElement | null = null;
   let panel: HTMLDivElement | null = null;
   let initialized = false;
+  let viewReported = false;
+  const trackView = () => {
+    if (options.preview || viewReported || !api || host.hidden || controller.state.phase === 'error') return;
+    const version = controller.state.form?.form.version;
+    if (!version) return;
+    viewReported = true;
+    // Analytics is non-blocking and never sends session credentials, answers or visitor metadata.
+    void api.view(id, version).catch(() => undefined);
+  };
   const label = phrases(config.locale);
   const setOpen = (value: boolean) => {
     if (!toggle || !panel) return;
@@ -78,7 +88,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       if (!initialized) {
         initialized = true;
         connection();
-        void controller.initialize().then(appearance);
+        void controller.initialize().then(() => { appearance(); trackView(); });
       }
       panel.focus({ preventScroll: true });
     } else {
@@ -153,7 +163,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       window.addEventListener('scroll', scrollHandler, { passive: true });
     }
   }
-  if (!isLauncher) { connection(); void controller.initialize().then(appearance); }
+  if (!isLauncher) { connection(); void controller.initialize().then(() => { appearance(); trackView(); }); }
   return handle;
 }
 

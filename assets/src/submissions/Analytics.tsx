@@ -11,8 +11,8 @@ interface Breakdown { label: string; count: number }
 interface Dropoff extends Breakdown { formId: number; stepId: string }
 interface AnalyticsReport {
   from: string; to: string; formId: number;
-  counts: { starts: number; completed: number; partial: number; abandoned: number };
-  completionRate: number; avgDurationMs: number | null;
+  counts: { views: number; starts: number; completed: number; partial: number; abandoned: number };
+  completionRate: number; viewStartRate: number | null; avgDurationMs: number | null;
   sources: Breakdown[]; devices: Breakdown[]; dropoffs: Dropoff[];
   answers: { fieldKey: string; label: string; options: Breakdown[] }[];
   methodology: string;
@@ -46,6 +46,8 @@ export function Analytics({ api }: { api: AdminApi }) {
     return () => abort.abort();
   }, [api, filters]);
   const kpis = report ? [
+    { label: __('Views (impressions)', 'chatflow-forms'), value: report.counts.views.toLocaleString() },
+    { label: __('View → start', 'chatflow-forms'), value: report.viewStartRate === null ? '—' : `${report.viewStartRate}%` },
     { label: __('Starts', 'chatflow-forms'), value: report.counts.starts.toLocaleString() },
     { label: __('Completed', 'chatflow-forms'), value: report.counts.completed.toLocaleString() },
     { label: __('Completion rate', 'chatflow-forms'), value: `${report.completionRate}%` },
