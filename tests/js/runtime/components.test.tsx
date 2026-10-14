@@ -98,7 +98,7 @@ describe('safe content, translations and motion', () => {
 describe('Shadow DOM mount and global API', () => {
   it('tracks a real launcher impression on first open, never on closed mounts or repeat opens', async () => {
     const view = vi.spyOn(ApiClient.prototype, 'view').mockResolvedValue({ recorded: true });
-    vi.spyOn(RuntimeController.prototype, 'initialize').mockImplementation(async function () {
+    vi.spyOn(RuntimeController.prototype, 'initialize').mockImplementation(async function (this: RuntimeController) {
       this.state.form = form();
       this.state.phase = 'ready';
     });
