@@ -14,12 +14,12 @@ final class FrontendModule implements Module {
 			function ( $attributes ) {
 				$attributes = shortcode_atts(
 					array(
-						'id'       => 0,
-						'height'   => 600,
-						'mode'     => 'inline',
-						'theme'    => 'auto',
-						'position' => 'right',
-						'auto_open' => '',
+						'id'             => 0,
+						'height'         => 600,
+						'mode'           => 'inline',
+						'theme'          => 'auto',
+						'position'       => 'right',
+						'auto_open'      => '',
 						'scroll_percent' => '',
 					),
 					$attributes,
@@ -103,7 +103,10 @@ final class FrontendModule implements Module {
 			$exclude = array_map( 'absint', $launcher['excludePageIds'] ?? array() );
 			if ( in_array( $page_id, $exclude, true ) || ( $include && ! in_array( $page_id, $include, true ) ) ) {
 				continue; }
-			return array( 'form' => $form, 'display' => $display );
+			return array(
+				'form'    => $form,
+				'display' => $display,
+			);
 		}
 		return null;
 	}
@@ -122,7 +125,7 @@ final class FrontendModule implements Module {
 			return; }
 		$display  = $target['display'];
 		$launcher = $display['launcher'] ?? array();
-		echo ( new Renderer( $this->forms ) )->render(
+		$markup = ( new Renderer( $this->forms ) )->render(
 			$form->id(),
 			array(
 				'mode'           => $display['mode'],
@@ -130,7 +133,9 @@ final class FrontendModule implements Module {
 				'auto_open'      => $launcher['autoOpenSeconds'] ?? '',
 				'scroll_percent' => $launcher['scrollPercent'] ?? '',
 			)
-		); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes all HTML attributes and its JSON script payload.
+		);
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer returns escaped markup.
+		echo $markup;
 	}
 
 	public function tracking(): void {
