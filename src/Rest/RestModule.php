@@ -53,6 +53,7 @@ final class RestModule implements Module {
 		);
 		$this->route( '/admin/forms/(?P<id>\d+)/publish', 'POST', fn( $r ) => $this->respond( $this->forms->publish( (int) $r['id'], (int) ( $this->body( $r )['draftRevision'] ?? 0 ) ) ), 'cff_manage_forms' );
 		$this->route( '/admin/forms/(?P<id>\d+)', 'DELETE', array( $this, 'trashForm' ), 'cff_manage_forms' );
+		$this->route( '/admin/analytics', 'GET', fn( $r ) => $this->respond( ( new \ChatFlow\Analytics\Report( $this->forms ) )->run( (int) ( $r['formId'] ?? 0 ), $r['from'] ?? null, $r['to'] ?? null ) ), 'cff_view_submissions' );
 		$this->route( '/admin/submissions', 'GET', array( $this, 'submissionsList' ), 'cff_view_submissions' );
 		$this->route( '/admin/submissions/(?P<id>\d+)', 'GET', array( $this, 'detail' ), 'cff_view_submissions' );
 		$this->route( '/admin/submissions/(?P<id>\d+)', 'PATCH', array( $this, 'updateSubmission' ), 'cff_edit_submissions' );
