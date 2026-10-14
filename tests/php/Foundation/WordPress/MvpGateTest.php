@@ -271,6 +271,7 @@ final class MvpGateTest extends \WP_UnitTestCase {
 				'current_step_id' => 'step_punya_website',
 				'utm_source'      => 'test-campaign',
 				'device_type'     => 'desktop',
+				'answers'         => array( 'punya_website' => 'Belum pernah' ),
 			)
 		);
 		$repo->complete(
@@ -313,6 +314,8 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 120000, $report['avgDurationMs'] );
 		$this->assertSame( 'test-campaign', $report['sources'][0]['label'] );
 		$this->assertSame( 'step_punya_website', $report['dropoffs'][0]['stepId'] );
+		$this->assertSame( 'Belum pernah', $report['answers'][0]['options'][0]['label'] );
+		$this->assertSame( 1, $report['answers'][0]['options'][0]['count'] );
 		$this->assertArrayNotHasKey( 'answers', $report );
 		$path = 'admin/analytics';
 		wp_set_current_user( 0 );
