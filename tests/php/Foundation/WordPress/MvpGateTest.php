@@ -314,7 +314,7 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 'test-campaign', $report['sources'][0]['label'] );
 		$this->assertSame( 'step_punya_website', $report['dropoffs'][0]['stepId'] );
 		$this->assertArrayNotHasKey( 'answers', $report );
-		$path = 'admin/analytics?formId=' . $form->id() . '&from=' . $day . '&to=' . $day;
+		$path = 'admin/analytics';
 		wp_set_current_user( 0 );
 		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
