@@ -28,6 +28,7 @@ final class Report {
 			$sessions_period .= $wpdb->prepare( ' AND form_id = %d', $form_id );
 		}
 		$period .= " AND status IN ('completed','partial','abandoned')";
+
 		$view_period = $wpdb->prepare( 'day >= %s AND day <= %s AND metric = %s', $from, $to, 'view' );
 		if ( $form_id ) {
 			$view_period .= $wpdb->prepare( ' AND form_id = %d', $form_id );
