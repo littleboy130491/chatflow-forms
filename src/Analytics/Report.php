@@ -78,6 +78,7 @@ final class Report {
 			}
 			return $result;
 		};
+		$distributions = $this->distributions( $form_id, $since, $until );
 		return array(
 			'from'           => $from,
 			'to'             => $to,
@@ -88,7 +89,51 @@ final class Report {
 			'sources'        => $series( $sources ),
 			'devices'        => $series( $devices ),
 			'dropoffs'       => $steps,
-			'methodology'    => 'Starts count sessions; completions and drop-offs count stored non-spam submissions. Form views and answer distributions are not yet tracked.',
+			'answers'        => $distributions,
+			'methodology'    => 'Starts count sessions; completions and drop-offs count stored non-spam submissions. Choice distributions use the current published form version and omit free-text answers. Form views are not yet tracked.',
 		);
+	}
+
+	/** Aggregate only configured single-choice option values; never include free-text or Other responses.
+	 * @return list<array<string,mixed>>
+	 */
+	private function distributions( int $form_id, string $since, string $until ): array {
+		global $wpdb;
+		$form = $form_id ? $this->forms->getPublished( $form_id ) : null;
+		if ( ! $form ) {
+			return array();
+		}
+		$results = array();
+		foreach ( $form->schema()['steps'] as $step ) {
+			if ( 'single_choice' !== $step['type'] || count( $results ) >= 10 ) {
+				continue;
+			}
+			$allowed = array();
+			foreach ( $step['options'] ?? array() as $option ) {
+				if ( empty( $option['isOther'] ) ) {
+					$allowed[ $option['value'] ] = $option['label'];
+				}
+			}
+			if ( ! $allowed ) {
+				continue;
+			}
+			$placeholders = implode( ',', array_fill( 0, count( $allowed ), '%s' ) );
+			$params       = array_merge( array( $form_id, $form->version(), $since, $until, $step['key'] ), array_keys( $allowed ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Only trusted table names and generated placeholders are interpolated; all values are prepared.
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT v.value_text AS value,COUNT(*) AS total FROM {$wpdb->prefix}cff_submission_values v JOIN {$wpdb->prefix}cff_submissions s ON s.id=v.submission_id WHERE s.form_id=%d AND s.form_version=%d AND s.created_at >= %s AND s.created_at < %s AND s.status='completed' AND v.field_key=%s AND v.value_text IN ({$placeholders}) GROUP BY v.value_text", $params ), ARRAY_A );
+			$choices = array();
+			foreach ( $rows as $row ) {
+				$choices[] = array(
+					'label' => (string) $allowed[ $row['value'] ],
+					'count' => (int) $row['total'],
+				);
+			}
+			$results[] = array(
+				'fieldKey' => $step['key'],
+				'label'    => $step['label'],
+				'options'  => $choices,
+			);
+		}
+		return $results;
 	}
 }

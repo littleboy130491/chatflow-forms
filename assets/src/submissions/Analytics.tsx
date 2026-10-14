@@ -14,6 +14,7 @@ interface AnalyticsReport {
   counts: { starts: number; completed: number; partial: number; abandoned: number };
   completionRate: number; avgDurationMs: number | null;
   sources: Breakdown[]; devices: Breakdown[]; dropoffs: Dropoff[];
+  answers: { fieldKey: string; label: string; options: Breakdown[] }[];
   methodology: string;
 }
 function BreakdownTable({ title, rows }: { title: string; rows: Breakdown[] }) {
@@ -69,6 +70,9 @@ export function Analytics({ api }: { api: AdminApi }) {
         <BreakdownTable title={__('UTM sources', 'chatflow-forms')} rows={report.sources} />
         <BreakdownTable title={__('Devices', 'chatflow-forms')} rows={report.devices} />
         <BreakdownTable title={__('Step drop-off', 'chatflow-forms')} rows={report.dropoffs.map((row) => ({ label: `#${row.formId}: ${row.label}`, count: row.count }))} />
+        {report.answers.map((field) => (
+          <BreakdownTable key={field.fieldKey} title={field.label} rows={field.options} />
+        ))}
       </div>
       <p className="description">{report.methodology}</p>
     </>}
