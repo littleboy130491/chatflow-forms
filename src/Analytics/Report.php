@@ -68,7 +68,7 @@ final class Report {
 				'count'  => (int) $row['total'],
 			);
 		}
-		$series = static function ( array $rows ): array {
+		$series        = static function ( array $rows ): array {
 			$result = array();
 			foreach ( $rows as $row ) {
 				$result[] = array(
@@ -119,8 +119,8 @@ final class Report {
 			}
 			$placeholders = implode( ',', array_fill( 0, count( $allowed ), '%s' ) );
 			$params       = array_merge( array( $form_id, $form->version(), $since, $until, $step['key'] ), array_keys( $allowed ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Only trusted table names and generated placeholders are interpolated; all values are prepared.
-			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT v.value_text AS value,COUNT(*) AS total FROM {$wpdb->prefix}cff_submission_values v JOIN {$wpdb->prefix}cff_submissions s ON s.id=v.submission_id WHERE s.form_id=%d AND s.form_version=%d AND s.created_at >= %s AND s.created_at < %s AND s.status='completed' AND v.field_key=%s AND v.value_text IN ({$placeholders}) GROUP BY v.value_text", $params ), ARRAY_A );
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Generated option placeholders and all values are prepared.
+			$rows    = $wpdb->get_results( $wpdb->prepare( "SELECT v.value_text AS value,COUNT(*) AS total FROM {$wpdb->prefix}cff_submission_values v JOIN {$wpdb->prefix}cff_submissions s ON s.id=v.submission_id WHERE s.form_id=%d AND s.form_version=%d AND s.created_at >= %s AND s.created_at < %s AND s.status='completed' AND v.field_key=%s AND v.value_text IN ({$placeholders}) GROUP BY v.value_text", $params ), ARRAY_A );
 			$choices = array();
 			foreach ( $rows as $row ) {
 				$choices[] = array(
