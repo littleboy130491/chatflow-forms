@@ -19,9 +19,9 @@ final class Report {
 		if ( ! $start || ! $end || $start->format( 'Y-m-d' ) !== $from || $end->format( 'Y-m-d' ) !== $to || $end < $start || $start->diff( $end )->days > 366 ) {
 			throw new \InvalidArgumentException( 'Use a valid UTC date range of at most 366 days.' );
 		}
-		$until          = $end->modify( '+1 day' )->format( 'Y-m-d H:i:s' );
-		$since          = $start->format( 'Y-m-d H:i:s' );
-		$period         = $wpdb->prepare( 'created_at >= %s AND created_at < %s', $since, $until );
+		$until           = $end->modify( '+1 day' )->format( 'Y-m-d H:i:s' );
+		$since           = $start->format( 'Y-m-d H:i:s' );
+		$period          = $wpdb->prepare( 'created_at >= %s AND created_at < %s', $since, $until );
 		$sessions_period = $wpdb->prepare( 'started_at >= %s AND started_at < %s', $since, $until );
 		if ( $form_id ) {
 			$period          .= $wpdb->prepare( ' AND form_id = %d', $form_id );
