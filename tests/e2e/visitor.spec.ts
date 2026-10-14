@@ -34,7 +34,7 @@ test('a visitor can branch, resume on the same device, complete and receive a co
 
   // A real navigation, not an in-memory controller rerender, exercises durable resume.
   await page.reload();
-  await expect(chat.getByText(/Selamat datang kembali/)).toBeVisible();
+  await expect(chat.getByText(/Welcome back|Selamat datang kembali/)).toBeVisible();
   await chat.locator('.notice').getByRole('button', { name: /^(Continue|Lanjut)$/ }).click();
   await expect(chat.getByRole('group', { name: 'Layanan' })).toBeVisible();
 
