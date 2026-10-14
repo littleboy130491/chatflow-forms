@@ -5,6 +5,19 @@ import type { Session } from '../../../assets/src/runtime/types';
 const session: Session = { sessionId: '12345678-1234-4234-8234-123456789abc', formId: 42, version: 2, revision: 1, status: 'active', answers: {}, visited: [], currentStepId: null, progress: 0, requestToken: 'request-test', requestExpiresAt: '2099-01-01T00:00:00Z', context: { now: '2026-10-13T00:00:00Z' } };
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 describe('session API', () => {
+  it('uses browser-native fetch with the global receiver when no transport is injected', async () => {
+    const native = vi.fn(function (this: unknown) {
+      if (this !== globalThis) throw new TypeError('Illegal invocation');
+      return Promise.resolve(json(session));
+    });
+    vi.stubGlobal('fetch', native);
+    try {
+      await expect(new ApiClient('https://localhost/wp-json/cff/v1/').form(42)).resolves.toEqual(session);
+      expect(native).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it('supports WordPress plain-permalink REST endpoints without exposing credentials in route/query', async () => {
     const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => json(session)); const api = new ApiClient('https://localhost/?rest_route=/cff/v1/', fetcher);
     await api.form(42, 2); await api.submit(session, {}, 'submit-key');
