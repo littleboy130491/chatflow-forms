@@ -1,0 +1,23 @@
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: '.',
+  testMatch: '**/*.spec.ts',
+  timeout: 120_000,
+  expect: { timeout: 15_000 },
+  fullyParallel: false,
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: process.env.CI ? [['github'], ['list']] : [['list']],
+  outputDir: 'tests/e2e/artifacts',
+  use: {
+    baseURL: process.env.CFF_E2E_BASE_URL ?? 'http://localhost:8888',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'mobile-chromium', use: { ...devices['Pixel 7'] } },
+  ],
+});

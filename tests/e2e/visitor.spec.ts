@@ -1,0 +1,95 @@
+import { expect, test, type Locator } from '@playwright/test';
+
+function active(chat: Locator): Locator {
+  return chat.locator('.active');
+}
+
+async function advance(chat: Locator, name: string) {
+  await active(chat).getByRole('button', { name, exact: true }).click();
+}
+
+test('a visitor can branch, resume on the same device, complete and receive a confirmation', async ({ page, isMobile }) => {
+  await page.goto('/chatflow-e2e-inline/');
+  const chat = page.locator('cff-chat');
+  await expect(chat).toHaveAttribute('data-mode', 'inline');
+
+  await advance(chat, 'Yuk mulai');
+  await expect(chat.getByRole('group', { name: 'Pernah punya website' })).toBeVisible();
+  await chat.getByRole('group', { name: 'Pernah punya website' }).getByRole('button', { name: 'Belum pernah' }).click();
+  await expect(chat.getByRole('group', { name: 'Layanan' })).toBeVisible();
+  await expect(chat.getByRole('group', { name: 'Alamat website' })).toHaveCount(0);
+
+  // A real navigation, not an in-memory controller rerender, exercises durable resume.
+  await page.reload();
+  await expect(chat.getByText(/Selamat datang kembali/)).toBeVisible();
+  await chat.locator('.notice').getByRole('button', { name: 'Lanjut' }).click();
+  await expect(chat.getByRole('group', { name: 'Layanan' })).toBeVisible();
+
+  await chat.getByRole('group', { name: 'Layanan' }).getByRole('button', { name: 'Membuat website baru' }).click();
+  await chat.getByRole('group', { name: 'Jenis website' }).getByRole('button', { name: /Company \/ Business Profile/ }).click();
+  await expect(active(chat).getByRole('textbox', { name: 'Deskripsi website' })).toBeVisible();
+  await advance(chat, 'Lewati');
+  await chat.getByRole('group', { name: 'Budget' }).getByRole('button', { name: 'Rp10–25 jt' }).click();
+
+  await active(chat).getByRole('textbox', { name: 'Nama' }).fill(`E2E ${isMobile ? 'Mobile' : 'Desktop'}`);
+  await advance(chat, 'Lanjut');
+  await active(chat).getByRole('textbox', { name: 'WhatsApp' }).fill('081234567890');
+  await advance(chat, 'Lanjut');
+  await expect(active(chat).getByRole('textbox', { name: 'Email' })).toBeVisible();
+  await advance(chat, 'Lewati');
+  await chat.getByRole('group', { name: 'Boleh ditelepon' }).getByRole('button', { name: 'Tidak, chat saja' }).click();
+  await advance(chat, 'Lewati');
+  await expect(active(chat).getByRole('button', { name: 'Request Free Demo' })).toBeVisible();
+  await advance(chat, 'Request Free Demo');
+  await expect(chat.getByText(/Terima kasih, E2E/)).toBeVisible();
+  await expect(chat.getByRole('link', { name: 'Chat via WhatsApp' })).toHaveAttribute('href', /wa\.me/);
+  await expect(page.locator('cff-chat')).toHaveCount(1);
+});
+
+test('launcher defers the session handshake until opened and restores focus when closed', async ({ page }) => {
+  const handshake: string[] = [];
+  page.on('request', request => {
+    if (/\/wp-json\/cff\/v1\/(sessions|forms\/\d+\/start-token)/.test(request.url())) handshake.push(request.url());
+  });
+
+  await page.goto('/chatflow-e2e-launcher/');
+  const chat = page.locator('cff-chat');
+  await expect(chat).toHaveAttribute('data-position', 'left');
+  const toggle = chat.getByRole('button', { name: 'Buka chat' });
+  await expect(toggle).toBeVisible();
+  await expect(chat.locator('.launcher-panel')).toBeHidden();
+  expect(handshake).toHaveLength(0);
+
+  await toggle.click();
+  await expect(chat.locator('.launcher-panel')).toBeVisible();
+  await expect(chat.locator('.launcher-toggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(chat.getByRole('button', { name: 'Yuk mulai' })).toBeVisible();
+  await expect.poll(() => handshake.length).toBeGreaterThan(0);
+
+  await chat.locator('.launcher-panel').press('Escape');
+  await expect(chat.locator('.launcher-panel')).toBeHidden();
+  await expect(chat.locator('.launcher-toggle')).toBeFocused();
+});
+
+test('popup supports backdrop close and a timed trigger without creating a session before opening', async ({ page }) => {
+  await page.goto('/chatflow-e2e-popup/');
+  const chat = page.locator('cff-chat');
+  await expect(chat.locator('.launcher-panel')).toBeHidden();
+  await chat.getByRole('button', { name: 'Buka chat' }).click();
+  const dialog = chat.getByRole('dialog', { name: 'Formulir chat' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAttribute('aria-modal', 'true');
+  await chat.locator('.popup-backdrop').click({ position: { x: 2, y: 2 } });
+  await expect(dialog).toBeHidden();
+
+  await page.goto('/chatflow-e2e-popup-auto/');
+  await expect(page.locator('cff-chat').getByRole('dialog', { name: 'Formulir chat' })).toBeVisible();
+});
+
+test('site-wide targeting renders a single launcher on a matching page', async ({ page }) => {
+  await page.goto('/chatflow-e2e-sitewide/');
+  const chat = page.locator('cff-chat');
+  await expect(chat).toHaveCount(1);
+  await expect(chat).toHaveAttribute('data-mode', 'launcher');
+  await expect(chat.getByRole('button', { name: 'Buka chat' })).toBeVisible();
+});
