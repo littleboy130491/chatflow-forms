@@ -25,6 +25,7 @@ final class AdminModule implements Module {
 		$pages     = array(
 			'cff-forms'       => array( 'builder', 'cff_manage_forms', __( 'Forms', 'chatflow-forms' ) ),
 			'cff-submissions' => array( 'submissions', 'cff_view_submissions', __( 'Submissions', 'chatflow-forms' ) ),
+			'cff-analytics'   => array( 'analytics', 'cff_view_submissions', __( 'Analytics', 'chatflow-forms' ) ),
 			'cff-settings'    => array( 'settings', 'cff_manage_settings', __( 'Settings', 'chatflow-forms' ) ),
 			'cff-tools'       => array( 'submissions', $this->toolsCapability(), __( 'Tools', 'chatflow-forms' ) ),
 		);
@@ -50,6 +51,7 @@ final class AdminModule implements Module {
 		$cap    = array(
 			'builder'     => 'cff_manage_forms',
 			'submissions' => 'cff_view_submissions',
+			'analytics'   => 'cff_view_submissions',
 			'settings'    => 'cff_manage_settings',
 		)[ $name ] ?? '';
 		if ( 'cff-tools' === $this->pageSlug() ) {
@@ -148,20 +150,25 @@ final class AdminModule implements Module {
 				'api_version'     => '3',
 				'editor_script'   => 'cff-blocks',
 				'attributes'      => array(
-					'formId' => array(
+					'formId'   => array(
 						'type'    => 'integer',
 						'default' => 0,
 					),
-					'mode'   => array(
+					'mode'     => array(
 						'type'    => 'string',
 						'default' => 'inline',
-						'enum'    => array( 'inline', 'fullpage' ),
+						'enum'    => array( 'inline', 'fullpage', 'launcher' ),
 					),
-					'height' => array(
+					'position' => array(
+						'type'    => 'string',
+						'default' => 'right',
+						'enum'    => array( 'left', 'right' ),
+					),
+					'height'   => array(
 						'type'    => 'integer',
 						'default' => 600,
 					),
-					'theme'  => array(
+					'theme'    => array(
 						'type'    => 'string',
 						'default' => 'auto',
 						'enum'    => array( 'light', 'dark', 'auto' ),
@@ -186,13 +193,14 @@ final class AdminModule implements Module {
 		if ( ! $id || ! function_exists( 'cff_render_form' ) ) {
 			return '';
 		}
-		$mode = in_array( $attributes['mode'] ?? '', array( 'inline', 'fullpage' ), true ) ? $attributes['mode'] : 'inline';
+		$mode = in_array( $attributes['mode'] ?? '', array( 'inline', 'fullpage', 'launcher' ), true ) ? $attributes['mode'] : 'inline';
 		return cff_render_form(
 			$id,
 			array(
-				'mode'   => $mode,
-				'height' => max( 200, min( 2000, absint( $attributes['height'] ?? 600 ) ) ),
-				'theme'  => in_array( $attributes['theme'] ?? '', array( 'light', 'dark', 'auto' ), true ) ? $attributes['theme'] : 'auto',
+				'mode'     => $mode,
+				'position' => 'left' === ( $attributes['position'] ?? 'right' ) ? 'left' : 'right',
+				'height'   => max( 200, min( 2000, absint( $attributes['height'] ?? 600 ) ) ),
+				'theme'    => in_array( $attributes['theme'] ?? '', array( 'light', 'dark', 'auto' ), true ) ? $attributes['theme'] : 'auto',
 			)
 		);
 	}

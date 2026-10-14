@@ -1,6 +1,6 @@
 # Visitor runtime
 
-`mountRuntime(host, {formId, restUrl, mode: 'inline' | 'fullpage'})` mounts a
+`mountRuntime(host, {formId, restUrl, mode: 'inline' | 'fullpage' | 'launcher'})` mounts a
 Preact chat in an open ShadowRoot. The handle exposes `unmount()`,
 `prefill(answers)` and `getState()` (path, active step, variables, progress and
 diagnostics; no answer/token export). Auto-mount:
@@ -11,15 +11,17 @@ diagnostics; no answer/token export). Auto-mount:
 
 An optional child `script[type="application/json"][data-cff-schema]` supplies
 the safe public envelope; never put tokens, visitor data or WP nonces in cached
-markup. `data-mode="fullpage"` selects fullpage layout. Backend embedding/enqueue
-belongs to the integration lane.
+markup. `data-mode="fullpage"` selects fullpage layout. `data-mode="launcher"` makes an
+opt-in fixed-position floating launcher (`data-position="left"` or `"right"`).
+The chat is collapsed by default and network/session initialization is deferred
+until the visitor opens it. Backend embedding/enqueue belongs to the integration lane.
 
 `mountRuntime(host, {form: publicDraftEnvelope, preview: true})` makes no
 API/storage mutations, events or redirects, including restart. Optional preview
 `context` injects hidden values/a date for diagnostics.
 
-`window.ChatFlow.open(id)` scrolls/focuses an existing form (false when absent);
-it is not a popup/launcher. `ChatFlow.prefill({key:value}, id?)` provides editable
+`window.ChatFlow.open(id)` scrolls/focuses an existing inline form or opens an
+existing floating launcher (false when absent). `ChatFlow.prefill({key:value}, id?)` provides editable
 defaults, not authoritative answers. `ChatFlow.registerField(type, Component)`
 registers a renderer and returns a disposer; matching PHP validation and explicit
 schema/publish support remain required.
@@ -74,3 +76,10 @@ with the real logic lane's shared files: `npx tsc -p tsconfig.runtime.json`,
 scoped ESLint and Vite with isolated output. This branch never commits shared
 source or packaged builds. Integrator: pin jsdom as a direct dev dependency and
 regenerate packaged assets after composing lanes.
+
+Popup mode uses `[chatflow id="42" mode="popup"]`, and supports programmatic
+`ChatFlow.open(42)`, Escape, a scrim close action, and an opt-in timed or scroll
+trigger. `auto_open="10"` (seconds) and `scroll_percent="60"` are also
+supported by floating launcher mode. Triggers run once per page load, while
+session creation is still deferred until the panel actually opens. They are not
+enabled during builder previews.

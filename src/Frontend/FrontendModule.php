@@ -14,10 +14,13 @@ final class FrontendModule implements Module {
 			function ( $attributes ) {
 				$attributes = shortcode_atts(
 					array(
-						'id'     => 0,
-						'height' => 600,
-						'mode'   => 'inline',
-						'theme'  => 'auto',
+						'id'             => 0,
+						'height'         => 600,
+						'mode'           => 'inline',
+						'theme'          => 'auto',
+						'position'       => 'right',
+						'auto_open'      => '',
+						'scroll_percent' => '',
 					),
 					$attributes,
 					'chatflow'
@@ -30,6 +33,8 @@ final class FrontendModule implements Module {
 		add_filter( 'template_include', array( $this, 'template' ) );
 		add_filter( 'script_loader_tag', array( $this, 'moduleTag' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'tracking' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueueSiteWide' ) );
+		add_action( 'wp_footer', array( $this, 'siteWide' ), 19 );
 		foreach ( array( 'rocket_delay_js_exclusions', 'rocket_exclude_defer_js', 'litespeed_optm_js_defer_exc', 'autoptimize_filter_js_exclude' ) as $filter ) {
 			add_filter( $filter, array( $this, 'optimizerExclusions' ) ); }
 	}
@@ -70,6 +75,69 @@ final class FrontendModule implements Module {
 		} if ( is_string( $excluded ) ) {
 			return implode( ',', array_filter( array_merge( array( $excluded ), $assets ) ) );
 		} return $excluded; }
+
+	/** @return array{form:\ChatFlow\Forms\Form,display:array<string,mixed>}|null */
+	private function siteWideTarget(): ?array {
+		if ( is_admin() || is_feed() || is_404() || is_preview() || get_query_var( 'cff_form_slug' ) ) {
+			return null; }
+		$page_id = (int) get_queried_object_id();
+		$ids     = get_posts(
+			array(
+				'post_type'      => 'cff_form',
+				'post_status'    => 'publish',
+				'fields'         => 'ids',
+				'posts_per_page' => 200,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+			)
+		);
+		foreach ( $ids as $id ) {
+			$form = $this->forms->getPublished( (int) $id );
+			if ( ! $form ) {
+				continue; }
+			$display  = $form->settings()['display'] ?? array();
+			$launcher = $display['launcher'] ?? array();
+			if ( ! ( $launcher['enabled'] ?? false ) || ! in_array( $display['mode'] ?? '', array( 'launcher', 'popup' ), true ) ) {
+				continue; }
+			$include = array_map( 'absint', $launcher['includePageIds'] ?? array() );
+			$exclude = array_map( 'absint', $launcher['excludePageIds'] ?? array() );
+			if ( in_array( $page_id, $exclude, true ) || ( $include && ! in_array( $page_id, $include, true ) ) ) {
+				continue; }
+			return array(
+				'form'    => $form,
+				'display' => $display,
+			);
+		}
+		return null;
+	}
+
+	public function enqueueSiteWide(): void {
+		if ( $this->siteWideTarget() ) {
+			wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true ); }
+	}
+
+	public function siteWide(): void {
+		$target = $this->siteWideTarget();
+		if ( ! $target ) {
+			return; }
+		$form = $target['form'];
+		if ( Renderer::wasRendered( $form->id() ) ) {
+			return; }
+		$display  = $target['display'];
+		$launcher = $display['launcher'] ?? array();
+		$markup   = ( new Renderer( $this->forms ) )->render(
+			$form->id(),
+			array(
+				'mode'           => $display['mode'],
+				'position'       => $launcher['position'] ?? 'right',
+				'auto_open'      => $launcher['autoOpenSeconds'] ?? '',
+				'scroll_percent' => $launcher['scrollPercent'] ?? '',
+			)
+		);
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer returns escaped markup.
+		echo $markup;
+	}
+
 	public function tracking(): void {
 		$settings = Settings::get();
 		$tracking = $settings['tracking'];

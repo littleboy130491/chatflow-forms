@@ -7,7 +7,7 @@ export type Session = SessionEnvelope;
 export type Completion = SubmitResponse;
 export interface RuntimeOptions {
   form?: PublicForm; preview?: boolean; restUrl?: string; formId?: number; locale?: string;
-  mode?: 'inline' | 'fullpage'; prefill?: AnswerMap; context?: ReplayContext;
+  mode?: 'inline' | 'fullpage' | 'launcher' | 'popup'; prefill?: AnswerMap; context?: ReplayContext;
   tracking?: TrackingOptions;
 }
 export interface FieldProps {

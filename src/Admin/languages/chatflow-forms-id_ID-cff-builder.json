@@ -85,6 +85,9 @@
       "An unexpected error occurred.": [
         "Terjadi kesalahan tak terduga."
       ],
+      "Analytics": [
+        "Analitik"
+      ],
       "Anonymized": [
         "Dianonimkan"
       ],
@@ -136,6 +139,12 @@
       "Auto-continue statement": [
         "Lanjutkan pernyataan secara otomatis"
       ],
+      "Auto-open after seconds (blank = off)": [
+        "Buka otomatis setelah detik (kosong = nonaktif)"
+      ],
+      "Auto-open at scroll percent (blank = off)": [
+        "Buka otomatis saat gulir mencapai persen (kosong = nonaktif)"
+      ],
       "Autocomplete": [
         "Pelengkapan otomatis"
       ],
@@ -150,6 +159,9 @@
       ],
       "Avatar attachment ID": [
         "ID lampiran avatar"
+      ],
+      "Average completion time": [
+        "Rata-rata waktu penyelesaian"
       ],
       "BCC": [
         "BCC"
@@ -253,6 +265,9 @@
       "Completed": [
         "Selesai"
       ],
+      "Completion rate": [
+        "Tingkat penyelesaian"
+      ],
       "Confirm publish": [
         "Konfirmasi penerbitan"
       ],
@@ -343,11 +358,17 @@
       "Device": [
         "Perangkat"
       ],
+      "Devices": [
+        "Perangkat"
+      ],
       "Diff uses the draft loaded in this editor, not the historical published snapshot.": [
         "Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya."
       ],
       "Discard local edits and reload?": [
         "Buang perubahan lokal dan muat ulang?"
+      ],
+      "Display and engagement": [
+        "Tampilan dan interaksi"
       ],
       "Display defaults": [
         "Tampilan bawaan"
@@ -418,6 +439,9 @@
       "Endings and completion": [
         "Penutup dan penyelesaian"
       ],
+      "Exclude page IDs (comma-separated)": [
+        "ID halaman yang dikecualikan (pisahkan dengan koma)"
+      ],
       "Exclusive / none of the above": [
         "Eksklusif / tidak satu pun di atas"
       ],
@@ -457,6 +481,9 @@
       "First-touch attribution": [
         "Atribusi kunjungan pertama"
       ],
+      "Floating launcher": [
+        "Tombol chat mengambang"
+      ],
       "Font stack": [
         "Daftar font"
       ],
@@ -468,6 +495,9 @@
       ],
       "Form ID": [
         "ID formulir"
+      ],
+      "Form ID (0 = all)": [
+        "ID formulir (0 = semua)"
       ],
       "Form ID (blank = all)": [
         "ID formulir (kosong = semua)"
@@ -492,6 +522,9 @@
       ],
       "Formula-like cells are escaped by the server. Exports contain personal data; store them securely.": [
         "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
+      ],
+      "From (UTC)": [
+        "Dari (UTC)"
       ],
       "From date (UTC)": [
         "Dari tanggal (UTC)"
@@ -559,11 +592,17 @@
       "Import form JSON": [
         "Impor JSON formulir"
       ],
+      "Import form JSON (creates a draft)": [
+        "Impor JSON formulir (membuat draf)"
+      ],
       "Import new draft": [
         "Impor sebagai draf baru"
       ],
       "Imports create a new draft and are validated by the server. Webhooks exported by ChatFlow have their secrets removed and are disabled.": [
         "Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang diekspor ChatFlow dihapus dan webhook dinonaktifkan."
+      ],
+      "Include page IDs (comma-separated; blank = all)": [
+        "ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)"
       ],
       "Inherit theme font": [
         "Gunakan font tema"
@@ -610,6 +649,9 @@
       "Label": [
         "Label"
       ],
+      "Launcher position": [
+        "Posisi tombol chat"
+      ],
       "Launcher, popup and QR tools are optional later features.": [
         "Peluncur, popup, dan alat QR merupakan fitur opsional mendatang."
       ],
@@ -618,6 +660,9 @@
       ],
       "Leave with unsaved changes?": [
         "Keluar dengan perubahan yang belum disimpan?"
+      ],
+      "Left": [
+        "Kiri"
       ],
       "Limits": [
         "Batasan"
@@ -736,6 +781,9 @@
       "No": [
         "Tidak"
       ],
+      "No data for this period.": [
+        "Tidak ada data untuk periode ini."
+      ],
       "No logic warnings detected.": [
         "Tidak ditemukan peringatan logika."
       ],
@@ -781,6 +829,9 @@
       "Other (free-text option)": [
         "Lainnya (pilihan teks bebas)"
       ],
+      "Page exclusions take precedence. A published form is required for automatic placement.": [
+        "Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis."
+      ],
       "Partial": [
         "Sebagian"
       ],
@@ -819,6 +870,9 @@
       ],
       "Plain-text version": [
         "Versi teks biasa"
+      ],
+      "Popup": [
+        "Jendela pop-up"
       ],
       "Preview": [
         "Pratinjau"
@@ -997,6 +1051,9 @@
       "Retry delivery": [
         "Ulangi pengiriman"
       ],
+      "Right": [
+        "Kanan"
+      ],
       "Rows per page": [
         "Baris per halaman"
       ],
@@ -1078,6 +1135,9 @@
       "Shortcode": [
         "Shortcode"
       ],
+      "Show automatically on matching pages": [
+        "Tampilkan otomatis pada halaman yang sesuai"
+      ],
       "Signing secret": [
         "Rahasia penandatanganan"
       ],
@@ -1111,6 +1171,9 @@
       "Start over": [
         "Mulai ulang"
       ],
+      "Starts": [
+        "Mulai"
+      ],
       "Starts per rate window": [
         "Jumlah mulai per jendela pembatasan"
       ],
@@ -1125,6 +1188,9 @@
       ],
       "Status / version": [
         "Status / versi"
+      ],
+      "Step drop-off": [
+        "Langkah tempat pengunjung berhenti"
       ],
       "Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings.": [
         "Langkah: %d ditambahkan, %d diubah, %d dihapus. Versi baru membekukan skema dan pengaturan pribadi."
@@ -1192,6 +1258,9 @@
       "Theme": [
         "Tema"
       ],
+      "To (UTC)": [
+        "Hingga (UTC)"
+      ],
       "To date (UTC)": [
         "Sampai tanggal (UTC)"
       ],
@@ -1238,6 +1307,9 @@
         "Kampanye UTM"
       ],
       "UTM source": [
+        "Sumber UTM"
+      ],
+      "UTM sources": [
         "Sumber UTM"
       ],
       "Undo": [

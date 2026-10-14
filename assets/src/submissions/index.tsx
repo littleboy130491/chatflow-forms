@@ -11,6 +11,7 @@ import { Filters } from './Filters';
 import { Detail } from './Detail';
 import { Settings } from './Settings';
 import { Tools } from './Tools';
+import { Analytics } from './Analytics';
 import { Export } from './Export';
 import { displayValue, freezeFilters } from './model';
 import type { Filters as FilterValues, Status, SubmissionDTO } from './model';
@@ -309,6 +310,10 @@ function AdminSubmissions({ config }: { config: AdminConfig }) {
       <p>{__('You cannot manage settings.', 'chatflow-forms')}</p>
     );
   if (config.tools) return <Tools api={api} />;
+  if (config.screen === 'analytics')
+    return can(config, 'view_submissions') ? <Analytics api={api} /> : (
+      <p>{__('You cannot view submissions.', 'chatflow-forms')}</p>
+    );
   return can(config, 'view_submissions') ? (
     <SubmissionList api={api} />
   ) : (

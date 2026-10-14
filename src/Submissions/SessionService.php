@@ -62,6 +62,11 @@ final class SessionService {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
 					return $guard['response']; }
+				// Rate-limit actual sessions; handshake quotas alone can be bypassed with new keys.
+				// Idempotent retries return before this counter.
+				$ip = ( new IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] );
+				if ( ! ( new RateLimiter() )->consume( 'session-start:' . $form_id . ':' . $ip, 30, 600 ) ) {
+					return Database::error( 'cff_rate_limit', 'Please wait before starting again.', 429, array( 'retryAfter' => 600 ) ); }
 				$this->lockForm( $form_id );
 				$form = $this->forms->getPublished( $form_id, $version );
 				if ( ! $form ) {

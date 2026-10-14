@@ -21,7 +21,7 @@ There is no licence system, telemetry, native CRM connector, payment or AI chat.
    public/document root** and set `CFF_PRIVATE_DIR` in server configuration:
    `define( 'CFF_PRIVATE_DIR', '/srv/chatflow-private' );`
    The plugin does not create or expose an insecure uploads fallback.
-3. In **ChatFlow → Forms**, create a blank form or use the Imajiner survey
+3. In **ChatFlow → Forms**, create a blank form, import a ChatFlow form JSON export as a new unpublished draft, or use the Imajiner survey
    template. Edit steps, options, rules, endings, appearance and notification
    settings. Draft autosaves use revision conflict checks; **Publish** makes a
    new immutable visitor version. Draft preview does not save visitor answers.
@@ -29,6 +29,9 @@ There is no licence system, telemetry, native CRM connector, payment or AI chat.
    `[chatflow id="123" mode="inline" theme="auto" height="600"]`, or trusted PHP
    `cff_render_form(123)`. The shortcode also fits Elementor's Shortcode widget.
    Full-page URLs default to `/f/{form-slug}`; the base is configurable in Settings.
+   Phase 2 also supports an opt-in floating button with
+   `[chatflow id="123" mode="launcher" position="right"]`. It opens on click;
+   automatic opening and site-wide targeting are not implemented yet.
 5. **Submissions** provides status/filter/search, details, notes, read/star, bulk
    actions, protected CSV exports, activity and delivery retries. **Tools** has
    preview-token-bound purge: preview the exact criteria, then type `DELETE`.

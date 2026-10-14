@@ -13,7 +13,7 @@ import {
   uniqueKey,
   v1Types,
 } from '../../../assets/src/builder/model';
-import { exportForm, parseFormFile } from '../../../assets/src/builder/formIO';
+import { exportForm, importForm, parseFormFile } from '../../../assets/src/builder/formIO';
 import { displayValue, exportOptions } from '../../../assets/src/submissions/model';
 const config: AdminConfig = {
   restUrl: 'https://example.org/wp-json/cff/v1/',
@@ -269,10 +269,51 @@ describe('form files and submission helpers', () => {
     expect(parseFormFile(JSON.stringify(file))).toEqual(file);
     expect(file).not.toHaveProperty('id');
   });
-  it('rejects incompatible, oversized and malformed form imports before any API call', () => {
+  it('imports a valid form as an unpublished draft through the admin API', async () => {
+    const original = stored();
+    const file = exportForm(original);
+    const { client, transport } = api(async (path, method, body) => {
+      expect(path).toBe('admin/forms');
+      expect(method).toBe('POST');
+      expect(body).toEqual({
+        title: original.title,
+        schema: original.schema,
+        settings: file.settings,
+      });
+      return { ...original, id: 123, status: 'draft', version: 0 };
+    });
+    const imported = await importForm(JSON.stringify(file), client);
+    expect(imported).toMatchObject({ id: 123, status: 'draft', version: 0 });
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it('disables outbound webhooks and strips their secrets in untrusted files', async () => {
+    const original = stored();
+    original.settings.integrations = {
+      webhooks: [{
+        id: 'unsafe', enabled: true, url: 'https://example.org/webhook',
+        events: ['completed'], secret: 'sensitive-signing-key',
+      }],
+    };
+    const file = { format: 'chatflow/form', version: 1, title: original.title,
+      schema: original.schema, settings: original.settings };
+    const { client, transport } = api(async (_path, _method, body) => {
+      expect((body.settings as typeof original.settings).integrations?.webhooks?.[0]).toMatchObject({
+        secret: '', enabled: false,
+      });
+      return original;
+    });
+    await importForm(JSON.stringify(file), client);
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(original.settings.integrations?.webhooks?.[0]?.secret).toBe('sensitive-signing-key');
+  });
+  it('rejects incompatible, oversized and malformed form imports before any API call', async () => {
     for (const text of ['null', '{}', '{', '{"format":"chatflow/form","version":2}'])
       expect(() => parseFormFile(text)).toThrow();
     expect(() => parseFormFile(' '.repeat(1048577))).toThrow('1 MiB');
+    const { client, transport } = api(async () => stored());
+    for (const json of ['null', '{}', '{', '{"format":"chatflow/form","version":2}'])
+      await expect(importForm(json, client)).rejects.toThrow();
+    expect(transport).not.toHaveBeenCalled();
   });
   it('preserves selected IDs, filter parity, columns, label headers and Indonesian delimiter', () => {
     const filters = {

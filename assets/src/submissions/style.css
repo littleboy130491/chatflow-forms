@@ -8,3 +8,12 @@
 .cff-answer { background: #e8edf1; margin-left: 15%; }
 .cff-detail dd { margin-bottom: 16px; white-space: pre-wrap; }
 .cff-detail dt { font-weight: 600; }
+
+.cff-analytics-filters{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:20px 0}
+.cff-analytics-filters>*{min-width:150px}
+.cff-analytics-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin:16px 0}
+.cff-analytics-kpis strong{font-size:24px;display:block}
+.cff-analytics-row{padding:8px 0}
+.cff-analytics-row>div:first-child{display:flex;justify-content:space-between;gap:16px}
+.cff-analytics-track{height:6px;background:#e2e4e7;border-radius:99px;overflow:hidden;margin-top:5px}
+.cff-analytics-track span{display:block;height:100%;background:#2271b1;border-radius:99px}

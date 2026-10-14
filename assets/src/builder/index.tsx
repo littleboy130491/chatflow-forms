@@ -24,7 +24,7 @@ import {
 import { Inspector, SortableItem } from './Inspector';
 import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
-import { downloadForm } from './formIO';
+import { downloadForm, importForm } from './formIO';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -46,7 +46,8 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
   const [page, setPage] = useState(1),
     [forms, setForms] = useState<Page<FormDTO> | null>(null),
     [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [importing, setImporting] = useState(false);
   const load = () => {
     setBusy(true);
     api
@@ -78,6 +79,33 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
       >
         {__('New Imajiner survey', 'chatflow-forms')}
       </Button>
+      <label className="cff-import-form">
+        {__('Import form JSON (creates a draft)', 'chatflow-forms')}
+        <input
+          type="file"
+          accept=".json,application/json"
+          disabled={busy || importing}
+          onChange={async (event) => {
+            const input = event.currentTarget;
+            const file = input.files?.[0];
+            if (!file) return;
+            setImporting(true);
+            setError('');
+            let imported: FormDTO | null = null;
+            try {
+              if (file.size > 1048576)
+                throw new Error(__('Form file exceeds 1 MiB.', 'chatflow-forms'));
+              imported = await importForm(await file.text(), api);
+            } catch (err) {
+              setError(errorMessage(err));
+            } finally {
+              input.value = '';
+              setImporting(false);
+            }
+            if (imported) onOpen(imported);
+          }}
+        />
+      </label>
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}

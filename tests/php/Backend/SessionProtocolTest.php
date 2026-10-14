@@ -98,6 +98,26 @@ final class SessionProtocolTest extends TestCase {
 		self::assertStringNotContainsString( $s['resumeToken'], $receipt );
 		self::assertStringNotContainsString( $s['requestToken'], $receipt );
 		self::assertArrayNotHasKey( '_meta', $s['context'] ); }
+	public function testHandshakeCannotCreateUnlimitedSessionsWithNewIdempotencyKeys(): void {
+		$ip = ( new \ChatFlow\Tracking\IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] );
+		$limiter = new \ChatFlow\Spam\RateLimiter();
+		for ( $i = 0; $i < 29; ++$i ) {
+			self::assertTrue( $limiter->consume( 'session-start:' . $this->form->id() . ':' . $ip, 30, 600 ) );
+		}
+		$token = $this->token();
+		$body = array( 'formId' => $this->form->id(), 'version' => $this->form->version(), 'meta' => array(), 'prefill' => array() );
+		$key = wp_generate_uuid4();
+		$first = $this->sessions->start( $body, $token, $key );
+		self::assertIsArray( $first );
+		$this->locators[] = $first['sessionId'];
+		$retry = $this->sessions->start( $body, $token, $key );
+		self::assertIsArray( $retry );
+		self::assertSame( $first['sessionId'], $retry['sessionId'] );
+		self::assertSame( $first['resumeToken'], $retry['resumeToken'] );
+		$limited = $this->sessions->start( $body, $token, wp_generate_uuid4() );
+		self::assertInstanceOf( \WP_Error::class, $limited );
+		self::assertSame( 'cff_rate_limit', $limited->get_error_code() );
+	}
 	public function testBadPurposeAndLocatorNeverGrantSubmitAuthority(): void {
 		$s = $this->start();
 		$r = $this->sessions->mutate( 'patch', $s['sessionId'], $this->body( $s, array() ), $s['resumeToken'], wp_generate_uuid4() );

@@ -15,7 +15,7 @@ export function BlockEditor({
   attributes,
   setAttributes,
 }: {
-  attributes: { formId: number; mode: string; height: number; theme: string };
+  attributes: { formId: number; mode: string; position: string; height: number; theme: string };
   setAttributes: (attributes: Record<string, unknown>) => void;
 }) {
   const config = window.cffBlock,
@@ -110,17 +110,27 @@ export function BlockEditor({
             choices={[
               { value: 'inline', label: __('Inline', 'chatflow-forms') },
               { value: 'fullpage', label: __('Fullpage', 'chatflow-forms') },
+              { value: 'launcher', label: __('Floating launcher', 'chatflow-forms') },
             ]}
             onChange={(mode) => setAttributes({ mode })}
           />
-          <Field
+          {attributes.mode === 'launcher' && <Select
+            label={__('Launcher position', 'chatflow-forms')}
+            value={attributes.position ?? 'right'}
+            choices={[
+              { value: 'left', label: __('Left', 'chatflow-forms') },
+              { value: 'right', label: __('Right', 'chatflow-forms') },
+            ]}
+            onChange={(position) => setAttributes({ position })}
+          />}
+          {attributes.mode !== 'launcher' && <Field
             label={__('Height (200–2000 px)', 'chatflow-forms')}
             type="number"
             value={attributes.height}
             onChange={(value) =>
               setAttributes({ height: Math.max(200, Math.min(2000, Number(value) || 600)) })
             }
-          />
+          />}
           <Select
             label={__('Theme', 'chatflow-forms')}
             value={attributes.theme}

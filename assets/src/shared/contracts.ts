@@ -44,7 +44,7 @@ export interface SubmitResponse {
   redirectUrl?: string;
 }
 export interface AdminConfig {
-  restUrl: string; nonce: string; pluginUrl: string; screen: 'builder' | 'submissions' | 'settings';
+  restUrl: string; nonce: string; pluginUrl: string; screen: 'builder' | 'submissions' | 'settings' | 'analytics';
   formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean };
 }
 export interface RestError { code: string; message: string; data: { status: number; errors?: ValidationIssue[];
