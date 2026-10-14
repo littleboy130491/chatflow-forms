@@ -29,6 +29,7 @@ final class RestModule implements Module {
 	public function routes(): void {
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
 		$this->route( '/forms/(?P<id>\d+)/start-token', 'POST', array( $this, 'startToken' ) );
+		$this->route( '/forms/(?P<id>\d+)/view', 'POST', array( $this, 'formView' ) );
 		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ), 201 ) );
 		$this->route( '/sessions/resume', 'POST', fn( $r ) => $this->respond( $this->sessions->resume( absint( $this->body( $r )['formId'] ?? 0 ), $r->get_header( 'X-CFF-Resume-Token' ) ?? '' ) ) );
 		$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( $this->sessions->get( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ?? '' ) ) );
@@ -162,6 +163,16 @@ final class RestModule implements Module {
 		$response->header( 'ETag', $etag );
 		$response->header( 'Cache-Control', 'public,max-age=60,must-revalidate' );
 		return $response;
+	}
+	/** Record an aggregate form impression without issuing a visitor session. */
+	public function formView( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
+		$body    = $this->body( $r );
+		$version = $body['version'] ?? null;
+		if ( ! is_int( $version ) || $version < 1 ) {
+			return Database::error( 'cff_invalid_version', 'A published form version is required.', 422 );
+		}
+		$do_not_track = '1' === $r->get_header( 'DNT' ) || '1' === $r->get_header( 'Sec-GPC' );
+		return $this->respond( ( new \ChatFlow\Analytics\ViewCounter( $this->forms ) )->record( (int) $r['id'], $version, $do_not_track ) );
 	}
 	public function startToken( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id      = (int) $r['id'];
