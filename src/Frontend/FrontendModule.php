@@ -125,7 +125,7 @@ final class FrontendModule implements Module {
 			return; }
 		$display  = $target['display'];
 		$launcher = $display['launcher'] ?? array();
-		$markup = ( new Renderer( $this->forms ) )->render(
+		$markup   = ( new Renderer( $this->forms ) )->render(
 			$form->id(),
 			array(
 				'mode'           => $display['mode'],
