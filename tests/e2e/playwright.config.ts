@@ -10,7 +10,7 @@ export default defineConfig({
   retries: 0,
   workers: 1,
   reporter: process.env.CI ? [['github'], ['list']] : [['list']],
-  outputDir: 'tests/e2e/artifacts',
+  outputDir: 'artifacts',
   use: {
     baseURL: process.env.CFF_E2E_BASE_URL ?? 'http://localhost:8888',
     trace: 'retain-on-failure',
