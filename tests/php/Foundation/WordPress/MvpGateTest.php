@@ -316,7 +316,7 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 'step_punya_website', $report['dropoffs'][0]['stepId'] );
 		$this->assertSame( 'Belum pernah', $report['answers'][0]['options'][0]['label'] );
 		$this->assertSame( 1, $report['answers'][0]['options'][0]['count'] );
-		$this->assertArrayNotHasKey( 'answers', $report );
+		$this->assertArrayNotHasKey( 'value_text', $report['answers'][0]['options'][0] );
 		$path = 'admin/analytics';
 		wp_set_current_user( 0 );
 		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );
