@@ -191,7 +191,7 @@ final class FormRepository {
 		foreach ( array(
 			'/spam/captcha'        => ! in_array( $settings['spam']['captcha'] ?? 'none', array( 'none', '' ), true ),
 			'/spam/akismetEnabled' => ! empty( $settings['spam']['akismetEnabled'] ),
-			'/display/mode'        => ! in_array( $settings['display']['mode'] ?? 'inline', array( 'inline', 'fullpage' ), true ),
+			'/display/mode'        => ! in_array( $settings['display']['mode'] ?? 'inline', array( 'inline', 'fullpage', 'launcher', 'popup' ), true ),
 		) as $path => $unsupported ) {
 			if ( $unsupported ) {
 				$issues[] = array(

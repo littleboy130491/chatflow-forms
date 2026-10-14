@@ -76,3 +76,10 @@ with the real logic lane's shared files: `npx tsc -p tsconfig.runtime.json`,
 scoped ESLint and Vite with isolated output. This branch never commits shared
 source or packaged builds. Integrator: pin jsdom as a direct dev dependency and
 regenerate packaged assets after composing lanes.
+
+Popup mode uses `[chatflow id="42" mode="popup"]`, and supports programmatic
+`ChatFlow.open(42)`, Escape, a scrim close action, and an opt-in timed or scroll
+trigger. `auto_open="10"` (seconds) and `scroll_percent="60"` are also
+supported by floating launcher mode. Triggers run once per page load, while
+session creation is still deferred until the panel actually opens. They are not
+enabled during builder previews.

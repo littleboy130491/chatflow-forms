@@ -13,3 +13,13 @@
 .launcher-panel .chat{width:100%;max-width:none;border-radius:14px}
 .launcher-panel .conversation{max-height:min(56dvh,560px)}
 @media(max-width:480px){:host([data-mode="launcher"]){right:12px;bottom:12px;width:calc(100vw - 24px)}:host([data-mode="launcher"][data-position="left"]){left:12px}.launcher-panel .conversation{max-height:55dvh}}
+
+/* Popup mode uses a modal overlay; the toggle remains reachable when closed. */
+:host([data-mode="popup"]){position:fixed;inset:0;z-index:2147480000;pointer-events:none}
+.popup-root{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.popup-root .popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);pointer-events:auto}
+.popup-root .popup-backdrop[hidden]{display:none!important}
+.popup-root .launcher-panel{position:relative;z-index:1;max-width:min(640px,calc(100vw - 32px));max-height:calc(100dvh - 88px);pointer-events:auto}
+.popup-root .launcher-toggle{position:fixed;bottom:16px;right:16px;z-index:2;pointer-events:auto}
+.popup-root.is-left .launcher-toggle{right:auto;left:16px}
+.popup-root .conversation{max-height:min(65dvh,650px)}

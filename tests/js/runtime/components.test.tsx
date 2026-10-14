@@ -107,7 +107,7 @@ describe('Shadow DOM mount and global API', () => {
     await act(() => handle!.unmount()); expect(host.shadowRoot?.childElementCount).toBe(0);
   });
   it('rejects unimplemented display modes and insecure cross-origin REST endpoints', () => {
-    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'popup' as 'inline' })).toThrow('Unsupported display mode');
+    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'invalid' as 'inline' })).toThrow('Unsupported display mode');
     expect(() => mountRuntime(host, { formId: 42, restUrl: 'https://third-party.test/wp-json/cff/v1/' })).toThrow('cff_unsafe_endpoint');
   });
   it('keeps launcher collapsed until clicked and supports Escape, focus and programmatic open', async () => {
@@ -132,6 +132,20 @@ describe('Shadow DOM mount and global API', () => {
     expect(panel.hidden).toBe(false);
     await act(() => handle!.unmount());
     expect(shadow.childElementCount).toBe(0);
+  });
+  it('opens popup by API and closes with backdrop and Escape', async () => {
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(), preview: true, mode: 'popup' }); });
+    const shadow = host.shadowRoot!;
+    const modal = shadow.querySelector<HTMLDivElement>('.launcher-panel')!;
+    const backdrop = shadow.querySelector<HTMLElement>('.popup-backdrop')!;
+    expect(modal.hidden).toBe(true);
+    expect(modal.getAttribute('aria-modal')).toBe('true');
+    expect(window.ChatFlow.open(42)).toBe(true);
+    expect(modal.hidden).toBe(false);
+    await act(() => backdrop.click());
+    expect(modal.hidden).toBe(true);
+    await act(() => handle!.unmount());
   });
   it('provides a guarded custom-field registration and open/prefill API', async () => {
     expect(window.ChatFlow.open(9999)).toBe(false);

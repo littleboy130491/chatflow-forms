@@ -240,6 +240,17 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-position="left"', $launcher );
 		$this->assertStringNotContainsString( 'min-height:', $launcher );
 		$this->assertStringNotContainsString( 'startToken', $launcher );
+		$popup = ( new \ChatFlow\Frontend\Renderer() )->render(
+			$form->id(),
+			array(
+				'mode'           => 'popup',
+				'auto_open'      => 7,
+				'scroll_percent' => 60,
+			)
+		);
+		$this->assertStringContainsString( 'data-mode="popup"', $popup );
+		$this->assertStringContainsString( 'data-auto-open="7"', $popup );
+		$this->assertStringContainsString( 'data-scroll-percent="60"', $popup );
 	}
 
 	public function testTestNotificationPayloadsAreCleanedWithoutDeletingRealDeliveries(): void {
