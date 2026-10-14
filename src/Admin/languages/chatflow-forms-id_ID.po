@@ -79,6 +79,9 @@ msgstr "Host pengalihan eksternal yang diizinkan (pisahkan dengan koma)"
 msgid "An unexpected error occurred."
 msgstr "Terjadi kesalahan tak terduga."
 
+msgid "Analytics"
+msgstr "Analitik"
+
 msgid "Anonymized"
 msgstr "Dianonimkan"
 
@@ -130,6 +133,12 @@ msgstr "Masa cookie atribusi (hari)"
 msgid "Auto-continue statement"
 msgstr "Lanjutkan pernyataan secara otomatis"
 
+msgid "Auto-open after seconds (blank = off)"
+msgstr "Buka otomatis setelah detik (kosong = nonaktif)"
+
+msgid "Auto-open at scroll percent (blank = off)"
+msgstr "Buka otomatis saat gulir mencapai persen (kosong = nonaktif)"
+
 msgid "Autocomplete"
 msgstr "Pelengkapan otomatis"
 
@@ -144,6 +153,9 @@ msgstr "Balasan otomatis"
 
 msgid "Avatar attachment ID"
 msgstr "ID lampiran avatar"
+
+msgid "Average completion time"
+msgstr "Rata-rata waktu penyelesaian"
 
 msgid "BCC"
 msgstr "BCC"
@@ -247,6 +259,9 @@ msgstr "Koma"
 msgid "Completed"
 msgstr "Selesai"
 
+msgid "Completion rate"
+msgstr "Tingkat penyelesaian"
+
 msgid "Confirm publish"
 msgstr "Konfirmasi penerbitan"
 
@@ -337,11 +352,17 @@ msgstr "Tujuan"
 msgid "Device"
 msgstr "Perangkat"
 
+msgid "Devices"
+msgstr "Perangkat"
+
 msgid "Diff uses the draft loaded in this editor, not the historical published snapshot."
 msgstr "Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya."
 
 msgid "Discard local edits and reload?"
 msgstr "Buang perubahan lokal dan muat ulang?"
+
+msgid "Display and engagement"
+msgstr "Tampilan dan interaksi"
 
 msgid "Display defaults"
 msgstr "Tampilan bawaan"
@@ -412,6 +433,9 @@ msgstr "Jenis penutup"
 msgid "Endings and completion"
 msgstr "Penutup dan penyelesaian"
 
+msgid "Exclude page IDs (comma-separated)"
+msgstr "ID halaman yang dikecualikan (pisahkan dengan koma)"
+
 msgid "Exclusive / none of the above"
 msgstr "Eksklusif / tidak satu pun di atas"
 
@@ -466,6 +490,9 @@ msgstr "Formulir"
 msgid "Form ID"
 msgstr "ID formulir"
 
+msgid "Form ID (0 = all)"
+msgstr "ID formulir (0 = semua)"
+
 msgid "Form ID (blank = all)"
 msgstr "ID formulir (kosong = semua)"
 
@@ -489,6 +516,9 @@ msgstr "Formulir"
 
 msgid "Formula-like cells are escaped by the server. Exports contain personal data; store them securely."
 msgstr "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
+
+msgid "From (UTC)"
+msgstr "Dari (UTC)"
 
 msgid "From date (UTC)"
 msgstr "Dari tanggal (UTC)"
@@ -564,6 +594,9 @@ msgstr "Impor sebagai draf baru"
 
 msgid "Imports create a new draft and are validated by the server. Webhooks exported by ChatFlow have their secrets removed and are disabled."
 msgstr "Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang diekspor ChatFlow dihapus dan webhook dinonaktifkan."
+
+msgid "Include page IDs (comma-separated; blank = all)"
+msgstr "ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)"
 
 msgid "Inherit theme font"
 msgstr "Gunakan font tema"
@@ -742,6 +775,9 @@ msgstr "Berikutnya"
 msgid "No"
 msgstr "Tidak"
 
+msgid "No data for this period."
+msgstr "Tidak ada data untuk periode ini."
+
 msgid "No logic warnings detected."
 msgstr "Tidak ditemukan peringatan logika."
 
@@ -787,6 +823,9 @@ msgstr "Label pilihan"
 msgid "Other (free-text option)"
 msgstr "Lainnya (pilihan teks bebas)"
 
+msgid "Page exclusions take precedence. A published form is required for automatic placement."
+msgstr "Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis."
+
 msgid "Partial"
 msgstr "Sebagian"
 
@@ -825,6 +864,9 @@ msgstr "Tanya jawab biasa"
 
 msgid "Plain-text version"
 msgstr "Versi teks biasa"
+
+msgid "Popup"
+msgstr "Jendela pop-up"
 
 msgid "Preview"
 msgstr "Pratinjau"
@@ -1087,6 +1129,9 @@ msgstr "Teks pendek"
 msgid "Shortcode"
 msgstr "Shortcode"
 
+msgid "Show automatically on matching pages"
+msgstr "Tampilkan otomatis pada halaman yang sesuai"
+
 msgid "Signing secret"
 msgstr "Rahasia penandatanganan"
 
@@ -1120,6 +1165,9 @@ msgstr "Berbintang"
 msgid "Start over"
 msgstr "Mulai ulang"
 
+msgid "Starts"
+msgstr "Mulai"
+
 msgid "Starts per rate window"
 msgstr "Jumlah mulai per jendela pembatasan"
 
@@ -1134,6 +1182,9 @@ msgstr "Status / percobaan"
 
 msgid "Status / version"
 msgstr "Status / versi"
+
+msgid "Step drop-off"
+msgstr "Langkah tempat pengunjung berhenti"
 
 msgid "Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings."
 msgstr "Langkah: %d ditambahkan, %d diubah, %d dihapus. Versi baru membekukan skema dan pengaturan pribadi."
@@ -1201,6 +1252,9 @@ msgstr "Pratinjau runtime tidak tersedia. Bangun ulang aset plugin."
 msgid "Theme"
 msgstr "Tema"
 
+msgid "To (UTC)"
+msgstr "Hingga (UTC)"
+
 msgid "To date (UTC)"
 msgstr "Sampai tanggal (UTC)"
 
@@ -1247,6 +1301,9 @@ msgid "UTM campaign"
 msgstr "Kampanye UTM"
 
 msgid "UTM source"
+msgstr "Sumber UTM"
+
+msgid "UTM sources"
 msgstr "Sumber UTM"
 
 msgid "Undo"
