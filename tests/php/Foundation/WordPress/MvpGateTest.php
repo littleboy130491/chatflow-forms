@@ -253,6 +253,79 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-scroll-percent="60"', $popup );
 	}
 
+	public function testAggregateAnalyticsOnlyExposesAuthorizedCounts(): void {
+		global $wpdb;
+		$definition = Imajiner::definition();
+		$forms      = new FormRepository();
+		$form       = $forms->create( 'Analytics acceptance', $definition['schema'], $definition['settings'] );
+		$this->assertNotWPError( $form );
+		$form = $forms->publish( $form->id(), $form->draftRevision() );
+		$this->assertNotWPError( $form );
+		$now    = gmdate( 'Y-m-d H:i:s' );
+		$day    = gmdate( 'Y-m-d' );
+		$repo   = new Repository( $forms );
+		$record = $repo->savePartial(
+			array(
+				'form_id'         => $form->id(),
+				'form_version'    => $form->version(),
+				'current_step_id' => 'step_punya_website',
+				'utm_source'      => 'test-campaign',
+				'device_type'     => 'desktop',
+			)
+		);
+		$repo->complete(
+			$record->id(),
+			array(
+				'status'       => 'completed',
+				'duration_ms'  => 120000,
+				'completed_at' => $now,
+			)
+		);
+		$repo->savePartial(
+			array(
+				'form_id'         => $form->id(),
+				'form_version'    => $form->version(),
+				'current_step_id' => 'step_punya_website',
+				'utm_source'      => 'test-campaign',
+				'device_type'     => 'mobile',
+			)
+		);
+		for ( $i = 0; $i < 2; ++$i ) {
+			$this->assertNotFalse(
+				$wpdb->insert(
+					$wpdb->prefix . 'cff_sessions',
+					array(
+						'public_id'    => wp_generate_uuid4(),
+						'resume_hash'  => hash( 'sha256', wp_generate_uuid4() ),
+						'form_id'      => $form->id(),
+						'form_version' => $form->version(),
+						'context'      => '{}',
+						'started_at'   => $now,
+						'last_seen_at' => $now,
+						'expires_at'   => gmdate( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS ),
+					)
+				)
+			);
+		}
+		$report = ( new \ChatFlow\Analytics\Report( $forms ) )->run( $form->id(), $day, $day );
+		$this->assertSame( array( 'starts' => 2, 'completed' => 1, 'partial' => 1, 'abandoned' => 0 ), $report['counts'] );
+		$this->assertSame( 50.0, $report['completionRate'] );
+		$this->assertSame( 120000, $report['avgDurationMs'] );
+		$this->assertSame( 'test-campaign', $report['sources'][0]['label'] );
+		$this->assertSame( 'step_punya_website', $report['dropoffs'][0]['stepId'] );
+		$this->assertArrayNotHasKey( 'answers', $report );
+		$path = 'admin/analytics?formId=' . $form->id() . '&from=' . $day . '&to=' . $day;
+		wp_set_current_user( 0 );
+		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );
+		$response = $this->request( 'GET', $path, array(), array( 'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ) ) );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 2, $response->get_data()['counts']['starts'] );
+		$this->expectException( \InvalidArgumentException::class );
+		( new \ChatFlow\Analytics\Report() )->run( 0, '2026-02-30', '2026-03-02' );
+	}
+
 	public function testTestNotificationPayloadsAreCleanedWithoutDeletingRealDeliveries(): void {
 		global $wpdb;
 		$outbox = new Outbox();
