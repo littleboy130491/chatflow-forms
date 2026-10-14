@@ -79,7 +79,7 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
       >
         {__('New Imajiner survey', 'chatflow-forms')}
       </Button>
-      <label className="cff-import-form">
+      <label className="cff-import-form" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginLeft: 12 }}>
         {__('Import form JSON (creates a draft)', 'chatflow-forms')}
         <input
           type="file"
