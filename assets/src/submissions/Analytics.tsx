@@ -1,5 +1,6 @@
 /** @jsxRuntime classic */
 /** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
