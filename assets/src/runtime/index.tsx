@@ -121,9 +121,10 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       if (isPopup && event.key === 'Tab' && panel && !panel.hidden) {
         const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]')];
         const first = items[0], last = items.at(-1);
+        const active = shadow.activeElement;
         if (!first || !last) { event.preventDefault(); panel.focus(); }
-        else if (event.shiftKey && (panel.contains(document.activeElement) ? document.activeElement === first : true)) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
+        else if (event.shiftKey && (panel.contains(active) ? active === first : true)) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && (active === last || !panel.contains(active))) { event.preventDefault(); first.focus(); }
       }
     });
   }
