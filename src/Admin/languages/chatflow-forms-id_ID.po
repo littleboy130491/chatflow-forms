@@ -1386,3 +1386,9 @@ msgstr "Anda tidak dapat mengelola pengaturan."
 
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
+
+msgid "Views (impressions)"
+msgstr "Tampilan (impresi)"
+
+msgid "View → start"
+msgstr "Tampilan → mulai"

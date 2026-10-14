@@ -28,11 +28,19 @@ final class Report {
 			$sessions_period .= $wpdb->prepare( ' AND form_id = %d', $form_id );
 		}
 		$period .= " AND status IN ('completed','partial','abandoned')";
+
+		$view_period = $wpdb->prepare( 'day >= %s AND day <= %s AND metric = %s', $from, $to, 'view' );
+		if ( $form_id ) {
+			$view_period .= $wpdb->prepare( ' AND form_id = %d', $form_id );
+		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prepared date/metric/form filters; trusted table prefix.
+		$views = (int) $wpdb->get_var( "SELECT COALESCE(SUM(value),0) FROM {$wpdb->prefix}cff_stats_daily WHERE {$view_period}" );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prepared dates/form ID; table name is trusted WP prefix.
 		$starts = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_sessions WHERE {$sessions_period}" );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prepared dates/form ID and fixed status whitelist.
 		$statuses = $wpdb->get_results( "SELECT status,COUNT(*) AS total FROM {$wpdb->prefix}cff_submissions WHERE {$period} GROUP BY status", ARRAY_A );
 		$counts   = array(
+			'views'     => $views,
 			'starts'    => $starts,
 			'completed' => 0,
 			'partial'   => 0,
@@ -85,12 +93,13 @@ final class Report {
 			'formId'         => $form_id,
 			'counts'         => $counts,
 			'completionRate' => $starts ? round( 100 * $counts['completed'] / $starts, 1 ) : 0,
+			'viewStartRate'  => $views >= $starts && $views > 0 ? round( 100 * $starts / $views, 1 ) : null,
 			'avgDurationMs'  => null === $duration ? null : (int) round( (float) $duration ),
 			'sources'        => $series( $sources ),
 			'devices'        => $series( $devices ),
 			'dropoffs'       => $steps,
 			'answers'        => $distributions,
-			'methodology'    => 'Starts count sessions; completions and drop-offs count stored non-spam submissions. Choice distributions use the current published form version and omit free-text answers. Form views are not yet tracked.',
+			'methodology'    => 'Views are anonymous form impressions recorded when inline forms initialize or launchers/popups open, not unique visitors. Draft previews and Do Not Track requests are excluded. Views are available only after tracking is deployed, not backfilled. View-to-start rate is omitted when historical starts exceed tracked views. Starts count sessions; completions and drop-offs count stored non-spam submissions. Choice distributions use the current published form version and omit free-text answers.',
 		);
 	}
 
