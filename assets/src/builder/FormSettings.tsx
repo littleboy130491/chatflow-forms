@@ -510,6 +510,8 @@ export function SettingsEditor({
   api: AdminApi;
   save: () => Promise<FormDTO>;
 }) {
+  const [includePages, setIncludePages] = useState(() => (form.settings.display?.launcher?.includePageIds ?? []).join(','));
+  const [excludePages, setExcludePages] = useState(() => (form.settings.display?.launcher?.excludePageIds ?? []).join(','));
   const settings: FormSettings = {
       ...api.config.defaults,
       ...form.settings,
@@ -629,13 +631,19 @@ export function SettingsEditor({
           />
           <Field
             label={__('Include page IDs (comma-separated; blank = all)', 'chatflow-forms')}
-            value={(launcher.includePageIds ?? []).join(',')}
-            onChange={(value) => setLauncher({ includePageIds: pageIds(value) as NonNullable<typeof launcher.includePageIds> })}
+            value={includePages}
+            onChange={(value) => {
+              setIncludePages(value);
+              setLauncher({ includePageIds: pageIds(value) as NonNullable<typeof launcher.includePageIds> });
+            }}
           />
           <Field
             label={__('Exclude page IDs (comma-separated)', 'chatflow-forms')}
-            value={(launcher.excludePageIds ?? []).join(',')}
-            onChange={(value) => setLauncher({ excludePageIds: pageIds(value) as NonNullable<typeof launcher.excludePageIds> })}
+            value={excludePages}
+            onChange={(value) => {
+              setExcludePages(value);
+              setLauncher({ excludePageIds: pageIds(value) as NonNullable<typeof launcher.excludePageIds> });
+            }}
           />
           <p>{__('Page exclusions take precedence. A published form is required for automatic placement.', 'chatflow-forms')}</p>
         </>)}
