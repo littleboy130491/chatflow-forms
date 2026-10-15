@@ -83,16 +83,19 @@ final class Starter {
 				),
 			),
 			'settings' => array(
-				'completion' => array( 'defaultEndingId' => 'ending_thanks' ),
-				'appearance' => array( 'theme' => 'light', 'primary' => '#262626' ),
-				'sessions'   => array(
-					'savePartial'    => true,
+				'completion'    => array( 'defaultEndingId' => 'ending_thanks' ),
+				'appearance'    => array(
+					'theme'   => 'light',
+					'primary' => '#262626',
+				),
+				'sessions'      => array(
+					'savePartial'   => true,
 					'resumeEnabled' => true,
 					'resumePrompt'  => true,
 					'resumeDays'    => 30,
 					'abandonDays'   => 30,
 				),
-				'spam'       => array(
+				'spam'          => array(
 					'honeypotEnabled'   => true,
 					'minSeconds'        => 2,
 					'rateLimit'         => 10,
