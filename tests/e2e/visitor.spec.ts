@@ -79,6 +79,7 @@ test('visitors submit rating, scale, NPS and a configured slider through real Wo
   await slider.press('ArrowRight');
   await expect(slider).toHaveValue('20');
   await advance(chat, /^(Continue|Lanjut)$/);
+  await advance(chat, /^(Submit|Kirim)$/);
   await expect(chat.getByText('Feedback saved. Thank you!')).toBeVisible();
 });
 
