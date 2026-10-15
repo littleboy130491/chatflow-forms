@@ -68,7 +68,7 @@ test('visitors submit rating, scale, NPS and a configured slider through real Wo
   const scale = chat.getByRole('group', { name: 'Scale' });
   await scale.getByRole('button', { name: '8 / 10' }).click();
   const nps = chat.getByRole('group', { name: 'NPS' });
-  await nps.getByRole('button', { name: '0 / 10' }).click();
+  await nps.getByRole('button', { name: '0 / 10', exact: true }).click();
   const slider = active(chat).getByRole('slider', { name: 'Slider' });
   await expect(slider).toHaveAttribute('min', '10');
   await expect(slider).toHaveAttribute('max', '30');
