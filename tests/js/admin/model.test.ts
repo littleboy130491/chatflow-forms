@@ -109,6 +109,7 @@ describe('admin API and immutable identities', () => {
   });
   it('creates only supported v1 types and unique permanent identifiers', () => {
     expect(v1Types).toContain('summary');
+    for (const type of ['rating', 'scale', 'nps', 'slider']) expect(v1Types).toContain(type);
     expect(v1Types).not.toContain('file_upload');
     const a = makeStep('single_choice', []),
       b = makeStep('single_choice', [a]);

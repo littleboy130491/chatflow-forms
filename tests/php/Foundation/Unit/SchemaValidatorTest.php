@@ -26,6 +26,19 @@ final class SchemaValidatorTest extends TestCase {
 		$this->assertContains( 'invalid_range', $codes );
 	}
 
+	public function testScoreFieldsAreAvailableAndNumericBoundsAreEnforcedBeforePublishing(): void {
+		$schema = json_decode( file_get_contents( dirname( __DIR__, 3 ) . '/fixtures/schema.json' ), true, 512, JSON_THROW_ON_ERROR )[0]['schema'];
+		$v = new SchemaValidator();
+		foreach ( array( 'rating', 'scale', 'nps', 'slider' ) as $type ) {
+			$schema['steps'][0]['type'] = $type;
+			$schema['steps'][0]['validation'] = array();
+			$this->assertSame( array(), $v->validatePublishable( $schema ), $type );
+		}
+		$schema['steps'][0]['validation'] = array( 'min' => 50, 'max' => 10 );
+		$this->assertContains( 'invalid_range', array_column( $v->validate( $schema ), 'code' ) );
+		$schema['steps'][0]['type'] = 'nps';
+		$this->assertContains( 'unsupported_validation', array_column( $v->validate( $schema ), 'code' ) );
+	}
 	public function testPrivateSettingsAreStrictAndDefaultEndingMustExist(): void {
 		$v = new SchemaValidator();
 		$this->assertSame( array(), $v->validateSettings( array() ) );
