@@ -6,7 +6,7 @@ final class Registry {
 	private array $fields = array();
 
 	public function __construct() {
-		$fields = array( new ShortTextField(), new LongTextField(), new EmailField(), new PhoneField(), new NumberField(), new DateField(), new SingleChoiceField(), new MultiChoiceField(), new YesNoField(), new ConsentField(), new HiddenField(), new StatementField(), new SummaryField() );
+		$fields = array( new ShortTextField(), new LongTextField(), new EmailField(), new PhoneField(), new NumberField(), new RatingField(), new ScaleField(), new NpsField(), new SliderField(), new DateField(), new SingleChoiceField(), new MultiChoiceField(), new YesNoField(), new ConsentField(), new HiddenField(), new StatementField(), new SummaryField() );
 		if ( function_exists( 'apply_filters' ) ) {
 			$fields = apply_filters( 'cff_field_types', $fields );
 		}

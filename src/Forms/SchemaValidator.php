@@ -5,7 +5,7 @@ use ChatFlow\Vendor\Opis\JsonSchema\Validator;
 use ChatFlow\Vendor\Opis\JsonSchema\Errors\ErrorFormatter;
 
 final class SchemaValidator {
-	public const V1_TYPES = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
+	public const V1_TYPES = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'rating', 'scale', 'nps', 'slider', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
 
 	/** @param array<string,mixed> $schema
 	 *  @return list<array{path:string,code:string,message:string}>
@@ -37,6 +37,17 @@ final class SchemaValidator {
 				$this->checkRules( $option['logic'] ?? array(), $schema, $path . '/options/' . $oi . '/logic', $errors );
 			}
 			$v = $step['validation'] ?? array();
+			if ( in_array( $step['type'], array( 'rating', 'scale', 'nps' ), true ) && ( isset( $v['min'] ) || isset( $v['max'] ) || isset( $v['step'] ) ) ) {
+				$errors[] = $this->error( $path . '/validation', 'unsupported_validation', 'Score fields use a fixed numeric range.' );
+			}
+			if ( 'slider' === $step['type'] ) {
+				$min       = $v['min'] ?? 0;
+				$max       = $v['max'] ?? 100;
+				$step_size = $v['step'] ?? 1;
+				if ( ! is_numeric( $min ) || ! is_numeric( $max ) || ! is_numeric( $step_size ) || ! is_finite( (float) $min ) || ! is_finite( (float) $max ) || abs( (float) $min ) > 10000 || abs( (float) $max ) > 10000 || $min >= $max || $step_size <= 0 || $step_size > $max - $min ) {
+					$errors[] = $this->error( $path . '/validation', 'invalid_range', 'Slider bounds and increment must form a valid finite range.' );
+				}
+			}
 			foreach ( array( array( 'minLength', 'maxLength' ), array( 'minSelections', 'maxSelections' ), array( 'min', 'max' ) ) as $pair ) {
 				if ( isset( $v[ $pair[0] ], $v[ $pair[1] ] ) && $v[ $pair[0] ] > $v[ $pair[1] ] ) {
 					$errors[] = $this->error( $path . '/validation', 'invalid_range', 'Minimum must not exceed maximum.' );

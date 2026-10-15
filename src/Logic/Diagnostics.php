@@ -97,6 +97,17 @@ final class Diagnostics {
 				}
 			}
 			$v = (array) ( $s['validation'] ?? array() );
+			if ( in_array( $s['type'], array( 'rating', 'scale', 'nps' ), true ) && ( isset( $v['min'] ) || isset( $v['max'] ) || isset( $v['step'] ) ) ) {
+				$add( $path . '/validation', 'unsupported_validation', 'Score fields use a fixed numeric range.' );
+			}
+			if ( 'slider' === $s['type'] ) {
+				$min       = $v['min'] ?? 0;
+				$max       = $v['max'] ?? 100;
+				$step_size = $v['step'] ?? 1;
+				if ( ! Values::numeric( $min ) || ! Values::numeric( $max ) || ! Values::numeric( $step_size ) || abs( (float) $min ) > 10000 || abs( (float) $max ) > 10000 || $min >= $max || $step_size <= 0 || $step_size > $max - $min ) {
+					$add( $path . '/validation', 'invalid_range', 'Slider bounds and increment must form a valid finite range.' );
+				}
+			}
 			if ( ! empty( $v['mxCheck'] ) ) {
 				$add( $path . '/validation/mxCheck', 'unsupported_validation', 'MX checking is not enabled.' );
 			}

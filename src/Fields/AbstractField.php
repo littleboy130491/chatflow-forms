@@ -24,7 +24,7 @@ abstract class AbstractField implements FieldType {
 		if ( 'phone' === $type && is_string( $value ) ) {
 			return self::phone( $value, $step['settings']['country'] ?? 'ID' );
 		}
-		if ( 'number' === $type && is_string( $value ) && preg_match( '/^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/D', $value ) && is_finite( (float) $value ) ) {
+		if ( in_array( $type, array( 'number', 'rating', 'scale', 'nps', 'slider' ), true ) && is_string( $value ) && preg_match( '/^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/D', $value ) && is_finite( (float) $value ) ) {
 			return (float) $value;
 		}
 		return in_array( $type, array( 'statement', 'summary' ), true ) ? null : $value;
@@ -62,7 +62,7 @@ abstract class AbstractField implements FieldType {
 			return $errors;
 		}
 		$typed = match ( $type ) {
-			'number' => Values::numeric( $value ),
+			'number', 'rating', 'scale', 'nps', 'slider' => Values::numeric( $value ),
 			'yes_no', 'consent' => is_bool( $value ),
 			'multi_choice' => is_array( $value ) && array_is_list( $value ) && count( array_filter( $value, 'is_string' ) ) === count( $value ),
 			'single_choice' => is_string( $value ) || Values::isOtherAnswer( $value ),
@@ -127,16 +127,24 @@ abstract class AbstractField implements FieldType {
 				}
 			}
 		}
-		if ( 'number' === $type && Values::numeric( $value ) ) {
-			if ( Values::numeric( $v['min'] ?? null ) && $value < $v['min'] ) {
+		if ( in_array( $type, array( 'number', 'rating', 'scale', 'nps', 'slider' ), true ) && Values::numeric( $value ) ) {
+			$bounds = match ( $type ) {
+				'rating' => array( 1, 5, 1 ),
+				'scale'  => array( 1, 10, 1 ),
+				'nps'    => array( 0, 10, 1 ),
+				'slider' => array( $v['min'] ?? 0, $v['max'] ?? 100, $v['step'] ?? 1 ),
+				default  => array( $v['min'] ?? null, $v['max'] ?? null, $v['step'] ?? null ),
+			};
+			list( $min, $max, $increment ) = $bounds;
+			if ( Values::numeric( $min ) && $value < $min ) {
 				$add( 'min', 'The answer is below the minimum.' );
 			}
-			if ( Values::numeric( $v['max'] ?? null ) && $value > $v['max'] ) {
+			if ( Values::numeric( $max ) && $value > $max ) {
 				$add( 'max', 'The answer exceeds the maximum.' );
 			}
-			if ( isset( $v['step'] ) ) {
-				$units = ( $value - ( Values::numeric( $v['min'] ?? null ) ? $v['min'] : 0 ) ) / $v['step'];
-				if ( abs( $units - round( $units ) ) > 1e-8 ) {
+			if ( Values::numeric( $increment ) && $increment > 0 ) {
+				$units = ( $value - ( Values::numeric( $min ) ? $min : 0 ) ) / $increment;
+				if ( ! is_finite( (float) $units ) || abs( $units - round( $units ) ) > 1e-8 ) {
 					$add( 'step', 'The answer does not match the allowed increment.' );
 				}
 			}
