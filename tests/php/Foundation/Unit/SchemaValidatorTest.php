@@ -31,7 +31,7 @@ final class SchemaValidatorTest extends TestCase {
 		$v = new SchemaValidator();
 		foreach ( array( 'rating', 'scale', 'nps', 'slider' ) as $type ) {
 			$schema['steps'][0]['type'] = $type;
-			$schema['steps'][0]['validation'] = array();
+			unset( $schema['steps'][0]['validation'] );
 			$this->assertSame( array(), $v->validatePublishable( $schema ), $type );
 		}
 		$schema['steps'][0]['validation'] = array( 'min' => 50, 'max' => 10 );
