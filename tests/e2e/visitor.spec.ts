@@ -79,7 +79,8 @@ test('visitors submit rating, scale, NPS and a configured slider through real Wo
   await slider.press('ArrowRight');
   await expect(slider).toHaveValue('20');
   await advance(chat, /^(Continue|Lanjut)$/);
-  await advance(chat, /^(Submit|Kirim)$/);
+  // The final review action sits outside .active once all questions are answered.
+  await chat.getByRole('button', { name: /^(Submit|Kirim)$/, exact: true }).click();
   await expect(chat.getByText('Feedback saved. Thank you!')).toBeVisible();
 });
 
