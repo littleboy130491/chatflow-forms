@@ -760,6 +760,9 @@
       "Multiple choice": [
         "Pilihan jamak"
       ],
+      "NPS (0–10)": [
+        "NPS (0–10)"
+      ],
       "Name": [
         "Nama"
       ],
@@ -946,6 +949,12 @@
       "Rate window seconds": [
         "Jendela pembatasan (detik)"
       ],
+      "Rating (1–5)": [
+        "Penilaian (1–5)"
+      ],
+      "Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.": [
+        "Penilaian: 1–5, skala: 1–10, NPS: 0–10. Nilai disimpan sebagai angka."
+      ],
       "Reaction text": [
         "Teks reaksi"
       ],
@@ -1084,6 +1093,9 @@
       "Saving…": [
         "Menyimpan…"
       ],
+      "Scale (1–10)": [
+        "Skala (1–10)"
+      ],
       "Scoring and visual node graphs are not enabled in MVP.": [
         "Penilaian dan grafik simpul visual belum diaktifkan dalam MVP."
       ],
@@ -1149,6 +1161,9 @@
       ],
       "Skipped": [
         "Dilewati"
+      ],
+      "Slider": [
+        "Penggeser"
       ],
       "Source / device": [
         "Sumber / perangkat"
