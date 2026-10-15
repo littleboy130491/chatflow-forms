@@ -85,7 +85,8 @@ test('launcher defers the session handshake until opened and restores focus when
 });
 
 test('popup supports backdrop close and a timed trigger without creating a session before opening', async ({ page }) => {
-  await page.goto('/chatflow-e2e-popup/');
+  const response = await page.goto('/chatflow-e2e-popup/');
+  expect(response?.status(), 'WordPress must return an HTTP 200 for the popup page').toBe(200);
   const chat = page.locator('cff-chat');
   await expect(chat.locator('.launcher-panel')).toBeHidden();
   await chat.getByRole('button', { name: /^(Open chat|Buka chat)$/ }).click();

@@ -34,6 +34,14 @@ jobs:
         run: node tools/wp-env.mjs run cli --env-cwd=wp-content/plugins/chatflow-forms env CFF_E2E=1 wp eval-file tests/e2e/seed.php
       - name: Run real Chromium desktop and mobile journeys
         run: npm run test:e2e
+      - name: Inspect WordPress container failures
+        if: failure()
+        run: |
+          docker ps --format 'table {{.Names}}\\t{{.Status}}'
+          for container in $(docker ps -q); do
+            echo "=== Container ${container} ==="
+            docker logs --tail 150 "${container}" 2>&1 || true
+          done
       - if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
