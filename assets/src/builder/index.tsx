@@ -42,12 +42,21 @@ export const fieldLabels: Record<string, string> = {
   statement: __('Statement', 'chatflow-forms'),
   summary: __('Summary', 'chatflow-forms'),
 };
-function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
+export interface TemplateSummary {
+  id: string;
+  title: string;
+  description: string;
+  locale: string;
+}
+export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
   const [page, setPage] = useState(1),
     [forms, setForms] = useState<Page<FormDTO> | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
-    [importing, setImporting] = useState(false);
+    [importing, setImporting] = useState(false),
+    [templates, setTemplates] = useState<TemplateSummary[]>([]),
+    [templatesLoading, setTemplatesLoading] = useState(true),
+    [creatingTemplate, setCreatingTemplate] = useState('');
   const load = () => {
     setBusy(true);
     api
@@ -57,27 +66,19 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
       .finally(() => setBusy(false));
   };
   useEffect(load, [api, page]);
+  useEffect(() => {
+    let active = true;
+    api.request<{ items: TemplateSummary[] }>('admin/templates')
+      .then((result) => { if (active) setTemplates(result.items); })
+      .catch((err) => { if (active) setError(errorMessage(err)); })
+      .finally(() => { if (active) setTemplatesLoading(false); });
+    return () => { active = false; };
+  }, [api]);
   return (
     <section>
       <h1>{__('ChatFlow Forms', 'chatflow-forms')}</h1>
       <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
         {__('New blank form', 'chatflow-forms')}
-      </Button>
-      <Button
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          setError('');
-          try {
-            onOpen(await api.request<FormDTO>('admin/templates/imajiner-survey', 'POST', {}));
-          } catch (err) {
-            setError(errorMessage(err));
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {__('New Imajiner survey', 'chatflow-forms')}
       </Button>
       <label className="cff-import-form">
         {__('Import form JSON (creates a draft)', 'chatflow-forms')}
@@ -106,6 +107,37 @@ function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => 
           }}
         />
       </label>
+      <section className="cff-templates" aria-label={__('Start from a template', 'chatflow-forms')}>
+        <h2>{__('Start from a template', 'chatflow-forms')}</h2>
+        <p>{__('Choose a starting point. You can edit every question before publishing.', 'chatflow-forms')}</p>
+        {templatesLoading && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
+        <div className="cff-template-grid">
+          {templates.map((template) => (
+            <article className="cff-template-card" key={template.id}>
+              <h3>{template.title}</h3>
+              <p>{template.description}</p>
+              <span className="cff-template-locale">{template.locale.replace('_', '-')}</span>
+              <Button
+                variant="secondary"
+                disabled={busy || importing || Boolean(creatingTemplate)}
+                onClick={async () => {
+                  setCreatingTemplate(template.id);
+                  setError('');
+                  try {
+                    onOpen(await api.request<FormDTO>(`admin/templates/${template.id}`, 'POST', {}));
+                  } catch (err) {
+                    setError(errorMessage(err));
+                  } finally {
+                    setCreatingTemplate('');
+                  }
+                }}
+              >
+                {creatingTemplate === template.id ? __('Creating draft…', 'chatflow-forms') : __('Use template', 'chatflow-forms')}
+              </Button>
+            </article>
+          ))}
+        </div>
+      </section>
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}

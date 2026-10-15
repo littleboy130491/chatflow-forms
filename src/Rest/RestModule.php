@@ -77,24 +77,9 @@ final class RestModule implements Module {
 			'cff_manage_settings'
 		);
 		$this->route( '/admin/system-status', 'GET', array( $this, 'systemStatus' ), 'cff_manage_settings' );
-		$this->route(
-			'/admin/templates',
-			'GET',
-			fn() => $this->respond(
-				array(
-					'items' => array(
-						array(
-							'id'     => 'imajiner-survey',
-							'title'  => 'Imajiner website survey',
-							'locale' => 'id_ID',
-						),
-					),
-				)
-			),
-			'cff_manage_forms'
-		);
-		$this->route( '/admin/templates/imajiner-survey', 'GET', fn() => $this->respond( \ChatFlow\Templates\Imajiner::definition() ), 'cff_manage_forms' );
-		$this->route( '/admin/templates/imajiner-survey', 'POST', fn() => $this->respond( ( new \ChatFlow\Templates\Templates( $this->forms ) )->create(), 201 ), 'cff_manage_forms' );
+		$this->route( '/admin/templates', 'GET', fn() => $this->respond( array( 'items' => \ChatFlow\Templates\Templates::catalog() ) ), 'cff_manage_forms' );
+		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'GET', fn( $r ) => $this->respond( \ChatFlow\Templates\Templates::definition( (string) $r['slug'] ) ), 'cff_manage_forms' );
+		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'POST', fn( $r ) => $this->respond( ( new \ChatFlow\Templates\Templates( $this->forms ) )->create( (string) $r['slug'] ), 201 ), 'cff_manage_forms' );
 	}
 	private function route( string $path, string $method, callable $callback, ?string $cap = null ): void {
 		register_rest_route(

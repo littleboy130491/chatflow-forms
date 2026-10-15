@@ -27,6 +27,16 @@ View counts start from deployment, with no historical backfill. If old starts
 outnumber tracked impressions, the dashboard intentionally omits the
 view-to-start rate rather than showing a misleading percentage.
 
+## Starter templates (Phase 2)
+
+**ChatFlow → Forms** now displays a template gallery. The Imajiner survey remains
+available alongside vendor-neutral **Contact request** and **Customer feedback**
+starter forms. Selecting a template creates a new *unpublished draft* with
+editable steps and settings, and does not enable external delivery, autoresponder,
+or webhook endpoints. Review messaging, consent copy, privacy policy requirements,
+and notification recipients before publishing. Templates are not submissions
+and do not include existing respondent data.
+
 ## Install and use
 
 1. Build the release ZIP below, or use a packaged release when available.

@@ -17,3 +17,14 @@
 @media (max-width: 1100px) { .cff-builder-grid { grid-template-columns: 170px 1fr; } .cff-inspector { grid-column: 1 / -1; } }
 @media (max-width: 700px) { .cff-builder-grid { display: block; } .cff-toolbar { position: static; } }
 @media (prefers-reduced-motion: reduce) { .cff-admin * { transition: none !important; animation: none !important; } }
+.cff-templates { margin: 24px 0; }
+.cff-templates > p { color: #50575e; }
+.cff-template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+.cff-template-card { display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid #dcdcde; border-radius: 6px; background: #fff; min-width: 0; }
+.cff-template-card h3, .cff-template-card p { margin: 0; }
+.cff-template-card p { color: #50575e; flex: 1; line-height: 1.55; }
+.cff-template-card .components-button { align-self: flex-start; }
+.cff-template-locale { font-size: 12px; color: #646970; }
+.cff-import-form { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 0 12px; }
+.cff-import-form input { max-width: min(100%, 250px); }
+@media (max-width: 700px) { .cff-import-form { display: flex; margin: 12px 0; flex-wrap: wrap; } }
