@@ -2,7 +2,7 @@ import { getCountryCallingCode, isSupportedCountry, type CountryCode } from 'lib
 import type { JSONValue, Step, ReplayContext, ValidationIssue } from '../contracts';
 import { age, choiceValue, dateParts, empty, isOtherAnswer, issue, matches, numeric, pointer, regex } from './value';
 
-export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
+export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'rating', 'scale', 'nps', 'slider', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
 export const isDisplay = (type: string): boolean => ['statement', 'summary', 'media'].includes(type);
 export function plainText(value: string, multiline = false): string {
   let text = value.replace(/\r\n?/g, '\n').replace(/<[^>]*>/g, '');
@@ -29,7 +29,7 @@ export function sanitizeAnswer(step: Step, value: JSONValue, context: ReplayCont
     case 'short_text': case 'long_text': case 'email': case 'date':
       return typeof value === 'string' ? plainText(value, step.type === 'long_text') : value;
     case 'phone': return typeof value === 'string' ? phone(value, step.settings?.country ?? 'ID') : value;
-    case 'number':
+    case 'number': case 'rating': case 'scale': case 'nps': case 'slider':
       if (typeof value === 'string' && /^[ \t\n\r]*[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?[ \t\n\r]*$/.test(value) && Number.isFinite(Number(value))) return Number(value);
       return value;
     case 'statement': case 'summary': return null;
@@ -52,7 +52,7 @@ export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayC
   if (value === null) { if (required) add('required', 'An answer is required.'); return errors; }
   let typed = false;
   switch (step.type) {
-    case 'number': typed = numeric(value); break;
+    case 'number': case 'rating': case 'scale': case 'nps': case 'slider': typed = numeric(value); break;
     case 'yes_no': case 'consent': typed = typeof value === 'boolean'; break;
     case 'multi_choice': typed = Array.isArray(value) && value.every(v => typeof v === 'string'); break;
     case 'single_choice': typed = typeof value === 'string' || isOtherAnswer(value); break;
@@ -88,12 +88,17 @@ export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayC
       }
     }
   }
-  if (step.type === 'number' && numeric(value)) {
-    if (numeric(v.min) && value < v.min) add('min', 'The answer is below the minimum.');
-    if (numeric(v.max) && value > v.max) add('max', 'The answer exceeds the maximum.');
-    if (v.step !== undefined) {
-      const units = (value - (numeric(v.min) ? v.min : 0)) / v.step;
-      if (Math.abs(units - Math.round(units)) > 1e-8) add('step', 'The answer does not match the allowed increment.');
+  if (['number', 'rating', 'scale', 'nps', 'slider'].includes(step.type) && numeric(value)) {
+    const [min, max, increment] = step.type === 'rating' ? [1, 5, 1] :
+      step.type === 'scale' ? [1, 10, 1] :
+      step.type === 'nps' ? [0, 10, 1] :
+      step.type === 'slider' ? [v.min ?? 0, v.max ?? 100, v.step ?? 1] : [v.min, v.max, v.step];
+    if (numeric(min) && value < min) add('min', 'The answer is below the minimum.');
+    if (numeric(max) && value > max) add('max', 'The answer exceeds the maximum.');
+    if (numeric(increment) && increment > 0) {
+      const units = (value - (numeric(min) ? min : 0)) / increment;
+      if (!Number.isFinite(units) || Math.abs(units - Math.round(units)) > 1e-8)
+        add('step', 'The answer does not match the allowed increment.');
     }
   }
   if (step.type === 'single_choice' || step.type === 'multi_choice') {

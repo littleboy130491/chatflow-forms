@@ -68,6 +68,13 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
     (s.options ?? []).forEach((o, j) => inspect(o.logic ?? [], `${path}/options/${j}/logic`));
     if (s.options && s.options.length > 200) add(path + '/options', 'invalid_schema', 'A field may have at most 200 options.');
     const v = s.validation ?? {};
+    if (['rating', 'scale', 'nps'].includes(s.type) && (v.min !== undefined || v.max !== undefined || v.step !== undefined))
+      add(path + '/validation', 'unsupported_validation', 'Score fields use a fixed numeric range.');
+    if (s.type === 'slider') {
+      const min = v.min ?? 0, max = v.max ?? 100, increment = v.step ?? 1;
+      if (!numeric(min) || !numeric(max) || !numeric(increment) || Math.abs(Number(min)) > 10000 || Math.abs(Number(max)) > 10000 || Number(min) >= Number(max) || Number(increment) <= 0 || Number(increment) > Number(max) - Number(min))
+        add(path + '/validation', 'invalid_range', 'Slider bounds and increment must form a valid finite range.');
+    }
     for (const [min, max] of [[v.minLength, v.maxLength], [v.minSelections, v.maxSelections], [v.min, v.max]]) {
       if (min !== undefined && max !== undefined && typeof min === typeof max && min > max) add(path + '/validation', 'invalid_range', 'Minimum must not exceed maximum.');
     }

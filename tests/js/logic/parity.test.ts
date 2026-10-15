@@ -31,7 +31,7 @@ describe('shared diagnostics', () => {
   for (const c of checks.diagnostics) it(c.name, () => expect(diagnoseSchema(c.schema)).toEqual(c.expected));
 });
 it('covers every enabled v1 field and freezes variables independently', () => {
-  expect(V1_FIELD_TYPES).toHaveLength(13);
+  expect(V1_FIELD_TYPES).toHaveLength(17);
   for (const type of V1_FIELD_TYPES) expect(fixtures.some(f => f.schema.steps.some(s => s.type === type))).toBe(true);
   const f = fixtures.find(f => f.name === 'rule-order-variables')!;
   const first = replay(f.schema, f.answers); first.variables.total = 99;
