@@ -59,6 +59,44 @@ $make_page( 'chatflow-e2e-inline', '[chatflow id="' . $live->id() . '" mode="inl
 $make_page( 'chatflow-e2e-launcher', '[chatflow id="' . $live->id() . '" mode="launcher" position="left"]' );
 $make_page( 'chatflow-e2e-popup', '[chatflow id="' . $live->id() . '" mode="popup"]' );
 $make_page( 'chatflow-e2e-popup-auto', '[chatflow id="' . $live->id() . '" mode="popup" auto_open="1"]' );
+// Four-field numeric feedback journey: actual WordPress persistence, validation, and frontend controls.
+$score_steps = array();
+foreach ( array(
+	'rating' => array( 'label' => 'Rating', 'validation' => array() ),
+	'scale'  => array( 'label' => 'Scale', 'validation' => array() ),
+	'nps'    => array( 'label' => 'NPS', 'validation' => array() ),
+	'slider' => array( 'label' => 'Slider', 'validation' => array( 'min' => 10, 'max' => 30, 'step' => 5 ) ),
+) as $type => $meta ) {
+	$score_steps[] = array(
+		'id' => 'step_' . $type,
+		'key' => $type,
+		'type' => $type,
+		'label' => $meta['label'],
+		'messages' => array( 'Choose a ' . $type . ' value.' ),
+		'required' => true,
+		...( $meta['validation'] ? array( 'validation' => $meta['validation'] ) : array() ),
+	);
+}
+$score_schema = array(
+	'schemaVersion' => 1,
+	'bot' => array( 'name' => 'Feedback Bot', 'typingSpeed' => 'off' ),
+	'steps' => $score_steps,
+	'endings' => array( array( 'id' => 'end_scores', 'type' => 'message', 'messages' => array( 'Feedback saved. Thank you!' ) ) ),
+);
+$score_settings = array(
+	'completion' => array( 'defaultEndingId' => 'end_scores' ),
+	'spam' => array( 'minSeconds' => 0 ),
+);
+$score_draft = $forms->create( 'E2E numeric scores', $score_schema, $score_settings );
+if ( is_wp_error( $score_draft ) ) {
+	throw new \RuntimeException( $score_draft->get_error_message() );
+}
+$score_live = $forms->publish( $score_draft->id(), $score_draft->draftRevision() );
+if ( is_wp_error( $score_live ) ) {
+	throw new \RuntimeException( $score_live->get_error_message() );
+}
+$make_page( 'chatflow-e2e-scores', '[chatflow id="' . $score_live->id() . '" mode="inline"]' );
+
 update_option( 'permalink_structure', '/%postname%/' );
 flush_rewrite_rules( false );
 \WP_CLI::success( 'Created published form ' . $live->id() . ' and isolated E2E pages.' );
