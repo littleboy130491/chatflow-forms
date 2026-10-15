@@ -328,9 +328,11 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 'Belum pernah', $report['answers'][0]['options'][0]['label'] );
 		$this->assertSame( 1, $report['answers'][0]['options'][0]['count'] );
 		$this->assertArrayNotHasKey( 'value_text', $report['answers'][0]['options'][0] );
-		$this->assertSame( 'Satisfaction', $report['answers'][1]['label'] );
-		$this->assertSame( '4', $report['answers'][1]['options'][0]['label'] );
-		$this->assertSame( 1, $report['answers'][1]['options'][0]['count'] );
+		$scores = array_values( array_filter( $report['answers'], static fn( $row ) => 'satisfaction' === $row['fieldKey'] ) );
+		$this->assertCount( 1, $scores );
+		$this->assertSame( 'Satisfaction', $scores[0]['label'] );
+		$this->assertSame( '4', $scores[0]['options'][0]['label'] );
+		$this->assertSame( 1, $scores[0]['options'][0]['count'] );
 		$path = 'admin/analytics';
 		wp_set_current_user( 0 );
 		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );
