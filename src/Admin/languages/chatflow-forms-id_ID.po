@@ -235,6 +235,9 @@ msgstr "Pilih kolom"
 msgid "Choose a form from the block settings."
 msgstr "Pilih formulir dari pengaturan blok."
 
+msgid "Choose a starting point. You can edit every question before publishing."
+msgstr "Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan."
+
 msgid "Choose email field"
 msgstr "Pilih kolom email"
 
@@ -291,6 +294,9 @@ msgstr "Radius sudut (0–32)"
 
 msgid "Create private export"
 msgstr "Buat ekspor pribadi"
+
+msgid "Creating draft…"
+msgstr "Membuat draf…"
 
 msgid "Criteria / count"
 msgstr "Kriteria / jumlah"
@@ -754,9 +760,6 @@ msgstr "Nama"
 msgid "Nested condition"
 msgstr "Kondisi bertingkat"
 
-msgid "New Imajiner survey"
-msgstr "Survei Imajiner baru"
-
 msgid "New blank form"
 msgstr "Formulir kosong baru"
 
@@ -1162,6 +1165,9 @@ msgstr "Status bintang"
 msgid "Starred"
 msgstr "Berbintang"
 
+msgid "Start from a template"
+msgstr "Mulai dari templat"
+
 msgid "Start over"
 msgstr "Mulai ulang"
 
@@ -1333,6 +1339,9 @@ msgstr "Hapus bintang"
 msgid "Untitled form"
 msgstr "Formulir tanpa judul"
 
+msgid "Use template"
+msgstr "Gunakan templat"
+
 msgid "Use the ChatFlow Form block or an Elementor Shortcode widget."
 msgstr "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
 
@@ -1353,6 +1362,12 @@ msgstr "Nilai (larik JSON)"
 
 msgid "Verified proxy header"
 msgstr "Header proxy terverifikasi"
+
+msgid "View → start"
+msgstr "Tampilan → mulai"
+
+msgid "Views (impressions)"
+msgstr "Tampilan (impresi)"
 
 msgid "Visit website"
 msgstr "Kunjungi situs web"
@@ -1386,9 +1401,3 @@ msgstr "Anda tidak dapat mengelola pengaturan."
 
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
-
-msgid "Views (impressions)"
-msgstr "Tampilan (impresi)"
-
-msgid "View → start"
-msgstr "Tampilan → mulai"

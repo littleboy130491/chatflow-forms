@@ -77,6 +77,7 @@ Check email MX on server|Periksa MX email di server
 Choice layout|Tata letak pilihan
 Choose a field|Pilih kolom
 Choose a form from the block settings.|Pilih formulir dari pengaturan blok.
+Choose a starting point. You can edit every question before publishing.|Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan.
 Choose email field|Pilih kolom email
 Choose form|Pilih formulir
 Close preview|Tutup pratinjau
@@ -96,6 +97,7 @@ Conversation replay|Putar ulang percakapan
 Copy|Salin
 Corner radius (0–32)|Radius sudut (0–32)
 Create private export|Buat ekspor pribadi
+Creating draft…|Membuat draf…
 Criteria / count|Kriteria / jumlah
 Custom headers (private)|Header khusus (pribadi)
 Date|Tanggal
@@ -385,6 +387,7 @@ Spam protection|Perlindungan spam
 Spam|Spam
 Star state|Status bintang
 Starred|Berbintang
+Start from a template|Mulai dari templat
 Start over|Mulai ulang
 Starts per rate window|Jumlah mulai per jendela pembatasan
 Starts|Mulai
@@ -443,6 +446,7 @@ Unread|Belum dibaca
 Unsaved draft|Draf belum disimpan
 Unstar|Hapus bintang
 Untitled form|Formulir tanpa judul
+Use template|Gunakan templat
 Use the ChatFlow Form block or an Elementor Shortcode widget.|Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor.
 User / event|Pengguna / peristiwa
 User bubble colour|Warna gelembung pengguna
