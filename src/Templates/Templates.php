@@ -13,7 +13,7 @@ final class Templates {
 		return array(
 			array(
 				'id'          => 'imajiner-survey',
-				'title'       => 'Imajiner website survey',
+				'title'       => 'Survei Website Imajiner',
 				'description' => 'Qualify website project inquiries, with conditional questions.',
 				'locale'      => 'id_ID',
 			),
