@@ -256,6 +256,13 @@ final class MvpGateTest extends \WP_UnitTestCase {
 	public function testAggregateAnalyticsOnlyExposesAuthorizedCounts(): void {
 		global $wpdb;
 		$definition = Imajiner::definition();
+		$definition['schema']['steps'][] = array(
+			'id'       => 'step_satisfaction',
+			'key'      => 'satisfaction',
+			'type'     => 'rating',
+			'label'    => 'Satisfaction',
+			'messages' => array( 'Please rate this experience.' ),
+		);
 		$forms      = new FormRepository();
 		$form       = $forms->create( 'Analytics acceptance', $definition['schema'], $definition['settings'] );
 		$this->assertNotWPError( $form );
@@ -271,7 +278,10 @@ final class MvpGateTest extends \WP_UnitTestCase {
 				'current_step_id' => 'step_punya_website',
 				'utm_source'      => 'test-campaign',
 				'device_type'     => 'desktop',
-				'answers'         => array( 'punya_website' => 'Belum pernah' ),
+				'answers'         => array(
+					'punya_website' => 'Belum pernah',
+					'satisfaction'  => 4,
+				),
 			)
 		);
 		$repo->complete(
@@ -318,6 +328,9 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 'Belum pernah', $report['answers'][0]['options'][0]['label'] );
 		$this->assertSame( 1, $report['answers'][0]['options'][0]['count'] );
 		$this->assertArrayNotHasKey( 'value_text', $report['answers'][0]['options'][0] );
+		$this->assertSame( 'Satisfaction', $report['answers'][1]['label'] );
+		$this->assertSame( '4', $report['answers'][1]['options'][0]['label'] );
+		$this->assertSame( 1, $report['answers'][1]['options'][0]['count'] );
 		$path = 'admin/analytics';
 		wp_set_current_user( 0 );
 		$this->assertSame( 403, $this->request( 'GET', $path )->get_status() );

@@ -99,11 +99,11 @@ final class Report {
 			'devices'        => $series( $devices ),
 			'dropoffs'       => $steps,
 			'answers'        => $distributions,
-			'methodology'    => 'Views are anonymous form impressions recorded when inline forms initialize or launchers/popups open, not unique visitors. Draft previews and Do Not Track requests are excluded. Views are available only after tracking is deployed, not backfilled. View-to-start rate is omitted when historical starts exceed tracked views. Starts count sessions; completions and drop-offs count stored non-spam submissions. Choice distributions use the current published form version and omit free-text answers.',
+			'methodology'    => 'Views are anonymous form impressions recorded when inline forms initialize or launchers/popups open, not unique visitors. Draft previews and Do Not Track requests are excluded. Views are available only after tracking is deployed, not backfilled. View-to-start rate is omitted when historical starts exceed tracked views. Starts count sessions; completions and drop-offs count stored non-spam submissions. Configured choice and numeric score distributions use the current published form version and omit free-text answers.',
 		);
 	}
 
-	/** Aggregate only configured single-choice option values; never include free-text or Other responses.
+	/** Aggregate only configured choice values and bounded score options; never include free-text or Other responses.
 	 * @return list<array<string,mixed>>
 	 */
 	private function distributions( int $form_id, string $since, string $until ): array {
@@ -114,13 +114,21 @@ final class Report {
 		}
 		$results = array();
 		foreach ( $form->schema()['steps'] as $step ) {
-			if ( 'single_choice' !== $step['type'] || count( $results ) >= 10 ) {
+			if ( ! in_array( $step['type'], array( 'single_choice', 'rating', 'scale', 'nps' ), true ) || count( $results ) >= 10 ) {
 				continue;
 			}
 			$allowed = array();
-			foreach ( $step['options'] ?? array() as $option ) {
-				if ( empty( $option['isOther'] ) ) {
-					$allowed[ $option['value'] ] = $option['label'];
+			if ( 'single_choice' === $step['type'] ) {
+				foreach ( $step['options'] ?? array() as $option ) {
+					if ( empty( $option['isOther'] ) ) {
+						$allowed[ $option['value'] ] = $option['label'];
+					}
+				}
+			} else {
+				$minimum = 'nps' === $step['type'] ? 0 : 1;
+				$maximum = 'rating' === $step['type'] ? 5 : 10;
+				for ( $score = $minimum; $score <= $maximum; ++$score ) {
+					$allowed[ (string) $score ] = (string) $score;
 				}
 			}
 			if ( ! $allowed ) {
