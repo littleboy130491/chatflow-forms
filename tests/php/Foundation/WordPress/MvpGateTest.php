@@ -309,7 +309,8 @@ final class MvpGateTest extends \WP_UnitTestCase {
 			);
 		}
 		$report = ( new \ChatFlow\Analytics\Report( $forms ) )->run( $form->id(), $day, $day );
-		$this->assertSame( array( 'starts' => 2, 'completed' => 1, 'partial' => 1, 'abandoned' => 0 ), $report['counts'] );
+		$this->assertSame( array( 'views' => 0, 'starts' => 2, 'completed' => 1, 'partial' => 1, 'abandoned' => 0 ), $report['counts'] );
+		$this->assertNull( $report['viewStartRate'] );
 		$this->assertSame( 50.0, $report['completionRate'] );
 		$this->assertSame( 120000, $report['avgDurationMs'] );
 		$this->assertSame( 'test-campaign', $report['sources'][0]['label'] );
@@ -327,6 +328,89 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 2, $response->get_data()['counts']['starts'] );
 		$this->expectException( \InvalidArgumentException::class );
 		( new \ChatFlow\Analytics\Report() )->run( 0, '2026-02-30', '2026-03-02' );
+	}
+
+	public function testPublicImpressionsAreAggregatePrivateAndRateLimited(): void {
+		global $wpdb;
+		$forms      = new FormRepository();
+		$definition = Imajiner::definition();
+		$form       = $forms->create( 'Impression test', $definition['schema'], $definition['settings'] );
+		$this->assertNotWPError( $form );
+		$path = 'forms/' . $form->id() . '/view';
+		wp_set_current_user( 0 );
+		$this->assertSame( 404, $this->request( 'POST', $path, array( 'version' => 1 ) )->get_status() );
+		wp_set_current_user( 1 );
+		$form = $forms->publish( $form->id(), $form->draftRevision() );
+		$this->assertNotWPError( $form );
+		wp_set_current_user( 0 );
+		$this->assertSame( 422, $this->request( 'POST', $path, array( 'version' => '1' ) )->get_status() );
+		$this->assertSame( 409, $this->request( 'POST', $path, array( 'version' => 2 ) )->get_status() );
+		$this->assertSame( array( 'recorded' => false ), $this->request( 'POST', $path, array( 'version' => 1 ), array( 'DNT' => '1' ) )->get_data() );
+		$this->assertSame( array( 'recorded' => false ), $this->request( 'POST', $path, array( 'version' => 1 ), array( 'Sec-GPC' => '1' ) )->get_data() );
+		for ( $i = 0; $i < 2; ++$i ) {
+			$response = $this->request( 'POST', $path, array( 'version' => 1 ) );
+			$this->assertSame( 200, $response->get_status() );
+			$this->assertSame( array( 'recorded' => true ), $response->get_data() );
+			$this->assertStringContainsString( 'no-store', $response->get_headers()['Cache-Control'] );
+		}
+		$day    = gmdate( 'Y-m-d' );
+		$report = ( new \ChatFlow\Analytics\Report( $forms ) )->run( $form->id(), $day, $day );
+		$this->assertSame( 2, $report['counts']['views'] );
+		$this->assertSame( 0.0, $report['viewStartRate'] );
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT metric,dimension,value FROM {$wpdb->prefix}cff_stats_daily WHERE form_id=%d", $form->id() ), ARRAY_A );
+		$this->assertCount( 1, $rows );
+		$this->assertSame( 'view', $rows[0]['metric'] );
+		$this->assertSame( '{}', $rows[0]['dimension'] );
+		$this->assertSame( 2.0, (float) $rows[0]['value'] );
+		$ip = ( new \ChatFlow\Tracking\IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] );
+		$limiter = new \ChatFlow\Spam\RateLimiter();
+		for ( $i = 0; $i < 118; ++$i ) {
+			$this->assertTrue( $limiter->consume( 'form-view:' . $form->id() . ':' . $ip, 120, 600 ) );
+		}
+		$this->assertSame( 429, $this->request( 'POST', $path, array( 'version' => 1 ) )->get_status() );
+		$this->assertSame( 2, ( new \ChatFlow\Analytics\Report( $forms ) )->run( $form->id(), $day, $day )['counts']['views'] );
+	}
+	public function testTemplateGalleryCreatesOnlyUnpublishedValidatedForms(): void {
+		$service = new \ChatFlow\Templates\Templates();
+		$catalog = \ChatFlow\Templates\Templates::catalog();
+		$this->assertSame( array( 'imajiner-survey', 'contact-request', 'customer-feedback' ), array_column( $catalog, 'id' ) );
+		$admin = get_current_user_id();
+		wp_set_current_user( 0 );
+		$this->assertSame( 403, $this->request( 'GET', 'admin/templates' )->get_status() );
+		$this->assertSame( 403, $this->request( 'POST', 'admin/templates/contact-request' )->get_status() );
+		wp_set_current_user( $admin );
+		$nonce = array( 'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ) );
+		$list = $this->request( 'GET', 'admin/templates', array(), $nonce );
+		$this->assertSame( 200, $list->get_status() );
+		$this->assertCount( 3, $list->get_data()['items'] );
+		foreach ( $catalog as $item ) {
+			$path = 'admin/templates/' . $item['id'];
+			$definition = $this->request( 'GET', $path, array(), $nonce );
+			$this->assertSame( 200, $definition->get_status() );
+			$this->assertSame( $item['title'], $definition->get_data()['title'] );
+			$this->assertSame( array(), $definition->get_data()['settings']['notifications']['admin'] ?? array() );
+			$response = $this->request( 'POST', $path, array(), $nonce );
+			$this->assertSame( 201, $response->get_status(), Database::json( $response->get_data() ) );
+			$data = $response->get_data();
+			$this->assertSame( 'draft', $data['status'] );
+			$this->assertSame( 0, $data['version'] );
+			$this->assertNotEmpty( $data['id'] );
+			$this->assertNull( ( new FormRepository() )->getPublished( (int) $data['id'] ) );
+			$draft = ( new FormRepository() )->getDraft( (int) $data['id'] );
+			$this->assertNotNull( $draft );
+			$published = ( new FormRepository() )->publish( $draft->id(), $draft->draftRevision() );
+			$this->assertNotWPError( $published );
+			$this->assertSame( 1, $published->version() );
+			if ( 'contact-request' === $item['id'] ) {
+				$this->assertContains( 'consent', array_column( $published->schema()['steps'], 'type' ) );
+			}
+			if ( 'customer-feedback' === $item['id'] ) {
+				$this->assertNotContains( 'email', array_column( $published->schema()['steps'], 'type' ) );
+			}
+		}
+		$this->assertSame( 404, $this->request( 'GET', 'admin/templates/unknown', array(), $nonce )->get_status() );
+		$this->assertSame( 404, $this->request( 'POST', 'admin/templates/unknown', array(), $nonce )->get_status() );
+		$this->assertWPError( $service->create( 'unknown' ) );
 	}
 
 	public function testTestNotificationPayloadsAreCleanedWithoutDeletingRealDeliveries(): void {

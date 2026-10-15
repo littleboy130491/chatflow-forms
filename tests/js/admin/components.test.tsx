@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminApi } from '../../../assets/src/builder/api';
 import type { AdminConfig, FormDTO } from '../../../assets/src/builder/api';
 import { blankForm, v1Types } from '../../../assets/src/builder/model';
+import { FormsList } from '../../../assets/src/builder/index';
 import { JsonEditor } from '../../../assets/src/builder/controls';
 import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
 import { Purge } from '../../../assets/src/submissions/Purge';
@@ -123,6 +124,43 @@ async function click(label: string) {
   await act(async () => button(label).click());
 }
 describe('admin component regression tests (WordPress controls mocked, real owned components)', () => {
+  it('loads starter templates and creates the selected template as an unpublished draft', async () => {
+    const api = new AdminApi(config);
+    const open = vi.fn();
+    const draft = { ...blankForm(), id: 89, status: 'draft' as const };
+    const request = vi.fn(async (path: string, method = 'GET') => {
+      if (path.startsWith('admin/forms?')) return { items: [], total: 0, page: 1, perPage: 20 };
+      if (path === 'admin/templates') return {
+        items: [{ id: 'contact-request', title: 'Contact request', description: 'Collect inquiries.', locale: 'en_US' }],
+      };
+      if (path === 'admin/templates/contact-request' && method === 'POST') return draft;
+      throw new Error('Unexpected admin endpoint: ' + path);
+    });
+    api.request = request as unknown as AdminApi['request'];
+    await act(async () => root.render(createElement(FormsList, { api, onOpen: open })));
+    await vi.waitFor(() => expect(container.textContent).toContain('Contact request'));
+    expect(container.textContent).toContain('Collect inquiries.');
+    await click('Use template');
+    expect(request).toHaveBeenCalledWith('admin/templates/contact-request', 'POST', {});
+    expect(open).toHaveBeenCalledWith(draft);
+  });
+  it('does not navigate if starter template creation fails', async () => {
+    const api = new AdminApi(config);
+    const open = vi.fn();
+    const request = vi.fn(async (path: string) => {
+      if (path.startsWith('admin/forms?')) return { items: [], total: 0, page: 1, perPage: 20 };
+      if (path === 'admin/templates') return {
+        items: [{ id: 'customer-feedback', title: 'Customer feedback', description: 'Gather feedback.', locale: 'en_US' }],
+      };
+      throw new Error('Template could not be created.');
+    });
+    api.request = request as unknown as AdminApi['request'];
+    await act(async () => root.render(createElement(FormsList, { api, onOpen: open })));
+    await vi.waitFor(() => expect(container.textContent).toContain('Customer feedback'));
+    await click('Use template');
+    expect(container.querySelector('[role=alert]')?.textContent).toContain('Template could not be created.');
+    expect(open).not.toHaveBeenCalled();
+  });
   it('leaves state unchanged for invalid JSON and applies valid JSON explicitly', async () => {
     const changed = vi.fn();
     await act(async () =>

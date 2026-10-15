@@ -241,6 +241,9 @@
       "Choose a form from the block settings.": [
         "Pilih formulir dari pengaturan blok."
       ],
+      "Choose a starting point. You can edit every question before publishing.": [
+        "Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan."
+      ],
       "Choose email field": [
         "Pilih kolom email"
       ],
@@ -297,6 +300,9 @@
       ],
       "Create private export": [
         "Buat ekspor pribadi"
+      ],
+      "Creating draft…": [
+        "Membuat draf…"
       ],
       "Criteria / count": [
         "Kriteria / jumlah"
@@ -760,9 +766,6 @@
       "Nested condition": [
         "Kondisi bertingkat"
       ],
-      "New Imajiner survey": [
-        "Survei Imajiner baru"
-      ],
       "New blank form": [
         "Formulir kosong baru"
       ],
@@ -1168,6 +1171,9 @@
       "Starred": [
         "Berbintang"
       ],
+      "Start from a template": [
+        "Mulai dari templat"
+      ],
       "Start over": [
         "Mulai ulang"
       ],
@@ -1339,6 +1345,9 @@
       "Untitled form": [
         "Formulir tanpa judul"
       ],
+      "Use template": [
+        "Gunakan templat"
+      ],
       "Use the ChatFlow Form block or an Elementor Shortcode widget.": [
         "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
       ],
@@ -1359,6 +1368,12 @@
       ],
       "Verified proxy header": [
         "Header proxy terverifikasi"
+      ],
+      "View → start": [
+        "Tampilan → mulai"
+      ],
+      "Views (impressions)": [
+        "Tampilan (impresi)"
       ],
       "Visit website": [
         "Kunjungi situs web"

@@ -12,6 +12,31 @@ receipt and hosting/cache compatibility matrix remain untested. See
 [phase coverage and actual checks](docs/mvp-checks.md). PLAN.md is unchanged.
 There is no licence system, telemetry, native CRM connector, payment or AI chat.
 
+## Phase 2 aggregate form views
+
+Analytics includes anonymous **view impressions** (not unique visitors) and a
+view-to-start percentage. The runtime sends one non-blocking view event when an
+inline form initializes, or when the visitor first opens a launcher/popup.
+Builder previews do not count. The endpoint stores only daily counters keyed
+by form and published version; no per-view IP, answers, session IDs or URLs
+are persisted. Do Not Track and Global Privacy Control requests are excluded
+when the global privacy setting respects DNT. A per-form/IP short-lived rate
+limit prevents unbounded counter manipulation.
+
+View counts start from deployment, with no historical backfill. If old starts
+outnumber tracked impressions, the dashboard intentionally omits the
+view-to-start rate rather than showing a misleading percentage.
+
+## Starter templates (Phase 2)
+
+**ChatFlow → Forms** now displays a template gallery. The Imajiner survey remains
+available alongside vendor-neutral **Contact request** and **Customer feedback**
+starter forms. Selecting a template creates a new *unpublished draft* with
+editable steps and settings, and does not enable external delivery, autoresponder,
+or webhook endpoints. Review messaging, consent copy, privacy policy requirements,
+and notification recipients before publishing. Templates are not submissions
+and do not include existing respondent data.
+
 ## Install and use
 
 1. Build the release ZIP below, or use a packaged release when available.

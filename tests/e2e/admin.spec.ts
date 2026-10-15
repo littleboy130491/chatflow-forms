@@ -25,7 +25,9 @@ test('WordPress administrator can create a draft from a template and publish it'
 
   await page.goto('/wp-admin/admin.php?page=cff-forms');
   await expect(page.getByRole('heading', { name: 'ChatFlow Forms' })).toBeVisible();
-  await page.getByRole('button', { name: 'New Imajiner survey' }).click();
+  const survey = page.locator('.cff-template-card').filter({ has: page.getByRole('heading', { name: 'Survei Website Imajiner' }) });
+  await expect(survey).toBeVisible();
+  await survey.getByRole('button', { name: 'Use template' }).click();
   await expect(page.getByRole('button', { name: 'Publish', exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Publish', exact: true }).click();

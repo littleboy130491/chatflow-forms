@@ -18,6 +18,17 @@ describe('session API', () => {
       vi.unstubAllGlobals();
     }
   });
+  it('reports an impression without sending visitor credentials or metadata', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(json({ recorded: true }));
+    const api = new ApiClient('https://localhost/wp-json/cff/v1/', fetcher);
+    await expect(api.view(42, 2)).resolves.toEqual({ recorded: true });
+    expect(fetcher.mock.calls[0]?.[0]).toBe('https://localhost/wp-json/cff/v1/forms/42/view');
+    expect(fetcher.mock.calls[0]?.[1]).toMatchObject({
+      method: 'POST', body: '{"version":2}', credentials: 'same-origin', cache: 'no-store',
+    });
+    expect(fetcher.mock.calls[0]?.[1]?.headers).not.toHaveProperty('X-CFF-Request-Token');
+    expect(fetcher.mock.calls[0]?.[1]?.headers).not.toHaveProperty('Idempotency-Key');
+  });
   it('supports WordPress plain-permalink REST endpoints without exposing credentials in route/query', async () => {
     const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => json(session)); const api = new ApiClient('https://localhost/?rest_route=/cff/v1/', fetcher);
     await api.form(42, 2); await api.submit(session, {}, 'submit-key');

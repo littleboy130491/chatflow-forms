@@ -29,6 +29,7 @@ final class RestModule implements Module {
 	public function routes(): void {
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
 		$this->route( '/forms/(?P<id>\d+)/start-token', 'POST', array( $this, 'startToken' ) );
+		$this->route( '/forms/(?P<id>\d+)/view', 'POST', array( $this, 'formView' ) );
 		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ), 201 ) );
 		$this->route( '/sessions/resume', 'POST', fn( $r ) => $this->respond( $this->sessions->resume( absint( $this->body( $r )['formId'] ?? 0 ), $r->get_header( 'X-CFF-Resume-Token' ) ?? '' ) ) );
 		$this->route( '/sessions/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( $this->sessions->get( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ?? '' ) ) );
@@ -76,24 +77,9 @@ final class RestModule implements Module {
 			'cff_manage_settings'
 		);
 		$this->route( '/admin/system-status', 'GET', array( $this, 'systemStatus' ), 'cff_manage_settings' );
-		$this->route(
-			'/admin/templates',
-			'GET',
-			fn() => $this->respond(
-				array(
-					'items' => array(
-						array(
-							'id'     => 'imajiner-survey',
-							'title'  => 'Imajiner website survey',
-							'locale' => 'id_ID',
-						),
-					),
-				)
-			),
-			'cff_manage_forms'
-		);
-		$this->route( '/admin/templates/imajiner-survey', 'GET', fn() => $this->respond( \ChatFlow\Templates\Imajiner::definition() ), 'cff_manage_forms' );
-		$this->route( '/admin/templates/imajiner-survey', 'POST', fn() => $this->respond( ( new \ChatFlow\Templates\Templates( $this->forms ) )->create(), 201 ), 'cff_manage_forms' );
+		$this->route( '/admin/templates', 'GET', fn() => $this->respond( array( 'items' => \ChatFlow\Templates\Templates::catalog() ) ), 'cff_manage_forms' );
+		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'GET', fn( $r ) => $this->respond( \ChatFlow\Templates\Templates::definition( (string) $r['slug'] ) ), 'cff_manage_forms' );
+		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'POST', fn( $r ) => $this->respond( ( new \ChatFlow\Templates\Templates( $this->forms ) )->create( (string) $r['slug'] ), 201 ), 'cff_manage_forms' );
 	}
 	private function route( string $path, string $method, callable $callback, ?string $cap = null ): void {
 		register_rest_route(
@@ -162,6 +148,16 @@ final class RestModule implements Module {
 		$response->header( 'ETag', $etag );
 		$response->header( 'Cache-Control', 'public,max-age=60,must-revalidate' );
 		return $response;
+	}
+	/** Record an aggregate form impression without issuing a visitor session. */
+	public function formView( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
+		$body    = $this->body( $r );
+		$version = $body['version'] ?? null;
+		if ( ! is_int( $version ) || $version < 1 ) {
+			return Database::error( 'cff_invalid_version', 'A published form version is required.', 422 );
+		}
+		$do_not_track = '1' === $r->get_header( 'DNT' ) || '1' === $r->get_header( 'Sec-GPC' );
+		return $this->respond( ( new \ChatFlow\Analytics\ViewCounter( $this->forms ) )->record( (int) $r['id'], $version, $do_not_track ) );
 	}
 	public function startToken( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id      = (int) $r['id'];
