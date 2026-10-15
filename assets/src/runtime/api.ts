@@ -13,7 +13,7 @@ export function uuid(): string {
 }
 export class ApiClient {
   private readonly base: URL;
-  constructor(restUrl: string, private readonly fetcher: typeof fetch = fetch, private readonly pause: (ms: number) => Promise<void> = ms => new Promise(resolve => setTimeout(resolve, ms))) {
+  constructor(restUrl: string, private readonly fetcher: typeof fetch = (input, init) => globalThis.fetch(input, init), private readonly pause: (ms: number) => Promise<void> = ms => new Promise(resolve => setTimeout(resolve, ms))) {
     this.base = new URL(restUrl, globalThis.location?.href ?? 'https://localhost/');
     if (!['https:', 'http:'].includes(this.base.protocol) || this.base.username || this.base.password || this.base.hash) throw new ApiError('cff_unsafe_endpoint', 0);
     if ([...this.base.searchParams.keys()].some(key => key !== 'rest_route')) throw new ApiError('cff_unsafe_endpoint', 0);

@@ -36,7 +36,7 @@ export class ApiError extends Error {
 export class AdminApi {
   constructor(
     public readonly config: AdminConfig,
-    private readonly transport: typeof fetch = fetch,
+    private readonly transport: typeof fetch = (input, init) => globalThis.fetch(input, init),
   ) {}
   async request<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     if (

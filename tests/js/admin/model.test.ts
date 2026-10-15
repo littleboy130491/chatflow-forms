@@ -51,6 +51,19 @@ function deferred<T>() {
   return { promise, resolve };
 }
 describe('admin API and immutable identities', () => {
+  it('uses browser-native fetch with the global receiver when no transport is injected', async () => {
+    const native = vi.fn(function (this: unknown) {
+      if (this !== globalThis) throw new TypeError('Illegal invocation');
+      return Promise.resolve(new Response(JSON.stringify(stored()), { status: 200 }));
+    });
+    vi.stubGlobal('fetch', native);
+    try {
+      await expect(new AdminApi(config).request('admin/forms')).resolves.toMatchObject({ id: 42 });
+      expect(native).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it('uses logged-in credentials, REST nonce and no-store for admin mutations', async () => {
     const { client, transport } = api(async () => stored());
     await client.request('admin/forms/42', 'PUT', { draftRevision: 3 });

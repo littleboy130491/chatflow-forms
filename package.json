@@ -19,7 +19,8 @@
     "env:stop": "node tools/wp-env.mjs stop",
     "test:wp": "node tools/wp-env.mjs run tests-cli --env-cwd=wp-content/plugins/chatflow-forms php vendor/bin/phpunit -c phpunit.wp.xml.dist",
     "test:wp:multisite": "node tools/wp-env.mjs run tests-cli --env-cwd=wp-content/plugins/chatflow-forms env WP_MULTISITE=1 php vendor/bin/phpunit -c phpunit.wp.xml.dist",
-    "package": "composer scope && php tools/package.php"
+    "package": "composer scope && php tools/package.php",
+    "test:e2e": "playwright test -c tests/e2e/playwright.config.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

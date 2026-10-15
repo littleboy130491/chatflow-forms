@@ -9,7 +9,7 @@ import { phrases } from '../../../assets/src/runtime/i18n';
 import { mountRuntime } from '../../../assets/src/runtime';
 import { ApiClient } from '../../../assets/src/runtime/api';
 import { RuntimeController } from '../../../assets/src/runtime/controller';
-import { typingDelay } from '../../../assets/src/runtime/chat';
+import { revealedMessageCount, typingDelay } from '../../../assets/src/runtime/chat';
 import { safeColor, safeFont, scopedAppearanceCss } from '../../../assets/src/runtime/appearance';
 import { form } from './helpers';
 import type { Step } from '../../../assets/src/runtime/types';
@@ -96,6 +96,12 @@ describe('safe content, translations and motion', () => {
   });
 });
 describe('Shadow DOM mount and global API', () => {
+  it('does not expose the next question with the previous step typing reveal', () => {
+    const previous = { stepId: 'step_intro', count: 3 };
+    expect(revealedMessageCount(previous, 'step_name')).toBe(0);
+    expect(revealedMessageCount(previous, 'step_intro')).toBe(3);
+    expect(revealedMessageCount({ stepId: 'step_name', count: 0 }, 'step_name')).toBe(0);
+  });
   it('tracks a real launcher impression on first open, never on closed mounts or repeat opens', async () => {
     const view = vi.spyOn(ApiClient.prototype, 'view').mockResolvedValue({ recorded: true });
     vi.spyOn(RuntimeController.prototype, 'initialize').mockImplementation(async function (this: RuntimeController) {

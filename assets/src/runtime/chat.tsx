@@ -12,9 +12,14 @@ export function typingDelay(length: number, speed: 'off' | 'fast' | 'normal' | '
   return Math.min(1200, Math.max(400, length * (speed === 'fast' ? 10 : speed === 'slow' ? 30 : 20)));
 }
 
+/** A new step must not inherit the previous step's completed typing animation. */
+export function revealedMessageCount(reveal: { stepId: string | null; count: number }, activeId: string | null): number {
+  return reveal.stepId === activeId ? reveal.count : 0;
+}
+
 export function Chat({ controller, onClose }: { controller: RuntimeController; onClose?: () => void }) {
   const [, rerender] = useState(0);
-  const [shown, setShown] = useState(0);
+  const [reveal, setReveal] = useState<{ stepId: string | null; count: number }>({ stepId: null, count: 0 });
   const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [reduced, setReduced] = useState(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
@@ -26,6 +31,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
   const phrase = phrases(locale, form?.phrases);
   const step = controller.activeStep;
   const messages = step?.messages ?? [];
+  const shown = revealedMessageCount(reveal, state.activeId);
   const enabled = shown >= messages.length;
   const interpolateText = (text: string) => interpolate(text, state.answers, controller.meta);
 
@@ -35,10 +41,11 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
     const change = () => setReduced(query?.matches ?? false);
     query?.addEventListener('change', change); return () => query?.removeEventListener('change', change);
   }, []);
-  useEffect(() => { setShown(0); }, [state.activeId]);
+  useEffect(() => { setReveal({ stepId: state.activeId, count: 0 }); }, [state.activeId]);
   useEffect(() => {
     if (state.phase !== 'ready' || shown >= messages.length) return;
-    const timer = setTimeout(() => setShown(n => n + 1), typingDelay(messages[shown]?.length ?? 0, form?.schema.bot.typingSpeed, reduced));
+    const stepId = state.activeId;
+    const timer = setTimeout(() => setReveal(current => current.stepId === stepId ? { ...current, count: current.count + 1 } : current), typingDelay(messages[shown]?.length ?? 0, form?.schema.bot.typingSpeed, reduced));
     return () => clearTimeout(timer);
   }, [state.activeId, state.phase, shown, messages.length, reduced, form?.schema.bot.typingSpeed]);
   useEffect(() => {
