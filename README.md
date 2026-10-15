@@ -27,6 +27,17 @@ View counts start from deployment, with no historical backfill. If old starts
 outnumber tracked impressions, the dashboard intentionally omits the
 view-to-start rate rather than showing a misleading percentage.
 
+## Phase 2 numeric feedback fields
+
+The builder and visitor runtime support four numeric inputs: **Rating** (1–5
+stars), **Scale** (1–10), **NPS** (0–10), and a **Slider** (default 0–100,
+configurable minimum, maximum and increment). Values are saved as numbers and
+validated by both the PHP server and TypeScript replay engine, including
+server-side bounds/step checks. Slider answers are not stored until the
+visitor confirms the chosen position. Existing v1 forms retain their schema
+and behavior; no database migration is required. File uploads, address inputs,
+provider CAPTCHA and other Phase 2 features are still separate work.
+
 ## Starter templates (Phase 2)
 
 **ChatFlow → Forms** now displays a template gallery. The Imajiner survey remains

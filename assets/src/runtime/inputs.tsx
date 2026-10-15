@@ -83,6 +83,40 @@ function TextInput({ step, value, disabled, onAnswer, phrase, error }: FieldProp
   </form>;
 }
 
+/** Score choices submit a numeric answer, not a string or a display-only label. */
+export function ScoreInput({ step, value, disabled, onAnswer }: FieldProps) {
+  const min = step.type === 'nps' ? 0 : 1;
+  const max = step.type === 'rating' ? 5 : 10;
+  const selected = typeof value === 'number' ? value : null;
+  const values = Array.from({ length: max - min + 1 }, (_, index) => index + min);
+  return <div role="group" aria-label={step.label} className="score-input">
+    {values.map(option => <button
+      type="button"
+      className="chip score-chip"
+      key={option}
+      disabled={disabled}
+      aria-label={`${option} / ${max}`}
+      aria-pressed={selected === option}
+      onClick={() => onAnswer(option)}
+    >{step.type === 'rating' ? <><span aria-hidden="true">★</span> {option}</> : option}</button>)}
+  </div>;
+}
+
+/** No answer is stored until the visitor explicitly confirms the slider position. */
+export function SliderInput({ step, value, disabled, onAnswer, phrase }: FieldProps) {
+  const min = typeof step.validation?.min === 'number' ? step.validation.min : 0;
+  const max = typeof step.validation?.max === 'number' ? step.validation.max : 100;
+  const increment = step.validation?.step ?? 1;
+  const [draft, setDraft] = useState(typeof value === 'number' ? value : min);
+  return <form onSubmit={event => { event.preventDefault(); onAnswer(draft); }}>
+    <label for={`input-${step.id}`}>{step.label}</label>
+    <div className="slider-reading"><span>{min}</span><output for={`input-${step.id}`}>{draft}{step.settings?.unit ? ` ${step.settings.unit}` : ''}</output><span>{max}</span></div>
+    <input id={`input-${step.id}`} type="range" min={min} max={max} step={increment} value={draft} disabled={disabled}
+      onInput={event => setDraft(Number(event.currentTarget.value))} />
+    <button type="submit" disabled={disabled}>{step.settings?.buttonLabel ?? phrase('continue')}</button>
+  </form>;
+}
+
 function ConsentInput({ step, value, disabled, onAnswer, phrase }: FieldProps) {
   const [checked, setChecked] = useState(value === true);
   const privacy = step.settings?.privacyUrl ? safeLink(step.settings.privacyUrl) : null;
@@ -97,6 +131,8 @@ export function FieldInput(props: FieldProps & { media?: PublicForm['form']['med
   const Registered = fieldRenderer(type);
   if (Registered) return <Registered {...props} />;
   if (['single_choice', 'multi_choice', 'yes_no'].includes(type)) return <ChipInput {...props} />;
+  if (['rating', 'scale', 'nps'].includes(type)) return <ScoreInput {...props} />;
+  if (type === 'slider') return <SliderInput {...props} />;
   if (type === 'consent') return <ConsentInput {...props} />;
   if (['short_text', 'long_text', 'email', 'phone', 'number', 'date'].includes(type)) return <TextInput {...props} />;
   return <p role="alert">{props.phrase('unsupported')}</p>;

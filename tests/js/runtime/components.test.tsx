@@ -69,6 +69,34 @@ describe('Phase 1 inputs and accessible keyboard interaction', () => {
     const onAnswer = await mountInput(field('multi_choice', { options }));
     await act(() => host.querySelectorAll<HTMLButtonElement>('.chip')[0]!.click()); await act(() => host.querySelectorAll<HTMLButtonElement>('.chip')[3]!.click()); host.querySelector<HTMLButtonElement>('.continue')!.click(); expect(onAnswer).toHaveBeenCalledWith(['none']);
   });
+  it.each([
+    ['rating', 1, 5, 3],
+    ['scale', 1, 10, 7],
+    ['nps', 0, 10, 0],
+  ] as const)('renders accessible %s buttons that submit numeric scores', async (type, min, max, chosen) => {
+    const onAnswer = await mountInput(field(type));
+    const group = host.querySelector('[role=group]')!;
+    expect(group.getAttribute('aria-label')).toBe('Accessible label');
+    const buttons = group.querySelectorAll<HTMLButtonElement>('button');
+    expect(buttons).toHaveLength(max - min + 1);
+    await act(() => buttons[chosen - min]!.click());
+    expect(onAnswer).toHaveBeenCalledWith(chosen);
+    expect(typeof onAnswer.mock.calls[0]?.[0]).toBe('number');
+    await act(() => render(null, host));
+    const blocked = await mountInput(field(type), undefined, true);
+    host.querySelector('button')!.click();
+    expect(blocked).not.toHaveBeenCalled();
+  });
+  it('lets visitors confirm a configured slider position with its unit', async () => {
+    const onAnswer = await mountInput(field('slider', { validation: { min: 10, max: 20, step: 2 }, settings: { unit: 'points' } }));
+    const slider = host.querySelector<HTMLInputElement>('input[type="range"]')!;
+    expect(slider.min).toBe('10'); expect(slider.max).toBe('20'); expect(slider.step).toBe('2');
+    expect(host.querySelector('output')?.textContent).toBe('10 points');
+    expect(onAnswer).not.toHaveBeenCalled();
+    await act(() => input('input[type="range"]', '16'));
+    await act(submit);
+    expect(onAnswer).toHaveBeenCalledWith(16);
+  });
   it('does not accept a disabled choice or silently render reserved upload types', async () => {
     const onAnswer = await mountInput(choice, undefined, true); host.querySelector('button')!.click(); expect(onAnswer).not.toHaveBeenCalled();
     await act(() => render(null, host)); await mountInput(field('file_upload')); expect(host.querySelector('[role=alert]')?.textContent).toContain('not available'); expect(host.querySelector('input')).toBeNull();
