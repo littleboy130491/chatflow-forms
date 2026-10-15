@@ -44,7 +44,7 @@ final class SchemaValidator {
 				$min       = $v['min'] ?? 0;
 				$max       = $v['max'] ?? 100;
 				$step_size = $v['step'] ?? 1;
-				if ( ! is_numeric( $min ) || ! is_numeric( $max ) || ! is_numeric( $step_size ) || ! is_finite( (float) $min ) || ! is_finite( (float) $max ) || abs( (float) $min ) > 10000 || abs( (float) $max ) > 10000 || $min >= $max || $step_size <= 0 || $step_size > $max - $min ) {
+				if ( ! ( is_int( $min ) || is_float( $min ) ) || ! ( is_int( $max ) || is_float( $max ) ) || ! ( is_int( $step_size ) || is_float( $step_size ) ) || ! is_finite( (float) $min ) || ! is_finite( (float) $max ) || abs( (float) $min ) > 10000 || abs( (float) $max ) > 10000 || $min >= $max || $step_size <= 0 || $step_size > $max - $min ) {
 					$errors[] = $this->error( $path . '/validation', 'invalid_range', 'Slider bounds and increment must form a valid finite range.' );
 				}
 			}
