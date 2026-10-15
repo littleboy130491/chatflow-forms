@@ -9,6 +9,12 @@ if ( ! defined( 'WP_CLI' ) || ! WP_CLI || '1' !== getenv( 'CFF_E2E' ) || ! in_ar
 if ( ! class_exists( \ChatFlow\Forms\FormRepository::class ) ) {
 	throw new \RuntimeException( 'Activate ChatFlow Forms before seeding the browser fixtures.' );
 }
+// The disposable wp-env fixture, never production: normalize admin credentials for repeatable login acceptance.
+$e2e_admin = get_user_by( 'login', 'admin' );
+if ( ! $e2e_admin ) {
+	throw new \RuntimeException( 'The disposable environment is missing its admin user.' );
+}
+wp_set_password( 'password', $e2e_admin->ID );
 
 $make_page = static function ( string $slug, string $body = '' ): int {
 	$existing = get_page_by_path( $slug, OBJECT, 'page' );
