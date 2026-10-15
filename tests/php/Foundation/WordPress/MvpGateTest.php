@@ -370,6 +370,49 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$this->assertSame( 429, $this->request( 'POST', $path, array( 'version' => 1 ) )->get_status() );
 		$this->assertSame( 2, ( new \ChatFlow\Analytics\Report( $forms ) )->run( $form->id(), $day, $day )['counts']['views'] );
 	}
+	public function testTemplateGalleryCreatesOnlyUnpublishedValidatedForms(): void {
+		$service = new \ChatFlow\Templates\Templates();
+		$catalog = \ChatFlow\Templates\Templates::catalog();
+		$this->assertSame( array( 'imajiner-survey', 'contact-request', 'customer-feedback' ), array_column( $catalog, 'id' ) );
+		$admin = get_current_user_id();
+		wp_set_current_user( 0 );
+		$this->assertSame( 403, $this->request( 'GET', 'admin/templates' )->get_status() );
+		$this->assertSame( 403, $this->request( 'POST', 'admin/templates/contact-request' )->get_status() );
+		wp_set_current_user( $admin );
+		$nonce = array( 'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ) );
+		$list = $this->request( 'GET', 'admin/templates', array(), $nonce );
+		$this->assertSame( 200, $list->get_status() );
+		$this->assertCount( 3, $list->get_data()['items'] );
+		foreach ( $catalog as $item ) {
+			$path = 'admin/templates/' . $item['id'];
+			$definition = $this->request( 'GET', $path, array(), $nonce );
+			$this->assertSame( 200, $definition->get_status() );
+			$this->assertSame( $item['title'], $definition->get_data()['title'] );
+			$this->assertSame( array(), $definition->get_data()['settings']['notifications']['admin'] ?? array() );
+			$response = $this->request( 'POST', $path, array(), $nonce );
+			$this->assertSame( 201, $response->get_status(), Database::json( $response->get_data() ) );
+			$data = $response->get_data();
+			$this->assertSame( 'draft', $data['status'] );
+			$this->assertSame( 0, $data['version'] );
+			$this->assertNotEmpty( $data['id'] );
+			$this->assertNull( ( new FormRepository() )->getPublished( (int) $data['id'] ) );
+			$draft = ( new FormRepository() )->getDraft( (int) $data['id'] );
+			$this->assertNotNull( $draft );
+			$published = ( new FormRepository() )->publish( $draft->id(), $draft->draftRevision() );
+			$this->assertNotWPError( $published );
+			$this->assertSame( 1, $published->version() );
+			if ( 'contact-request' === $item['id'] ) {
+				$this->assertContains( 'consent', array_column( $published->schema()['steps'], 'type' ) );
+			}
+			if ( 'customer-feedback' === $item['id'] ) {
+				$this->assertNotContains( 'email', array_column( $published->schema()['steps'], 'type' ) );
+			}
+		}
+		$this->assertSame( 404, $this->request( 'GET', 'admin/templates/unknown', array(), $nonce )->get_status() );
+		$this->assertSame( 404, $this->request( 'POST', 'admin/templates/unknown', array(), $nonce )->get_status() );
+		$this->assertWPError( $service->create( 'unknown' ) );
+	}
+
 	public function testTestNotificationPayloadsAreCleanedWithoutDeletingRealDeliveries(): void {
 		global $wpdb;
 		$outbox = new Outbox();
