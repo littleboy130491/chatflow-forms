@@ -188,6 +188,98 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 			),
 			$response->get_data()['items']
 		);
-		$this->assertSame( 422, $this->post( 'admin/ai/rephrase', array( 'tone' => 'sarcastic', 'items' => array( array( 'id' => 'a', 'text' => 'b' ) ) ) )->get_status() );
+		$this->assertSame(
+			422,
+			$this->post(
+				'admin/ai/rephrase',
+				array(
+					'tone'  => 'sarcastic',
+					'items' => array(
+						array(
+							'id'   => 'a',
+							'text' => 'b',
+						),
+					),
+				)
+			)->get_status()
+		);
+	}
+
+	/** @param array<string,mixed> $data */
+	private function chat( array $data ): void {
+		$this->reply = array(
+			'choices' => array(
+				array(
+					'finish_reason' => 'stop',
+					'message'       => array( 'content' => Database::json( $data ) ),
+				),
+			),
+		);
+	}
+
+	public function testOpenRouterAndCompatibleEndpointsUseChatCompletionsWithMaskedKeys(): void {
+		$items = array(
+			'tone'  => 'friendly',
+			'items' => array(
+				array(
+					'id'   => 'a',
+					'text' => 'Hello',
+				),
+			),
+		);
+		$this->chat(
+			array(
+				'items' => array(
+					array(
+						'id'   => 'a',
+						'text' => 'Hi there',
+					),
+				),
+			)
+		);
+		$openrouter = 'sk-or-v1-' . str_repeat( 'a', 64 );
+		$this->assertIsArray(
+			Settings::save(
+				array(
+					'ai' => array(
+						'provider'      => 'openrouter',
+						'openrouterKey' => $openrouter,
+					),
+				)
+			)
+		);
+		$this->assertSame( Settings::MASK, Settings::masked( Settings::get() )['ai']['openrouterKey'] );
+		$response = $this->post( 'admin/ai/rephrase', $items );
+		$this->assertSame( 200, $response->get_status(), Database::json( $response->get_data() ) );
+		$this->assertSame( 'Hi there', $response->get_data()['items'][0]['text'] );
+		[ $url, $args ] = $this->calls[0];
+		$this->assertSame( 'https://openrouter.ai/api/v1/chat/completions', $url );
+		$this->assertSame( 'Bearer ' . $openrouter, $args['headers']['Authorization'] );
+		$this->assertSame( 0, $args['redirection'] );
+		$sent = json_decode( $args['body'], true );
+		$this->assertSame( 'openrouter/auto', $sent['model'] );
+		$this->assertSame( 'json_schema', $sent['response_format']['type'] );
+
+		$this->assertInstanceOf( \WP_Error::class, Settings::save( array( 'ai' => array( 'baseUrl' => 'http://127.0.0.1:11434/v1' ) ) ), 'Plain http is refused.' );
+		$this->assertInstanceOf( \WP_Error::class, Settings::save( array( 'ai' => array( 'baseUrl' => 'https://user:pass@api.example.test/v1' ) ) ) );
+		$this->assertInstanceOf( \WP_Error::class, Settings::save( array( 'ai' => array( 'provider' => 'other' ) ) ) );
+		$this->assertIsArray(
+			Settings::save(
+				array(
+					'ai' => array(
+						'provider'    => 'openai',
+						'baseUrl'     => 'https://api.example.test/v1',
+						'compatKey'   => 'sk-compatible-' . str_repeat( 'b', 20 ),
+						'compatModel' => 'gpt-4o-mini',
+					),
+				)
+			)
+		);
+		$this->calls  = array();
+		$this->status = 400;
+		$this->post( 'admin/ai/rephrase', $items );
+		$this->assertCount( 2, $this->calls, 'A 400 on JSON Schema retries once in plain JSON mode.' );
+		$this->assertSame( 'https://api.example.test/v1/chat/completions', $this->calls[0][0] );
+		$this->assertSame( 'json_object', json_decode( $this->calls[1][1]['body'], true )['response_format']['type'] );
 	}
 }

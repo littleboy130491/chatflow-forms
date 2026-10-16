@@ -3,6 +3,7 @@ namespace ChatFlow\Tests\Foundation\Unit;
 
 use ChatFlow\Ai\Blueprint;
 use ChatFlow\Ai\Claude;
+use ChatFlow\Ai\OpenAiCompatible;
 use PHPUnit\Framework\TestCase;
 
 final class AiAssistTest extends TestCase {
@@ -79,7 +80,15 @@ final class AiAssistTest extends TestCase {
 	}
 
 	public function testBlueprintRejectsEmptyFormsAndCapsSteps(): void {
-		self::assertSame( 'cff_ai_empty_form', Blueprint::toForm( array( 'title' => 'X', 'steps' => array() ) ) );
+		self::assertSame(
+			'cff_ai_empty_form',
+			Blueprint::toForm(
+				array(
+					'title' => 'X',
+					'steps' => array(),
+				)
+			)
+		);
 		self::assertSame( 'cff_ai_empty_form', Blueprint::toForm( array( 'title' => '' ) ) );
 		$step = array(
 			'type'     => 'short_text',
@@ -148,12 +157,34 @@ final class AiAssistTest extends TestCase {
 		self::assertSame( 'medium', $body['output_config']['effort'] );
 		self::assertArrayNotHasKey( 'thinking', $body );
 		self::assertArrayNotHasKey( 'tool_choice', $body );
-		self::assertSame( array( 'role' => 'user', 'content' => 'user' ), $body['messages'][0] );
+		self::assertSame(
+			array(
+				'role'    => 'user',
+				'content' => 'user',
+			),
+			$body['messages'][0]
+		);
 	}
 
 	public function testResponseParsingHandlesRefusalTruncationAndTextBlocks(): void {
-		self::assertSame( 'cff_ai_refused', Claude::parse( array( 'stop_reason' => 'refusal', 'content' => array() ) ) );
-		self::assertSame( 'cff_ai_incomplete', Claude::parse( array( 'stop_reason' => 'max_tokens', 'content' => array() ) ) );
+		self::assertSame(
+			'cff_ai_refused',
+			Claude::parse(
+				array(
+					'stop_reason' => 'refusal',
+					'content'     => array(),
+				)
+			)
+		);
+		self::assertSame(
+			'cff_ai_incomplete',
+			Claude::parse(
+				array(
+					'stop_reason' => 'max_tokens',
+					'content'     => array(),
+				)
+			)
+		);
 		self::assertSame(
 			array( 'ok' => true ),
 			Claude::parse(
@@ -176,12 +207,58 @@ final class AiAssistTest extends TestCase {
 				)
 			)
 		);
-		self::assertSame( 'cff_ai_invalid_output', Claude::parse( array( 'stop_reason' => 'end_turn', 'content' => array( array( 'type' => 'text', 'text' => 'nope' ) ) ) ) );
+		self::assertSame(
+			'cff_ai_invalid_output',
+			Claude::parse(
+				array(
+					'stop_reason' => 'end_turn',
+					'content'     => array(
+						array(
+							'type' => 'text',
+							'text' => 'nope',
+						),
+					),
+				)
+			)
+		);
 		self::assertNull( Claude::statusCode( 200 ) );
 		self::assertSame( 'cff_ai_auth', Claude::statusCode( 401 ) );
 		self::assertSame( 'cff_ai_rate_limited', Claude::statusCode( 429 ) );
 		self::assertSame( 'cff_ai_unavailable', Claude::statusCode( 529 ) );
 		self::assertTrue( Claude::validKey( 'sk-ant-api03-' . str_repeat( 'a', 40 ) ) );
 		self::assertFalse( Claude::validKey( 'not-a-key' ) );
+	}
+	public function testOpenAiCompatibleBodyRequestsStrictJsonSchema(): void {
+		$schema = Blueprint::schema();
+		$body   = OpenAiCompatible::body( 'gpt-4o-mini', 'System', 'User', $schema, true, true );
+		self::assertSame( 'gpt-4o-mini', $body['model'] );
+		self::assertSame( array( 'system', 'user' ), array_column( $body['messages'], 'role' ) );
+		self::assertSame( 'json_schema', $body['response_format']['type'] );
+		self::assertTrue( $body['response_format']['json_schema']['strict'] );
+		self::assertSame( $schema, $body['response_format']['json_schema']['schema'] );
+		self::assertSame( array( 'require_parameters' => true ), $body['provider'] );
+		self::assertArrayNotHasKey( 'provider', OpenAiCompatible::body( 'm', 'S', 'U', $schema ) );
+		self::assertSame( 'https://api.example.test/v1/chat/completions', OpenAiCompatible::endpoint( 'https://api.example.test/v1/' ) );
+	}
+
+	public function testOpenAiCompatibleParsingHandlesRefusalTruncationFencesAndLists(): void {
+		$reply = static fn( mixed $content, string $finish = 'stop', mixed $refusal = null ): array => array(
+			'choices' => array(
+				array(
+					'finish_reason' => $finish,
+					'message'       => array(
+						'content' => $content,
+						'refusal' => $refusal,
+					),
+				),
+			),
+		);
+		self::assertSame( array( 'title' => 'A' ), OpenAiCompatible::parse( $reply( '{"title":"A"}' ) ) );
+		self::assertSame( array( 'title' => 'B' ), OpenAiCompatible::parse( $reply( "```json\n{\"title\":\"B\"}\n```" ) ) );
+		self::assertSame( 'cff_ai_refused', OpenAiCompatible::parse( $reply( null, 'stop', 'No.' ) ) );
+		self::assertSame( 'cff_ai_refused', OpenAiCompatible::parse( $reply( '', 'content_filter' ) ) );
+		self::assertSame( 'cff_ai_incomplete', OpenAiCompatible::parse( $reply( '{"tit', 'length' ) ) );
+		self::assertSame( 'cff_ai_invalid_output', OpenAiCompatible::parse( $reply( '[1,2]' ) ) );
+		self::assertSame( 'cff_ai_invalid_output', OpenAiCompatible::parse( array() ) );
 	}
 }

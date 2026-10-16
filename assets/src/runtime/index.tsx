@@ -33,6 +33,8 @@ function previewState(controller: RuntimeController) {
   return { phase: controller.state.phase, visited: [...(controller.state.path?.visited ?? [])], currentStepId: controller.state.activeId, variables: { ...controller.state.path?.variables }, progress: controller.state.path?.progress ?? 0, errors: [...(controller.state.path?.errors ?? [])] };
 }
 
+function isLauncherMode(config: RuntimeOptions): boolean { return config.mode === 'launcher' || config.mode === 'popup'; }
+
 export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): RuntimeHandle {
   mounted.get(host)?.handle.unmount();
   const id = options.form?.form.id ?? options.formId ?? Number(host.dataset.formId);
@@ -53,10 +55,12 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const controller = new RuntimeController(config, api, undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
   let selectedFont: GoogleFont | undefined;
   let releaseFont: () => void = () => {};
-  const appearance = () => {
-    const value = controller.state.form?.form.appearance;
+  const appearance = (beforeOpen = false) => {
+    // Before a lazy launcher first opens, style its button from the embedded form when there is one.
+    const value = (controller.state.form ?? config.form)?.form.appearance;
     if (!value) return;
-    const font = value.inheritFont ? undefined : googleFont(value.googleFont);
+    // Fonts wait until the chat initialises, so a closed launcher never contacts Google Fonts.
+    const font = value.inheritFont || beforeOpen ? undefined : googleFont(value.googleFont);
     if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
     // Messaging style has its own defaults; explicit theme colours always win.
     const base = value.style === 'messaging' ? messagingDefaults : classicDefaults;
@@ -68,8 +72,10 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     if (value.style === 'messaging') root.dataset.style = 'messaging'; else delete root.dataset.style;
     customization.textContent = scopedAppearanceCss(value.customCss);
   };
-  const unsubscribe = controller.subscribe(appearance);
-  const colorScheme = globalThis.matchMedia?.('(prefers-color-scheme: dark)'); colorScheme?.addEventListener('change', appearance);
+  const restyle = () => appearance();
+  const unsubscribe = controller.subscribe(restyle);
+  if (isLauncherMode(config)) appearance(true);
+  const colorScheme = globalThis.matchMedia?.('(prefers-color-scheme: dark)'); colorScheme?.addEventListener('change', restyle);
   const connection = () => controller.setOffline(navigator.onLine === false);
   const externalChange = (event: StorageEvent) => { if (event.key?.startsWith(`cff:session:${id}:`)) controller.markConflict(); };
   if (!options.preview) { window.addEventListener('online', connection); window.addEventListener('offline', connection); window.addEventListener('storage', externalChange); }
@@ -111,7 +117,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       if (backdrop) backdrop.hidden = !value;
     }
     if (value) autoOpened = true;
-    toggle.textContent = label(value ? 'closeChat' : 'openChat');
+    // Open, the panel's own close button takes over; the launcher button only opens.
+    toggle.hidden = value;
     toggle.setAttribute('aria-expanded', String(value));
     if (value) {
       initialize();
@@ -127,7 +134,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'launcher-toggle';
-    toggle.textContent = label('openChat');
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 22l4.5-2.2c1 .3 2.1.5 3.3.5 5.5 0 10-3.9 10-8.6S17.5 3 12 3z"/></svg>';
+    const toggleLabel = document.createElement('span'); toggleLabel.className = 'sr-only'; toggleLabel.textContent = label('openChat'); toggle.append(toggleLabel);
     toggle.setAttribute('aria-controls', overlayId);
     toggle.setAttribute('aria-expanded', 'false');
     panel = document.createElement('div');
@@ -173,9 +181,9 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     document.addEventListener('keydown', keyHandler);
   }
   if (!isLauncher) root.after(captchaRoot);
-  render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, chatRoot);
+  render(<Chat controller={controller} closable={isLauncher} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, chatRoot);
   const handle: RuntimeHandle = {
-    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); if (keyHandler) document.removeEventListener('keydown', keyHandler); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); if (keyHandler) document.removeEventListener('keydown', keyHandler); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', restyle); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
     jumpToStep: id => controller.jumpToStep(id),

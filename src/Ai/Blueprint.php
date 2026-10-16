@@ -34,7 +34,10 @@ final class Blueprint {
 						'additionalProperties' => false,
 						'required'             => array( 'type', 'label', 'message', 'required', 'options' ),
 						'properties'           => array(
-							'type'     => array( 'enum' => self::TYPES ),
+							'type'     => array(
+								'type' => 'string',
+								'enum' => self::TYPES,
+							),
 							'label'    => array( 'type' => 'string' ),
 							'message'  => array( 'type' => 'string' ),
 							'required' => array( 'type' => 'boolean' ),

@@ -31,7 +31,7 @@ final class Imajiner {
 				} $result[] = $option;
 			} return $result;
 		};
-		$add( 'intro', 'statement', 'Pembuka', array( 'Halo! 👋 Saya Ima dari Imajiner.', 'Saya akan bantu memahami kebutuhan website Anda, cuma ±2 menit.', 'Tenang, Anda **tidak akan dikejar-kejar sales** 😉' ), false, array( 'settings' => array( 'buttonLabel' => 'Yuk mulai' ) ) );
+		$add( 'intro', 'statement', 'Pembuka', array( 'Halo! 👋 Saya Ima dari Imajiner.', 'Saya akan bantu memahami kebutuhan website Anda, cuma ±2 menit.', 'Tenang, Anda **tidak akan dikejar-kejar sales** 😉' ), false );
 		$add(
 			'punya_website',
 			'single_choice',

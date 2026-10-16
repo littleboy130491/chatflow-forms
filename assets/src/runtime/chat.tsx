@@ -17,6 +17,11 @@ export function revealedMessageCount(reveal: { stepId: string | null; count: num
   return reveal.stepId === activeId ? reveal.count : 0;
 }
 
+/** A statement shows a button only when the builder asks to wait (autoContinue: false); otherwise it continues by itself. */
+export function waitsForButton(step: Pick<Step, 'type' | 'settings'>): boolean {
+  return step.type !== 'statement' || step.settings?.autoContinue === false;
+}
+
 /** Focus the step's primary control: the text input over a phone country select, and the submit button over a summary's Edit links. */
 export function focusActive(root: HTMLElement | null, type?: Step['type']): void {
   if (!root) return;
@@ -26,7 +31,7 @@ export function focusActive(root: HTMLElement | null, type?: Step['type']): void
   (target ?? root.querySelector<HTMLElement>('button'))?.focus({ preventScroll: true });
 }
 
-export function Chat({ controller, onClose }: { controller: RuntimeController; onClose?: () => void }) {
+export function Chat({ controller, onClose, closable = false }: { controller: RuntimeController; onClose?: () => void; closable?: boolean }) {
   const [, rerender] = useState(0);
   const [reveal, setReveal] = useState<{ stepId: string | null; count: number }>({ stepId: null, count: 0 });
   const [confirm, setConfirm] = useState(false);
@@ -65,8 +70,9 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
   useEffect(() => {
     if (!enabled || state.phase !== 'ready') return;
     focusActive(active.current, step?.type);
-    if (step?.type === 'statement' && step.settings?.autoContinue) {
-      const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 250);
+    if (step?.type === 'statement' && waitsForButton(step) === false) {
+      // Statements flow straight on after their messages, like a chat; a short pause lets the last one be read.
+      const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 600);
       return () => clearTimeout(timer);
     }
   }, [state.activeId, enabled, state.phase, step?.settings?.autoContinue, reduced, controller]);
@@ -97,7 +103,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
   const styleAttributes = messaging ? { 'data-style': 'messaging', 'data-wallpaper': look.wallpaper ?? 'doodle', 'data-choices': look.choiceStyle ?? 'keyboard', 'data-tails': look.bubbleTails === false ? 'off' : 'on' } : {};
   const botName = form?.schema.bot.name ?? 'ChatFlow';
   return <section className={`chat ${controller.options.mode === 'fullpage' ? 'fullpage' : ''}`} {...styleAttributes} dir={globalThis.document?.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'} aria-label={form?.title ?? 'ChatFlow'} aria-busy={state.busy}>
-    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav></header>
+    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav>{closable && <button type="button" className="close-chat" aria-label={phrase('closeChat')} onClick={onClose}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></button>}</header>
     <div className="progress" role="progressbar" aria-label={phrase('progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(state.phase === 'done' ? 100 : state.path?.progress ?? 0)}><span style={{ width: `${state.phase === 'done' ? 100 : state.path?.progress ?? 0}%` }} /></div>
     {controller.options.preview && <p className="notice">{phrase('preview')}</p>}
     {!controller.options.preview && globalThis.location?.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(location.hostname) && <p className="notice" role="alert">{phrase('insecure')}</p>}
@@ -117,7 +123,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
           {step.helpText && <p id={`help-${step.id}`} className="help"><Markdown text={interpolateRich(step.helpText)} /></p>}
           {state.fieldError && <p id={`error-${step.id}`} className="bubble bot" role="alert">{phrase(state.fieldError)}</p>}
           {step.type === 'summary' && summary()}
-          {['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
+          {step.type === 'statement' && !waitsForButton(step) ? null : ['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
           {controller.canSkip && <button className="link-button" disabled={state.busy || state.conflict} onClick={() => void controller.answer(null)}>{phrase('skip')}</button>}
         </>}
       </div>}
@@ -135,7 +141,7 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
       {error}
       <div ref={last} />
     </main>
-    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><footer><span role="status">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{!state.offline && !state.storageUnavailable && phrase(state.dirty ? 'unsaved' : 'saved')}{form?.session.resumeEnabled && <small>{phrase('sessionStorage')}</small>}
+    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><span className="sr-only" role="status">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{(state.offline || state.storageUnavailable || (form?.session.magicLinks?.enabled && state.phase === 'ready')) && <footer>{(state.offline || state.storageUnavailable) && <p className="status-notice">{phrase(state.offline ? 'offline' : 'storageUnavailable')}</p>}
       {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
         <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicEmailConfirm'))) return; void controller.magicLink('email').then(() => setMagicStatus(phrase('magicEmailAccepted'))).catch(() => setMagicStatus(phrase('magicEmailError'))); }}>{phrase('magicEmail')}</button>
         {form.session.magicLinks.whatsapp && <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicShareConfirm'))) return; void controller.magicLink('whatsapp').then(async result => {
@@ -144,6 +150,6 @@ export function Chat({ controller, onClose }: { controller: RuntimeController; o
           catch { setMagicStatus(phrase('magicCancelled')); }
         }).catch(() => setMagicStatus(phrase('magicShareError'))); }}>{phrase('magicShare')}</button>}
         <small role="status">{magicStatus}</small>
-      </div>}</footer></>}
+      </div>}</footer>}</>}
   </section>;
 }

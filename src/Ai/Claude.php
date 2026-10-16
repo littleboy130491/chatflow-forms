@@ -4,11 +4,11 @@ namespace ChatFlow\Ai;
 use ChatFlow\Submissions\Database;
 
 /**
- * Minimal Claude Messages API client over the WordPress HTTP API (the site owner
+ * Minimal Claude Messages API client (the Anthropic provider) over the WordPress HTTP API (the site owner
  * chose this over bundling the PHP SDK). Server-side only: the key never reaches
  * the browser, and provider response bodies are never returned or logged.
  */
-final class Claude {
+final class Claude implements Provider {
 	public const ENDPOINT = 'https://api.anthropic.com/v1/messages';
 	public const MODEL    = 'claude-opus-5-5';
 	public const KEY      = '/^sk-ant-[A-Za-z0-9_-]{20,300}$/D';
@@ -75,13 +75,13 @@ final class Claude {
 	/** Generic, user-facing message per error code; provider bodies are never shown. */
 	public static function error( string $code ): \WP_Error {
 		$messages             = array(
-			'cff_ai_not_configured' => array( 'Add a Claude API key in ChatFlow Settings to use AI assist.', 400 ),
-			'cff_ai_auth'           => array( 'The Claude API key was rejected. Check it in ChatFlow Settings.', 502 ),
+			'cff_ai_not_configured' => array( 'Configure an AI provider in ChatFlow Settings to use AI assist.', 400 ),
+			'cff_ai_auth'           => array( 'The AI provider rejected the API key. Check it in ChatFlow Settings.', 502 ),
 			'cff_ai_rate_limited'   => array( 'AI assist is busy or rate limited. Wait a moment and try again.', 429 ),
-			'cff_ai_unavailable'    => array( 'The Claude API is unavailable right now. Try again shortly.', 502 ),
-			'cff_ai_refused'        => array( 'Claude declined this request. Rephrase it and try again.', 422 ),
+			'cff_ai_unavailable'    => array( 'The AI provider is unavailable right now. Try again shortly.', 502 ),
+			'cff_ai_refused'        => array( 'The AI model declined this request. Rephrase it and try again.', 422 ),
 			'cff_ai_incomplete'     => array( 'The response was cut off. Ask for a shorter form and try again.', 502 ),
-			'cff_ai_invalid_output' => array( 'Claude returned an unusable response. Try again.', 502 ),
+			'cff_ai_invalid_output' => array( 'The AI model returned an unusable response. Try again, or choose a model that supports JSON output.', 502 ),
 			'cff_ai_empty_form'     => array( 'No usable questions were generated. Describe the form in more detail.', 422 ),
 		);
 		[ $message, $status ] = $messages[ $code ] ?? array( 'AI assist failed. Try again.', 502 );

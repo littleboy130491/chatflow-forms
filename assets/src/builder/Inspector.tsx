@@ -381,11 +381,11 @@ export function Inspector({
                 value={settings.buttonLabel}
                 onChange={(buttonLabel) => patchSettings({ buttonLabel })}
               />
-              <Check
-                label={__('Auto-continue statement', 'chatflow-forms')}
-                value={settings.autoContinue}
-                onChange={(autoContinue) => patchSettings({ autoContinue })}
-              />
+              {step.type === 'statement' && <Check
+                label={__('Wait for the visitor to press a button', 'chatflow-forms')}
+                value={settings.autoContinue === false}
+                onChange={(wait) => patchSettings({ autoContinue: !wait })}
+              />}
             </Fragment>
           )}
           {step.type === 'consent' && (

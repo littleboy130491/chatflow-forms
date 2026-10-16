@@ -3,6 +3,8 @@ namespace ChatFlow\Rest;
 
 use ChatFlow\Ai\Blueprint;
 use ChatFlow\Ai\Claude;
+use ChatFlow\Ai\Provider;
+use ChatFlow\Ai\Providers;
 use ChatFlow\Forms\FormRepository;
 use ChatFlow\Forms\SchemaValidator;
 use ChatFlow\Logic\Diagnostics;
@@ -13,6 +15,7 @@ use ChatFlow\Submissions\Database;
  * Optional AI assist (Phase 3): generate a draft form from a prompt, and rephrase
  * existing bot copy in a chosen tone. Admin-only, rate limited per user, and it
  * only ever sends the admin's prompt or the form's own copy - never submissions.
+ * The backend is Anthropic, OpenRouter or an OpenAI-compatible endpoint.
  */
 final class AiController {
 	public const TONES = array( 'friendly', 'professional', 'playful', 'concise', 'formal' );
@@ -37,21 +40,22 @@ final class AiController {
 	}
 
 	public static function configured(): bool {
-		return Claude::validKey( (string) ( Settings::get()['ai']['apiKey'] ?? '' ) );
+		return Providers::configured( (array) ( Settings::get()['ai'] ?? array() ) );
 	}
 
 	private static function language( mixed $locale ): string {
 		return is_string( $locale ) && str_starts_with( $locale, 'id' ) ? 'Indonesian' : 'English';
 	}
 
-	private function client(): Claude|\WP_Error {
-		if ( ! self::configured() ) {
+	private function client(): Provider|\WP_Error {
+		$client = Providers::client( (array) ( Settings::get()['ai'] ?? array() ) );
+		if ( ! $client ) {
 			return Claude::error( 'cff_ai_not_configured' );
 		}
 		if ( ! ( new RateLimiter() )->consume( 'ai:' . get_current_user_id(), 30, 3600 ) ) {
 			return Claude::error( 'cff_ai_rate_limited' );
 		}
-		return new Claude( (string) Settings::get()['ai']['apiKey'] );
+		return $client;
 	}
 
 	public function generate( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {

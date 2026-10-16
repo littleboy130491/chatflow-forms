@@ -26,7 +26,9 @@ test('a visitor can branch, resume on the same device, complete and receive a co
   const chat = page.locator('cff-chat');
   await expect(chat).toHaveAttribute('data-mode', 'inline');
 
-  await advance(chat, 'Yuk mulai');
+  // The intro statement continues by itself; there is no start button.
+  await expect(chat.getByRole('group', { name: 'Pernah punya website' })).toBeVisible();
+  await expect(chat.getByRole('button', { name: 'Yuk mulai' })).toHaveCount(0);
   await expect(chat.getByRole('group', { name: 'Pernah punya website' })).toBeVisible();
   await chat.getByRole('group', { name: 'Pernah punya website' }).getByRole('button', { name: 'Belum pernah' }).click();
   await expect(chat.getByRole('group', { name: 'Layanan' })).toBeVisible();
@@ -101,7 +103,7 @@ test('launcher defers the session handshake until opened and restores focus when
   await toggle.click();
   await expect(chat.locator('.launcher-panel')).toBeVisible();
   await expect(chat.locator('.launcher-toggle')).toHaveAttribute('aria-expanded', 'true');
-  await expect(chat.getByRole('button', { name: 'Yuk mulai' })).toBeVisible();
+  await expect(chat.getByRole('group', { name: 'Pernah punya website' })).toBeVisible();
   await expect.poll(() => handshake.length).toBeGreaterThan(0);
 
   await chat.locator('.launcher-panel').press('Escape');
