@@ -107,6 +107,14 @@ final class IntegrationsModule implements Module {
 		if ( 'async' === $row['channel'] && ! $is_test ) {
 			return HookDispatcher::action( 'cff_submission_completed_async', array( $submission, $form ), $submission->id() ) ? 'sent' : 'hook_exception';
 		}
+		if ( 'connector' === $row['channel'] ) {
+			foreach ( $form->settings()['integrations']['connectors'] ?? array() as $connector ) {
+				if ( $connector['id'] === $row['destination_id'] ) {
+					return $is_test ? 'cancelled' : Connectors\Connectors::deliver( $connector, $payload );
+				}
+			}
+			return 'destination_missing';
+		}
 		$group = 'webhook' === $row['channel'] ? ( $form->settings()['integrations']['webhooks'] ?? array() ) : ( $form->settings()['notifications'][ 'admin_mail' === $row['channel'] ? 'admin' : 'autoresponders' ] ?? array() );
 		foreach ( $group as $destination ) {
 			if ( $destination['id'] !== $row['destination_id'] ) {

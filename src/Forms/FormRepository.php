@@ -124,7 +124,7 @@ final class FormRepository {
 				/** @var list<string> $types */
 				$types  = apply_filters( 'cff_publishable_field_types', ( new \ChatFlow\Fields\Registry() )->types() );
 				$errors = array_merge( $this->validator->validatePublishable( $draft->schema(), $types ), $this->validator->validateSettings( $draft->settings(), $draft->schema() ) );
-				$errors = array_merge( $errors, $this->integrationSettingsIssues( $draft->settings() ) );
+				$errors = array_merge( $errors, $this->integrationSettingsIssues( $draft->settings() ), \ChatFlow\Integrations\Connectors\Connectors::issues( $draft->settings(), $draft->schema() ) );
 				if ( $errors ) {
 					return $this->invalid( $errors );
 				}

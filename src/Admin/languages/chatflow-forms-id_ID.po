@@ -25,6 +25,9 @@ msgstr "Pernyataan sambutan yang siap dilengkapi pertanyaan Anda."
 msgid "A/B copy and order experiment"
 msgstr "Eksperimen A/B teks dan urutan"
 
+msgid "API key (ends with the data centre, e.g. -us21)"
+msgstr "Kunci API (diakhiri kode pusat data, mis. -us21)"
+
 msgid "Abandon"
 msgstr "Ditinggalkan"
 
@@ -63,6 +66,9 @@ msgstr "Tambah tombol"
 
 msgid "Add condition"
 msgstr "Tambah kondisi"
+
+msgid "Add connector"
+msgstr "Tambah konektor"
 
 msgid "Add ending"
 msgstr "Tambah penutup"
@@ -352,6 +358,9 @@ msgstr "Pilih prasetel"
 msgid "Choose a published ChatFlow form ID."
 msgstr "Pilih ID formulir ChatFlow yang telah diterbitkan."
 
+msgid "Choose a question"
+msgstr "Pilih pertanyaan"
+
 msgid "Choose a starting point. You can edit every question before publishing."
 msgstr "Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan."
 
@@ -415,8 +424,23 @@ msgstr "Konfirmasi penerbitan"
 msgid "Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map."
 msgstr "Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta."
 
+msgid "Connector"
+msgstr "Konektor"
+
+msgid "Connector credentials"
+msgstr "Kredensial konektor"
+
+msgid "Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes."
+msgstr "Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Pengaturan global terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya."
+
 msgid "Consent"
 msgstr "Persetujuan"
+
+msgid "Consent question (optional; send only when answered yes)"
+msgstr "Pertanyaan persetujuan (opsional; kirim hanya jika dijawab ya)"
+
+msgid "Consent question (required; must be answered yes)"
+msgstr "Pertanyaan persetujuan (wajib; harus dijawab ya)"
 
 msgid "Consent text"
 msgstr "Teks persetujuan"
@@ -444,6 +468,9 @@ msgstr "Alur percakapan"
 
 msgid "Conversation replay"
 msgstr "Putar ulang percakapan"
+
+msgid "Conversions API access token"
+msgstr "Token akses Conversions API"
 
 msgid "Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available."
 msgstr "Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia."
@@ -574,6 +601,9 @@ msgstr "Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab 
 msgid "Do not store"
 msgstr "Jangan simpan"
 
+msgid "Double opt-in (subscriber confirms by email)"
+msgstr "Konfirmasi ganda (pelanggan mengonfirmasi lewat email)"
+
 msgid "Download (authenticated, expiring)"
 msgstr "Unduh (memerlukan autentikasi, memiliki masa berlaku)"
 
@@ -619,6 +649,12 @@ msgstr "Pratinjau HTML email"
 msgid "Email body"
 msgstr "Isi email"
 
+msgid "Email question (optional, sent hashed)"
+msgstr "Pertanyaan email (opsional, dikirim dalam bentuk hash)"
+
+msgid "Email question (required)"
+msgstr "Pertanyaan email (wajib)"
+
 msgid "Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message."
 msgstr "Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia."
 
@@ -657,6 +693,9 @@ msgstr "Jenis penutup"
 
 msgid "Endings and completion"
 msgstr "Penutup dan penyelesaian"
+
+msgid "Event name"
+msgstr "Nama peristiwa"
 
 msgid "Exclude page IDs (comma-separated)"
 msgstr "ID halaman yang dikecualikan (pisahkan dengan koma)"
@@ -717,6 +756,9 @@ msgstr "Kunci kolom"
 
 msgid "Field labels"
 msgstr "Label kolom"
+
+msgid "Field mapping: provider field → answer key"
+msgstr "Pemetaan kolom: kolom penyedia → kunci jawaban"
 
 msgid "Field palette"
 msgstr "Palet kolom"
@@ -916,6 +958,9 @@ msgstr "Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang
 msgid "Include page IDs (comma-separated; blank = all)"
 msgstr "ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)"
 
+msgid "Incoming webhook URL (https://hooks.slack.com/services/…)"
+msgstr "URL incoming webhook (https://hooks.slack.com/services/…)"
+
 msgid "Indonesian lead qualification with conditional branching."
 msgstr "Kualifikasi calon pelanggan dalam bahasa Indonesia dengan percabangan bersyarat."
 
@@ -1054,6 +1099,9 @@ msgstr "Teks panjang"
 msgid "Machine keys"
 msgstr "Kunci mesin"
 
+msgid "Mailchimp audience ID"
+msgstr "ID audiens Mailchimp"
+
 msgid "Mark read"
 msgstr "Tandai dibaca"
 
@@ -1078,6 +1126,12 @@ msgstr "Panjang maksimum"
 msgid "Maximum selections"
 msgstr "Pilihan maksimum"
 
+msgid "Measurement ID (G-…)"
+msgstr "Measurement ID (G-…)"
+
+msgid "Measurement Protocol API secret"
+msgstr "Rahasia API Measurement Protocol"
+
 msgid "Media"
 msgstr "Media"
 
@@ -1089,6 +1143,9 @@ msgstr "Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{for
 
 msgid "Message"
 msgstr "Pesan"
+
+msgid "Message intro (merge tags allowed)"
+msgstr "Pembuka pesan (boleh memakai merge tag)"
 
 msgid "Metadata and consent"
 msgstr "Metadata dan persetujuan"
@@ -1134,6 +1191,12 @@ msgstr "Nama"
 
 msgid "Name, email and a message; no external integrations."
 msgstr "Nama, email, dan pesan; tanpa integrasi eksternal."
+
+msgid "Native connectors"
+msgstr "Konektor bawaan"
+
+msgid "Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses."
+msgstr "Konektor bawaan mengirim kiriman ke layanan ini di latar belakang. Kosongkan penyedia untuk menonaktifkannya; penyedia yang terisi sebagian tidak dapat disimpan. Setiap formulir memilih konektor yang digunakan."
 
 msgid "Needs improvement"
 msgstr "Perlu ditingkatkan"
@@ -1194,6 +1257,9 @@ msgstr "Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yan
 
 msgid "Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned."
 msgstr "Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri."
+
+msgid "None"
+msgstr "Tidak ada"
 
 msgid "Not starred"
 msgstr "Tidak berbintang"
@@ -1291,8 +1357,14 @@ msgstr "Hapus secara permanen"
 msgid "Phone"
 msgstr "Telepon"
 
+msgid "Phone question (optional, sent hashed)"
+msgstr "Pertanyaan telepon (opsional, dikirim dalam bentuk hash)"
+
 msgid "Phrase key → translated text"
 msgstr "Kunci frasa → teks terjemahan"
+
+msgid "Pixel (dataset) ID"
+msgstr "ID Pixel (dataset)"
 
 msgid "Placeholder"
 msgstr "Teks petunjuk"
@@ -1353,6 +1425,9 @@ msgstr "URL kebijakan privasi"
 
 msgid "Private Akismet key"
 msgstr "Kunci Akismet privat"
+
+msgid "Private app access token (CRM contacts write scope)"
+msgstr "Token akses private app (cakupan tulis kontak CRM)"
 
 msgid "Private captcha key"
 msgstr "Kunci captcha privat"
@@ -1467,6 +1542,9 @@ msgstr "Hapus tombol"
 
 msgid "Remove condition"
 msgstr "Hapus kondisi"
+
+msgid "Remove connector"
+msgstr "Hapus konektor"
 
 msgid "Remove email"
 msgstr "Hapus email"
@@ -1789,11 +1867,17 @@ msgstr "Status sistem"
 msgid "Tablet"
 msgstr "Tablet"
 
+msgid "Tags (comma-separated)"
+msgstr "Tag (pisahkan dengan koma)"
+
 msgid "Target"
 msgstr "Target"
 
 msgid "Test email queued. Check the activity log for delivery."
 msgstr "Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman."
+
+msgid "Test event code (optional, for Events Manager testing)"
+msgstr "Kode peristiwa uji (opsional, untuk pengujian Events Manager)"
 
 msgid "Test recipient"
 msgstr "Penerima uji"

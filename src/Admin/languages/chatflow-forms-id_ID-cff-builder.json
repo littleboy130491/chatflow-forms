@@ -31,6 +31,9 @@
       "A/B copy and order experiment": [
         "Eksperimen A/B teks dan urutan"
       ],
+      "API key (ends with the data centre, e.g. -us21)": [
+        "Kunci API (diakhiri kode pusat data, mis. -us21)"
+      ],
       "Abandon": [
         "Ditinggalkan"
       ],
@@ -69,6 +72,9 @@
       ],
       "Add condition": [
         "Tambah kondisi"
+      ],
+      "Add connector": [
+        "Tambah konektor"
       ],
       "Add ending": [
         "Tambah penutup"
@@ -358,6 +364,9 @@
       "Choose a published ChatFlow form ID.": [
         "Pilih ID formulir ChatFlow yang telah diterbitkan."
       ],
+      "Choose a question": [
+        "Pilih pertanyaan"
+      ],
       "Choose a starting point. You can edit every question before publishing.": [
         "Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan."
       ],
@@ -421,8 +430,23 @@
       "Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.": [
         "Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta."
       ],
+      "Connector": [
+        "Konektor"
+      ],
+      "Connector credentials": [
+        "Kredensial konektor"
+      ],
+      "Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes.": [
+        "Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Pengaturan global terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya."
+      ],
       "Consent": [
         "Persetujuan"
+      ],
+      "Consent question (optional; send only when answered yes)": [
+        "Pertanyaan persetujuan (opsional; kirim hanya jika dijawab ya)"
+      ],
+      "Consent question (required; must be answered yes)": [
+        "Pertanyaan persetujuan (wajib; harus dijawab ya)"
       ],
       "Consent text": [
         "Teks persetujuan"
@@ -450,6 +474,9 @@
       ],
       "Conversation replay": [
         "Putar ulang percakapan"
+      ],
+      "Conversions API access token": [
+        "Token akses Conversions API"
       ],
       "Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.": [
         "Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia."
@@ -580,6 +607,9 @@
       "Do not store": [
         "Jangan simpan"
       ],
+      "Double opt-in (subscriber confirms by email)": [
+        "Konfirmasi ganda (pelanggan mengonfirmasi lewat email)"
+      ],
       "Download (authenticated, expiring)": [
         "Unduh (memerlukan autentikasi, memiliki masa berlaku)"
       ],
@@ -625,6 +655,12 @@
       "Email body": [
         "Isi email"
       ],
+      "Email question (optional, sent hashed)": [
+        "Pertanyaan email (opsional, dikirim dalam bentuk hash)"
+      ],
+      "Email question (required)": [
+        "Pertanyaan email (wajib)"
+      ],
       "Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.": [
         "Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia."
       ],
@@ -663,6 +699,9 @@
       ],
       "Endings and completion": [
         "Penutup dan penyelesaian"
+      ],
+      "Event name": [
+        "Nama peristiwa"
       ],
       "Exclude page IDs (comma-separated)": [
         "ID halaman yang dikecualikan (pisahkan dengan koma)"
@@ -723,6 +762,9 @@
       ],
       "Field labels": [
         "Label kolom"
+      ],
+      "Field mapping: provider field → answer key": [
+        "Pemetaan kolom: kolom penyedia → kunci jawaban"
       ],
       "Field palette": [
         "Palet kolom"
@@ -922,6 +964,9 @@
       "Include page IDs (comma-separated; blank = all)": [
         "ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)"
       ],
+      "Incoming webhook URL (https://hooks.slack.com/services/…)": [
+        "URL incoming webhook (https://hooks.slack.com/services/…)"
+      ],
       "Indonesian lead qualification with conditional branching.": [
         "Kualifikasi calon pelanggan dalam bahasa Indonesia dengan percabangan bersyarat."
       ],
@@ -1060,6 +1105,9 @@
       "Machine keys": [
         "Kunci mesin"
       ],
+      "Mailchimp audience ID": [
+        "ID audiens Mailchimp"
+      ],
       "Mark read": [
         "Tandai dibaca"
       ],
@@ -1084,6 +1132,12 @@
       "Maximum selections": [
         "Pilihan maksimum"
       ],
+      "Measurement ID (G-…)": [
+        "Measurement ID (G-…)"
+      ],
+      "Measurement Protocol API secret": [
+        "Rahasia API Measurement Protocol"
+      ],
       "Media": [
         "Media"
       ],
@@ -1095,6 +1149,9 @@
       ],
       "Message": [
         "Pesan"
+      ],
+      "Message intro (merge tags allowed)": [
+        "Pembuka pesan (boleh memakai merge tag)"
       ],
       "Metadata and consent": [
         "Metadata dan persetujuan"
@@ -1140,6 +1197,12 @@
       ],
       "Name, email and a message; no external integrations.": [
         "Nama, email, dan pesan; tanpa integrasi eksternal."
+      ],
+      "Native connectors": [
+        "Konektor bawaan"
+      ],
+      "Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses.": [
+        "Konektor bawaan mengirim kiriman ke layanan ini di latar belakang. Kosongkan penyedia untuk menonaktifkannya; penyedia yang terisi sebagian tidak dapat disimpan. Setiap formulir memilih konektor yang digunakan."
       ],
       "Needs improvement": [
         "Perlu ditingkatkan"
@@ -1200,6 +1263,9 @@
       ],
       "Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned.": [
         "Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri."
+      ],
+      "None": [
+        "Tidak ada"
       ],
       "Not starred": [
         "Tidak berbintang"
@@ -1297,8 +1363,14 @@
       "Phone": [
         "Telepon"
       ],
+      "Phone question (optional, sent hashed)": [
+        "Pertanyaan telepon (opsional, dikirim dalam bentuk hash)"
+      ],
       "Phrase key → translated text": [
         "Kunci frasa → teks terjemahan"
+      ],
+      "Pixel (dataset) ID": [
+        "ID Pixel (dataset)"
       ],
       "Placeholder": [
         "Teks petunjuk"
@@ -1359,6 +1431,9 @@
       ],
       "Private Akismet key": [
         "Kunci Akismet privat"
+      ],
+      "Private app access token (CRM contacts write scope)": [
+        "Token akses private app (cakupan tulis kontak CRM)"
       ],
       "Private captcha key": [
         "Kunci captcha privat"
@@ -1473,6 +1548,9 @@
       ],
       "Remove condition": [
         "Hapus kondisi"
+      ],
+      "Remove connector": [
+        "Hapus konektor"
       ],
       "Remove email": [
         "Hapus email"
@@ -1795,11 +1873,17 @@
       "Tablet": [
         "Tablet"
       ],
+      "Tags (comma-separated)": [
+        "Tag (pisahkan dengan koma)"
+      ],
       "Target": [
         "Target"
       ],
       "Test email queued. Check the activity log for delivery.": [
         "Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman."
+      ],
+      "Test event code (optional, for Events Manager testing)": [
+        "Kode peristiwa uji (opsional, untuk pengujian Events Manager)"
       ],
       "Test recipient": [
         "Penerima uji"

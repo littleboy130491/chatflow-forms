@@ -6,6 +6,7 @@ A published conversational form.|Formulir percakapan yang telah diterbitkan.
 A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
 A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
+API key (ends with the data centre, e.g. -us21)|Kunci API (diakhiri kode pusat data, mis. -us21)
 Abandon|Ditinggalkan
 Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
 Abandoned|Ditinggalkan
@@ -20,6 +21,7 @@ Add admin email|Tambah email admin
 Add autoresponder|Tambah balasan otomatis
 Add button|Tambah tombol
 Add condition|Tambah kondisi
+Add connector|Tambah konektor
 Add ending|Tambah penutup
 Add message|Tambah pesan
 Add note|Tambah catatan
@@ -120,6 +122,7 @@ Choose a form|Pilih formulir
 Choose a form from the block settings.|Pilih formulir dari pengaturan blok.
 Choose a preset|Pilih prasetel
 Choose a published ChatFlow form ID.|Pilih ID formulir ChatFlow yang telah diterbitkan.
+Choose a question|Pilih pertanyaan
 Choose a starting point. You can edit every question before publishing.|Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbitkan.
 Choose an email field|Pilih kolom email
 Choose email field|Pilih kolom email
@@ -141,7 +144,12 @@ Configure matching provider credentials in global Settings. Optional checks cont
 Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.|Atur aturan peluncur dan pemicu popup seluruh situs di Pengaturan → Tampilan dan keterlibatan.
 Confirm publish|Konfirmasi penerbitan
 Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.|Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta.
+Connector|Konektor
+Connector credentials|Kredensial konektor
+Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes.|Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Pengaturan global terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya.
 Consent|Persetujuan
+Consent question (optional; send only when answered yes)|Pertanyaan persetujuan (opsional; kirim hanya jika dijawab ya)
+Consent question (required; must be answered yes)|Pertanyaan persetujuan (wajib; harus dijawab ya)
 Consent text|Teks persetujuan
 Consent to process this intake request|Persetujuan untuk memproses permintaan konsultasi ini
 Contact details and an enquiry.|Detail kontak dan pertanyaan.
@@ -151,6 +159,7 @@ Continue / submit button|Tombol lanjut / kirim
 Contrast feedback (WCAG AA normal text)|Umpan balik kontras (WCAG AA teks normal)
 Conversation flow|Alur percakapan
 Conversation replay|Putar ulang percakapan
+Conversions API access token|Token akses Conversions API
 Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.|Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia.
 Copy|Salin
 Copy stored IP|Salin IP tersimpan
@@ -198,6 +207,7 @@ Display defaults|Tampilan bawaan
 Display mode|Mode tampilan
 Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft.|Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab (minimum nol), bukan bukti sesi ditinggalkan; percabangan, penolakan pelacakan, dan riwayat tersimpan memengaruhi hitungan. Label menggunakan draf saat ini.
 Do not store|Jangan simpan
+Double opt-in (subscriber confirms by email)|Konfirmasi ganda (pelanggan mengonfirmasi lewat email)
 Download (authenticated, expiring)|Unduh (memerlukan autentikasi, memiliki masa berlaku)
 Download QR code|Unduh kode QR
 Download attached file|Unduh berkas terlampir
@@ -213,6 +223,8 @@ Edit|Ubah
 Email|Email
 Email HTML preview|Pratinjau HTML email
 Email body|Isi email
+Email question (optional, sent hashed)|Pertanyaan email (opsional, dikirim dalam bentuk hash)
+Email question (required)|Pertanyaan email (wajib)
 Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.|Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia.
 Emoji|Emoji
 Enable first-touch tracking|Aktifkan pelacakan kunjungan pertama
@@ -227,6 +239,7 @@ Ending|Penutup
 Ending messages (one per line)|Pesan penutup (satu per baris)
 Ending type|Jenis penutup
 Endings and completion|Penutup dan penyelesaian
+Event name|Nama peristiwa
 Exclude page IDs (comma-separated)|ID halaman yang dikecualikan (pisahkan dengan koma)
 Exclude page IDs (exclusions win)|Kecualikan ID halaman (pengecualian diprioritaskan)
 Exclusive / none of the above|Eksklusif / tidak satu pun di atas
@@ -250,6 +263,7 @@ Feedback / NPS|Umpan balik / NPS
 Field|Kolom
 Field key|Kunci kolom
 Field labels|Label kolom
+Field mapping: provider field → answer key|Pemetaan kolom: kolom penyedia → kunci jawaban
 Field palette|Palet kolom
 File download denied or unavailable.|Unduhan berkas ditolak atau tidak tersedia.
 File upload|Unggah berkas
@@ -318,6 +332,7 @@ Import form JSON (creates a draft)|Impor JSON formulir (membuat draf)
 Import new draft|Impor sebagai draf baru
 Imports create a new draft and are validated by the server. Webhooks exported by ChatFlow have their secrets removed and are disabled.|Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang diekspor ChatFlow dihapus dan webhook dinonaktifkan.
 Include page IDs (comma-separated; blank = all)|ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)
+Incoming webhook URL (https://hooks.slack.com/services/…)|URL incoming webhook (https://hooks.slack.com/services/…)
 Indonesian lead qualification with conditional branching.|Kualifikasi calon pelanggan dalam bahasa Indonesia dengan percabangan bersyarat.
 Inherit theme font|Gunakan font tema
 Inline|Inline
@@ -365,6 +380,7 @@ Logic rules (evaluated in order)|Aturan logika (dievaluasi berurutan)
 Logo URL|URL logo
 Long text|Teks panjang
 Machine keys|Kunci mesin
+Mailchimp audience ID|ID audiens Mailchimp
 Mark read|Tandai dibaca
 Mark spam|Tandai spam
 Mark unread|Tandai belum dibaca
@@ -373,10 +389,13 @@ Maximum|Maksimum
 Maximum bytes per file|Batas byte per berkas
 Maximum length|Panjang maksimum
 Maximum selections|Pilihan maksimum
+Measurement ID (G-…)|Measurement ID (G-…)
+Measurement Protocol API secret|Rahasia API Measurement Protocol
 Media|Media
 Media type|Jenis media
 Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url="https://…"]Label[/cff_button].|Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url="https://…"]Label[/cff_button].
 Message|Pesan
+Message intro (merge tags allowed)|Pembuka pesan (boleh memakai merge tag)
 Metadata and consent|Metadata dan persetujuan
 Minimum|Minimum
 Minimum age|Usia minimum
@@ -392,6 +411,8 @@ Multiple choice|Pilihan jamak
 NPS (0–10)|NPS (0–10)
 Name|Nama
 Name, email and a message; no external integrations.|Nama, email, dan pesan; tanpa integrasi eksternal.
+Native connectors|Konektor bawaan
+Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses.|Konektor bawaan mengirim kiriman ke layanan ini di latar belakang. Kosongkan penyedia untuk menonaktifkannya; penyedia yang terisi sebagian tidak dapat disimpan. Setiap formulir memilih konektor yang digunakan.
 Needs improvement|Perlu ditingkatkan
 Nested condition|Kondisi bertingkat
 Net promoter score|Skor rekomendasi (NPS)
@@ -415,6 +436,7 @@ No logic warnings detected.|Tidak ditemukan peringatan logika.
 No matching submissions.|Tidak ada kiriman yang cocok.
 No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.|Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim.
 Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned.|Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri.
+None|Tidak ada
 Not starred|Tidak berbintang
 Notes|Catatan
 Notify on abandoned contact leads|Kirim notifikasi untuk prospek kontak yang ditinggalkan
@@ -448,7 +470,9 @@ Permanently delete selected|Hapus permanen yang dipilih
 Permanently deletes matching data in bounded batches. This cannot be undone. Preview first.|Menghapus data yang cocok secara permanen dalam batch terbatas. Tidak dapat dibatalkan. Lakukan pratinjau dahulu.
 Permanently purge|Hapus secara permanen
 Phone|Telepon
+Phone question (optional, sent hashed)|Pertanyaan telepon (opsional, dikirim dalam bentuk hash)
 Phrase key → translated text|Kunci frasa → teks terjemahan
+Pixel (dataset) ID|ID Pixel (dataset)
 Placeholder|Teks petunjuk
 Plain Q&A|Tanya jawab biasa
 Plain-text version|Versi teks biasa
@@ -470,6 +494,7 @@ Privacy and retention override|Pengaturan khusus privasi dan retensi
 Privacy defaults|Privasi bawaan
 Privacy policy URL|URL kebijakan privasi
 Private Akismet key|Kunci Akismet privat
+Private app access token (CRM contacts write scope)|Token akses private app (cakupan tulis kontak CRM)
 Private captcha key|Kunci captcha privat
 Private storage unavailable.|Penyimpanan privat tidak tersedia.
 Product recommender|Rekomendasi produk
@@ -509,6 +534,7 @@ Regex pattern|Pola regex
 Reload server draft|Muat ulang draf server
 Remove button|Hapus tombol
 Remove condition|Hapus kondisi
+Remove connector|Hapus konektor
 Remove email|Hapus email
 Remove ending|Hapus penutup
 Remove ending? Update any rules that reference it.|Hapus penutup? Perbarui semua aturan yang merujuknya.
@@ -622,9 +648,11 @@ Summary|Ringkasan
 System / local — no ChatFlow font requests|Sistem / lokal — tanpa permintaan font ChatFlow
 System status|Status sistem
 Tablet|Tablet
+Tags (comma-separated)|Tag (pisahkan dengan koma)
 Target|Target
 Template gallery and import|Galeri templat dan impor
 Test email queued. Check the activity log for delivery.|Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman.
+Test event code (optional, for Events Manager testing)|Kode peristiwa uji (opsional, untuk pengujian Events Manager)
 Test recipient|Penerima uji
 Text colour|Warna teks
 Thank you for your submission|Terima kasih atas kiriman Anda
