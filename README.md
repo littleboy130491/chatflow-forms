@@ -120,8 +120,10 @@ analytics, and consent-aware single-use resume links. See [Phase 3 usage and
 security](docs/phase3-power.md). Native connectors send submissions to Slack,
 Mailchimp, HubSpot, Google Analytics 4 and the Meta Conversions API through the
 delivery outbox; marketing and ad connectors require a consent answer. See
-[connectors](docs/connectors.md). The optional AI builder assist is deferred; no
-AI chat or telemetry is included.
+[connectors](docs/connectors.md). Optional AI assist uses the Claude API to
+generate a draft form from a description and rephrase bot copy in a chosen tone;
+see [AI assist](docs/ai-assist.md). There is no AI chat for visitors and no
+telemetry.
 
 ## Development
 

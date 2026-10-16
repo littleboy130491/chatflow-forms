@@ -8,6 +8,7 @@ import { blankForm, v1Types } from '../../../assets/src/builder/model';
 import { FormStart } from '../../../assets/src/builder/index';
 import { JsonEditor } from '../../../assets/src/builder/controls';
 import { ConnectorSettings } from '../../../assets/src/builder/ConnectorSettings';
+import { AiGenerate, applyRewrites, copyItems } from '../../../assets/src/builder/AiAssist';
 import type { FormSettings } from '../../../assets/src/builder/api';
 import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
 import { Purge } from '../../../assets/src/submissions/Purge';
@@ -368,5 +369,41 @@ describe('native connector editor', () => {
     expect(latest.connectors?.[0]).not.toHaveProperty('listId');
     await click('Remove connector');
     expect(latest.connectors).toEqual([]);
+  });
+});
+
+describe('AI assist', () => {
+  it('collects labels, bot messages and endings, and applies only returned rewrites', () => {
+    const form = blankForm();
+    form.schema.steps = [{ id: 's1', key: 'name', type: 'short_text', label: 'Name', messages: ['Hi {{name}}', ''] }];
+    form.schema.endings = [{ id: 'end', type: 'message', messages: ['Thanks'] }];
+    const items = copyItems(form.schema);
+    expect(items).toEqual([
+      { id: 'step:s1:label', text: 'Name' },
+      { id: 'step:s1:message:0', text: 'Hi {{name}}' },
+      { id: 'ending:end:message:0', text: 'Thanks' },
+    ]);
+    const next = applyRewrites(form.schema, [{ id: 'step:s1:message:0', text: 'Hey {{name}}!' }, { id: 'unknown', text: 'x' }]);
+    expect(next.steps[0]).toMatchObject({ label: 'Name', messages: ['Hey {{name}}!', ''] });
+    expect(next.endings[0]!.messages).toEqual(['Thanks']);
+    // The original schema is not mutated.
+    expect(form.schema.steps[0]!.messages).toEqual(['Hi {{name}}', '']);
+  });
+  it('generates a draft from a description and reports server errors without opening', async () => {
+    const api = new AdminApi(config);
+    const open = vi.fn();
+    const draft = { ...blankForm(), id: 77, status: 'draft' as const };
+    let fail = true;
+    const request = vi.fn(async () => { if (fail) throw new Error('Claude declined this request.'); return draft; });
+    api.request = request as unknown as AdminApi['request'];
+    await act(async () => root.render(createElement(AiGenerate, { api, onOpen: open })));
+    await change('Describe the form you need', 'A lead form for a bakery');
+    await click('Generate draft');
+    expect(request).toHaveBeenCalledWith('admin/ai/generate', 'POST', { prompt: 'A lead form for a bakery', locale: 'en_US' });
+    expect(container.querySelector('[role=alert]')?.textContent).toContain('Claude declined');
+    expect(open).not.toHaveBeenCalled();
+    fail = false;
+    await click('Generate draft');
+    expect(open).toHaveBeenCalledWith(draft);
   });
 });

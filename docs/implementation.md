@@ -161,8 +161,8 @@ native WP/MariaDB fallback.
 - No live SMTP inbox/webhook delivery, credentialed CAPTCHA/Akismet, installed
   Elementor, live WPML/Polylang GUI, cache/CDN/optimizer/theme/hosting matrix.
   Shell fixtures do not prove external-provider compatibility.
-- Optional AI assistance is deferred; native connectors are in docs/connectors.md
-  (provider delivery verified with mocked HTTP only). No licensing, telemetry,
+- Native connectors (docs/connectors.md) and optional AI assist (docs/ai-assist.md)
+  are verified with mocked HTTP only. No licensing, telemetry,
   payments or AI chat. Google fonts are opt-in with local/system defaults;
   custom CSS cannot import remote fonts. Network/privacy/CSP behavior on
   actual visitor browsers remains untested.
