@@ -6,7 +6,7 @@ final class Starter {
 	/** @return array{title:string,schema:array<string,mixed>,settings:array<string,mixed>} */
 	public static function contact(): array {
 		return self::form(
-			'Contact request',
+			__( 'Contact request', 'chatflow-forms' ),
 			array(
 				self::step( 'intro', 'statement', 'Welcome', array( 'Hello! Tell us how we can help.' ) ),
 				self::step( 'name', 'short_text', 'Your name', array( 'What should we call you?' ), true ),
@@ -40,7 +40,7 @@ final class Starter {
 	/** @return array{title:string,schema:array<string,mixed>,settings:array<string,mixed>} */
 	public static function feedback(): array {
 		return self::form(
-			'Customer feedback',
+			__( 'Customer feedback', 'chatflow-forms' ),
 			array(
 				self::step( 'intro', 'statement', 'Welcome', array( 'We would appreciate your feedback.' ) ),
 				self::step(

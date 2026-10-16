@@ -110,6 +110,44 @@ function OptionEditor({
     </fieldset>
   );
 }
+const layoutLabels = (): Record<'chips' | 'cards' | 'dropdown', string> => ({
+  chips: __('Chips', 'chatflow-forms'),
+  cards: __('Cards', 'chatflow-forms'),
+  dropdown: __('Dropdown', 'chatflow-forms'),
+});
+const sourceLabels = (): Record<'default' | 'url' | 'cookie' | 'meta' | 'merge', string> => ({
+  default: __('Default value', 'chatflow-forms'),
+  url: __('URL parameter', 'chatflow-forms'),
+  cookie: __('Cookie', 'chatflow-forms'),
+  meta: __('Page metadata', 'chatflow-forms'),
+  merge: __('Merge tag', 'chatflow-forms'),
+});
+const mediaLabels = (): Record<'image' | 'video' | 'gif', string> => ({
+  image: __('Image', 'chatflow-forms'),
+  video: __('Video', 'chatflow-forms'),
+  gif: __('GIF', 'chatflow-forms'),
+});
+const addressLabels = (): Record<'street' | 'city' | 'postcode' | 'country', string> => ({
+  street: __('Street', 'chatflow-forms'),
+  city: __('City', 'chatflow-forms'),
+  postcode: __('Postcode', 'chatflow-forms'),
+  country: __('Country', 'chatflow-forms'),
+});
+const formatLabels = (): Record<'text' | 'url' | 'email', string> => ({
+  text: __('Any text', 'chatflow-forms'),
+  url: __('URL', 'chatflow-forms'),
+  email: __('Email address', 'chatflow-forms'),
+});
+const inputModeLabels = (): Record<string, string> => ({
+  text: __('Standard keyboard', 'chatflow-forms'),
+  numeric: __('Numbers', 'chatflow-forms'),
+  tel: __('Telephone keypad', 'chatflow-forms'),
+  decimal: __('Decimal numbers', 'chatflow-forms'),
+  email: __('Email keyboard', 'chatflow-forms'),
+  url: __('URL keyboard', 'chatflow-forms'),
+  search: __('Search keyboard', 'chatflow-forms'),
+  none: __('No on-screen keyboard', 'chatflow-forms'),
+});
 export function Inspector({
   step,
   schema,
@@ -231,7 +269,7 @@ export function Inspector({
               <Select
                 label={__('Choice layout', 'chatflow-forms')}
                 value={settings.layout ?? 'chips'}
-                choices={['chips', 'cards', 'dropdown'].map((value) => ({ label: value, value }))}
+                choices={(['chips', 'cards', 'dropdown'] as const).map((value) => ({ label: layoutLabels()[value], value }))}
                 onChange={(layout) => patchSettings({ layout: layout as 'chips' | 'cards' | 'dropdown' })}
               />
               <DndContext
@@ -311,10 +349,10 @@ export function Inspector({
               onChange={(country) => patchSettings({ country: country.toUpperCase() })}
             />
           )}
-          {step.type === 'address' && (['street','city','postcode','country'] as const).map((field) => <Check key={field} label={field} value={(settings.addressFields ?? ['street','city','postcode','country']).some((value)=>value===field)}
+          {step.type === 'address' && (['street','city','postcode','country'] as const).map((field) => <Check key={field} label={addressLabels()[field]} value={(settings.addressFields ?? ['street','city','postcode','country']).some((value)=>value===field)}
             onChange={(checked)=>{const fields=settings.addressFields ?? ['street','city','postcode','country'];const next=checked ? [...fields.filter((value)=>value!==field),field] : fields.filter((value)=>value!==field);patchSettings({addressFields:next as NonNullable<Step['settings']>['addressFields'] & {length:number}});}} />)}
           {step.type === 'media' && <Fragment>
-            <Select label={__('Media type','chatflow-forms')} value={settings.media?.type ?? 'image'} choices={['image','video','gif'].map((value)=>({value,label:value}))} onChange={(type)=>patchSettings({media:{url:settings.media?.url ?? '',...settings.media,type:type as 'image'|'video'|'gif'}})} />
+            <Select label={__('Media type','chatflow-forms')} value={settings.media?.type ?? 'image'} choices={(['image','video','gif'] as const).map((value)=>({value,label:mediaLabels()[value]}))} onChange={(type)=>patchSettings({media:{url:settings.media?.url ?? '',...settings.media,type:type as 'image'|'video'|'gif'}})} />
             <Field label={__('HTTPS media URL','chatflow-forms')} value={settings.media?.url ?? ''} onChange={(url)=>patchSettings({media:{type:'image',...settings.media,url}})} />
             <Field label={__('Alternative text','chatflow-forms')} value={settings.media?.alt ?? ''} onChange={(alt)=>patchSettings({media:{type:'image',url:'',...settings.media,alt}})} />
           </Fragment>}
@@ -327,7 +365,7 @@ export function Inspector({
             label={__('Keyboard hint', 'chatflow-forms')}
             value={settings.inputMode ?? 'text'}
             choices={['text', 'numeric', 'tel', 'decimal', 'email', 'url', 'search', 'none'].map((value) => ({
-              label: value,
+              label: inputModeLabels()[value] ?? value,
               value,
             }))}
             onChange={(inputMode) =>
@@ -369,8 +407,8 @@ export function Inspector({
               <Select
                 label={__('Hidden value source', 'chatflow-forms')}
                 value={settings.source ?? 'default'}
-                choices={['default', 'url', 'cookie', 'meta', 'merge'].map((value) => ({
-                  label: value,
+                choices={(['default', 'url', 'cookie', 'meta', 'merge'] as const).map((value) => ({
+                  label: sourceLabels()[value],
                   value,
                 }))}
                 onChange={(source) =>
@@ -426,7 +464,7 @@ export function Inspector({
               <Select
                 label={__('Format', 'chatflow-forms')}
                 value={validation.format ?? 'text'}
-                choices={['text', 'url', 'email'].map((value) => ({ label: value, value }))}
+                choices={(['text', 'url', 'email'] as const).map((value) => ({ label: formatLabels()[value], value }))}
                 onChange={(format) =>
                   onChange({
                     ...step,

@@ -61,7 +61,21 @@ final class FormsTable extends \WP_List_Table {
 					admin_url( 'admin.php' )
 				)
 			) . '">' . esc_html__( 'Live', 'chatflow-forms' ) . '</a>',
+			'trash'   => '<a href="' . esc_url(
+				add_query_arg(
+					array(
+						'page'   => 'cff-forms',
+						'status' => 'trash',
+					),
+					admin_url( 'admin.php' )
+				)
+			) . '"' . ( $this->isTrashView() ? ' class="current" aria-current="page"' : '' ) . '>' . esc_html__( 'Trash', 'chatflow-forms' ) . '</a>',
 		);
+	}
+
+	public function isTrashView(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
+		return isset( $_GET['status'] ) && 'trash' === $_GET['status'];
 	}
 
 	public function prepare_items(): void {
@@ -78,7 +92,7 @@ final class FormsTable extends \WP_List_Table {
 		$query       = new \WP_Query(
 			array(
 				'post_type'      => 'cff_form',
-				'post_status'    => in_array( $status, array( 'draft', 'publish' ), true ) ? $status : array( 'draft', 'publish' ),
+				'post_status'    => in_array( $status, array( 'draft', 'publish', 'trash' ), true ) ? $status : array( 'draft', 'publish' ),
 				'posts_per_page' => 20,
 				'paged'          => $this->get_pagenum(),
 				'orderby'        => $orderby,
@@ -88,6 +102,18 @@ final class FormsTable extends \WP_List_Table {
 		);
 		$this->items = array();
 		foreach ( $query->posts as $post ) {
+			if ( 'trash' === $post->post_status ) {
+				// Trashed forms cannot be loaded as drafts; list them by post data only.
+				$this->items[] = array_merge(
+					array(
+						'id'     => (int) $post->ID,
+						'name'   => $post->post_title,
+						'status' => 'trash',
+					),
+					Statistics::get( (int) $post->ID )
+				);
+				continue;
+			}
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
 				$this->items[] = array_merge(
@@ -111,6 +137,13 @@ final class FormsTable extends \WP_List_Table {
 
 	/** @param array<string,mixed> $item */
 	public function column_name( $item ): string {
+		if ( 'trash' === $item['status'] ) {
+			$actions = array(
+				'untrash' => '<a href="' . esc_url( AdminModule::trashActionUrl( 'restore', (int) $item['id'] ) ) . '">' . esc_html__( 'Restore', 'chatflow-forms' ) . '</a>',
+				'delete'  => '<a class="submitdelete" href="' . esc_url( AdminModule::trashActionUrl( 'delete', (int) $item['id'] ) ) . '" data-cff-confirm="' . esc_attr__( 'Delete this form permanently? This cannot be undone. Forms that still have submissions cannot be deleted.', 'chatflow-forms' ) . '">' . esc_html__( 'Delete permanently', 'chatflow-forms' ) . '</a>',
+			);
+			return '<strong>' . esc_html( $item['name'] ) . '</strong>' . $this->row_actions( $actions );
+		}
 		$edit                 = add_query_arg(
 			array(
 				'page'   => 'cff-builder',
@@ -133,13 +166,21 @@ final class FormsTable extends \WP_List_Table {
 			return '<code>' . esc_html( $shortcode ) . '</code> ' . $this->button( $item['id'], 'copy', __( 'Copy', 'chatflow-forms' ) );
 		}
 		if ( 'status' === $column_name ) {
-			return esc_html( 'publish' === $item['status'] ? __( 'Live', 'chatflow-forms' ) : __( 'Draft', 'chatflow-forms' ) );
+			$labels = array(
+				'publish' => __( 'Live', 'chatflow-forms' ),
+				'trash'   => __( 'Trash', 'chatflow-forms' ),
+			);
+			return esc_html( $labels[ $item['status'] ] ?? __( 'Draft', 'chatflow-forms' ) );
 		}
 		$value = $item[ $column_name ] ?? '—';
 		return esc_html( (string) $value ) . ( 'completionRate' === $column_name ? '%' : '' );
 	}
 
 	public function no_items(): void {
+		if ( $this->isTrashView() ) {
+			esc_html_e( 'No forms in the trash.', 'chatflow-forms' );
+			return;
+		}
 		esc_html_e( 'No forms found.', 'chatflow-forms' );
 	}
 

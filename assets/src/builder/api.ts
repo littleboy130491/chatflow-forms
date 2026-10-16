@@ -17,6 +17,8 @@ export interface AdminConfig extends SharedAdminConfig {
   capabilities?: Partial<Record<Capability, boolean>>;
   adminUrl?: string;
   siteUrl?: string;
+  /** Site time zone (IANA name or "+HH:MM" offset) used by site-timezone reports. */
+  timezone?: string;
   fullpageBase?: string;
   tools?: boolean;
   preview?: boolean;

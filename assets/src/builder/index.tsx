@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/element';
+import { Fragment, createRoot, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { createReduxStore, createRegistry, RegistryProvider, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -28,7 +28,7 @@ import { googleFont, googleFonts } from '../shared/fonts';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
 import { AiGenerate, AiRephrase } from './AiAssist';
-import { Share } from './Share';
+import { Share, shortcode } from './Share';
 import { Contrast } from './Contrast';
 export { mountFormsList } from './forms-list';
 import './style.css';
@@ -56,6 +56,25 @@ export const fieldLabels: Record<string, string> = {
   statement: __('Statement', 'chatflow-forms'),
   summary: __('Summary', 'chatflow-forms'),
 };
+export const typingSpeedLabels: Record<'off' | 'fast' | 'normal' | 'slow', string> = {
+  off: __('Off (instant)', 'chatflow-forms'),
+  fast: __('Fast', 'chatflow-forms'),
+  normal: __('Normal', 'chatflow-forms'),
+  slow: __('Slow', 'chatflow-forms'),
+};
+export const themeLabels: Record<'light' | 'dark' | 'auto', string> = {
+  light: __('Light', 'chatflow-forms'),
+  dark: __('Dark', 'chatflow-forms'),
+  auto: __('Auto (follow visitor device)', 'chatflow-forms'),
+};
+/** Keeps a reload on the builder from creating another blank draft once the form exists. */
+export function builderUrlFor(href: string, id: number): string | null {
+  const url = new URL(href);
+  if (!id || (url.searchParams.get('formId') === String(id) && !url.searchParams.has('blank'))) return null;
+  url.searchParams.delete('blank');
+  url.searchParams.set('formId', String(id));
+  return url.href;
+}
 export interface TemplateSummary {
   id: string;
   title: string;
@@ -224,6 +243,22 @@ function BuilderView({
     setSchema({ ...schema, steps: [...schema.steps, next] });
     setSelected(next.id);
   };
+  const deleteStep = (id: string) => {
+    if (schema.steps.length <= 1) return;
+    if (!window.confirm(__('Delete this field? Review broken references before publishing.', 'chatflow-forms')))
+      return;
+    const steps = schema.steps.filter((item) => item.id !== id);
+    setSchema({
+      ...schema,
+      steps: steps as FormSchema['steps'],
+      groups: (schema.groups ?? []).map((group) => ({
+        ...group,
+        stepIds: group.stepIds.filter((stepId) => stepId !== id),
+      })),
+    });
+    setMarked(marked.filter((stepId) => stepId !== id));
+    if (selected === id) setSelected(steps[0]?.id ?? '');
+  };
   const dirty = controller.dirty();
   const [lockError, setLockError] = useState('');
   useEffect(() => {
@@ -241,8 +276,23 @@ function BuilderView({
     return () => clearInterval(timer);
   }, [controller, lockError]);
   useEffect(() => {
+    const next = builderUrlFor(window.location.href, form.id);
+    if (next) window.history.replaceState(window.history.state, '', next);
+  }, [form.id]);
+  // Set after the admin already confirmed leaving, so the browser does not ask again.
+  const leaving = useRef(false);
+  const publishButton = useRef<HTMLDivElement>(null),
+    publishDialog = useRef<HTMLElement>(null);
+  const closePublish = () => {
+    setPublishConfirm(false);
+    publishButton.current?.querySelector('button')?.focus();
+  };
+  useEffect(() => {
+    if (publishConfirm) publishDialog.current?.focus();
+  }, [publishConfirm]);
+  useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => {
-      if (controller.dirty()) {
+      if (!leaving.current && controller.dirty()) {
         event.preventDefault();
         event.returnValue = '';
       }
@@ -256,7 +306,10 @@ function BuilderView({
       <header className="cff-toolbar">
         <Button
           onClick={() => {
-            if (!dirty || window.confirm(__('Leave with unsaved changes?', 'chatflow-forms'))) onBack();
+            if (!dirty || window.confirm(__('Leave with unsaved changes?', 'chatflow-forms'))) {
+              leaving.current = true;
+              onBack();
+            }
           }}
         >
           {__('All forms', 'chatflow-forms')}
@@ -272,7 +325,11 @@ function BuilderView({
             : dirty
               ? __('Unsaved draft', 'chatflow-forms')
               : __('Draft saved', 'chatflow-forms')}{' '}
-          · {__('Live version', 'chatflow-forms')} {form.version}
+          ·{' '}
+          {form.version > 0
+            ? /* translators: %d: published version number */
+              sprintf(__('Live version %d', 'chatflow-forms'), form.version)
+            : __('Not published yet', 'chatflow-forms')}
         </span>
         <Button disabled={!state.history.length || state.saving} onClick={() => controller.undo()}>
           {__('Undo', 'chatflow-forms')}
@@ -289,17 +346,31 @@ function BuilderView({
           {__('Save draft', 'chatflow-forms')}
         </Button>
         <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
-        <Button
-          variant="primary"
-          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
-          onClick={() => setPublishConfirm(true)}
-        >
-          {__('Publish', 'chatflow-forms')}
-        </Button>
+        <span ref={publishButton}>
+          <Button
+            variant="primary"
+            aria-haspopup="dialog"
+            disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
+            onClick={() => setPublishConfirm(true)}
+          >
+            {__('Publish', 'chatflow-forms')}
+          </Button>
+        </span>
       </header>
       {state.error && (
-        <Notice status="error" isDismissible={false}>
-          {state.error}
+        <Notice status={state.locked ? 'warning' : 'error'} isDismissible={false}>
+          <p>{state.error}</p>
+          {state.locked && (
+            <Button
+              variant="secondary"
+              disabled={state.saving}
+              onClick={() => {
+                void controller.save().catch(() => undefined);
+              }}
+            >
+              {__('Retry save', 'chatflow-forms')}
+            </Button>
+          )}
         </Notice>
       )}
       {lockError && <Notice status="warning" isDismissible={false}>{lockError}</Notice>}
@@ -338,7 +409,16 @@ function BuilderView({
         </Notice>
       )}
       {publishConfirm && (
-        <section className="cff-card" role="dialog" aria-label={__('Confirm publish', 'chatflow-forms')}>
+        <section
+          className="cff-card"
+          role="dialog"
+          aria-label={__('Confirm publish', 'chatflow-forms')}
+          ref={publishDialog}
+          tabIndex={-1}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') closePublish();
+          }}
+        >
           <p>
             {sprintf(
               __(
@@ -358,7 +438,7 @@ function BuilderView({
               )}
             </p>
           )}
-          <Button onClick={() => setPublishConfirm(false)}>{__('Cancel', 'chatflow-forms')}</Button>
+          <Button onClick={closePublish}>{__('Cancel', 'chatflow-forms')}</Button>
           <Button
             variant="primary"
             disabled={state.saving || Boolean(lockError) || (form.version > 0 && !baseline)}
@@ -366,7 +446,7 @@ function BuilderView({
               try {
                 const published = await controller.publish();
                 setBaseline(published.schema);
-                setPublishConfirm(false);
+                closePublish();
               } catch {
                 /* The controller displays server validation and conflict errors. */
               }
@@ -376,7 +456,7 @@ function BuilderView({
           </Button>
         </section>
       )}
-      <nav className="cff-tabs">
+      <nav className="cff-tabs" aria-label={__('Builder sections', 'chatflow-forms')}>
         {[
           { value: 'build', label: __('Build', 'chatflow-forms') },
           { value: 'logic', label: __('Logic', 'chatflow-forms') },
@@ -387,6 +467,7 @@ function BuilderView({
           <Button
             key={item.value}
             variant={tab === item.value ? 'primary' : 'secondary'}
+            aria-pressed={tab === item.value}
             onClick={() => setTab(item.value)}
           >
             {item.label}
@@ -539,6 +620,13 @@ function BuilderView({
                       >
                         {__('Duplicate field', 'chatflow-forms')}
                       </Button>
+                      <Button
+                        isDestructive
+                        disabled={schema.steps.length <= 1}
+                        onClick={() => deleteStep(item.id)}
+                      >
+                        {__('Delete field', 'chatflow-forms')}
+                      </Button>
                     </article>
                   </SortableItem>
                 ))}
@@ -635,7 +723,10 @@ function BuilderView({
           <Select
             label={__('Typing speed', 'chatflow-forms')}
             value={schema.bot.typingSpeed ?? 'normal'}
-            choices={['off', 'fast', 'normal', 'slow'].map((value) => ({ value, label: value }))}
+            choices={(['off', 'fast', 'normal', 'slow'] as const).map((value) => ({
+              value,
+              label: typingSpeedLabels[value],
+            }))}
             onChange={(typingSpeed) =>
               setSchema({
                 ...schema,
@@ -646,7 +737,7 @@ function BuilderView({
           <Select
             label={__('Theme', 'chatflow-forms')}
             value={form.settings.appearance?.theme ?? 'light'}
-            choices={['light', 'dark', 'auto'].map((value) => ({ value, label: value }))}
+            choices={(['light', 'dark', 'auto'] as const).map((value) => ({ value, label: themeLabels[value] }))}
             onChange={(theme) =>
               edit((value) => ({
                 ...value,
@@ -728,7 +819,7 @@ function BuilderView({
           <h2>{__('Share', 'chatflow-forms')}</h2>
           {form.id ? (
             <Fragment>
-              <code>{`[chatflow id="${form.id}" mode="inline"]`}</code>
+              <code>{shortcode(form)}</code>
               <p>{__('Use the ChatFlow Form block or an Elementor Shortcode widget.', 'chatflow-forms')}</p>
               <p>{`${api.config.siteUrl ?? ''}${api.config.fullpageBase ?? 'chat'}/${form.slug}/`}</p>
               <code>{`<cff-chat data-form-id="${form.id}" data-rest-url="${api.config.restUrl}"></cff-chat>`}</code>
