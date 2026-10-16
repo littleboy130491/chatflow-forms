@@ -24,6 +24,21 @@ describe('native Forms table REST-backed actions', () => {
     await formsListAction(new AdminApi(config, transport), 'export', 12); expect(downloadForm).toHaveBeenCalledWith({ id: 12 });
     await formsListAction(new AdminApi(config, transport), 'copy', 12); expect(copy).toHaveBeenCalledWith('[chatflow id="12"]');
   });
+  it('asks before following a permanent-delete link from the Trash view', () => {
+    const root = document.createElement('div');
+    root.innerHTML = '<a href="#delete" data-cff-confirm="Delete this form permanently?"><span>Delete permanently</span></a>';
+    document.body.append(root);
+    mountFormsList(root, config);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const cancelled = new MouseEvent('click', { bubbles: true, cancelable: true });
+    root.querySelector('span')!.dispatchEvent(cancelled);
+    expect(confirm).toHaveBeenCalledWith('Delete this form permanently?');
+    expect(cancelled.defaultPrevented).toBe(true);
+    confirm.mockReturnValue(true);
+    const accepted = new MouseEvent('click', { bubbles: true, cancelable: true });
+    root.querySelector('span')!.dispatchEvent(accepted);
+    expect(accepted.defaultPrevented).toBe(false);
+  });
   it('bounds capabilities/actions/identifiers and presents errors as text', async () => {
     const api = new AdminApi(config, vi.fn()); await expect(formsListAction(api, 'invalid', 1)).rejects.toThrow(); await expect(formsListAction(api, 'copy', NaN)).rejects.toThrow();
     await expect(formsListAction(new AdminApi({ ...config, capabilities: {} }), 'copy', 1)).rejects.toThrow();

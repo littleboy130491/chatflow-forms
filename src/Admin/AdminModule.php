@@ -16,6 +16,107 @@ final class AdminModule implements Module {
 		add_action( 'init', array( $this, 'registerBlock' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueueBlock' ) );
 		add_action( 'init', array( $this, 'loadTranslations' ), 5 );
+		add_action( 'admin_post_cff_restore_form', array( $this, 'restoreForm' ) );
+		add_action( 'admin_post_cff_delete_form', array( $this, 'deleteForm' ) );
+		add_filter( 'wp_untrash_post_status', array( $this, 'untrashStatus' ), 10, 3 );
+		add_action( 'current_screen', array( $this, 'redirectClassicScreens' ) );
+	}
+
+	/** Restored forms return to their previous status instead of core's default draft. */
+	public function untrashStatus( string $status, int $id, string $previous ): string {
+		return 'cff_form' === get_post_type( $id ) && in_array( $previous, array( 'draft', 'publish' ), true ) ? $previous : $status;
+	}
+
+	/** The classic list/editor screens bypass the builder, so send admins to the builder instead. */
+	public function redirectClassicScreens( \WP_Screen $screen ): void {
+		if ( 'cff_form' !== $screen->post_type ) {
+			return;
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only screen routing.
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only screen routing.
+		$id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+		if ( 'edit' === $screen->base ) {
+			$target = add_query_arg( 'page', 'cff-forms', admin_url( 'admin.php' ) );
+		} elseif ( 'post' === $screen->base && ( 'add' === $screen->action || 'edit' === $action ) ) {
+			$target = add_query_arg(
+				array_filter(
+					array(
+						'page'   => 'cff-builder',
+						'formId' => 'edit' === $action ? $id : 0,
+					)
+				),
+				admin_url( 'admin.php' )
+			);
+		} else {
+			return;
+		}
+		wp_safe_redirect( $target );
+		exit;
+	}
+
+	public function restoreForm(): void {
+		$id = $this->trashedFormFromRequest( 'restore' );
+		$this->backToTrash( wp_untrash_post( $id ) ? 'restored' : 'failed' );
+	}
+
+	public function deleteForm(): void {
+		global $wpdb;
+		$id = $this->trashedFormFromRequest( 'delete' );
+		// Submissions keep personal data and files; they must be purged deliberately first.
+		$submissions = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE form_id = %d', $wpdb->prefix . 'cff_submissions', $id ) );
+		if ( $submissions > 0 ) {
+			$this->backToTrash( 'has_submissions' );
+		}
+		if ( ! wp_delete_post( $id, true ) ) {
+			$this->backToTrash( 'failed' );
+		}
+		// Sessions (and their temporary uploads) are left to the regular expiry jobs.
+		foreach ( array( 'cff_form_versions', 'cff_stats_daily', 'cff_events' ) as $table ) {
+			$wpdb->delete( $wpdb->prefix . $table, array( 'form_id' => $id ), array( '%d' ) );
+		}
+		$this->backToTrash( 'deleted' );
+	}
+
+	public static function trashActionUrl( string $action, int $id ): string {
+		return wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => 'cff_' . $action . '_form',
+					'formId' => $id,
+				),
+				admin_url( 'admin-post.php' )
+			),
+			'cff_' . $action . '_form_' . $id
+		);
+	}
+
+	private function trashedFormFromRequest( string $action ): int {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is bound to this ID and verified next.
+		$id = isset( $_GET['formId'] ) ? absint( $_GET['formId'] ) : 0;
+		check_admin_referer( 'cff_' . $action . '_form_' . $id );
+		if ( ! current_user_can( 'cff_manage_forms' ) ) {
+			wp_die( esc_html__( 'You are not allowed to manage forms.', 'chatflow-forms' ), '', array( 'response' => 403 ) );
+		}
+		$post = $id ? get_post( $id ) : null;
+		if ( ! $post || 'cff_form' !== $post->post_type || 'trash' !== $post->post_status ) {
+			wp_die( esc_html__( 'Only trashed forms can be restored or deleted permanently.', 'chatflow-forms' ), '', array( 'response' => 404 ) );
+		}
+		return $id;
+	}
+
+	private function backToTrash( string $notice ): void {
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'       => 'cff-forms',
+					'status'     => 'trash',
+					'cff_notice' => $notice,
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
 	}
 	public function loadTranslations(): void {
 		load_plugin_textdomain( 'chatflow-forms', false, dirname( plugin_basename( CFF_FILE ) ) . '/src/Admin/languages' );
@@ -72,7 +173,12 @@ final class AdminModule implements Module {
 		if ( 'forms' === $name ) {
 			$table = new FormsTable( $this->forms );
 			$table->prepare_items();
-			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'New form', 'chatflow-forms' ) . '</a></h1><div id="cff-form-start"></div><div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
+			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'New form', 'chatflow-forms' ) . '</a></h1>';
+			$this->trashNotice();
+			echo '<div id="cff-form-start"></div><div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
+			if ( $table->isTrashView() ) {
+				echo '<input type="hidden" name="status" value="trash">';
+			}
 			$table->views();
 			$table->search_box( __( 'Search forms', 'chatflow-forms' ), 'cff-forms' );
 			$table->display();
@@ -80,6 +186,20 @@ final class AdminModule implements Module {
 			return;
 		}
 		echo '<div class="wrap"><div id="cff-admin-root"></div></div>';
+	}
+
+	private function trashNotice(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only result of a nonce-checked redirect.
+		$notice   = isset( $_GET['cff_notice'] ) ? sanitize_key( wp_unslash( $_GET['cff_notice'] ) ) : '';
+		$messages = array(
+			'restored'        => array( 'success', __( 'Form restored.', 'chatflow-forms' ) ),
+			'deleted'         => array( 'success', __( 'Form deleted permanently.', 'chatflow-forms' ) ),
+			'has_submissions' => array( 'error', __( 'This form still has submissions. Purge them in Tools before deleting the form permanently.', 'chatflow-forms' ) ),
+			'failed'          => array( 'error', __( 'The form could not be changed. Please try again.', 'chatflow-forms' ) ),
+		);
+		if ( isset( $messages[ $notice ] ) ) {
+			echo '<div class="notice notice-' . esc_attr( $messages[ $notice ][0] ) . '"><p>' . esc_html( $messages[ $notice ][1] ) . '</p></div>';
+		}
 	}
 
 	public function enqueue( string $hook ): void {

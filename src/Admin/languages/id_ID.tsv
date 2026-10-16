@@ -192,10 +192,12 @@ Default theme|Tema bawaan
 Default value|Nilai bawaan
 Delay in seconds (0 = immediate)|Jeda dalam detik (0 = langsung)
 Delete partial on start over|Hapus kiriman sebagian saat mulai ulang
+Delete permanently|Hapus permanen
 Delete saved content template?|Hapus templat konten tersimpan?
 Delete selected|Hapus yang dipilih
 Delete selected fields? Review broken references before publishing.|Hapus kolom terpilih? Periksa referensi yang rusak sebelum menerbitkan.
 Delete template|Hapus templat
+Delete this form permanently? This cannot be undone. Forms that still have submissions cannot be deleted.|Hapus formulir ini secara permanen? Tindakan ini tidak dapat dibatalkan. Formulir yang masih memiliki kiriman tidak dapat dihapus.
 Delete this site’s forms and submissions on plugin uninstall|Hapus formulir dan kiriman situs ini saat plugin dihapus
 Delimiter|Pemisah
 Delivery activity|Aktivitas pengiriman
@@ -293,9 +295,11 @@ Form ID (blank = all)|ID formulir (kosong = semua)
 Form JSON file|Berkas JSON formulir
 Form URL QR code|Kode QR URL formulir
 Form builder|Pembuat formulir
+Form deleted permanently.|Formulir dihapus permanen.
 Form file exceeds 1 MiB.|Berkas formulir melebihi 1 MiB.
 Form funnel and experiments|Alur konversi formulir dan eksperimen
 Form name|Nama formulir
+Form restored.|Formulir dipulihkan.
 Form version|Versi formulir
 Formal|Formal
 Format|Format
@@ -451,6 +455,7 @@ No|Tidak
 No column|Tanpa kolom
 No data for this period.|Tidak ada data untuk periode ini.
 No forms found.|Tidak ada formulir yang ditemukan.
+No forms in the trash.|Tidak ada formulir di sampah.
 No logic warnings detected.|Tidak ditemukan peringatan logika.
 No matching submissions.|Tidak ada kiriman yang cocok.
 No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.|Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim.
@@ -467,6 +472,7 @@ Off for this form|Nonaktif untuk formulir ini
 Okay|Cukup baik
 Older than days (default 360 unless dates set)|Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)
 Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.|Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi.
+Only trashed forms can be restored or deleted permanently.|Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen.
 Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
 Open imported form|Buka formulir hasil impor
 Operand source|Sumber operand
@@ -593,6 +599,7 @@ Reset filters|Atur ulang filter
 Respect Do Not Track|Hormati Do Not Track
 Respondent email field|Kolom email responden
 Restart preview|Mulai ulang pratinjau
+Restore|Pulihkan
 Restore selected to Completed|Pulihkan yang dipilih ke Selesai
 Resume days (1–90)|Masa melanjutkan sesi (hari; 1–90)
 Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.|Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie.
@@ -695,12 +702,14 @@ Thank you!|Terima kasih!
 Thank you. Your request has been received.|Terima kasih. Permintaan Anda telah diterima.
 The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.|Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
 The export form must match the active form filter. Change the filter or select its form before exporting.|Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor.
+The form could not be changed. Please try again.|Formulir tidak dapat diubah. Silakan coba lagi.
 The frozen form snapshot is unavailable.|Snapshot formulir yang dibekukan tidak tersedia.
 The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
 The runtime preview is unavailable. Rebuild the plugin assets.|Pratinjau runtime tidak tersedia. Bangun ulang aset plugin.
 Theme|Tema
 Theme preset|Prasetel tema
 This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.|Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas.
+This form still has submissions. Purge them in Tools before deleting the form permanently.|Formulir ini masih memiliki kiriman. Hapus kiriman tersebut di Alat sebelum menghapus formulir secara permanen.
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
 This month|Bulan ini
 To (UTC)|Hingga (UTC)
@@ -775,6 +784,7 @@ Working…|Sedang diproses…
 Yes|Ya
 Yes / No|Ya / Tidak
 You are not allowed to access this screen.|Anda tidak diizinkan mengakses halaman ini.
+You are not allowed to manage forms.|Anda tidak diizinkan mengelola formulir.
 You cannot manage forms.|Anda tidak dapat mengelola formulir.
 You cannot manage settings.|Anda tidak dapat mengelola pengaturan.
 You cannot view analytics.|Anda tidak diizinkan melihat analitik.

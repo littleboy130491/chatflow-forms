@@ -22,6 +22,12 @@ export async function formsListAction(api: AdminApi, action: string, id: number)
 export function mountFormsList(root: HTMLElement, config: AdminConfig = window.cffAdmin): void {
   const api = new AdminApi(config); let busy = false;
   root.addEventListener('click', event => {
+    // Destructive links (Delete permanently) carry their own confirmation copy.
+    const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-cff-confirm]');
+    if (link && root.contains(link)) {
+      if (!window.confirm(link.dataset.cffConfirm ?? '')) event.preventDefault();
+      return;
+    }
     const button = (event.target as Element).closest<HTMLButtonElement>('button[data-cff-action]');
     if (!button || !root.contains(button)) return;
     event.preventDefault(); if (busy) return;
