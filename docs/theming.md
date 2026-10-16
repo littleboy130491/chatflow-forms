@@ -36,6 +36,14 @@ visitor's browser; custom CSS stays scoped to the chat's Shadow DOM.
   the answers given so far when the visitor clicks. https, tel: and mailto: links
   work too. Clicks dispatch a `cff:contact` event on the form element for
   analytics.
+- **Look:** set the button text, colour, text colour and icon (automatic from the
+  link, WhatsApp, chat bubble, phone, email or none).
+- **Working hours:** tick *Only show the button during working hours*, choose a
+  time zone (the site's by default; an IANA name such as `Asia/Jakarta` or an
+  offset such as `+07:00`) and the hours per weekday. Outside them the button is
+  hidden or replaced by your message. Ranges such as 22:00–02:00 run past
+  midnight and 00:00–00:00 means all day. The check uses the visitor's device
+  clock and refreshes every minute; an unknown time zone keeps the button visible.
 - **After submitting:** on Settings → Endings, give an ending a *Link* button and
   use *Build a WhatsApp link*; the message can include every answer. WhatsApp
   links (wa.me, api.whatsapp.com) are always allowed, so they do not need to be

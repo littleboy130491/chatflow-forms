@@ -19,6 +19,9 @@ msgstr "Cuplikan CSV yang sama persis dengan pratinjau penghapusan belum tersedi
 msgid "A published conversational form."
 msgstr "Formulir percakapan yang telah diterbitkan."
 
+msgid "A range that ends before it starts (22:00–02:00) runs past midnight; 00:00–00:00 means all day."
+msgstr "Rentang yang berakhir sebelum mulainya (22:00–02:00) berlanjut melewati tengah malam; 00:00–00:00 berarti sepanjang hari."
+
 msgid "A satisfaction choice and optional comment."
 msgstr "Pilihan kepuasan dan komentar opsional."
 
@@ -474,6 +477,9 @@ msgstr "Klasik"
 
 msgid "Close preview"
 msgstr "Tutup pratinjau"
+
+msgid "Closed"
+msgstr "Tutup"
 
 msgid "Closing date (UTC ISO 8601, blank = never)"
 msgstr "Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)"
@@ -1030,6 +1036,9 @@ msgstr "Formulir"
 msgid "Formula-like cells are escaped by the server. Exports contain personal data; store them securely."
 msgstr "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
 
+msgid "Friday"
+msgstr "Jumat"
+
 msgid "Friendly"
 msgstr "Ramah"
 
@@ -1158,6 +1167,9 @@ msgstr "Sumber nilai tersembunyi"
 
 msgid "Hide field"
 msgstr "Sembunyikan kolom"
+
+msgid "Hide the button"
+msgstr "Sembunyikan tombol"
 
 msgid "Home"
 msgstr "Rumah"
@@ -1441,6 +1453,9 @@ msgstr "Pesan"
 msgid "Message intro (merge tags allowed)"
 msgstr "Pembuka pesan (boleh memakai merge tag)"
 
+msgid "Message outside working hours (merge tags allowed)"
+msgstr "Pesan di luar jam kerja (tag gabungan boleh)"
+
 msgid "Messaging"
 msgstr "Perpesanan"
 
@@ -1476,6 +1491,9 @@ msgstr "Model (kosong = openrouter/auto)"
 
 msgid "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons."
 msgstr "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
+
+msgid "Monday"
+msgstr "Senin"
 
 msgid "More forms"
 msgstr "Formulir berikutnya"
@@ -1618,6 +1636,9 @@ msgstr "Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)"
 msgid "Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private."
 msgstr "Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi."
 
+msgid "Only show the button during working hours"
+msgstr "Tampilkan tombol hanya pada jam kerja"
+
 msgid "Only trashed forms can be restored or deleted permanently."
 msgstr "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
 
@@ -1656,6 +1677,9 @@ msgstr "Lainnya (pilihan teks bebas)"
 
 msgid "Outcome endings (first matching condition wins)"
 msgstr "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"
+
+msgid "Outside working hours"
+msgstr "Di luar jam kerja"
 
 msgid "Override step order (safe independent steps only)"
 msgstr "Ubah urutan langkah (hanya langkah mandiri yang aman)"
@@ -2059,6 +2083,9 @@ msgstr "Contoh jawaban harus berupa objek."
 msgid "Sample conversation. Your real questions appear in Preview."
 msgstr "Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau."
 
+msgid "Saturday"
+msgstr "Sabtu"
+
 msgid "Save draft"
 msgstr "Simpan draf"
 
@@ -2166,6 +2193,9 @@ msgstr "Shortcode"
 
 msgid "Show a contact button below the conversation"
 msgstr "Tampilkan tombol kontak di bawah percakapan"
+
+msgid "Show a message instead"
+msgstr "Tampilkan pesan sebagai gantinya"
 
 msgid "Show automatically on matching pages"
 msgstr "Tampilkan otomatis pada halaman yang sesuai"
@@ -2293,6 +2323,9 @@ msgstr "Kurangi"
 msgid "Summary"
 msgstr "Ringkasan"
 
+msgid "Sunday"
+msgstr "Minggu"
+
 msgid "Sunset"
 msgstr "Senja"
 
@@ -2371,6 +2404,12 @@ msgstr "Bulan ini"
 msgid "This week"
 msgstr "Minggu ini"
 
+msgid "Thursday"
+msgstr "Kamis"
+
+msgid "Time zone (e.g. Asia/Jakarta or +07:00)"
+msgstr "Zona waktu (mis. Asia/Jakarta atau +07:00)"
+
 msgid "Timing"
 msgstr "Waktu"
 
@@ -2418,6 +2457,9 @@ msgstr "Rentang CIDR tepercaya (satu per baris)"
 
 msgid "Trusted proxy configuration"
 msgstr "Konfigurasi proxy tepercaya"
+
+msgid "Tuesday"
+msgstr "Selasa"
 
 msgid "Type"
 msgstr "Jenis"
@@ -2584,6 +2626,9 @@ msgstr "URL webhook"
 msgid "Webhooks"
 msgstr "Webhook"
 
+msgid "Wednesday"
+msgstr "Rabu"
+
 msgid "Weight (1–100)"
 msgstr "Bobot (1–100)"
 
@@ -2616,6 +2661,9 @@ msgstr "Kunci kolom yang diizinkan"
 
 msgid "Work"
 msgstr "Pekerjaan"
+
+msgid "Working hours"
+msgstr "Jam kerja"
 
 msgid "Working…"
 msgstr "Sedang diproses…"
@@ -2661,6 +2709,9 @@ msgstr "Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 
 
 msgid "age is at least"
 msgstr "usia minimal"
+
+msgid "closes"
+msgstr "tutup"
 
 msgid "contains"
 msgstr "mengandung"
@@ -2712,6 +2763,9 @@ msgstr "salah satu dari"
 
 msgid "matches pattern"
 msgstr "cocok dengan pola"
+
+msgid "opens"
+msgstr "buka"
 
 msgid "reCAPTCHA v3 minimum score (0–1)"
 msgstr "Skor minimum reCAPTCHA v3 (0–1)"

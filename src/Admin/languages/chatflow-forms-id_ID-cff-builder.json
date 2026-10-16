@@ -25,6 +25,9 @@
       "A published conversational form.": [
         "Formulir percakapan yang telah diterbitkan."
       ],
+      "A range that ends before it starts (22:00–02:00) runs past midnight; 00:00–00:00 means all day.": [
+        "Rentang yang berakhir sebelum mulainya (22:00–02:00) berlanjut melewati tengah malam; 00:00–00:00 berarti sepanjang hari."
+      ],
       "A satisfaction choice and optional comment.": [
         "Pilihan kepuasan dan komentar opsional."
       ],
@@ -480,6 +483,9 @@
       ],
       "Close preview": [
         "Tutup pratinjau"
+      ],
+      "Closed": [
+        "Tutup"
       ],
       "Closing date (UTC ISO 8601, blank = never)": [
         "Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)"
@@ -1036,6 +1042,9 @@
       "Formula-like cells are escaped by the server. Exports contain personal data; store them securely.": [
         "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
       ],
+      "Friday": [
+        "Jumat"
+      ],
       "Friendly": [
         "Ramah"
       ],
@@ -1164,6 +1173,9 @@
       ],
       "Hide field": [
         "Sembunyikan kolom"
+      ],
+      "Hide the button": [
+        "Sembunyikan tombol"
       ],
       "Home": [
         "Rumah"
@@ -1447,6 +1459,9 @@
       "Message intro (merge tags allowed)": [
         "Pembuka pesan (boleh memakai merge tag)"
       ],
+      "Message outside working hours (merge tags allowed)": [
+        "Pesan di luar jam kerja (tag gabungan boleh)"
+      ],
       "Messaging": [
         "Perpesanan"
       ],
@@ -1482,6 +1497,9 @@
       ],
       "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.": [
         "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
+      ],
+      "Monday": [
+        "Senin"
       ],
       "More forms": [
         "Formulir berikutnya"
@@ -1624,6 +1642,9 @@
       "Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.": [
         "Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi."
       ],
+      "Only show the button during working hours": [
+        "Tampilkan tombol hanya pada jam kerja"
+      ],
       "Only trashed forms can be restored or deleted permanently.": [
         "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
       ],
@@ -1662,6 +1683,9 @@
       ],
       "Outcome endings (first matching condition wins)": [
         "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"
+      ],
+      "Outside working hours": [
+        "Di luar jam kerja"
       ],
       "Override step order (safe independent steps only)": [
         "Ubah urutan langkah (hanya langkah mandiri yang aman)"
@@ -2065,6 +2089,9 @@
       "Sample conversation. Your real questions appear in Preview.": [
         "Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau."
       ],
+      "Saturday": [
+        "Sabtu"
+      ],
       "Save draft": [
         "Simpan draf"
       ],
@@ -2172,6 +2199,9 @@
       ],
       "Show a contact button below the conversation": [
         "Tampilkan tombol kontak di bawah percakapan"
+      ],
+      "Show a message instead": [
+        "Tampilkan pesan sebagai gantinya"
       ],
       "Show automatically on matching pages": [
         "Tampilkan otomatis pada halaman yang sesuai"
@@ -2299,6 +2329,9 @@
       "Summary": [
         "Ringkasan"
       ],
+      "Sunday": [
+        "Minggu"
+      ],
       "Sunset": [
         "Senja"
       ],
@@ -2377,6 +2410,12 @@
       "This week": [
         "Minggu ini"
       ],
+      "Thursday": [
+        "Kamis"
+      ],
+      "Time zone (e.g. Asia/Jakarta or +07:00)": [
+        "Zona waktu (mis. Asia/Jakarta atau +07:00)"
+      ],
       "Timing": [
         "Waktu"
       ],
@@ -2424,6 +2463,9 @@
       ],
       "Trusted proxy configuration": [
         "Konfigurasi proxy tepercaya"
+      ],
+      "Tuesday": [
+        "Selasa"
       ],
       "Type": [
         "Jenis"
@@ -2590,6 +2632,9 @@
       "Webhooks": [
         "Webhook"
       ],
+      "Wednesday": [
+        "Rabu"
+      ],
       "Weight (1–100)": [
         "Bobot (1–100)"
       ],
@@ -2622,6 +2667,9 @@
       ],
       "Work": [
         "Pekerjaan"
+      ],
+      "Working hours": [
+        "Jam kerja"
       ],
       "Working…": [
         "Sedang diproses…"
@@ -2667,6 +2715,9 @@
       ],
       "age is at least": [
         "usia minimal"
+      ],
+      "closes": [
+        "tutup"
       ],
       "contains": [
         "mengandung"
@@ -2718,6 +2769,9 @@
       ],
       "matches pattern": [
         "cocok dengan pola"
+      ],
+      "opens": [
+        "buka"
       ],
       "reCAPTCHA v3 minimum score (0–1)": [
         "Skor minimum reCAPTCHA v3 (0–1)"

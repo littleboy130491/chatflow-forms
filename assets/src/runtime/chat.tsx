@@ -5,6 +5,7 @@ import { RuntimeController } from './controller';
 import { answerLabel, interpolateLink, interpolateMarkdown, Markdown, markdownText, reactions, safeLink } from './content';
 import { FieldInput } from './inputs';
 import { isWhatsapp } from '../shared/whatsapp';
+import { isOpen } from '../shared/hours';
 import { safeColor } from './appearance';
 import { phrases } from './i18n';
 import type { Step } from './types';
@@ -51,6 +52,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [magicStatus, setMagicStatus] = useState('');
+  const [clock, setClock] = useState(() => Date.now());
   const [reduced, setReduced] = useState(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
   const active = useRef<HTMLDivElement>(null);
   const last = useRef<HTMLDivElement>(null);
@@ -69,6 +71,9 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const interpolateRich = (text: string) => interpolateMarkdown(text, state.answers, controller.meta);
 
   useLayoutEffect(() => controller.subscribe(() => rerender(n => n + 1)), [controller]);
+  // Opening hours of the contact button are re-checked every minute while the chat is open.
+  const scheduled = Boolean(controller.state.form?.form.schema.bot.contact?.hours?.enabled);
+  useEffect(() => { if (!scheduled) return; const timer = setInterval(() => setClock(Date.now()), 60000); return () => clearInterval(timer); }, [scheduled]);
   useEffect(() => {
     const query = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
     const change = () => setReduced(query?.matches ?? false);
@@ -122,7 +127,9 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const contactIcon = contactUrl ? contactIconFor(contactUrl, contactSettings?.icon) : 'none';
   const contactLabel = contactSettings?.label || phrase(contactUrl && isWhatsapp(contactUrl) ? 'whatsapp' : 'contactUs');
   const contactBackground = safeColor(contactSettings?.color), contactText = safeColor(contactSettings?.textColor);
-  const contact = contactUrl && <a className={`contact-link${isWhatsapp(contactUrl) ? ' is-whatsapp' : ''}`} href={contactUrl} target="_blank" rel="noopener noreferrer" aria-label={`${contactLabel} (${phrase('opensNewTab')})`} onClick={() => controller.contactClicked()}
+  const contactOpen = isOpen(contactSettings?.hours, new Date(clock));
+  const contactClosedMessage = !contactOpen && contactSettings?.hours?.outside === 'message' && contactSettings.hours.message ? interpolateText(contactSettings.hours.message) : '';
+  const contact = contactUrl && contactOpen && <a className={`contact-link${isWhatsapp(contactUrl) ? ' is-whatsapp' : ''}`} href={contactUrl} target="_blank" rel="noopener noreferrer" aria-label={`${contactLabel} (${phrase('opensNewTab')})`} onClick={() => controller.contactClicked()}
     style={{ ...(contactBackground ? { background: contactBackground, borderColor: contactBackground } : {}), ...(contactText ? { color: contactText } : {}) }}>
     {contactIcon !== 'none' && <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d={contactIcons[contactIcon]} /></svg>}
     <span>{contactLabel}</span>
@@ -166,7 +173,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
       {error}
       <div ref={last} />
     </main>
-    {contact && <div className="contact-bar">{contact}</div>}
+    {(contact || contactClosedMessage) && <div className="contact-bar">{contact || <p className="contact-closed">{contactClosedMessage}</p>}</div>}
     {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><span className="sr-only" role="status">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{(state.offline || state.storageUnavailable || (form?.session.magicLinks?.enabled && state.phase === 'ready')) && <footer>{(state.offline || state.storageUnavailable) && <p className="status-notice">{phrase(state.offline ? 'offline' : 'storageUnavailable')}</p>}
       {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
         <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicEmailConfirm'))) return; void controller.magicLink('email').then(() => setMagicStatus(phrase('magicEmailAccepted'))).catch(() => setMagicStatus(phrase('magicEmailError'))); }}>{phrase('magicEmail')}</button>

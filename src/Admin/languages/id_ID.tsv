@@ -4,6 +4,7 @@ A 0–10 recommendation score and optional feedback.|Skor rekomendasi 0–10 dan
 A form is required so columns remain consistent. Active filters and selected rows are intersected with that form; no cross-form export is implied.|Formulir wajib dipilih agar kolom konsisten. Filter aktif dan baris pilihan dibatasi pada formulir tersebut; ekspor tidak melintasi formulir.
 A matching purge-preview CSV snapshot is not available. Export each affected form separately before deleting; ordinary exports are not an exact preview backup when rows change.|Cuplikan CSV yang sama persis dengan pratinjau penghapusan belum tersedia. Ekspor tiap formulir terdampak secara terpisah sebelum menghapus; ekspor biasa bukan cadangan pratinjau yang tepat jika baris berubah.
 A published conversational form.|Formulir percakapan yang telah diterbitkan.
+A range that ends before it starts (22:00–02:00) runs past midnight; 00:00–00:00 means all day.|Rentang yang berakhir sebelum mulainya (22:00–02:00) berlanjut melewati tengah malam; 00:00–00:00 berarti sepanjang hari.
 A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
 A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
@@ -167,6 +168,8 @@ Choose template|Pilih templat
 City|Kota
 Classic|Klasik
 Close preview|Tutup pratinjau
+Closed|Tutup
+closes|tutup
 Closing date (UTC ISO 8601, blank = never)|Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)
 Cloudflare Turnstile|Cloudflare Turnstile
 Collect a name, email address, topic, message, and permission to reply.|Kumpulkan nama, alamat email, topik, pesan, dan izin untuk membalas.
@@ -366,6 +369,7 @@ Formal|Formal
 Format|Format
 Forms|Formulir
 Formula-like cells are escaped by the server. Exports contain personal data; store them securely.|Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman.
+Friday|Jumat
 Friendly|Ramah
 From|Dari
 From (UTC)|Dari (UTC)
@@ -400,6 +404,7 @@ Group title|Judul grup
 Header background|Latar header
 Header text|Teks header
 Hi there! 👋|Halo! 👋
+Hide the button|Sembunyikan tombol
 HTTPS media URL|URL media HTTPS
 Headers|Header
 Health intake|Permintaan konsultasi kesehatan
@@ -506,6 +511,7 @@ Media|Media
 Media type|Jenis media
 Merge tag|Tag gabung
 Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url="https://…"]Label[/cff_button].|Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url="https://…"]Label[/cff_button].
+Message outside working hours (merge tags allowed)|Pesan di luar jam kerja (tag gabungan boleh)
 Message|Pesan
 Message intro (merge tags allowed)|Pembuka pesan (boleh memakai merge tag)
 Messaging|Perpesanan
@@ -520,6 +526,7 @@ Mobile|Ponsel
 Model (blank = openrouter/auto)|Model (kosong = openrouter/auto)
 Model|Model
 Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.|Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard.
+Monday|Senin
 More forms|Formulir berikutnya
 Move down|Pindah ke bawah
 Move up|Pindah ke atas
@@ -572,12 +579,14 @@ Off for this form|Nonaktif untuk formulir ini
 Okay|Cukup baik
 Older than days (default 360 unless dates set)|Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)
 Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.|Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi.
+Only show the button during working hours|Tampilkan tombol hanya pada jam kerja
 Only trashed forms can be restored or deleted permanently.|Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen.
 Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
 Open imported form|Buka formulir hasil impor
 OpenAI-compatible endpoint|Endpoint kompatibel OpenAI
 OpenRouter API key (sk-or-…)|Kunci API OpenRouter (sk-or-…)
 OpenRouter|OpenRouter
+opens|buka
 Operand source|Sumber operand
 Operation|Operasi
 Operator|Operator
@@ -588,6 +597,7 @@ Optional. Form editors can generate a draft form from a description and rephrase
 Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.|Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI.
 Other (free-text option)|Lainnya (pilihan teks bebas)
 Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
+Outside working hours|Di luar jam kerja
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
 Page exclusions take precedence. A published form is required for automatic placement.|Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis.
 Page metadata|Metadata halaman
@@ -730,9 +740,11 @@ Rows per page|Baris per halaman
 Rule %d|Aturan %d
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
 Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
+Saturday|Sabtu
 Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
 Shape|Bentuk
 Show a contact button below the conversation|Tampilkan tombol kontak di bawah percakapan
+Show a message instead|Tampilkan pesan sebagai gantinya
 Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
 Sky|Langit
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
@@ -819,6 +831,7 @@ Submissions per rate window|Kiriman per jendela pembatasan
 Submit attempts per visitor IP per rate window|Percobaan kirim per IP pengunjung per jendela batas
 Subtract|Kurangi
 Summary|Ringkasan
+Sunday|Minggu
 Sunset|Senja
 System / local — no ChatFlow font requests|Sistem / lokal — tanpa permintaan font ChatFlow
 System status|Status sistem
@@ -848,6 +861,8 @@ This form still has submissions. Purge them in Tools before deleting the form pe
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
 This month|Bulan ini
 This week|Minggu ini
+Thursday|Kamis
+Time zone (e.g. Asia/Jakarta or +07:00)|Zona waktu (mis. Asia/Jakarta atau +07:00)
 Timing|Waktu
 To (UTC)|Hingga (UTC)
 To (UTC, inclusive)|Sampai (UTC, inklusif)
@@ -866,6 +881,7 @@ Trash this form? New visitors cannot start it afterwards.|Pindahkan formulir ini
 Trash this submission?|Pindahkan kiriman ini ke sampah?
 Trusted CIDR ranges (one per line)|Rentang CIDR tepercaya (satu per baris)
 Trusted proxy configuration|Konfigurasi proxy tepercaya
+Tuesday|Selasa
 Type|Jenis
 Type DELETE to confirm|Ketik DELETE untuk konfirmasi
 Type DELETE to permanently erase selected submissions, files and activity.|Ketik DELETE untuk menghapus permanen jawaban, berkas, dan aktivitas yang dipilih.
@@ -922,6 +938,7 @@ Wait for the visitor to press a button|Tunggu pengunjung menekan tombol
 Wallpaper|Wallpaper
 Webhook URL|URL webhook
 Webhooks|Webhook
+Wednesday|Rabu
 Weight (1–100)|Bobot (1–100)
 Welcome! Add your questions in the builder.|Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir.
 What brings you here today?|Ada yang bisa kami bantu hari ini?
@@ -932,6 +949,7 @@ WhatsApp number with country code|Nomor WhatsApp dengan kode negara
 WhatsApp|WhatsApp
 Where will you use the product?|Di mana Anda akan menggunakan produk ini?
 Whitelisted field keys|Kunci kolom yang diizinkan
+Working hours|Jam kerja
 Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.
 Work|Pekerjaan
 Working…|Sedang diproses…

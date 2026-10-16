@@ -727,7 +727,7 @@ function BuilderView({
               })
             }
           />
-            <ContactLinkEditor schema={schema} onChange={setSchema} />
+            <ContactLinkEditor schema={schema} timezone={api.config.timezone} onChange={setSchema} />
           </section>
           <section className="cff-card">
             <h2>{__('Typography', 'chatflow-forms')}</h2>

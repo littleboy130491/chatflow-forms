@@ -382,3 +382,26 @@ describe('contact button customisation', () => {
     await act(() => handle!.unmount());
   });
 });
+describe('contact working hours', () => {
+  it('shows the custom message instead of the button outside working hours, or hides it', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-17T02:30:00Z')); // Saturday morning in Jakarta
+    const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }]);
+    envelope.form.schema.bot.contact = { url: 'https://wa.me/62812', hours: { enabled: true, timezone: 'Asia/Jakarta', days: { mon: { from: '09:00', to: '17:00' } }, outside: 'message', message: 'We reply Mon 09:00–17:00 WIB.' } };
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.contact-closed')?.textContent).toBe('We reply Mon 09:00–17:00 WIB.'));
+    expect(host.shadowRoot!.querySelector('.contact-link')).toBeNull();
+    await act(() => handle!.unmount());
+    envelope.form.schema.bot.contact.hours!.outside = 'hide';
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.chat')).not.toBeNull());
+    expect(host.shadowRoot!.querySelector('.contact-bar')).toBeNull();
+    await act(() => handle!.unmount());
+    vi.setSystemTime(new Date('2026-10-19T03:00:00Z')); // Monday 10:00 in Jakarta
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.contact-link')).not.toBeNull());
+    await act(() => handle!.unmount());
+    vi.useRealTimers();
+  });
+});

@@ -110,3 +110,4 @@ header nav{margin-inline-start:auto}
 .contact-link.is-whatsapp{background:#25d366;border-color:#25d366;color:#fff}.contact-link.is-whatsapp:hover{background:#1ebe5b}
 .chat{container-type:inline-size}header{flex-wrap:nowrap}.identity{min-width:0}.identity strong,.identity small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}nav button{white-space:nowrap}
 @container (max-width:520px){nav button{padding-inline:6px}}
+.contact-closed{margin:0;text-align:center;font-size:13px;line-height:1.4;color:color-mix(in srgb,var(--cff-text) 70%,transparent)}

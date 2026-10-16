@@ -83,3 +83,9 @@
 .cff-whatsapp-builder .components-button { justify-self: start; }
 .cff-whatsapp-details summary { cursor: pointer; color: var(--wp-admin-theme-color, #2271b1); margin: 4px 0 8px; }
 .cff-contact-sample span { display: inline-block; margin-top: 10px; padding: 10px 28px; border-radius: 10px; font-weight: 600; }
+.cff-hours { margin: 16px 0 0; padding: 12px; border: 1px solid #dcdcde; border-radius: 8px; max-width: 560px; }
+.cff-hours legend { font-weight: 600; padding: 0 4px; }
+.cff-hours-table { border-collapse: collapse; margin: 6px 0; }
+.cff-hours-table th { text-align: left; font-weight: 500; padding: 4px 16px 4px 0; }
+.cff-hours-table th label { display: flex; align-items: center; gap: 6px; }
+.cff-hours-table td { padding: 4px 0; }
