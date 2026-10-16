@@ -263,6 +263,7 @@ final class AdminModule implements Module {
 			'capabilities' => $caps,
 			'adminUrl'     => admin_url( 'admin.php' ),
 			'siteUrl'      => home_url( '/' ),
+			'timezone'     => wp_timezone_string(),
 			'fullpageBase' => is_array( $settings ) ? ( $settings['fullpageBase'] ?? 'chat' ) : 'chat',
 			'tools'        => 'cff-tools' === $this->pageSlug(),
 			'features'     => array(

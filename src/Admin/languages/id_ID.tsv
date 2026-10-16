@@ -156,6 +156,7 @@ Completed|Selesai
 Completed submission|Kiriman selesai
 Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission.|Hanya kiriman yang selesai. Menggunakan label opsi saat ini; opsi yang dihapus dikelompokkan tanpa menampilkan teks Lainnya. Pilihan ganda dapat dihitung lebih dari sekali per kiriman.
 Completion rate|Tingkat penyelesaian
+Completion rate (completed ÷ starts)|Tingkat penyelesaian (selesai ÷ mulai)
 Completions|Penyelesaian
 Concise|Ringkas
 Confetti on completion (off by default)|Konfeti saat selesai (nonaktif secara bawaan)
@@ -200,6 +201,8 @@ Custom headers (private)|Header khusus (pribadi)
 Customer feedback|Umpan balik pelanggan
 Dark|Gelap
 Date|Tanggal
+Dates in UTC|Tanggal dalam UTC
+Dates in site timezone (%s)|Tanggal dalam zona waktu situs (%s)
 Deactivation never deletes data. Multisite uses each site’s own setting.|Menonaktifkan plugin tidak menghapus data. Multisite menggunakan pengaturan masing-masing situs.
 Decimal numbers|Angka desimal
 Default country (ISO code)|Negara bawaan (kode ISO)
@@ -332,6 +335,7 @@ Formula-like cells are escaped by the server. Exports contain personal data; sto
 Friendly|Ramah
 From|Dari
 From (UTC)|Dari (UTC)
+From (site timezone)|Dari (zona waktu situs)
 From date (UTC)|Dari tanggal (UTC)
 From email|Email pengirim
 From name|Nama pengirim
@@ -765,7 +769,9 @@ This form still has submissions. Purge them in Tools before deleting the form pe
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
 This month|Bulan ini
 To (UTC)|Hingga (UTC)
+To (UTC, inclusive)|Sampai (UTC, inklusif)
 To (inclusive)|Sampai (termasuk)
+To (site timezone, inclusive)|Sampai (zona waktu situs, inklusif)
 To date (UTC)|Sampai tanggal (UTC)
 Tone|Nada
 Tools|Alat
