@@ -44,11 +44,27 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "magicLinks": { "type": "object", "additionalProperties": false, "properties": {
-          "enabled": { "type": "boolean" }, "whatsapp": { "type": "boolean" },
-          "emailField": { "type": "string", "maxLength": 64 },
-          "ttlMinutes": { "type": "integer", "minimum": 5, "maximum": 1440 }
-        } },
+        "magicLinks": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "whatsapp": {
+              "type": "boolean"
+            },
+            "emailField": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "ttlMinutes": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 1440
+            }
+          }
+        },
         "savePartial": {
           "type": "boolean"
         },
@@ -210,6 +226,13 @@
             "$ref": "#/$defs/webhook"
           },
           "maxItems": 20
+        },
+        "connectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/connector"
+          },
+          "maxItems": 10
         }
       }
     },
@@ -1207,6 +1230,92 @@
         "id",
         "enabled",
         "url",
+        "events"
+      ]
+    },
+    "connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$"
+        },
+        "type": {
+          "enum": [
+            "slack",
+            "mailchimp",
+            "hubspot",
+            "ga4",
+            "meta_capi"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "completed",
+              "partial",
+              "abandoned"
+            ]
+          },
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "consentField": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "emailField": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "phoneField": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "fields": {
+          "type": "object",
+          "maxProperties": 30,
+          "propertyNames": {
+            "maxLength": 100
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          }
+        },
+        "listId": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "doubleOptIn": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maxItems": 20
+        },
+        "eventName": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "enabled",
         "events"
       ]
     }

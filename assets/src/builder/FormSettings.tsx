@@ -8,6 +8,7 @@ import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './contro
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
 import { EmailTemplates } from './EmailTemplates';
+import { ConnectorSettings } from './ConnectorSettings';
 import { errorMessage } from './api';
 import type { AdminApi, FormDTO, FormSettings, FormSchema, Ending } from './api';
 import type { Notification, Webhook } from '../shared/settings.generated';
@@ -964,6 +965,7 @@ export function SettingsEditor({
           {__('Add webhook', 'chatflow-forms')}
         </Button>
       </section>
+      <ConnectorSettings schema={form.schema} integrations={integrations} onChange={(next) => set('integrations', next)} />
       <section className="cff-card">
         <h2>{__('Visitor phrase overrides', 'chatflow-forms')}</h2>
         <JsonEditor

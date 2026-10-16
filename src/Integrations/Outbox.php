@@ -34,6 +34,13 @@ final class Outbox {
 				);
 			}
 		}
+		foreach ( Connectors\Connectors::planned( $form->settings(), $event, $payload ) as $connector ) {
+			$plans[] = array(
+				'channel' => 'connector',
+				'id'      => $connector['id'],
+				'delay'   => 0,
+			);
+		}
 		$ids = array();
 		foreach ( $plans as $plan ) {
 			$ids[] = $this->insert( $submission->id(), $form->version(), $event, $plan['channel'], $plan['id'], $payload, $revision, $plan['delay'] );

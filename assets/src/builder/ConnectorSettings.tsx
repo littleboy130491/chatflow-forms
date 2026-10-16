@@ -1,0 +1,127 @@
+/** @jsxRuntime classic */
+/** @jsx React.createElement */
+import * as React from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { Button, Check, Field, JsonEditor, Notice, Select } from './controls';
+import { uid } from './model';
+import type { FormSchema, FormSettings } from './api';
+import type { Connector } from '../shared/settings.generated';
+
+type Integrations = NonNullable<FormSettings['integrations']>;
+type Connectors = NonNullable<Integrations['connectors']>;
+export type ConnectorType = Connector['type'];
+
+export const connectorLabels: Record<ConnectorType, string> = {
+  slack: 'Slack',
+  mailchimp: 'Mailchimp',
+  hubspot: 'HubSpot',
+  ga4: 'Google Analytics 4',
+  meta_capi: 'Meta Conversions API',
+};
+/** Which per-form options each provider uses; mirrors the PHP connector checks. */
+export const connectorNeeds: Record<ConnectorType, { email?: 'required' | 'optional'; phone?: boolean; consent: 'required' | 'optional'; fields?: string; list?: boolean; tags?: boolean; eventName?: string; message?: boolean }> = {
+  slack: { consent: 'optional', message: true },
+  mailchimp: { email: 'required', consent: 'required', fields: 'FNAME', list: true, tags: true },
+  hubspot: { email: 'required', consent: 'optional', fields: 'firstname' },
+  ga4: { consent: 'required', eventName: 'generate_lead' },
+  meta_capi: { email: 'optional', phone: true, consent: 'required', eventName: 'Lead' },
+};
+
+export function newConnector(type: ConnectorType): Connector {
+  return { id: uid('conn'), type, enabled: true, events: ['completed'] };
+}
+
+export function ConnectorSettings({ schema, integrations, onChange }: { schema: FormSchema; integrations: Integrations; onChange: (next: Integrations) => void }) {
+  const [adding, setAdding] = useState<ConnectorType>('slack');
+  const connectors = (integrations.connectors ?? []) as Connector[];
+  const save = (next: Connector[]) => onChange({ ...integrations, connectors: next as Connectors });
+  const fieldChoices = (types: string[] | null, empty: string) => [
+    { value: '', label: empty },
+    ...schema.steps.filter((step) => !types || types.includes(step.type)).map((step) => ({ value: step.key, label: `${step.label} (${step.key})` })),
+  ];
+  return (
+    <section className="cff-card">
+      <h2>{__('Native connectors', 'chatflow-forms')}</h2>
+      <Notice status="info" isDismissible={false}>
+        {__('Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes.', 'chatflow-forms')}
+      </Notice>
+      {connectors.map((connector) => {
+        const needs = connectorNeeds[connector.type];
+        const change = (patch: Partial<Connector>) => save(connectors.map((item) => (item.id === connector.id ? { ...item, ...patch } : item)));
+        const optional = (key: 'emailField' | 'phoneField' | 'consentField' | 'listId' | 'eventName' | 'message') => (value: string) => {
+          const next = { ...connector } as Record<string, unknown>;
+          if (value === '') delete next[key]; else next[key] = value;
+          save(connectors.map((item) => (item.id === connector.id ? (next as unknown as Connector) : item)));
+        };
+        return (
+          <fieldset key={connector.id} className="cff-connector">
+            <legend>{connectorLabels[connector.type]} · {connector.id}</legend>
+            <Check label={__('Enabled', 'chatflow-forms')} value={connector.enabled} onChange={(enabled) => change({ enabled })} />
+            {(['completed', 'partial', 'abandoned'] as const).map((event) => (
+              <Check
+                key={event}
+                label={event}
+                value={(connector.events as string[]).includes(event)}
+                onChange={(checked) => change({ events: (checked ? [...connector.events, event] : connector.events.filter((item) => item !== event)) as Connector['events'] })}
+              />
+            ))}
+            {needs.email && (
+              <Select
+                label={needs.email === 'required' ? __('Email question (required)', 'chatflow-forms') : __('Email question (optional, sent hashed)', 'chatflow-forms')}
+                value={connector.emailField ?? ''}
+                choices={fieldChoices(['email', 'short_text', 'hidden'], __('Choose a question', 'chatflow-forms'))}
+                onChange={optional('emailField')}
+              />
+            )}
+            {needs.phone && (
+              <Select label={__('Phone question (optional, sent hashed)', 'chatflow-forms')} value={connector.phoneField ?? ''} choices={fieldChoices(['phone', 'short_text', 'hidden'], __('None', 'chatflow-forms'))} onChange={optional('phoneField')} />
+            )}
+            <Select
+              label={needs.consent === 'required' ? __('Consent question (required; must be answered yes)', 'chatflow-forms') : __('Consent question (optional; send only when answered yes)', 'chatflow-forms')}
+              value={connector.consentField ?? ''}
+              choices={fieldChoices(['consent', 'yes_no'], __('None', 'chatflow-forms'))}
+              onChange={optional('consentField')}
+            />
+            {needs.list && (
+              <Fragment>
+                <Field label={__('Mailchimp audience ID', 'chatflow-forms')} value={connector.listId ?? ''} onChange={optional('listId')} />
+                <Check label={__('Double opt-in (subscriber confirms by email)', 'chatflow-forms')} value={connector.doubleOptIn ?? true} onChange={(doubleOptIn) => change({ doubleOptIn })} />
+              </Fragment>
+            )}
+            {needs.tags && (
+              <Field
+                label={__('Tags (comma-separated)', 'chatflow-forms')}
+                value={(connector.tags ?? []).join(', ')}
+                onChange={(value) => change({ tags: value.split(',').map((tag) => tag.trim()).filter(Boolean).slice(0, 20) as NonNullable<Connector['tags']> })}
+              />
+            )}
+            {needs.fields && (
+              <JsonEditor
+                label={`${__('Field mapping: provider field → answer key', 'chatflow-forms')} (${needs.fields})`}
+                value={connector.fields ?? {}}
+                onChange={(fields) => change({ fields })}
+              />
+            )}
+            {needs.eventName && <Field label={`${__('Event name', 'chatflow-forms')} (${needs.eventName})`} value={connector.eventName ?? ''} onChange={optional('eventName')} />}
+            {needs.message && <Field label={__('Message intro (merge tags allowed)', 'chatflow-forms')} value={connector.message ?? ''} onChange={optional('message')} />}
+            <Button isDestructive onClick={() => save(connectors.filter((item) => item.id !== connector.id))}>
+              {__('Remove connector', 'chatflow-forms')}
+            </Button>
+          </fieldset>
+        );
+      })}
+      <div className="cff-connector-add">
+        <Select
+          label={__('Connector', 'chatflow-forms')}
+          value={adding}
+          choices={(Object.keys(connectorLabels) as ConnectorType[]).map((type) => ({ value: type, label: connectorLabels[type] }))}
+          onChange={(type) => setAdding(type as ConnectorType)}
+        />
+        <Button disabled={connectors.length >= 10} onClick={() => save([...connectors, newConnector(adding)])}>
+          {__('Add connector', 'chatflow-forms')}
+        </Button>
+      </div>
+    </section>
+  );
+}

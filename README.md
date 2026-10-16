@@ -10,7 +10,7 @@ The **shell integration gate passes**, not the complete product acceptance gate:
 the under-15-minute builder exercise, mobile/browser journey, live SMTP/webhook
 receipt and hosting/cache compatibility matrix remain untested. See
 [MVP checks](docs/mvp-checks.md) and [integrated Phase 2 coverage](docs/phase2-integration.md). PLAN.md is unchanged.
-There is no licence system, telemetry, native CRM connector, payment or AI chat.
+There is no licence system, telemetry, payment or AI chat.
 
 ## Phase 2 aggregate form views
 
@@ -117,8 +117,11 @@ CAPTCHA or Akismet. See [the integration checks and acceptance gaps](docs/phase2
 Phase 3 provides bounded calculations, variables/scoring, outcome endings,
 an editable branching map, server-assigned copy/order experiments with variant
 analytics, and consent-aware single-use resume links. See [Phase 3 usage and
-security](docs/phase3-power.md). The optional AI builder assist and native CRM
-connectors are deferred; no AI chat or telemetry is included.
+security](docs/phase3-power.md). Native connectors send submissions to Slack,
+Mailchimp, HubSpot, Google Analytics 4 and the Meta Conversions API through the
+delivery outbox; marketing and ad connectors require a consent answer. See
+[connectors](docs/connectors.md). The optional AI builder assist is deferred; no
+AI chat or telemetry is included.
 
 ## Development
 

@@ -57,8 +57,9 @@ outside the plugin's protection; keep HTTPS and third-party scripts trusted.
 
 Shared PHP/TypeScript fixtures cover scoring, calculated answers, outcome
 selection, copy/order variants and rejection of forged computed answers or
-invalid expressions. AI builder assistance and native CRM connectors remain
-optional and **not implemented**. Licence checks, telemetry, payments and AI
+invalid expressions. Native connectors are documented in
+[connectors.md](connectors.md). AI builder assistance remains optional and
+**not implemented**. Licence checks, telemetry, payments and AI
 chat remain out of scope. A shell test/build pass does not establish mobile
 usability, under-15-minute authoring, real SMTP delivery, or hosting/cache
 compatibility; verify those separately before production rollout.

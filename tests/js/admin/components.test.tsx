@@ -7,6 +7,8 @@ import type { AdminConfig, FormDTO } from '../../../assets/src/builder/api';
 import { blankForm, v1Types } from '../../../assets/src/builder/model';
 import { FormStart } from '../../../assets/src/builder/index';
 import { JsonEditor } from '../../../assets/src/builder/controls';
+import { ConnectorSettings } from '../../../assets/src/builder/ConnectorSettings';
+import type { FormSettings } from '../../../assets/src/builder/api';
 import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
 import { Purge } from '../../../assets/src/submissions/Purge';
 import { Filters } from '../../../assets/src/submissions/Filters';
@@ -337,5 +339,34 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     await act(async () => root.render(null));
     await act(async () => vi.advanceTimersByTimeAsync(10000));
     expect(request).not.toHaveBeenCalled();
+  });
+});
+
+describe('native connector editor', () => {
+  it('adds a provider, offers only consent questions as the gate and drops cleared options', async () => {
+    const form = blankForm();
+    form.schema.steps = [
+      { id: 's1', key: 'email', type: 'email', label: 'Email', messages: [] },
+      { id: 's2', key: 'agree', type: 'consent', label: 'Agree', messages: [] },
+      { id: 's3', key: 'nama', type: 'short_text', label: 'Name', messages: [] },
+    ];
+    let latest: NonNullable<FormSettings['integrations']> = {};
+    const render = async () => act(async () => root.render(createElement(ConnectorSettings, { schema: form.schema, integrations: latest, onChange: (next: typeof latest) => { latest = next; void render(); } })));
+    await render();
+    await act(async () => {
+      const picker = [...container.querySelectorAll('label')].find((item) => item.textContent?.startsWith('Connector'))!.querySelector('select')!;
+      picker.value = 'mailchimp';
+      picker.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await click('Add connector');
+    expect(latest.connectors?.[0]).toMatchObject({ type: 'mailchimp', enabled: true, events: ['completed'] });
+    const consent = [...container.querySelectorAll('label')].find((item) => item.textContent?.startsWith('Consent question (required'))!.querySelector('select')!;
+    expect([...consent.options].map((option) => option.value)).toEqual(['', 'agree']);
+    await change('Mailchimp audience ID', 'abc123def4');
+    expect(latest.connectors?.[0]?.listId).toBe('abc123def4');
+    await change('Mailchimp audience ID', '');
+    expect(latest.connectors?.[0]).not.toHaveProperty('listId');
+    await click('Remove connector');
+    expect(latest.connectors).toEqual([]);
   });
 });

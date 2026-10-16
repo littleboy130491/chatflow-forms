@@ -34,7 +34,30 @@ export interface GlobalSettings {
     brandColor: string;
     footerText: string;
   };
+  connectors?: {
+    slack: { webhookUrl: string };
+    mailchimp: { apiKey: string };
+    hubspot: { accessToken: string };
+    ga4: { measurementId: string; apiSecret: string };
+    meta_capi: { pixelId: string; accessToken: string; testEventCode: string };
+  };
 }
+type ConnectorCredentials = NonNullable<GlobalSettings['connectors']>;
+/** Credential inputs per provider; leave a provider blank to turn it off. */
+const credentialFields: { type: keyof ConnectorCredentials; title: string; fields: { key: string; label: string; secret: boolean }[] }[] = [
+  { type: 'slack', title: 'Slack', fields: [{ key: 'webhookUrl', label: __('Incoming webhook URL (https://hooks.slack.com/services/…)', 'chatflow-forms'), secret: true }] },
+  { type: 'mailchimp', title: 'Mailchimp', fields: [{ key: 'apiKey', label: __('API key (ends with the data centre, e.g. -us21)', 'chatflow-forms'), secret: true }] },
+  { type: 'hubspot', title: 'HubSpot', fields: [{ key: 'accessToken', label: __('Private app access token (CRM contacts write scope)', 'chatflow-forms'), secret: true }] },
+  { type: 'ga4', title: 'Google Analytics 4', fields: [
+    { key: 'measurementId', label: __('Measurement ID (G-…)', 'chatflow-forms'), secret: false },
+    { key: 'apiSecret', label: __('Measurement Protocol API secret', 'chatflow-forms'), secret: true },
+  ] },
+  { type: 'meta_capi', title: 'Meta Conversions API', fields: [
+    { key: 'pixelId', label: __('Pixel (dataset) ID', 'chatflow-forms'), secret: false },
+    { key: 'accessToken', label: __('Conversions API access token', 'chatflow-forms'), secret: true },
+    { key: 'testEventCode', label: __('Test event code (optional, for Events Manager testing)', 'chatflow-forms'), secret: false },
+  ] },
+];
 export function Settings({ api }: { api: AdminApi }) {
   const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
@@ -253,6 +276,20 @@ export function Settings({ api }: { api: AdminApi }) {
             <Check label={__('Enable optional Akismet','chatflow-forms')} value={settings.spam?.akismetEnabled ?? false}
               onChange={(akismetEnabled) => update({...settings,spam:{...settings.spam!,akismetEnabled}})} />
             <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
+          </section>
+          <section className="cff-card">
+            <h2>{__('Connector credentials', 'chatflow-forms')}</h2>
+            <p>{__('Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses.', 'chatflow-forms')}</p>
+            {credentialFields.map(({ type, title, fields }) => (
+              <fieldset key={type}>
+                <legend>{title}</legend>
+                {fields.map(({ key, label, secret }) => (
+                  <Field key={key} label={label} type={secret ? 'password' : 'text'}
+                    value={(settings.connectors?.[type] as Record<string, string> | undefined)?.[key] ?? ''}
+                    onChange={(value) => update({ ...settings, connectors: { ...settings.connectors!, [type]: { ...settings.connectors?.[type], [key]: value.trim() } } })} />
+                ))}
+              </fieldset>
+            ))}
           </section>
           <section className="cff-card">
             <h2>{__('Trusted proxy configuration', 'chatflow-forms')}</h2>

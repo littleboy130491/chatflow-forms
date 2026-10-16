@@ -811,6 +811,21 @@ export interface ChatFlowPrivateFormSettingsV1 {
           Webhook,
           Webhook
         ];
+    /**
+     * @maxItems 10
+     */
+    connectors?:
+      | []
+      | [Connector]
+      | [Connector, Connector]
+      | [Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector]
+      | [Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector, Connector];
   };
   display?: {
     mode?: "inline" | "fullpage" | "launcher" | "popup";
@@ -1423,4 +1438,167 @@ export interface Webhook {
     [k: string]: string;
   };
   secret?: string;
+}
+export interface Connector {
+  id: string;
+  type: "slack" | "mailchimp" | "hubspot" | "ga4" | "meta_capi";
+  enabled: boolean;
+  /**
+   * @maxItems 3
+   */
+  events:
+    | []
+    | ["completed" | "partial" | "abandoned"]
+    | ["completed" | "partial" | "abandoned", "completed" | "partial" | "abandoned"]
+    | [
+        "completed" | "partial" | "abandoned",
+        "completed" | "partial" | "abandoned",
+        "completed" | "partial" | "abandoned"
+      ];
+  consentField?: string;
+  emailField?: string;
+  phoneField?: string;
+  fields?: {
+    [k: string]: string;
+  };
+  listId?: string;
+  doubleOptIn?: boolean;
+  /**
+   * @maxItems 20
+   */
+  tags?:
+    | []
+    | [string]
+    | [string, string]
+    | [string, string, string]
+    | [string, string, string, string]
+    | [string, string, string, string, string]
+    | [string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string, string, string, string, string, string, string, string]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ]
+    | [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+      ];
+  eventName?: string;
+  message?: string;
 }
