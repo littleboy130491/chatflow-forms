@@ -1,11 +1,8 @@
 <?php
 namespace ChatFlow\Tests\Backend;
 
-use ChatFlow\Fields\Registry;
 use ChatFlow\Forms\FormRepository;
 use ChatFlow\Install\Installer;
-use ChatFlow\Logic\Engine;
-use ChatFlow\Rest\RestModule;
 use ChatFlow\Rest\Settings;
 use ChatFlow\Submissions\Database;
 
@@ -23,9 +20,6 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 		Installer::activate();
 		delete_option( 'cff_settings' );
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
-		$fields = new Registry();
-		( new RestModule( new FormRepository(), new Engine( $fields ), $fields ) )->register();
-		do_action( 'rest_api_init', rest_get_server() );
 		add_filter( 'pre_http_request', array( $this, 'mock' ), 10, 3 );
 	}
 
@@ -78,10 +72,10 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 
 	public function testRequiresCapabilityKeyAndValidSettings(): void {
 		$this->assertInstanceOf( \WP_Error::class, Settings::save( array( 'ai' => array( 'apiKey' => 'not-a-claude-key' ) ) ) );
-		$this->assertSame( 400, $this->post( 'ai/generate', array( 'prompt' => 'A contact form' ) )->get_status(), 'No key configured.' );
+		$this->assertSame( 400, $this->post( 'admin/ai/generate', array( 'prompt' => 'A contact form' ) )->get_status(), 'No key configured.' );
 		$this->assertSame( array(), $this->calls );
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
-		$this->assertSame( 403, $this->post( 'ai/generate', array( 'prompt' => 'A contact form' ) )->get_status() );
+		$this->assertSame( 403, $this->post( 'admin/ai/generate', array( 'prompt' => 'A contact form' ) )->get_status() );
 	}
 
 	public function testGenerateCreatesAnUnpublishedValidatedDraft(): void {
@@ -110,7 +104,7 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 			)
 		);
 		$response = $this->post(
-			'ai/generate',
+			'admin/ai/generate',
 			array(
 				'prompt' => 'Lead form for a web agency',
 				'locale' => 'id_ID',
@@ -141,13 +135,13 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 			'stop_reason' => 'refusal',
 			'content'     => array(),
 		);
-		$refused     = $this->post( 'ai/generate', array( 'prompt' => 'Anything' ) );
+		$refused     = $this->post( 'admin/ai/generate', array( 'prompt' => 'Anything' ) );
 		$this->assertSame( 422, $refused->get_status() );
 		$this->assertSame( 'cff_ai_refused', $refused->get_data()['code'] );
 
 		$this->status = 401;
 		$this->reply  = array( 'error' => array( 'message' => 'provider-secret-detail' ) );
-		$auth         = $this->post( 'ai/generate', array( 'prompt' => 'Anything' ) );
+		$auth         = $this->post( 'admin/ai/generate', array( 'prompt' => 'Anything' ) );
 		$this->assertSame( 'cff_ai_auth', $auth->get_data()['code'] );
 		$this->assertStringNotContainsString( 'provider-secret-detail', Database::json( $auth->get_data() ) );
 	}
@@ -169,7 +163,7 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 			)
 		);
 		$response = $this->post(
-			'ai/rephrase',
+			'admin/ai/rephrase',
 			array(
 				'tone'  => 'friendly',
 				'items' => array(
@@ -194,6 +188,6 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 			),
 			$response->get_data()['items']
 		);
-		$this->assertSame( 422, $this->post( 'ai/rephrase', array( 'tone' => 'sarcastic', 'items' => array( array( 'id' => 'a', 'text' => 'b' ) ) ) )->get_status() );
+		$this->assertSame( 422, $this->post( 'admin/ai/rephrase', array( 'tone' => 'sarcastic', 'items' => array( array( 'id' => 'a', 'text' => 'b' ) ) ) )->get_status() );
 	}
 }
