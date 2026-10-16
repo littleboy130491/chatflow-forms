@@ -4,6 +4,7 @@ require dirname( __DIR__ ) . '/autoload.php';
 
 $classes = array(
 	'Opis\\JsonSchema\\Validator',
+	'OpenSpout\\Writer\\XLSX\\Writer',
 	'Opis\\Uri\\Uri',
 	'Opis\\String\\UnicodeString',
 	'DeviceDetector\\DeviceDetector',

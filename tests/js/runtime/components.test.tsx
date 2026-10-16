@@ -97,9 +97,9 @@ describe('Phase 1 inputs and accessible keyboard interaction', () => {
     await act(submit);
     expect(onAnswer).toHaveBeenCalledWith(16);
   });
-  it('does not accept a disabled choice or silently render reserved upload types', async () => {
+  it('does not accept a disabled choice or silently enable unavailable uploads', async () => {
     const onAnswer = await mountInput(choice, undefined, true); host.querySelector('button')!.click(); expect(onAnswer).not.toHaveBeenCalled();
-    await act(() => render(null, host)); await mountInput(field('file_upload')); expect(host.querySelector('[role=alert]')?.textContent).toContain('not available'); expect(host.querySelector('input')).toBeNull();
+    await act(() => render(null, host)); await mountInput(field('file_upload')); expect(host.querySelector('[role=alert]')?.textContent).toContain('not available'); expect(host.querySelector<HTMLInputElement>('input')?.disabled).toBe(true);
   });
 });
 describe('safe content, translations and motion', () => {
@@ -159,8 +159,8 @@ describe('Shadow DOM mount and global API', () => {
     expect(host.shadowRoot?.querySelector('[aria-live=polite]')).not.toBeNull(); expect(fetcher).not.toHaveBeenCalled(); expect(writes).not.toHaveBeenCalled(); expect(clears).not.toHaveBeenCalled();
     await act(() => handle!.unmount()); expect(host.shadowRoot?.childElementCount).toBe(0);
   });
-  it('rejects unimplemented display modes and insecure cross-origin REST endpoints', () => {
-    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'invalid' as 'inline' })).toThrow('Unsupported display mode');
+  it('rejects unknown display modes and insecure cross-origin REST endpoints', () => {
+    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'unknown' as 'inline' })).toThrow('Unsupported display mode');
     expect(() => mountRuntime(host, { formId: 42, restUrl: 'https://third-party.test/wp-json/cff/v1/' })).toThrow('cff_unsafe_endpoint');
   });
   it('keeps launcher collapsed until clicked and supports Escape, focus and programmatic open', async () => {

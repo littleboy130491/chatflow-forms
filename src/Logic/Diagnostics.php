@@ -39,6 +39,9 @@ final class Diagnostics {
 			$ids[ $id ] = true;
 		};
 		foreach ( $schema['steps'] as $i => $s ) {
+			if ( 'hidden' === $s['type'] && 'cookie' === ( $s['settings']['source'] ?? '' ) && ! \ChatFlow\Security\CookieSources::allows( $s['settings']['sourceKey'] ?? $s['key'] ) ) {
+				$add( '/steps/' . $i . '/settings/sourceKey', 'restricted_cookie', \ChatFlow\Security\CookieSources::MESSAGE );
+			}
 			if ( isset( $keys[ $s['key'] ] ) ) {
 				$add( '/steps/' . $i . '/key', 'duplicate_key', 'Field keys must be unique.' );
 			}
@@ -219,7 +222,7 @@ final class Diagnostics {
 				$add( '/steps/' . $i, 'unreachable_step', 'No possible navigation path reaches this step.' );
 			}
 		}
-		return $errors;
+		return array_merge( $errors, PowerDiagnostics::diagnose( $schema ) );
 	}
 
 	public static function variableType( mixed $value, string $type ): bool {

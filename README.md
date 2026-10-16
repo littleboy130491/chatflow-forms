@@ -1,7 +1,7 @@
 # ChatFlow Forms
 
 Private conversational-form plugin for WordPress 6.4+, PHP 8.1+ with OpenSSL.
-The Phase 1 implementation includes a React WordPress builder, Preact/TypeScript
+The implementation includes a React WordPress builder, Preact/TypeScript
 Shadow DOM chat, deterministic PHP/TS logic, versioned publishing, durable
 sessions, custom-table submissions, CSV/purge/privacy tools, notifications and
 signed generic webhooks. English and Indonesian UI are included.
@@ -9,7 +9,7 @@ signed generic webhooks. English and Indonesian UI are included.
 The **shell integration gate passes**, not the complete product acceptance gate:
 the under-15-minute builder exercise, mobile/browser journey, live SMTP/webhook
 receipt and hosting/cache compatibility matrix remain untested. See
-[phase coverage and actual checks](docs/mvp-checks.md). PLAN.md is unchanged.
+[MVP checks](docs/mvp-checks.md) and [integrated Phase 2 coverage](docs/phase2-integration.md). PLAN.md is unchanged.
 There is no licence system, telemetry, native CRM connector, payment or AI chat.
 
 ## Phase 2 aggregate form views
@@ -35,8 +35,7 @@ configurable minimum, maximum and increment). Values are saved as numbers and
 validated by both the PHP server and TypeScript replay engine, including
 server-side bounds/step checks. Slider answers are not stored until the
 visitor confirms the chosen position. Existing v1 forms retain their schema
-and behavior; no database migration is required. File uploads, address inputs,
-provider CAPTCHA and other Phase 2 features are still separate work.
+and behavior; no database migration is required.
 
 ## Starter templates (Phase 2)
 
@@ -64,10 +63,9 @@ and do not include existing respondent data.
 4. Embed the published form using the **ChatFlow Form** Gutenberg block,
    `[chatflow id="123" mode="inline" theme="auto" height="600"]`, or trusted PHP
    `cff_render_form(123)`. The shortcode also fits Elementor's Shortcode widget.
-   Full-page URLs default to `/f/{form-slug}`; the base is configurable in Settings.
-   Phase 2 also supports an opt-in floating button with
-   `[chatflow id="123" mode="launcher" position="right"]`. It opens on click;
-   automatic opening and site-wide targeting are not implemented yet.
+   Full-page URLs default to `/chat/{form-slug}/`; the base is configurable in Settings.
+   Phase 2 also supports a floating button with
+   `[chatflow id="123" mode="launcher" position="right"]`.
 5. **Submissions** provides status/filter/search, details, notes, read/star, bulk
    actions, protected CSV exports, activity and delivery retries. **Tools** has
    preview-token-bound purge: preview the exact criteria, then type `DELETE`.
@@ -110,8 +108,17 @@ day through the recovery worker.
 
 See [hooks](docs/hooks.md), [canonical payload](docs/payload.md),
 [runtime API](assets/src/runtime/README.md) and [architecture](docs/architecture.md).
-Uploads, scoring widgets, popup/drawer modes, advanced analytics and later-phase
-features are not claimed as implemented.
+Phase 2 adds private uploads, rating/scale/NPS/slider/address/media fields,
+accessible popup/drawer/launcher modes, optional CAPTCHA/Akismet, stored analytics,
+safe JSON template tools and private XLSX exports. Configure an outside-web-root
+private directory before uploads/exports, and provider credentials before enabling
+CAPTCHA or Akismet. See [the integration checks and acceptance gaps](docs/phase2-integration.md).
+
+Phase 3 provides bounded calculations, variables/scoring, outcome endings,
+an editable branching map, server-assigned copy/order experiments with variant
+analytics, and consent-aware single-use resume links. See [Phase 3 usage and
+security](docs/phase3-power.md). The optional AI builder assist and native CRM
+connectors are deferred; no AI chat or telemetry is included.
 
 ## Development
 

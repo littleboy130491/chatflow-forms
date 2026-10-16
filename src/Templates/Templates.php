@@ -29,6 +29,15 @@ final class Templates {
 				'description' => 'Gather experience ratings, suggestions, and recommendation intent without contact details.',
 				'locale'      => 'en_US',
 			),
+			...array_map(
+				static fn( array $item ): array => array(
+					'id'          => $item['slug'],
+					'title'       => $item['title'],
+					'description' => $item['description'],
+					'locale'      => 'en_US',
+				),
+				array_values( array_filter( Starter::gallery(), static fn( array $item ): bool => 'blank' !== $item['slug'] ) )
+			),
 		);
 	}
 
@@ -38,7 +47,7 @@ final class Templates {
 			'imajiner-survey'   => Imajiner::definition(),
 			'contact-request'   => Starter::contact(),
 			'customer-feedback' => Starter::feedback(),
-			default             => Database::error( 'cff_template_not_found', 'Unknown template.', 404 ),
+			default             => in_array( $id, array_column( self::catalog(), 'id' ), true ) ? Starter::definition( $id ) : Database::error( 'cff_template_not_found', 'Unknown template.', 404 ),
 		};
 	}
 

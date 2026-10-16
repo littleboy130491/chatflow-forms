@@ -18,6 +18,8 @@ export interface AdminConfig extends SharedAdminConfig {
   siteUrl?: string;
   fullpageBase?: string;
   tools?: boolean;
+  preview?: boolean;
+  exportId?: number;
 }
 export function can(config: AdminConfig, cap: Capability): boolean {
   return config.capabilities?.[cap] === true;

@@ -21,7 +21,7 @@ final class Renderer {
 			return ''; }
 		self::$rendered[ $id ] = true;
 		wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true );
-		$envelope = PublicProjection::build( $form );
+		$envelope = apply_filters( 'cff_public_display', PublicProjection::build( $form ) );
 		if ( in_array( $attributes['theme'] ?? '', array( 'auto', 'light', 'dark' ), true ) ) {
 			$envelope['form']['appearance']->theme = $attributes['theme'];
 		}

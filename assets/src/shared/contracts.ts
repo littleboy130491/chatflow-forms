@@ -17,6 +17,7 @@ export interface ReplayResult {
 export interface FormDTO {
   id: number; title: string; slug: string; schema: FormSchema; settings: FormSettings;
   version: number; draftRevision: number; status: 'draft' | 'publish';
+  statistics?: { completed: number; started: number; completionRate: number; lastSubmissionAt: string | null };
 }
 export interface ClientMeta {
   pageUrl?: string; pageTitle?: string; referrer?: string; landingPage?: string; landingReferrer?: string;
@@ -28,10 +29,11 @@ export interface PublicSchemaEnvelope {
   form: { id: number; title: string; slug: string; version: number; schema: FormSchema;
     appearance: NonNullable<FormSettings['appearance']>; phrases: NonNullable<FormSettings['phrases']>;
     media?: Record<string, { url: string; alt?: string }>;
-    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean } };
-  features: { fieldTypes: string[]; uploads: boolean };
+    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean; magicLinks?: { enabled: boolean; whatsapp: boolean } } };
+  features: { fieldTypes: string[]; uploads: boolean; engagement: boolean };
 }
 export interface SessionEnvelope {
+  schema?: FormSchema; variantId?: string;
   sessionId: string; formId: number; version: number; revision: number;
   status: 'active' | 'completed' | 'closed' | 'expired'; answers: AnswerMap; visited: string[];
   currentStepId: string | null; progress: number; requestToken: string; requestExpiresAt: string;
@@ -44,8 +46,8 @@ export interface SubmitResponse {
   redirectUrl?: string;
 }
 export interface AdminConfig {
-  restUrl: string; nonce: string; pluginUrl: string; screen: 'builder' | 'submissions' | 'settings' | 'analytics';
-  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean };
+  restUrl: string; nonce: string; pluginUrl: string; screen: 'forms' | 'builder' | 'submissions' | 'settings' | 'analytics';
+  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean; xlsx: boolean };
 }
 export interface RestError { code: string; message: string; data: { status: number; errors?: ValidationIssue[];
   retryAfter?: number; draftRevision?: number; revision?: number } }
@@ -55,7 +57,8 @@ export interface GlobalSettings {
   tracking: { enabled: boolean; consentRequired: boolean; days: number };
   privacy: { ip: 'anonymized' | 'full' | 'none'; storeUserAgent: boolean; storeMeta: boolean; respectDnt: boolean };
   retention: { enabled: boolean; days: number; partialDays: number | null };
-  spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
+  spam: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number;
+    captcha: 'none' | 'turnstile' | 'hcaptcha' | 'recaptcha'; siteKey: string; secretKey: string; minScore: number; akismetEnabled: boolean; akismetKey: string };
   proxy: { mode: 'automatic' | 'direct' | 'cloudflare' | 'custom'; trustedRanges: string[]; header: 'HTTP_X_FORWARDED_FOR' | 'HTTP_X_REAL_IP' | 'HTTP_CF_CONNECTING_IP' };
   email: { fromName: string; fromEmail: string; replyTo: string; logoUrl: string; brandColor: string; footerText: string };
 }

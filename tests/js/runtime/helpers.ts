@@ -5,7 +5,7 @@ export function form(steps?: [Step, ...Step[]]): PublicForm {
     { id: 'intro', key: 'intro', type: 'statement', label: 'Intro', messages: ['Hello {{name}}'] },
     { id: 'name', key: 'name', type: 'short_text', label: 'Name', required: true, messages: ['What is your name?'] },
     { id: 'review', key: 'review', type: 'summary', label: 'Review', messages: ['Check your answers'] },
-  ], endings: [{ id: 'thanks', type: 'message', messages: ['Thanks {{name}}'], buttons: [] }] } }, features: { fieldTypes: ['statement', 'short_text', 'summary'], uploads: false } };
+  ], endings: [{ id: 'thanks', type: 'message', messages: ['Thanks {{name}}'], buttons: [] }] } }, features: { fieldTypes: ['statement', 'short_text', 'summary'], uploads: false, engagement: false } };
 }
 export const clock = '2026-10-13T00:00:00.000Z';
 export function session(answers: AnswerMap = {}, revision = 1, version = 1): Session {

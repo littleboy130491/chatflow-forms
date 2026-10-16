@@ -18,7 +18,9 @@ export interface GlobalSettings {
     respectDnt: boolean;
   };
   retention: { enabled: boolean; days: number; partialDays?: number | null };
-  spam?: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number };
+  spam?: { honeypotEnabled: boolean; minSeconds: number; rateLimit: number; rateWindowSeconds: number;
+    captcha?: 'none' | 'turnstile' | 'hcaptcha' | 'recaptcha'; siteKey?: string; secretKey?: string;
+    minScore?: number; akismetEnabled?: boolean; akismetKey?: string };
   proxy: {
     mode: 'automatic' | 'direct' | 'cloudflare' | 'custom';
     trustedRanges: string[];
@@ -34,12 +36,14 @@ export interface GlobalSettings {
   };
 }
 export function Settings({ api }: { api: AdminApi }) {
+  const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [saved, setSaved] = useState(false);
   useEffect(() => {
     const abort = new AbortController();
+    void api.request<{smtpDetected:boolean}>('admin/system-status', 'GET', undefined, abort.signal).then(status => setSmtpDetected(status.smtpDetected)).catch(() => { if(!abort.signal.aborted) setSmtpDetected(null); });
     api
       .request<{ settings: GlobalSettings }>('admin/settings', 'GET', undefined, abort.signal)
       .then((result) => setSettings(result.settings))
@@ -234,6 +238,23 @@ export function Settings({ api }: { api: AdminApi }) {
             ))}
           </section>
           <section className="cff-card">
+            <h2>{__('Optional captcha and Akismet credentials', 'chatflow-forms')}</h2>
+            <Select label={__('Captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
+              choices={['none','turnstile','hcaptcha','recaptcha'].map((value) => ({value,label:value}))}
+              onChange={(captcha) => update({...settings,spam:{...settings.spam!,captcha:captcha as NonNullable<NonNullable<GlobalSettings['spam']>['captcha']>}})} />
+            {([
+              {key:'siteKey',label:__('Public site key','chatflow-forms')},
+              {key:'secretKey',label:__('Private captcha key','chatflow-forms')},
+              {key:'akismetKey',label:__('Private Akismet key','chatflow-forms')},
+            ] as const).map(({key,label}) => <Field key={key} label={label} type={key === 'siteKey' ? 'text' : 'password'} value={settings.spam?.[key] ?? ''}
+              onChange={(value) => update({...settings,spam:{...settings.spam!,[key]:value}})} />)}
+            <Field label={__('reCAPTCHA v3 minimum score (0–1)','chatflow-forms')} type="number" value={settings.spam?.minScore ?? 0.5}
+              onChange={(value) => update({...settings,spam:{...settings.spam!,minScore:Number(value)}})} />
+            <Check label={__('Enable optional Akismet','chatflow-forms')} value={settings.spam?.akismetEnabled ?? false}
+              onChange={(akismetEnabled) => update({...settings,spam:{...settings.spam!,akismetEnabled}})} />
+            <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
+          </section>
+          <section className="cff-card">
             <h2>{__('Trusted proxy configuration', 'chatflow-forms')}</h2>
             <Notice status="warning" isDismissible={false}>
               {__(
@@ -285,6 +306,8 @@ export function Settings({ api }: { api: AdminApi }) {
           </section>
           <section className="cff-card">
             <h2>{__('Global email layout', 'chatflow-forms')}</h2>
+            {smtpDetected === false && <Notice status="warning" isDismissible={false}>{__('No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.', 'chatflow-forms')}</Notice>}
+            {smtpDetected === null && <p>{__('SMTP status is unknown. Verify your mail transport and test inbox delivery.', 'chatflow-forms')}</p>}
             {(
               [
                 { key: 'fromName', label: __('From name', 'chatflow-forms') },

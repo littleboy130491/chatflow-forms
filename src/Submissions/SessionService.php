@@ -8,6 +8,7 @@ use ChatFlow\Integrations\HookDispatcher;
 use ChatFlow\Integrations\Outbox;
 use ChatFlow\Logic\Engine;
 use ChatFlow\Security\TokenSigner;
+use ChatFlow\Security\CookieSources;
 use ChatFlow\Spam\Protection;
 use ChatFlow\Spam\RateLimiter;
 use ChatFlow\Tracking\IpResolver;
@@ -61,7 +62,7 @@ final class SessionService {
 				if ( is_wp_error( $guard ) ) {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
-					return $guard['response']; }
+					return $this->cachedResponse( $guard['response'] ); }
 				// Rate-limit actual sessions; handshake quotas alone can be bypassed with new keys.
 				// Idempotent retries return before this counter.
 				$ip = ( new IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] );
@@ -80,7 +81,12 @@ final class SessionService {
 				$meta                       = $this->safeMeta( is_array( $meta ) ? $meta : array() );
 				$context                    = $metadata->context( $form, $meta );
 				$context['defaultEndingId'] = $form->settings()['completion']['defaultEndingId'] ?? '';
-				$replay                     = $this->replay( $form, $prefill, $context, 'partial' );
+				$variant                    = \ChatFlow\Logic\Experiments::assign( $form );
+				$context['_variantId']      = $variant['id'];
+				if ( '' !== $variant['id'] ) {
+					$context['_variantSchema'] = $variant['schema']; }
+				$form   = \ChatFlow\Logic\Experiments::withSchema( $form, $variant['schema'] );
+				$replay = $this->replay( $form, $prefill, $context, 'partial' );
 				if ( is_wp_error( $replay ) ) {
 					return $replay; }
 				$context['_answers']    = $replay['answers'];
@@ -103,6 +109,7 @@ final class SessionService {
 							'resume_hash'   => hash( 'sha256', $credential ),
 							'form_id'       => $form_id,
 							'form_version'  => $version,
+							'variant_id'    => $variant['id'],
 							'submission_id' => $submission?->id(),
 							'context'       => Database::json( $context ),
 							'started_at'    => Database::now(),
@@ -188,7 +195,7 @@ final class SessionService {
 				if ( 'submit' === $operation && 'completed' === $row['status'] && $this->verifyReceiptToken( $row, $token ) ) {
 					$receipt = $this->requests->receipt( 'session:' . $id . ':submit', $key, $body );
 					if ( null !== $receipt ) {
-						return $receipt; }
+						return $this->cachedResponse( $receipt, $row ); }
 				}
 				if ( ! $this->verify( $row, $token ) ) {
 					return $this->unauthorized(); }
@@ -196,7 +203,7 @@ final class SessionService {
 				if ( is_wp_error( $guard ) ) {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
-					return $guard['response']; }
+					return $this->cachedResponse( $guard['response'], $row ); }
 				if ( 'active' !== $row['status'] || strtotime( $row['expires_at'] . ' UTC' ) <= time() ) {
 					return $this->unauthorized(); }
 				if ( ( $body['version'] ?? null ) !== (int) $row['form_version'] ) {
@@ -207,7 +214,7 @@ final class SessionService {
 				$form = $this->snapshot( $row );
 				if ( is_wp_error( $form ) ) {
 					return $form; }
-				$context    = Database::decode( $row['context'] );
+				$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
 				$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
 				$revision   = (int) $row['revision'] + 1;
 				if ( 'delete' === $operation ) {
@@ -215,11 +222,22 @@ final class SessionService {
 						if ( $form->settings()['sessions']['deletePartialOnRestart'] ?? false ) {
 							$this->submissions->removeForRestart( $submission->id() );
 						} else {
+							$safe_data = array();
+							if ( CookieSources::deniedKeys( $form->schema() ) ) {
+								$safe_replay = $this->storedReplay( $row, $form );
+								if ( is_wp_error( $safe_replay ) ) {
+									return $safe_replay;
+								}
+								$safe_data = $this->data( $form, $safe_replay, $context['_meta'] ?? array() );
+							}
 							$submission = $this->submissions->complete(
 								$submission->id(),
-								array(
-									'status'       => 'abandoned',
-									'abandoned_at' => Database::now(),
+								array_merge(
+									$safe_data,
+									array(
+										'status'       => 'abandoned',
+										'abandoned_at' => Database::now(),
+									)
 								)
 							);
 							$this->enqueue( $submission, $form, 'submission.abandoned' );
@@ -238,6 +256,9 @@ final class SessionService {
 					$replay = $this->replay( $form, $answers, $context, 'submit' === $operation ? 'complete' : 'partial' );
 					if ( is_wp_error( $replay ) ) {
 						return $replay; }
+					$upload_error = ( new \ChatFlow\Frontend\Uploads() )->validateAnswers( $form, (int) $row['id'], $replay['answers'] );
+					if ( $upload_error ) {
+						return $upload_error; }
 					$timings = $this->timings( $body['stepTimings'] ?? array(), $replay['visited'] );
 					if ( is_wp_error( $timings ) ) {
 						return $timings; }
@@ -253,7 +274,9 @@ final class SessionService {
 						$ip   = ( new IpResolver() )->resolve( $_SERVER, get_option( 'cff_settings', array() )['proxy'] ?? array() );
 						if ( ! ( new RateLimiter() )->consume( 'submit:' . $form->id() . ':' . $ip, $spam['rateLimit'] ?? 10, $spam['rateWindowSeconds'] ?? 600 ) ) {
 							return Database::error( 'cff_rate_limit', 'Please wait before submitting again.', 429, array( 'retryAfter' => $spam['rateWindowSeconds'] ?? 600 ) ); }
-						$reasons                     = ( new Protection() )->reasons( $form, $body, strtotime( $row['started_at'] . ' UTC' ) );
+						$reasons = ( new Protection() )->reasons( $form, $body, strtotime( $row['started_at'] . ' UTC' ) );
+						if ( in_array( 'captcha_failed', $reasons, true ) || in_array( 'akismet_unavailable', $reasons, true ) ) {
+							return Database::error( 'cff_spam_verification', 'Spam verification failed. Please try again.', 422 ); }
 						$data['status']              = $reasons ? 'spam' : 'completed';
 						$data['spam_reasons']        = $reasons;
 						$data['completed_at']        = Database::now();
@@ -284,9 +307,12 @@ final class SessionService {
 				$changes['revision'] = $revision;
 				if ( isset( $replay ) ) {
 					$context['_answers'] = $replay['answers'];
-					$changes['context']  = Database::json( $context ); }
+				}
+				$changes['context']      = Database::json( $context );
 				$changes['last_seen_at'] = Database::now();
 				Database::check( $wpdb->update( $wpdb->prefix . 'cff_sessions', $changes, array( 'id' => $row['id'] ) ) );
+				if ( 'delete' !== $operation && $submission ) {
+					( new \ChatFlow\Frontend\Uploads() )->bindSubmission( (int) $row['id'], $submission->id() ); }
 				$this->requests->finish( $guard['id'], $response );
 				return $response;
 			}
@@ -335,28 +361,46 @@ final class SessionService {
 	private function snapshot( array $row ): Form|\WP_Error {
 		if ( ! $this->forms->getPublished( (int) $row['form_id'] ) ) {
 			return Database::error( 'cff_form_not_found', 'Published form not found.', 404 ); }
-		return $this->forms->getPublished( (int) $row['form_id'], (int) $row['form_version'] ) ?? Database::error( 'cff_version_conflict', 'The saved version is unavailable. Your partial was kept.', 409 );
+		$form = $this->forms->getPublished( (int) $row['form_id'], (int) $row['form_version'] );
+		if ( ! $form ) {
+			return Database::error( 'cff_version_conflict', 'The saved version is unavailable. Your partial was kept.', 409 ); }
+		$context = Database::decode( $row['context'] );
+		return isset( $context['_variantSchema'] ) ? \ChatFlow\Logic\Experiments::withSchema( $form, $context['_variantSchema'] ) : $form;
 	}
 	private function lockForm( int $id ): void {
 		global $wpdb;
 		$wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID=%d AND post_type='cff_form' FOR UPDATE", $id ) );
 		clean_post_cache( $id );
 	}
+	/** @param array<string,mixed> $response
+	 * @param array<string,mixed>|null $row
+	 * @return array<string,mixed>|\WP_Error */
+	private function cachedResponse( array $response, ?array $row = null ): array|\WP_Error {
+		$form = $this->forms->getVersion( (int) ( $row['form_id'] ?? $response['formId'] ?? 0 ), (int) ( $row['form_version'] ?? $response['version'] ?? 0 ) );
+		if ( ! $form ) {
+			return Database::error( 'cff_version_conflict', 'The saved version is unavailable.', 409 );
+		}
+		if ( CookieSources::deniedKeys( $form->schema() ) ) {
+			return Database::error( 'cff_restricted_cookie', 'An outdated cookie-source response cannot be replayed. Resume or start a new session.', 409 );
+		}
+		return $response;
+	}
 	/**
 	 * @param array<string,mixed> $row
 	 * @return array<string,mixed>|\WP_Error */
 	private function storedReplay( array $row, Form $form ): array|\WP_Error {
 		$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
-		$context    = Database::decode( $row['context'] );
-		return $this->replay( $form, $submission?->answers() ?? $context['_answers'] ?? array(), $context, 'partial' );
+		$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
+		return $this->replay( $form, \ChatFlow\Logic\Experiments::inputs( $submission?->answers() ?? $context['_answers'] ?? array(), $form->schema() ), $context, 'partial' );
 	}
 	/**
 	 * @param array<string,mixed> $answers
 	 * @param array<string,mixed> $context
 	 * @return array<string,mixed>|\WP_Error */
 	private function replay( Form $form, array $answers, array $context, string $mode ): array|\WP_Error {
-		$replay = $this->engine->replay( $form->schema(), $answers, $context, $mode );
-		$issues = $replay['errors'];
+		$context = CookieSources::context( $form->schema(), $context );
+		$replay  = $this->engine->replay( CookieSources::projection( $form->schema() ), CookieSources::answers( $form->schema(), $answers ), $context, $mode );
+		$issues  = $replay['errors'];
 		foreach ( $form->schema()['steps'] as $step ) {
 			if ( in_array( $step['id'], $replay['visited'], true ) && array_key_exists( $step['key'], $replay['answers'] ) ) {
 				$this->fields->get( $step['type'] );
@@ -372,8 +416,9 @@ final class SessionService {
 	 * @param array<string,mixed> $replay
 	 * @return array<string,mixed> */
 	private function envelope( array $row, Form $form, array $replay ): array {
-		$context = Database::decode( $row['context'] );
-		unset( $context['_meta'], $context['_answers'], $context['_startScope'] );
+		$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
+		$variant_id = $context['_variantId'] ?? '';
+		$context    = array_intersect_key( $context, array_flip( array( 'hidden', 'url', 'meta', 'now', 'defaultEndingId' ) ) );
 		foreach ( array( 'hidden', 'url', 'meta' ) as $key ) {
 			$context[ $key ] = (object) ( $context[ $key ] ?? array() ); }
 		return array(
@@ -387,6 +432,8 @@ final class SessionService {
 			'currentStepId'    => $replay['currentStepId'],
 			'progress'         => $replay['progress'],
 			'context'          => $context,
+			'variantId'        => $variant_id,
+			'schema'           => ( new \ChatFlow\Admin\Translations() )->display( \ChatFlow\Forms\PublicProjection::build( $form ) )['form']['schema'],
 			'requestToken'     => $this->signer->issue(
 				'request',
 				array(

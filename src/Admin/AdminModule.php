@@ -23,7 +23,7 @@ final class AdminModule implements Module {
 
 	public function menus(): void {
 		$pages     = array(
-			'cff-forms'       => array( 'builder', 'cff_manage_forms', __( 'Forms', 'chatflow-forms' ) ),
+			'cff-forms'       => array( 'forms', 'cff_manage_forms', __( 'Forms', 'chatflow-forms' ) ),
 			'cff-submissions' => array( 'submissions', 'cff_view_submissions', __( 'Submissions', 'chatflow-forms' ) ),
 			'cff-analytics'   => array( 'analytics', 'cff_view_submissions', __( 'Analytics', 'chatflow-forms' ) ),
 			'cff-settings'    => array( 'settings', 'cff_manage_settings', __( 'Settings', 'chatflow-forms' ) ),
@@ -37,18 +37,26 @@ final class AdminModule implements Module {
 		$first  = $available[ $parent ];
 		add_menu_page( __( 'ChatFlow', 'chatflow-forms' ), __( 'ChatFlow', 'chatflow-forms' ), $first[1], $parent, array( $this, 'render' ), 'dashicons-format-chat', 26 );
 		foreach ( $available as $slug => $page ) {
-			$hook = add_submenu_page( $parent, $page[2], $page[2], $page[1], $slug, array( $this, 'render' ) );
+			$title = 'cff-submissions' === $slug ? $this->submissionsMenuTitle() : $page[2];
+			$hook  = add_submenu_page( $parent, $page[2], $title, $page[1], $slug, array( $this, 'render' ) );
 			if ( $hook ) {
 				$this->screens[ $hook ] = $page[0];
 			}
 		}
 		$this->screens[ 'toplevel_page_' . $parent ] = $first[0];
+		if ( current_user_can( 'cff_manage_forms' ) ) {
+			$hook = add_submenu_page( $parent, __( 'Form builder', 'chatflow-forms' ), __( 'New form', 'chatflow-forms' ), 'cff_manage_forms', 'cff-builder', array( $this, 'render' ) );
+			if ( $hook ) {
+				$this->screens[ $hook ] = 'builder';
+			}
+		}
 	}
 
 	public function render(): void {
 		$screen = get_current_screen();
 		$name   = $screen ? ( $this->screens[ $screen->id ] ?? '' ) : '';
 		$cap    = array(
+			'forms'       => 'cff_manage_forms',
 			'builder'     => 'cff_manage_forms',
 			'submissions' => 'cff_view_submissions',
 			'analytics'   => 'cff_view_submissions',
@@ -61,6 +69,16 @@ final class AdminModule implements Module {
 			wp_die( esc_html__( 'You are not allowed to access this screen.', 'chatflow-forms' ), '', array( 'response' => 403 ) );
 		}
 		nocache_headers();
+		if ( 'forms' === $name ) {
+			$table = new FormsTable( $this->forms );
+			$table->prepare_items();
+			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'New form', 'chatflow-forms' ) . '</a></h1><div id="cff-admin-root"></div><div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
+			$table->views();
+			$table->search_box( __( 'Search forms', 'chatflow-forms' ), 'cff-forms' );
+			$table->display();
+			echo '</form></div>';
+			return;
+		}
 		echo '<div class="wrap"><div id="cff-admin-root"></div></div>';
 	}
 
@@ -69,7 +87,7 @@ final class AdminModule implements Module {
 			return;
 		}
 		$screen = $this->screens[ $hook ];
-		$entry  = 'builder' === $screen ? 'builder' : 'submissions';
+		$entry  = in_array( $screen, array( 'builder', 'forms' ), true ) ? 'builder' : 'submissions';
 		if ( ! $this->asset( $entry ) ) {
 			return;
 		}
@@ -80,7 +98,8 @@ final class AdminModule implements Module {
 		}
 		$config = $this->config( $screen );
 		wp_add_inline_script( 'cff-' . $entry, 'window.cffAdmin=' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ';', 'before' );
-		wp_add_inline_script( 'cff-' . $entry, 'window.CFFAdmin.' . $entry . '.mount' . ucfirst( $entry ) . '(document.getElementById("cff-admin-root"),window.cffAdmin);' );
+		$mount = 'forms' === $screen ? 'mountFormsList(document.getElementById("cff-forms-list"),window.cffAdmin);window.CFFAdmin.builder.mountFormStart(document.getElementById("cff-admin-root"),window.cffAdmin)' : 'mount' . ucfirst( $entry ) . '(document.getElementById("cff-admin-root"),window.cffAdmin)';
+		wp_add_inline_script( 'cff-' . $entry, 'window.CFFAdmin.' . $entry . '.' . $mount . ';' );
 	}
 
 	/** @return array<string, mixed> */
@@ -130,7 +149,8 @@ final class AdminModule implements Module {
 			'tools'        => 'cff-tools' === $this->pageSlug(),
 			'features'     => array(
 				'fieldTypes' => $types,
-				'uploads'    => false,
+				'uploads'    => in_array( 'file_upload', $types, true ),
+				'xlsx'       => \ChatFlow\Submissions\Xlsx::available(),
 			),
 		);
 		// This is an admin-only locator, not a write or authorization input.
@@ -138,6 +158,13 @@ final class AdminModule implements Module {
 		$id = isset( $_GET['formId'] ) ? absint( $_GET['formId'] ) : 0;
 		if ( $id && current_user_can( 'cff_manage_forms' ) && $this->forms->getDraft( $id ) ) {
 			$config['formId'] = $id;
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only draft preview locator.
+		$config['preview'] = isset( $_GET['preview'] ) && '1' === $_GET['preview'];
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only export resource locator; REST checks ownership.
+		$export_id = isset( $_GET['exportId'] ) ? absint( $_GET['exportId'] ) : 0;
+		if ( $export_id && current_user_can( 'cff_export_submissions' ) ) {
+			$config['exportId'] = $export_id;
 		}
 		return $config;
 	}
@@ -229,6 +256,15 @@ final class AdminModule implements Module {
 	private function pageSlug(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+	}
+	public function submissionsMenuTitle(): string {
+		$title = __( 'Submissions', 'chatflow-forms' );
+		if ( ! current_user_can( 'cff_view_submissions' ) ) {
+			return $title;
+		}
+		global $wpdb;
+		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE is_read=0 AND status NOT IN ('spam','trash')", $wpdb->prefix . 'cff_submissions' ) );
+		return $count ? $title . ' <span class="awaiting-mod"><span class="pending-count">' . esc_html( number_format_i18n( $count ) ) . '</span></span>' : $title;
 	}
 	private function toolsCapability(): string {
 		foreach ( array( 'cff_purge_submissions', 'cff_export_submissions', 'cff_manage_forms', 'cff_manage_settings' ) as $cap ) {

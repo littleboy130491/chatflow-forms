@@ -292,6 +292,7 @@ final class Repository {
 					if ( ! empty( $context['_startScope'] ) ) {
 						Database::check( $wpdb->delete( $wpdb->prefix . 'cff_requests', array( 'scope_hash' => $context['_startScope'] ) ) ); }
 					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_events', array( 'session_id' => $session['id'] ) ) );
+					Database::check( $wpdb->delete( $wpdb->prefix . 'cff_magic_links', array( 'session_id' => $session['id'] ) ) );
 					foreach ( array( 'patch', 'delete', 'submit' ) as $op ) {
 						if ( $preserve_session && 'delete' === $op ) {
 							continue; }

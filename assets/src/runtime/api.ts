@@ -58,6 +58,10 @@ export class ApiClient {
   view(id: number, version: number): Promise<{ recorded: boolean }> { return this.request(`forms/${id}/view`, 'POST', { version }); }
   start(formId: number, version: number, meta: ClientMeta, prefill: AnswerMap, token: string, key: string): Promise<Session> { return this.request('sessions', 'POST', { formId, version, meta, prefill }, { 'X-CFF-Start-Token': token, 'Idempotency-Key': key }); }
   resume(formId: number, token: string): Promise<Session> { return this.request('sessions/resume', 'POST', { formId }, { 'X-CFF-Resume-Token': token }); }
+  magicResume(formId: number, token: string): Promise<Session> { return this.request('sessions/magic-resume', 'POST', { formId }, { 'X-CFF-Magic-Token': token }); }
+  magicLink(session: Session, channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
+    return this.request(`sessions/${session.sessionId}/magic-link`, 'POST', { channel, consent: true }, { 'X-CFF-Request-Token': session.requestToken });
+  }
   get(session: Session): Promise<Session> {
     if (!/^[a-f0-9-]{36}$/i.test(session.sessionId)) throw new ApiError('cff_invalid_session', 0);
     return this.request(`sessions/${session.sessionId}`, 'GET', undefined, { 'X-CFF-Request-Token': session.requestToken });
@@ -67,4 +71,14 @@ export class ApiClient {
     return this.request(`sessions/${session.sessionId}${method === 'POST' ? '/submit' : ''}`, method, body, { 'X-CFF-Request-Token': session.requestToken, 'Idempotency-Key': key });
   }
   submit(session: Session, body: unknown, key: string): Promise<Completion> { return this.mutate(session, 'POST', body, key); }
+  async upload(session: Session, fieldId: string, file: File): Promise<{ uploadId: string; name: string; mime: string; bytes: number }> {
+    if (!/^[a-f0-9-]{36}$/i.test(session.sessionId)) throw new ApiError('cff_invalid_session', 0);
+    const data = new FormData(); data.append('fieldId', fieldId); data.append('file', file);
+    const abort = new AbortController(); const timer = setTimeout(() => abort.abort(), 120000);
+    try {
+      const response = await this.fetcher(this.url(`sessions/${session.sessionId}/uploads`), { method: 'POST', body: data, headers: { 'X-CFF-Request-Token': session.requestToken, 'Idempotency-Key': uuid(), Accept: 'application/json' }, credentials: 'same-origin', cache: 'no-store', redirect: 'error', signal: abort.signal });
+      if (!response.ok) throw new ApiError('cff_upload_failed', response.status);
+      return await response.json() as { uploadId: string; name: string; mime: string; bytes: number };
+    } finally { clearTimeout(timer); }
+  }
 }

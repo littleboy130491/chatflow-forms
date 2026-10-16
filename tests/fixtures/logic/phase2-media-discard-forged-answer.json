@@ -1,0 +1,48 @@
+{
+  "name": "phase2-media-discard-forged-answer",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "media",
+        "label": "Media",
+        "messages": [
+          "Video"
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": "forged-value"
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": null,
+    "endingId": "done",
+    "progress": 100,
+    "errors": [{"path":"/answers/answer","code":"display_answer","message":"Display steps do not store answers.","fieldKey":"answer"}],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

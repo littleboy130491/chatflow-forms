@@ -21,8 +21,7 @@ for (const directory of ['assets/src/builder', 'assets/src/submissions', 'assets
     walk(ast);
   }
 }
-for (const match of fs
-  .readFileSync(path.join(root, 'src/Admin/AdminModule.php'), 'utf8')
-  .matchAll(/(?:__|esc_html__)\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'chatflow-forms'/g))
-  messages.add(match[1].replace(/\\'/g, "'"));
+for (const file of ['src/Admin/AdminModule.php','src/Admin/FormsTable.php','src/Privacy/Export.php','src/Integrations/Elementor/FormWidget.php','src/Rest/TemplatesController.php','src/Templates/Starter.php','src/Analytics/Report.php'])
+  for (const match of fs.readFileSync(path.join(root,file), 'utf8').matchAll(/(?:__|esc_html__|esc_html_e)\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'chatflow-forms'/g))
+    messages.add(match[1].replace(/\\'/g, "'"));
 console.log(JSON.stringify([...messages].sort()));

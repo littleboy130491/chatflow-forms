@@ -183,6 +183,12 @@ export interface ChatFlowPrivateFormSettingsV1 {
         ];
   };
   sessions?: {
+    magicLinks?: {
+      enabled?: boolean;
+      whatsapp?: boolean;
+      emailField?: string;
+      ttlMinutes?: number;
+    };
     savePartial?: boolean;
     resumeEnabled?: boolean;
     resumePrompt?: boolean;
@@ -828,6 +834,7 @@ export interface ChatFlowPrivateFormSettingsV1 {
   };
 }
 export interface Appearance {
+  confetti?: boolean;
   theme?: "light" | "dark" | "auto";
   primary?: string;
   botBubbleBackground?: string;
@@ -838,6 +845,7 @@ export interface Appearance {
   radius?: number;
   width?: number;
   customCss?: string;
+  googleFont?: "system" | "Inter" | "Roboto" | "Open Sans";
 }
 export interface Notification {
   id: string;

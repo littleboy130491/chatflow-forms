@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-media",
+  "name": "phase2-media-missing-optional",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -30,19 +30,13 @@
   "context": {},
   "mode": "complete",
   "expected": {
-    "visited": [],
+    "visited": ["answer"],
     "answers": {},
     "variables": {},
     "currentStepId": null,
-    "endingId": null,
-    "progress": 0,
-    "errors": [
-      {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
-      }
-    ],
+    "endingId": "done",
+    "progress": 100,
+    "errors": [],
     "discardedKeys": []
   }
 }

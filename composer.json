@@ -6,13 +6,15 @@
   "require": {
     "php": ">=8.1",
     "ext-openssl": "*",
-    "opis/json-schema": "^2.6",
     "matomo/device-detector": "^6.5",
-    "yahnis-elsts/plugin-update-checker": "^5.6",
-    "woocommerce/action-scheduler": "^3.9"
+    "openspout/openspout": "~4.25.0",
+    "opis/json-schema": "^2.6",
+    "woocommerce/action-scheduler": "^3.9",
+    "yahnis-elsts/plugin-update-checker": "^5.6"
   },
   "require-dev": {
     "brianhenryie/strauss": "0.31.1",
+    "damian-elenbaas/elementor-stubs": "3.31.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
     "php-stubs/wordpress-stubs": "^6.8",
     "php-stubs/wp-cli-stubs": "^2.12",
@@ -35,7 +37,7 @@
       "namespace_prefix": "ChatFlow\\Vendor\\",
       "classmap_prefix": "CFF_Vendor_",
       "constant_prefix": "CFF_VENDOR_",
-      "packages": ["opis/json-schema", "matomo/device-detector", "yahnis-elsts/plugin-update-checker"],
+      "packages": ["opis/json-schema", "matomo/device-detector", "yahnis-elsts/plugin-update-checker", "openspout/openspout"],
       "include_root_autoload": false,
       "update_call_sites": false,
       "exclude_from_copy": { "packages": ["woocommerce/action-scheduler"] }

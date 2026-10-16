@@ -6,6 +6,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AdminApi, errorMessage, queryString } from '../builder/api';
 import { Button, Field, Notice } from '../builder/controls';
+import { FormAnalytics } from './FormAnalytics';
 
 interface Breakdown { label: string; count: number }
 interface Dropoff extends Breakdown { formId: number; stepId: string }
@@ -78,5 +79,6 @@ export function Analytics({ api }: { api: AdminApi }) {
       </div>
       <p className="description">{report.methodology}</p>
     </>}
+    <FormAnalytics api={api} />
   </main>;
 }

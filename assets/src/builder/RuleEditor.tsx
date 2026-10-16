@@ -3,10 +3,11 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Area, Button, Field, JsonEditor, Select } from './controls';
+import { Button, Field, JsonEditor, Select } from './controls';
 import type { Condition, FormSchema, Rule } from './api';
 
 type Predicate = Extract<Condition, { field: string }>;
+const scoring = (rule: Rule): Extract<Rule['then'], { action: 'set_variable' }> => rule.then as Extract<Rule['then'], { action: 'set_variable' }>;
 const operators: Predicate['op'][] = [
   'eq',
   'neq',
@@ -206,25 +207,24 @@ export function RuleEditor({
             schema={schema}
             onChange={(condition) => set(index, { ...rule, if: condition })}
           />
-          {rule.then.action === 'set_variable' ? (
-            <Area
-              label={__('Reserved scoring rule (not enabled in MVP)', 'chatflow-forms')}
-              value={JSON.stringify(rule.then)}
-              onChange={() => undefined}
-            />
-          ) : (
+          {rule.then.action === 'set_variable' ? (<>
+            <Select label={__('Action', 'chatflow-forms')} value="set_variable" choices={['show', 'hide', 'jump', 'end', 'require', 'unrequire', 'set_variable'].map(action => ({ value: action, label: action }))} onChange={action => set(index, { ...rule, then: { action: action as 'jump', to: schema.steps[0]?.id ?? '' } })} />
+            <Select label={__('Variable', 'chatflow-forms')} value={rule.then.key} choices={(schema.variables ?? []).map(v => ({ value: v.key, label: v.key }))} onChange={key => set(index, { ...rule, then: { ...scoring(rule), key } })} />
+            <Select label={__('Operation', 'chatflow-forms')} value={rule.then.operation} choices={['set', 'add', 'subtract'].map(value => ({ value, label: value }))} onChange={operation => set(index, { ...rule, then: { ...scoring(rule), operation: operation as 'set' | 'add' | 'subtract' } })} />
+            <Field label={__('Value', 'chatflow-forms')} value={String(rule.then.value ?? '')} onChange={value => set(index, { ...rule, then: { ...scoring(rule), value: schema.variables?.find(v => v.key === scoring(rule).key)?.type === 'number' ? Number(value) : schema.variables?.find(v => v.key === scoring(rule).key)?.type === 'boolean' ? value === 'true' : value } })} />
+          </>) : (
             <>
               <Select
                 label={__('Action', 'chatflow-forms')}
                 value={rule.then.action}
-                choices={['show', 'hide', 'jump', 'end', 'require', 'unrequire'].map((action) => ({
+                choices={['show', 'hide', 'jump', 'end', 'require', 'unrequire', 'set_variable'].map((action) => ({
                   value: action,
                   label: action,
                 }))}
                 onChange={(action) =>
                   set(index, {
                     ...rule,
-                    then: {
+                    then: action === 'set_variable' ? { action: 'set_variable', key: schema.variables?.[0]?.key ?? '', operation: 'set', value: schema.variables?.[0]?.default ?? 0 } : {
                       action: action as Exclude<Rule['then']['action'], 'set_variable'>,
                       to: action === 'end' ? (schema.endings[0]?.id ?? '') : (schema.steps[0]?.id ?? ''),
                     },
