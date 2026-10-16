@@ -207,6 +207,26 @@ describe('draft mutation serialization and conflict recovery', () => {
     await controller.save();
     expect(controller.dirty()).toBe(false);
   });
+  it('treats an edit lock as retryable, not as a revision conflict', async () => {
+    const form = stored();
+    let locked = true;
+    const { client, transport } = api(async (_p, _m, body) => {
+      if (locked) throw new ApiError('cff_form_locked', 'Another administrator is editing this form.', 409);
+      return { ...form, ...body, draftRevision: 4 } as FormDTO;
+    });
+    const controller = new DraftController(client, form);
+    controller.edit((f) => ({ ...f, title: 'Local' }));
+    await expect(controller.save()).rejects.toMatchObject({ code: 'cff_form_locked' });
+    expect(controller.state.conflict).toBeNull();
+    expect(controller.state.locked).toBe(true);
+    expect(controller.state.error).toContain('locked by another admin');
+    locked = false;
+    await controller.save();
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(controller.state.locked).toBe(false);
+    expect(controller.state.form.title).toBe('Local');
+    expect(controller.dirty()).toBe(false);
+  });
   it('reloads the server draft and clears history after explicit recovery', async () => {
     const form = stored(),
       { client } = api(async () => ({ ...form, title: 'Remote', draftRevision: 9 })),

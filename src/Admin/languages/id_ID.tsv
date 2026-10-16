@@ -66,6 +66,7 @@ Append submission UUID|Tambahkan UUID kiriman
 Append whitelisted answers|Tambahkan jawaban yang diizinkan
 Apply JSON|Terapkan JSON
 Apply filters|Terapkan filter
+Applying your latest changes…|Menerapkan perubahan terbaru Anda…
 Appointment request|Permintaan janji temu
 Arithmetic expression (answer.key, variable.key)|Ekspresi aritmetika (answer.key, variable.key)
 Ask before resuming|Tanya sebelum melanjutkan
@@ -591,11 +592,13 @@ Reserved scoring rule (not enabled in MVP)|Aturan penilaian cadangan (belum diak
 Reset filters|Atur ulang filter
 Respect Do Not Track|Hormati Do Not Track
 Respondent email field|Kolom email responden
+Restart preview|Mulai ulang pratinjau
 Restore selected to Completed|Pulihkan yang dipilih ke Selesai
 Resume days (1–90)|Masa melanjutkan sesi (hari; 1–90)
 Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.|Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie.
 Retention days|Masa retensi (hari)
 Retry delivery|Ulangi pengiriman
+Retry save|Coba simpan lagi
 Reusable email content|Konten email yang dapat digunakan kembali
 Rewrote %1$d of %2$d texts.|Menulis ulang %1$d dari %2$d teks.
 Right|Kanan
@@ -697,6 +700,7 @@ The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
 The runtime preview is unavailable. Rebuild the plugin assets.|Pratinjau runtime tidak tersedia. Bangun ulang aset plugin.
 Theme|Tema
 Theme preset|Prasetel tema
+This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.|Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas.
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
 This month|Bulan ini
 To (UTC)|Hingga (UTC)

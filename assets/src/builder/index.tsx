@@ -298,8 +298,19 @@ function BuilderView({
         </Button>
       </header>
       {state.error && (
-        <Notice status="error" isDismissible={false}>
-          {state.error}
+        <Notice status={state.locked ? 'warning' : 'error'} isDismissible={false}>
+          <p>{state.error}</p>
+          {state.locked && (
+            <Button
+              variant="secondary"
+              disabled={state.saving}
+              onClick={() => {
+                void controller.save().catch(() => undefined);
+              }}
+            >
+              {__('Retry save', 'chatflow-forms')}
+            </Button>
+          )}
         </Notice>
       )}
       {lockError && <Notice status="warning" isDismissible={false}>{lockError}</Notice>}
