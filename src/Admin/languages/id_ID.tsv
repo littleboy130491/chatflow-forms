@@ -90,6 +90,7 @@ Auto-continue statement|Lanjutkan pernyataan secara otomatis
 Auto-open after seconds (blank = off)|Buka otomatis setelah detik (kosong = nonaktif)
 Auto-open at scroll percent (blank = off)|Buka otomatis saat gulir mencapai persen (kosong = nonaktif)
 Autocomplete|Pelengkapan otomatis
+Automatic (from the link)|Otomatis (dari tautan)
 Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”.|Penempatan peluncur otomatis dan pemicu popup diatur per formulir: buka tab Pengaturan formulir ini dan gunakan “Tampilan dan interaksi”.
 Automatic retention|Retensi otomatis
 Automatically delete old submissions|Hapus kiriman lama secara otomatis
@@ -117,7 +118,9 @@ Build a WhatsApp link|Buat tautan WhatsApp
 Build|Susun
 Builder sections|Bagian pembuat formulir
 Bulk options (one label per line)|Pilihan massal (satu label per baris)
-Button label (blank = “Chat on WhatsApp” or “Contact us”)|Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)
+Button colour|Warna tombol
+Button text (blank = “Chat on WhatsApp” or “Contact us”)|Teks tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)
+Button text colour|Warna teks tombol
 Button URL (merge tags allowed)|URL tombol (tag penggabungan diizinkan)
 Button action|Tindakan tombol
 Button label|Label tombol
@@ -132,6 +135,8 @@ Change this submission to “%s”?|Ubah kiriman ini menjadi “%s”?
 Cards|Kartu
 Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
 Chat background|Latar percakapan
+Chat bubble|Gelembung chat
+Chat on WhatsApp|Chat lewat WhatsApp
 Chat theme|Tema percakapan
 Chat width (240–1600)|Lebar percakapan (240–1600)
 Chat width|Lebar percakapan
@@ -195,6 +200,7 @@ Consent to process this intake request|Persetujuan untuk memproses permintaan ko
 Contact details and an enquiry.|Detail kontak dan pertanyaan.
 Contact enquiry|Pertanyaan kontak
 Contact request|Permintaan kontak
+Contact us|Hubungi kami
 Content|Konten
 Continue / submit button|Tombol lanjut / kirim
 Contrast feedback (WCAG AA normal text)|Umpan balik kontras (WCAG AA teks normal)
@@ -411,6 +417,7 @@ How likely are you to recommend us? (0–10)|Seberapa besar kemungkinan Anda mer
 How was your experience?|Bagaimana pengalaman Anda?
 I agree that the information I provide may be used to respond to this intake request.|Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini.
 I agree to the privacy policy.|Saya menyetujui kebijakan privasi.
+Icon|Ikon
 IP storage|Penyimpanan IP
 Image|Gambar
 Image attachment ID|ID lampiran gambar
@@ -518,6 +525,7 @@ Move down|Pindah ke bawah
 Move up|Pindah ke atas
 Multiple choice|Pilihan jamak
 Night|Malam
+No icon|Tanpa ikon
 NPS (0–10)|NPS (0–10)
 Name|Nama
 Name, email and a message; no external integrations.|Nama, email, dan pesan; tanpa integrasi eksternal.
@@ -921,6 +929,7 @@ What could we improve?|Apa yang dapat kami tingkatkan?
 What would you like help with?|Apa yang dapat kami bantu?
 What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?
 WhatsApp number with country code|Nomor WhatsApp dengan kode negara
+WhatsApp|WhatsApp
 Where will you use the product?|Di mana Anda akan menggunakan produk ini?
 Whitelisted field keys|Kunci kolom yang diizinkan
 Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.

@@ -271,6 +271,9 @@
       "Autocomplete": [
         "Pelengkapan otomatis"
       ],
+      "Automatic (from the link)": [
+        "Otomatis (dari tautan)"
+      ],
       "Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”.": [
         "Penempatan peluncur otomatis dan pemicu popup diatur per formulir: buka tab Pengaturan formulir ini dan gunakan “Tampilan dan interaksi”."
       ],
@@ -352,14 +355,20 @@
       "Button action": [
         "Tindakan tombol"
       ],
+      "Button colour": [
+        "Warna tombol"
+      ],
       "Button label": [
         "Label tombol"
       ],
-      "Button label (blank = “Chat on WhatsApp” or “Contact us”)": [
-        "Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
-      ],
       "Button text": [
         "Teks tombol"
+      ],
+      "Button text (blank = “Chat on WhatsApp” or “Contact us”)": [
+        "Teks tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
+      ],
+      "Button text colour": [
+        "Warna teks tombol"
       ],
       "CC": [
         "CC"
@@ -387,6 +396,12 @@
       ],
       "Chat background": [
         "Latar percakapan"
+      ],
+      "Chat bubble": [
+        "Gelembung chat"
+      ],
+      "Chat on WhatsApp": [
+        "Chat lewat WhatsApp"
       ],
       "Chat theme": [
         "Tema percakapan"
@@ -555,6 +570,9 @@
       ],
       "Contact request": [
         "Permintaan kontak"
+      ],
+      "Contact us": [
+        "Hubungi kami"
       ],
       "Content": [
         "Konten"
@@ -1171,6 +1189,9 @@
       "IP storage": [
         "Penyimpanan IP"
       ],
+      "Icon": [
+        "Ikon"
+      ],
       "Image": [
         "Gambar"
       ],
@@ -1536,6 +1557,9 @@
       ],
       "No forms in the trash.": [
         "Tidak ada formulir di sampah."
+      ],
+      "No icon": [
+        "Tanpa ikon"
       ],
       "No logic warnings detected.": [
         "Tidak ditemukan peringatan logika."
@@ -2583,6 +2607,9 @@
       ],
       "What would you like to discuss at your appointment?": [
         "Apa yang ingin Anda diskusikan saat konsultasi?"
+      ],
+      "WhatsApp": [
+        "WhatsApp"
       ],
       "WhatsApp number with country code": [
         "Nomor WhatsApp dengan kode negara"

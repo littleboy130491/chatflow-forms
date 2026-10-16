@@ -101,6 +101,9 @@ export interface Bot {
   contact?: {
     label?: string;
     url: string;
+    color?: string;
+    textColor?: string;
+    icon?: "auto" | "whatsapp" | "chat" | "phone" | "email" | "none";
   };
 }
 export interface Step {

@@ -92,7 +92,7 @@ function ThemePreview({ form, config }: { form: FormDTO; config: AdminConfig }) 
   </div>;
 }
 
-function ColorField({ label, value, fallback, onChange }: { label: string; value: string | undefined; fallback: string; onChange: (value: string | undefined) => void }) {
+export function ColorField({ label, value, fallback, onChange }: { label: string; value: string | undefined; fallback: string; onChange: (value: string | undefined) => void }) {
   const id = `cff-color-${label.replace(/\W+/g, '-').toLowerCase()}`;
   const [draft, setDraft] = useState(value ?? '');
   useEffect(() => setDraft(value ?? ''), [value]);

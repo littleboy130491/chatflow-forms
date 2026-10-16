@@ -82,3 +82,4 @@
 .cff-whatsapp-builder { display: grid; gap: 4px; max-width: 560px; padding: 12px; margin: 8px 0 12px; border-radius: 8px; background: #f0faf3; border: 1px solid #c6ead2; }
 .cff-whatsapp-builder .components-button { justify-self: start; }
 .cff-whatsapp-details summary { cursor: pointer; color: var(--wp-admin-theme-color, #2271b1); margin: 4px 0 8px; }
+.cff-contact-sample span { display: inline-block; margin-top: 10px; padding: 10px 28px; border-radius: 10px; font-weight: 600; }

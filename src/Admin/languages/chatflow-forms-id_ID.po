@@ -265,6 +265,9 @@ msgstr "Buka otomatis saat gulir mencapai persen (kosong = nonaktif)"
 msgid "Autocomplete"
 msgstr "Pelengkapan otomatis"
 
+msgid "Automatic (from the link)"
+msgstr "Otomatis (dari tautan)"
+
 msgid "Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”."
 msgstr "Penempatan peluncur otomatis dan pemicu popup diatur per formulir: buka tab Pengaturan formulir ini dan gunakan “Tampilan dan interaksi”."
 
@@ -346,14 +349,20 @@ msgstr "URL tombol (tag penggabungan diizinkan)"
 msgid "Button action"
 msgstr "Tindakan tombol"
 
+msgid "Button colour"
+msgstr "Warna tombol"
+
 msgid "Button label"
 msgstr "Label tombol"
 
-msgid "Button label (blank = “Chat on WhatsApp” or “Contact us”)"
-msgstr "Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
-
 msgid "Button text"
 msgstr "Teks tombol"
+
+msgid "Button text (blank = “Chat on WhatsApp” or “Contact us”)"
+msgstr "Teks tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
+
+msgid "Button text colour"
+msgstr "Warna teks tombol"
 
 msgid "CC"
 msgstr "CC"
@@ -381,6 +390,12 @@ msgstr "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
 
 msgid "Chat background"
 msgstr "Latar percakapan"
+
+msgid "Chat bubble"
+msgstr "Gelembung chat"
+
+msgid "Chat on WhatsApp"
+msgstr "Chat lewat WhatsApp"
 
 msgid "Chat theme"
 msgstr "Tema percakapan"
@@ -549,6 +564,9 @@ msgstr "Pertanyaan kontak"
 
 msgid "Contact request"
 msgstr "Permintaan kontak"
+
+msgid "Contact us"
+msgstr "Hubungi kami"
 
 msgid "Content"
 msgstr "Konten"
@@ -1165,6 +1183,9 @@ msgstr "Saya menyetujui kebijakan privasi."
 msgid "IP storage"
 msgstr "Penyimpanan IP"
 
+msgid "Icon"
+msgstr "Ikon"
+
 msgid "Image"
 msgstr "Gambar"
 
@@ -1530,6 +1551,9 @@ msgstr "Tidak ada formulir yang ditemukan."
 
 msgid "No forms in the trash."
 msgstr "Tidak ada formulir di sampah."
+
+msgid "No icon"
+msgstr "Tanpa ikon"
 
 msgid "No logic warnings detected."
 msgstr "Tidak ditemukan peringatan logika."
@@ -2577,6 +2601,9 @@ msgstr "Apa yang dapat kami bantu?"
 
 msgid "What would you like to discuss at your appointment?"
 msgstr "Apa yang ingin Anda diskusikan saat konsultasi?"
+
+msgid "WhatsApp"
+msgstr "WhatsApp"
 
 msgid "WhatsApp number with country code"
 msgstr "Nomor WhatsApp dengan kode negara"
