@@ -8,7 +8,7 @@ import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './contro
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
 import { EmailTemplates } from './EmailTemplates';
-import { ConnectorSettings } from './ConnectorSettings';
+import { ConnectorSettings, deliveryEventLabels } from './ConnectorSettings';
 import { errorMessage } from './api';
 import type { AdminApi, FormDTO, FormSettings, FormSchema, Ending } from './api';
 import type { Notification, Webhook } from '../shared/settings.generated';
@@ -1007,7 +1007,7 @@ export function SettingsEditor({
               {(['completed', 'partial', 'abandoned'] as const).map((event) => (
                 <Check
                   key={event}
-                  label={event}
+                  label={deliveryEventLabels[event]}
                   value={(webhook.events as string[]).includes(event)}
                   onChange={(checked) =>
                     change({

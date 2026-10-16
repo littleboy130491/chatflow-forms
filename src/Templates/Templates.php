@@ -13,20 +13,21 @@ final class Templates {
 		return array(
 			array(
 				'id'          => 'imajiner-survey',
+				// Proper name of the bundled Indonesian template; kept identical to Imajiner::definition().
 				'title'       => 'Survei Website Imajiner',
-				'description' => 'Qualify website project inquiries, with conditional questions.',
+				'description' => __( 'Qualify website project inquiries, with conditional questions.', 'chatflow-forms' ),
 				'locale'      => 'id_ID',
 			),
 			array(
 				'id'          => 'contact-request',
-				'title'       => 'Contact request',
-				'description' => 'Collect a name, email address, topic, message, and permission to reply.',
+				'title'       => Starter::contact()['title'],
+				'description' => __( 'Collect a name, email address, topic, message, and permission to reply.', 'chatflow-forms' ),
 				'locale'      => 'en_US',
 			),
 			array(
 				'id'          => 'customer-feedback',
-				'title'       => 'Customer feedback',
-				'description' => 'Gather experience ratings, suggestions, and recommendation intent without contact details.',
+				'title'       => Starter::feedback()['title'],
+				'description' => __( 'Gather experience ratings, suggestions, and recommendation intent without contact details.', 'chatflow-forms' ),
 				'locale'      => 'en_US',
 			),
 			...array_map(
