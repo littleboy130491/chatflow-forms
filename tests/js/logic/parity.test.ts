@@ -43,3 +43,12 @@ it('covers every enabled v1 field and freezes variables independently', () => {
   expect(replay(f.schema, f.answers).variables.total).toBe(4);
   expect(f.schema.variables![0]!.default).toBe(2);
 });
+it('accepts server-registered extension field types without breaking built-in validation', async () => {
+  const { allowFieldTypes, validateAnswer } = await import('../../../assets/src/shared/logic/fields');
+  const step = { id: 'sig', key: 'sig', type: 'signature', label: 'Sign', messages: [], required: true } as unknown as Parameters<typeof validateAnswer>[0];
+  expect(validateAnswer(step, 'x')[0]?.code).toBe('unsupported_type');
+  allowFieldTypes(['signature', 'short_text', 'Bad-Name']);
+  expect(validateAnswer(step, 'x')).toEqual([]);
+  expect(validateAnswer(step, null)[0]?.code).toBe('required');
+  expect(validateAnswer({ ...step, type: 'short_text', validation: { maxLength: 1 } } as typeof step, 'xx')[0]?.code).toBe('max_length');
+});

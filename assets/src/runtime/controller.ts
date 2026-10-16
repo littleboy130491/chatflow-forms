@@ -1,4 +1,4 @@
-import { replay } from '../shared/logic';
+import { allowFieldTypes, replay } from '../shared/logic';
 import { readPrefill } from '../shared/prefill';
 import { collectMeta } from '../tracking';
 import { ApiClient, ApiError, uuid } from './api';
@@ -70,6 +70,7 @@ export class RuntimeController {
       this.state.form = this.options.form ?? await this.api!.form(this.options.formId!);
       if (this.disposed) return;
       this.latest = this.state.form;
+      allowFieldTypes(this.state.form.features?.fieldTypes ?? []);
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
       this.prefill = { ...readPrefill(globalThis.location?.search ?? '', this.state.form.form.schema), ...this.prefill };
       await this.loadEngagement();
@@ -77,7 +78,8 @@ export class RuntimeController {
       if (magic) {
         await this.adopt(await this.api!.magicResume(form.id, magic));
         this.state.acknowledged = this.displayBeforeCurrent();
-        this.compute(); this.state.phase = 'ready'; return;
+        // The link is single-use: keep the fresh credential so a reload resumes the same session.
+        this.compute(); this.state.phase = 'ready'; this.persist(); return;
       }
       this.saved = form.session.resumeEnabled ? this.storage.read(form.id) : null;
       const token = form.session.resumeEnabled ? this.storage.credential(form.id) : null;
@@ -276,12 +278,17 @@ export class RuntimeController {
       await this.renewCredential(true); return call();
     }
   }
+  /** Timings only for steps still on the path; an edited branch leaves earlier steps behind. */
+  private pathTimings(answers: AnswerMap): Record<string, number> {
+    const visited = new Set(replay(this.state.form!.form.schema, answers, this.context, 'partial').visited);
+    return Object.fromEntries(Object.entries(this.timings).filter(([id]) => visited.has(id)));
+  }
   async flush(): Promise<void> {
     if (this.disposed || this.options.preview || this.state.form?.form.session.savePartial === false || this.state.offline || this.state.busy || this.state.conflict || this.pending?.method === 'POST' || !this.session || !this.state.dirty) return;
     this.state.busy = true; this.notify();
     const desired = this.inputAnswers();
     try {
-      if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: { ...this.timings } } };
+      if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: this.pathTimings(desired) } };
       const response = await this.mutate<Session>(this.pending);
       if (this.disposed) return;
       const newer = JSON.stringify(desired) !== JSON.stringify(this.pending.body.answers);

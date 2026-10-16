@@ -1,6 +1,6 @@
 import type { Action, Condition, FormSchema, ValidationIssue } from '../contracts';
 import { issue, numeric, regex } from './value';
-import { ENABLED_FIELD_TYPES } from './fields';
+import { isKnownFieldType } from './fields';
 import { powerDiagnostics } from './power';
 import { allowedCookieSource, cookieSourceMessage } from '../cookies';
 
@@ -57,7 +57,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const skippable = new Set([...schema.steps.filter(s => s.hiddenByDefault).map(s => s.id), ...allRules.filter(r => r.then.action === 'hide').map(r => (r.then as { to: string }).to)]);
   schema.steps.forEach((s, i) => {
     const path = `/steps/${i}`;
-    if (!(ENABLED_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
+    if (!isKnownFieldType(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
     if (s.validation?.pattern !== undefined && !regex(s.validation.pattern)) add(path + '/validation/pattern', 'invalid_pattern', 'The validation pattern is not supported.');
     if (s.validation?.mxCheck) add(path + '/validation/mxCheck', 'unsupported_validation', 'MX checking is not enabled.');
     if (['single_choice', 'multi_choice'].includes(s.type) && !s.options?.length) add(path + '/options', 'missing_options', 'Choice fields need at least one option.');

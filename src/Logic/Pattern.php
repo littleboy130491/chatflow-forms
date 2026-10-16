@@ -30,6 +30,9 @@ final class Pattern {
 		if ( in_array( $char, array( 'D', 'W', 'S' ), true ) ) {
 			return $in_class ? null : '[^' . $classes[ strtolower( $char ) ] . ']';
 		}
+		if ( '-' === $char && ! $in_class ) {
+			return '-'; // JS rejects \- outside a class under the u flag; keep both engines identical.
+		}
 		return str_contains( 'nrt\\.[]{}^$*+?-/', $char ) ? '\\' . $char : null;
 	}
 

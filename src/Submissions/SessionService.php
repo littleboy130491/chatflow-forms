@@ -511,11 +511,15 @@ final class SessionService {
 			$timings = (array) $timings; }
 		if ( ! is_array( $timings ) || count( $timings ) > 500 ) {
 			return Database::error( 'cff_invalid_timings', 'Invalid step timings.', 422 ); }
+		$kept = array();
 		foreach ( $timings as $id => $ms ) {
-			if ( ! in_array( $id, $visited, true ) || ! is_int( $ms ) || $ms < 0 || $ms > 604800000 ) {
+			if ( ! is_int( $ms ) || $ms < 0 || $ms > 604800000 ) {
 				return Database::error( 'cff_invalid_timings', 'Invalid step timing.', 422 ); }
+			// Steps left behind by an edited branch are dropped, not rejected: the visitor can still finish.
+			if ( in_array( $id, $visited, true ) ) {
+				$kept[ $id ] = $ms; }
 		}
-		return $timings;
+		return $kept;
 	}
 	/**
 	 * @param array<string,mixed> $meta

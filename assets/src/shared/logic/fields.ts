@@ -4,6 +4,12 @@ import { age, choiceValue, dateParts, empty, isOtherAnswer, issue, matches, nume
 
 export const V1_FIELD_TYPES = ['short_text', 'long_text', 'email', 'phone', 'number', 'rating', 'scale', 'nps', 'slider', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary'] as const;
 export const ENABLED_FIELD_TYPES = [...V1_FIELD_TYPES, 'address', 'media', 'file_upload', 'calculated'] as const;
+/** Types added on the server through `cff_field_types`; the server field class validates them. */
+const extensionTypes = new Set<string>();
+export function allowFieldTypes(types: readonly string[]): void {
+  for (const type of types) if (/^[a-z][a-z0-9_]{0,63}$/.test(type) && !(ENABLED_FIELD_TYPES as readonly string[]).includes(type)) extensionTypes.add(type);
+}
+export const isKnownFieldType = (type: string): boolean => (ENABLED_FIELD_TYPES as readonly string[]).includes(type) || extensionTypes.has(type);
 export const isDisplay = (type: string): boolean => ['statement', 'summary', 'media'].includes(type);
 export function plainText(value: string, multiline = false): string {
   let text = value.replace(/\r\n?/g, '\n').replace(/<[^>]*>/g, '');
@@ -47,8 +53,12 @@ const url = (v: string): boolean => /^(?:https?:\/\/)?[A-Za-z0-9](?:[A-Za-z0-9.-
 export function validateAnswer(step: Step, rawValue: JSONValue, context: ReplayContext = {}): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
   const add = (code: string, message: string): void => { errors.push(issue('/answers/' + pointer(step.key), code, message, step.key)); };
-  if (!(ENABLED_FIELD_TYPES as readonly string[]).includes(step.type)) { add('unsupported_type', 'This field type is not supported.'); return errors; }
+  if (!isKnownFieldType(step.type)) { add('unsupported_type', 'This field type is not supported.'); return errors; }
   if (isDisplay(step.type)) return errors;
+  if (extensionTypes.has(step.type)) {
+    if ((rawValue === null || rawValue === undefined || rawValue === '') && step.required === true) add('required', 'An answer is required.');
+    return errors;
+  }
   const value = sanitizeAnswer(step, rawValue, context);
   const required = step.required === true || step.type === 'consent';
   if (value === null) { if (required) add('required', 'An answer is required.'); return errors; }

@@ -41,6 +41,7 @@ export function portablePattern(pattern: unknown): string | null {
   const escape = (c: string, inClass: boolean): string | null => {
     if (classes[c]) return inClass ? classes[c]! : `[${classes[c]}]`;
     if (['D', 'W', 'S'].includes(c)) return inClass ? null : `[^${classes[c.toLowerCase()]}]`;
+    if (c === '-' && !inClass) return '-'; // `\-` is only valid inside a class under the u flag.
     return 'nrt\\.[]{}^$*+?-/'.includes(c) ? `\\${c}` : null;
   };
   let compiled = '', atom = false, variableRepeats = 0;

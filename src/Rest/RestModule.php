@@ -375,7 +375,7 @@ final class RestModule implements Module {
 			if ( isset( $body[ $key ] ) && ! is_bool( $body[ $key ] ) ) {
 				return Database::error( 'cff_invalid_changes', 'Boolean required.', 422 ); }
 		}
-		if ( isset( $body['status'] ) && ! in_array( $body['status'], array( 'completed', 'partial', 'abandoned', 'spam', 'trash' ), true ) || isset( $body['note'] ) && ( ! is_string( $body['note'] ) || strlen( $body['note'] ) > 10000 ) ) {
+		if ( isset( $body['status'] ) && ! in_array( $body['status'], array( 'completed', 'partial', 'abandoned', 'spam', 'trash', 'restore' ), true ) || isset( $body['note'] ) && ( ! is_string( $body['note'] ) || strlen( $body['note'] ) > 10000 ) ) {
 			return Database::error( 'cff_invalid_changes', 'Invalid status or note.', 422 ); }
 		return $body;
 	}
@@ -383,7 +383,11 @@ final class RestModule implements Module {
 		$body = $this->changes( $this->body( $r ) );
 		if ( is_wp_error( $body ) ) {
 			return $body;
-		} $submission = $this->submissions->update( (int) $r['id'], $body );
+		}
+		if ( 'trash' === ( $body['status'] ?? '' ) && ! current_user_can( 'cff_delete_submissions' ) ) {
+			return Database::error( 'cff_forbidden', 'Trashing submissions requires the delete capability.', 403 );
+		}
+		$submission = $this->submissions->update( (int) $r['id'], $body );
 		return $this->respond( $submission ? $submission->admin() : Database::error( 'cff_not_found', 'Submission not found.', 404 ) ); }
 	public function deleteSubmission( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id   = (int) $r['id'];

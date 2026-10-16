@@ -32,6 +32,36 @@ function server() {
   return { fetcher, api: new ApiClient('/cff/v1/', fetcher, async () => {}), setRemote: (answers: AnswerMap, revision: number) => { remote = session(answers, revision); }, deny: (mode: typeof deny) => { deny = mode; } };
 }
 describe('replay-driven visitor controller', () => {
+  it('keeps the credential from a magic link so a reload resumes the same session', async () => {
+    const network = server();
+    const storage = new SessionStorage(localStorage);
+    network.fetcher.mockImplementationOnce(async () => response(form()));
+    history.replaceState(null, '', '/page#cff-magic=' + 'a'.repeat(43));
+    const magic = vi.spyOn(network.api, 'magicResume').mockResolvedValue(session({ name: 'Ada' }, 3));
+    const controller = new RuntimeController({ formId: 42 }, network.api, storage);
+    await controller.initialize();
+    expect(magic).toHaveBeenCalledOnce();
+    expect(location.hash).toBe('');
+    expect(storage.credential(42)).toBe(session().resumeToken);
+  });
+  it('drops timings of steps left behind by an edited branch so saves keep working', async () => {
+    const network = server();
+    const branching = form([
+      { id: 'route', key: 'route', type: 'yes_no', label: 'Route', messages: ['Route?'], logic: [{ if: { field: 'route', op: 'eq', value: false }, then: { action: 'jump', to: 'other' } }] },
+      { id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'], logic: [{ if: { all: [] }, then: { action: 'jump', to: 'review' } }] },
+      { id: 'other', key: 'other', type: 'short_text', label: 'Other', messages: ['Other?'] },
+      { id: 'review', key: 'review', type: 'summary', label: 'Review', messages: ['Check'] },
+    ]);
+    const controller = new RuntimeController({ form: branching }, network.api, new SessionStorage(localStorage));
+    await controller.initialize();
+    await controller.answer(true); await controller.answer('Ada');
+    controller.edit('route'); await controller.answer(false);
+    await controller.flush();
+    const patches = network.fetcher.mock.calls.filter(([, init]) => init?.method === 'PATCH');
+    const last = JSON.parse(String(patches.at(-1)?.[1]?.body)) as { stepTimings: Record<string, number> };
+    expect(Object.keys(last.stepTimings)).not.toContain('name');
+    expect(Object.keys(last.stepTimings)).toContain('route');
+  });
   it('recomputes the shared score/outcome fixture on edit and submits without supplying computed answers', async () => {
     const original = powerFixture.schema as unknown as FormSchema;
     const schema = applyVariant(original, original.experiments![0]!.variants[1]!);

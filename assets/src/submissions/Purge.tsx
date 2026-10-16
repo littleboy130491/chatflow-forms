@@ -7,6 +7,7 @@ import { Button, Field, Notice, Select } from '../builder/controls';
 import { errorMessage } from '../builder/api';
 import type { AdminApi } from '../builder/api';
 import { Filters } from './Filters';
+import { statuses, statusLabel } from './model';
 import type { PurgeCriteria, PurgeJob, PurgePreview, Status } from './model';
 import { useJobProgress } from './useJobProgress';
 export function Purge({ api }: { api: AdminApi }) {
@@ -46,10 +47,7 @@ export function Purge({ api }: { api: AdminApi }) {
           value={criteria.status ?? ''}
           choices={[
             { value: '', label: __('All statuses', 'chatflow-forms') },
-            ...['completed', 'partial', 'abandoned', 'spam', 'trash'].map((value) => ({
-              value,
-              label: value,
-            })),
+            ...statuses.map((value) => ({ value, label: statusLabel(value) })),
           ]}
           onChange={(status) => {
             const next = { ...criteria };
