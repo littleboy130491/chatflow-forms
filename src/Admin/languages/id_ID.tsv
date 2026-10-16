@@ -105,6 +105,7 @@ Calculated number|Angka terhitung
 Cancel|Batal
 Captcha and Akismet are optional later features, not enabled here.|Captcha dan Akismet merupakan fitur opsional mendatang, belum diaktifkan di sini.
 Captcha provider|Penyedia captcha
+Change this submission to “%s”?|Ubah kiriman ini menjadi “%s”?
 Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
 Chat width (240–1600)|Lebar percakapan (240–1600)
 ChatFlow|ChatFlow
@@ -580,6 +581,7 @@ Reset filters|Atur ulang filter
 Respect Do Not Track|Hormati Do Not Track
 Respondent email field|Kolom email responden
 Restore selected to Completed|Pulihkan yang dipilih ke Selesai
+Restore selected|Pulihkan yang dipilih
 Resume days (1–90)|Masa melanjutkan sesi (hari; 1–90)
 Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.|Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie.
 Retention days|Masa retensi (hari)
@@ -589,6 +591,7 @@ Rewrote %1$d of %2$d texts.|Menulis ulang %1$d dari %2$d teks.
 Right|Kanan
 Rows per page|Baris per halaman
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
+Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
 Sample answers must be an object.|Contoh jawaban harus berupa objek.

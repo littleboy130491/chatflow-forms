@@ -4,6 +4,66 @@ namespace ChatFlow\Rest;
 use ChatFlow\Submissions\Database;
 
 final class Settings {
+	/** Stands in for a stored secret in admin responses; sending it back keeps the stored value. */
+	public const MASK = '********';
+	/** Secret members, as group/member paths (connectors: group/provider/member). */
+	private const SECRETS = array(
+		array( 'spam', 'secretKey' ),
+		array( 'spam', 'akismetKey' ),
+		array( 'ai', 'apiKey' ),
+		array( 'connectors', 'slack', 'webhookUrl' ),
+		array( 'connectors', 'mailchimp', 'apiKey' ),
+		array( 'connectors', 'hubspot', 'accessToken' ),
+		array( 'connectors', 'ga4', 'apiSecret' ),
+		array( 'connectors', 'meta_capi', 'accessToken' ),
+	);
+
+	/**
+	 * Settings for the admin screen: stored secrets are replaced by MASK, never echoed.
+	 *
+	 * @param array<string,mixed> $settings
+	 * @return array<string,mixed>
+	 */
+	public static function masked( array $settings ): array {
+		foreach ( self::SECRETS as $path ) {
+			$ref = &$settings;
+			foreach ( $path as $key ) {
+				if ( ! is_array( $ref ) || ! array_key_exists( $key, $ref ) ) {
+					unset( $ref );
+					continue 2; }
+				$ref = &$ref[ $key ];
+			}
+			if ( is_string( $ref ) && '' !== $ref ) {
+				$ref = self::MASK; }
+			unset( $ref );
+		}
+		return $settings;
+	}
+
+	/**
+	 * Replace MASK placeholders in submitted settings with the stored secret.
+	 *
+	 * @param array<string,mixed> $input
+	 * @param array<string,mixed> $stored
+	 * @return array<string,mixed>
+	 */
+	private static function unmask( array $input, array $stored ): array {
+		foreach ( self::SECRETS as $path ) {
+			$ref  = &$input;
+			$have = $stored;
+			foreach ( $path as $key ) {
+				if ( ! is_array( $ref ) || ! array_key_exists( $key, $ref ) ) {
+					unset( $ref );
+					continue 2; }
+				$ref  = &$ref[ $key ];
+				$have = is_array( $have ) ? ( $have[ $key ] ?? '' ) : '';
+			}
+			if ( self::MASK === $ref ) {
+				$ref = is_string( $have ) ? $have : ''; }
+			unset( $ref );
+		}
+		return $input;
+	}
 	/** @return array<string,mixed> */
 	public static function defaults(): array {
 		return array(
@@ -62,6 +122,7 @@ final class Settings {
 	 * @param array<string,mixed> $input
 	 */
 	public static function save( array $input ): array|\WP_Error {
+		$input    = self::unmask( $input, self::get() );
 		$defaults = self::defaults();
 		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'connectors', 'ai' ) as $group ) {
 			if ( isset( $input[ $group ] ) && ! is_array( $input[ $group ] ) ) {

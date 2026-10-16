@@ -313,6 +313,9 @@ msgstr "Batal"
 msgid "Captcha provider"
 msgstr "Penyedia captcha"
 
+msgid "Change this submission to “%s”?"
+msgstr "Ubah kiriman ini menjadi “%s”?"
+
 msgid "Changing a value changes exports and integrations. Its ID stays unchanged."
 msgstr "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
 
@@ -1675,8 +1678,8 @@ msgstr "Hormati Do Not Track"
 msgid "Respondent email field"
 msgstr "Kolom email responden"
 
-msgid "Restore selected to Completed"
-msgstr "Pulihkan yang dipilih ke Selesai"
+msgid "Restore selected"
+msgstr "Pulihkan yang dipilih"
 
 msgid "Resume days (1–90)"
 msgstr "Masa melanjutkan sesi (hari; 1–90)"
@@ -1731,6 +1734,9 @@ msgstr "Simpan draf terlebih dahulu untuk memperoleh ID formulir."
 
 msgid "Saved template"
 msgstr "Templat tersimpan"
+
+msgid "Saved. Leave unchanged to keep it, or clear the field to remove it."
+msgstr "Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya."
 
 msgid "Saving…"
 msgstr "Menyimpan…"

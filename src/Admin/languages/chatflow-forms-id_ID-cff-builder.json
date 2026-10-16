@@ -319,6 +319,9 @@
       "Captcha provider": [
         "Penyedia captcha"
       ],
+      "Change this submission to “%s”?": [
+        "Ubah kiriman ini menjadi “%s”?"
+      ],
       "Changing a value changes exports and integrations. Its ID stays unchanged.": [
         "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
       ],
@@ -1681,8 +1684,8 @@
       "Respondent email field": [
         "Kolom email responden"
       ],
-      "Restore selected to Completed": [
-        "Pulihkan yang dipilih ke Selesai"
+      "Restore selected": [
+        "Pulihkan yang dipilih"
       ],
       "Resume days (1–90)": [
         "Masa melanjutkan sesi (hari; 1–90)"
@@ -1737,6 +1740,9 @@
       ],
       "Saved template": [
         "Templat tersimpan"
+      ],
+      "Saved. Leave unchanged to keep it, or clear the field to remove it.": [
+        "Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya."
       ],
       "Saving…": [
         "Menyimpan…"

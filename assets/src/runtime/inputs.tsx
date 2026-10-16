@@ -51,7 +51,7 @@ function ChipInput(props: FieldProps & { media?: PublicForm['form']['media'] }) 
   if (step.settings?.layout === 'dropdown' && !multi && step.type !== 'yes_no') return <form onSubmit={e => { e.preventDefault(); onAnswer(dropdownOther ? { value: dropdown, other } : dropdown); }}>
     <label for={`input-${step.id}`}>{step.label}</label>
     <select id={`input-${step.id}`} disabled={disabled} value={dropdown} onChange={e => setDropdown(e.currentTarget.value)} aria-describedby={`help-${step.id} error-${step.id}`}>
-      <option value="">{step.placeholder ?? phrase('continue')}</option>{options.map(option => <option key={option.id} value={String(option.value)}>{option.label}</option>)}
+      <option value="">{step.placeholder ?? phrase('select')}</option>{options.map(option => <option key={option.id} value={String(option.value)}>{option.label}</option>)}
     </select>{dropdownOther && otherInput(dropdown)}<button disabled={disabled || !dropdown || (dropdownOther && !other.trim())}>{step.settings.buttonLabel ?? phrase('continue')}</button>
   </form>;
   return <div ref={ref} role="group" aria-label={step.label} onKeyDown={keyboard} className={step.settings?.layout === 'cards' ? 'chips cards' : 'chips'}>

@@ -59,6 +59,10 @@ const credentialFields: { type: keyof ConnectorCredentials; title: string; field
     { key: 'testEventCode', label: __('Test event code (optional, for Events Manager testing)', 'chatflow-forms'), secret: false },
   ] },
 ];
+/** The server never returns stored secrets; it sends this mask, and keeps the secret if the mask comes back. */
+export const SECRET_MASK = '********';
+const secretHelp = (value: string | undefined): { help?: string } =>
+  value === SECRET_MASK ? { help: __('Saved. Leave unchanged to keep it, or clear the field to remove it.', 'chatflow-forms') } : {};
 export function Settings({ api }: { api: AdminApi }) {
   const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
@@ -270,7 +274,7 @@ export function Settings({ api }: { api: AdminApi }) {
               {key:'siteKey',label:__('Public site key','chatflow-forms')},
               {key:'secretKey',label:__('Private captcha key','chatflow-forms')},
               {key:'akismetKey',label:__('Private Akismet key','chatflow-forms')},
-            ] as const).map(({key,label}) => <Field key={key} label={label} type={key === 'siteKey' ? 'text' : 'password'} value={settings.spam?.[key] ?? ''}
+            ] as const).map(({key,label}) => <Field key={key} label={label} type={key === 'siteKey' ? 'text' : 'password'} value={settings.spam?.[key] ?? ''} {...(key !== 'siteKey' ? secretHelp(settings.spam?.[key]) : {})}
               onChange={(value) => update({...settings,spam:{...settings.spam!,[key]:value}})} />)}
             <Field label={__('reCAPTCHA v3 minimum score (0–1)','chatflow-forms')} type="number" value={settings.spam?.minScore ?? 0.5}
               onChange={(value) => update({...settings,spam:{...settings.spam!,minScore:Number(value)}})} />
@@ -281,7 +285,7 @@ export function Settings({ api }: { api: AdminApi }) {
           <section className="cff-card">
             <h2>{__('AI assist (Claude)', 'chatflow-forms')}</h2>
             <p>{__('Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.', 'chatflow-forms')}</p>
-            <Field label={__('Anthropic API key (sk-ant-…)', 'chatflow-forms')} type="password" value={settings.ai?.apiKey ?? ''}
+            <Field label={__('Anthropic API key (sk-ant-…)', 'chatflow-forms')} type="password" value={settings.ai?.apiKey ?? ''} {...secretHelp(settings.ai?.apiKey)}
               onChange={(value) => update({ ...settings, ai: { apiKey: value.trim() } })} />
           </section>
           <section className="cff-card">
@@ -292,6 +296,7 @@ export function Settings({ api }: { api: AdminApi }) {
                 <legend>{title}</legend>
                 {fields.map(({ key, label, secret }) => (
                   <Field key={key} label={label} type={secret ? 'password' : 'text'}
+                    {...(secret ? secretHelp((settings.connectors?.[type] as Record<string, string> | undefined)?.[key]) : {})}
                     value={(settings.connectors?.[type] as Record<string, string> | undefined)?.[key] ?? ''}
                     onChange={(value) => update({ ...settings, connectors: { ...settings.connectors!, [type]: { ...settings.connectors?.[type], [key]: value.trim() } } })} />
                 ))}

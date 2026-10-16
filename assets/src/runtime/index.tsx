@@ -70,6 +70,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   let autoTimer: ReturnType<typeof setTimeout> | null = null;
   let scrollHandler: (() => void) | null = null;
   let openTrigger: ((event: MouseEvent) => void) | null = null;
+  let keyHandler: ((event: KeyboardEvent) => void) | null = null;
   let chatRoot = root;
   let toggle: HTMLButtonElement | null = null;
   let panel: HTMLDivElement | null = null;
@@ -139,25 +140,32 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     chatRoot = document.createElement('div');
     panel.append(chatRoot, captchaRoot);
     toggle.addEventListener('click', () => setOpen(panel!.hidden));
-    root.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && panel && !panel.hidden) {
+    // Listen on the document so Escape and the popup's Tab trap still work after the focused
+    // control unmounts (focus falls back to <body>, outside the shadow tree).
+    const onKey = (event: KeyboardEvent) => {
+      if (!panel || panel.hidden) return;
+      const inside = event.composedPath().includes(panel);
+      if (event.key === 'Escape' && (inside || isPopup)) {
         event.preventDefault();
         setOpen(false);
       }
-      if (isPopup && event.key === 'Tab' && panel && !panel.hidden) {
-        const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]')];
+      if (isPopup && event.key === 'Tab') {
+        const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]')].filter(item => item.tabIndex >= 0 && !item.closest('.honeypot,[hidden],[aria-hidden="true"]'));
         const first = items[0], last = items.at(-1);
         const active = shadow.activeElement;
         if (!first || !last) { event.preventDefault(); panel.focus(); }
-        else if (event.shiftKey && (panel.contains(active) ? active === first : true)) { event.preventDefault(); last.focus(); }
+        else if (event.shiftKey && (panel.contains(active) ? active === first || active === panel : true)) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && (active === last || !panel.contains(active))) { event.preventDefault(); first.focus(); }
       }
-    });
+    };
+    root.addEventListener('keydown', onKey);
+    keyHandler = event => { if (!event.composedPath().includes(root)) onKey(event); };
+    document.addEventListener('keydown', keyHandler);
   }
   if (!isLauncher) root.after(captchaRoot);
   render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, chatRoot);
   const handle: RuntimeHandle = {
-    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); if (keyHandler) document.removeEventListener('keydown', keyHandler); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
     jumpToStep: id => controller.jumpToStep(id),
@@ -166,7 +174,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       host.hidden = false;
       initialize();
       host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true });
+      (host.shadowRoot?.querySelector<HTMLElement>('.active input:not([type=hidden]),.active textarea,.active select,.active button') ?? host.shadowRoot?.querySelector<HTMLElement>('.chat'))?.focus({ preventScroll: true });
     },
   };
   mounted.set(host, { handle, id, controller });

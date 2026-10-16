@@ -23,7 +23,8 @@ final class Ending {
 		$public  = array(
 			'id'       => $ending['id'],
 			'type'     => $ending['type'],
-			'messages' => array_map( fn( $text ) => Interpolator::interpolate( $text, $answers, $meta ), $ending['messages'] ?? array() ),
+			// Messages render as Markdown in the chat: substituted values must stay literal text.
+			'messages' => array_map( fn( $text ) => Interpolator::interpolate( $text, self::escapeMarkdown( $answers ), self::escapeMarkdown( $meta ) ), $ending['messages'] ?? array() ),
 			'buttons'  => array(),
 		);
 		foreach ( $ending['buttons'] ?? array() as $button ) {
@@ -86,5 +87,16 @@ final class Ending {
 		if ( 'https' !== strtolower( $parts['scheme'] ?? '' ) && ! ( $same && 'http' === ( $parts['scheme'] ?? '' ) && 'http' === ( $site['scheme'] ?? '' ) ) ) {
 			return null; }
 		return $url;
+	}
+
+	/** Backslash-escape the runtime's Markdown syntax ([]()*\\) in every string value. */
+	public static function escapeMarkdown( mixed $value ): mixed {
+		if ( is_string( $value ) ) {
+			return preg_replace( '/[\\\\\[\]()*]/', '\\\\$0', $value ) ?? $value;
+		}
+		if ( is_array( $value ) ) {
+			return array_map( array( self::class, 'escapeMarkdown' ), $value );
+		}
+		return $value;
 	}
 }

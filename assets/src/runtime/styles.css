@@ -9,9 +9,13 @@
 .launcher-root{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
 .launcher-root.is-left{align-items:flex-start}
 .launcher-toggle{min-width:120px;border-radius:999px;box-shadow:0 4px 22px #0003;background:#171717;color:#fff}
-.launcher-panel{width:100%;max-height:calc(100dvh - 112px);overflow:hidden;border-radius:14px;box-shadow:0 12px 48px #0003;background:#fff}
+/* The panel is a flex column so the conversation shrinks, instead of the footer or captcha being clipped, on short screens. */
+.launcher-panel{width:100%;max-height:calc(100dvh - 112px);overflow:hidden;border-radius:14px;box-shadow:0 12px 48px #0003;background:#fff;display:flex;flex-direction:column}
 .launcher-panel[hidden]{display:none!important}
-.launcher-panel .chat{width:100%;max-width:none;border-radius:14px}
+.launcher-panel>div:first-child{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.launcher-panel .chat{width:100%;max-width:none;border-radius:14px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.launcher-panel .chat>*{flex:none}.launcher-panel .chat>.conversation{flex:0 1 auto;min-height:96px}
+.launcher-panel footer{max-height:30dvh;overflow-y:auto}.launcher-panel .captcha{flex:none;max-height:40dvh;overflow-y:auto}.launcher-panel .captcha:empty{display:none}
 .launcher-panel .conversation{max-height:min(56dvh,560px)}
 @media(max-width:480px){:host([data-mode="launcher"]){right:12px;bottom:12px;width:calc(100vw - 24px)}:host([data-mode="launcher"][data-position="left"]){left:12px}.launcher-panel .conversation{max-height:55dvh}}
 
@@ -31,3 +35,4 @@
 .slider-reading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .slider-reading output { font-weight: 700; }
 .active input[type="range"] { width: 100%; max-width: 100%; min-height: 44px; }
+.ending:focus{outline:none}

@@ -228,7 +228,8 @@ export class RuntimeController {
     this.editing = id; this.state.activeId = id; this.state.phase = 'ready';
     this.state.error = null; this.state.fieldError = null; this.notify(); return true;
   }
-  inputValue(step: Step): unknown { return this.state.answers[step.key] ?? this.prefill[step.key] ?? step.defaultValue; }
+  // Page-script prefill never answers consent, uploads or non-input steps on the visitor's behalf.
+  inputValue(step: Step): unknown { return this.state.answers[step.key] ?? (['hidden', 'calculated', 'file_upload', 'consent', 'statement', 'summary', 'media'].includes(step.type) ? undefined : this.prefill[step.key]) ?? step.defaultValue; }
   private inputAnswers(): AnswerMap {
     const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden' && step.type !== 'calculated').map(step => step.key));
     return Object.fromEntries(Object.entries(this.state.answers).filter(([key]) => keys.has(key))) as AnswerMap;
@@ -314,8 +315,13 @@ export class RuntimeController {
     this.state.busy = true; this.state.phase = 'submitting'; this.state.error = null; this.notify();
     try {
       if (!this.pending) {
-        const captchaToken = this.engagement && this.engagement.captcha.provider !== 'none' ? await this.options.captcha?.(this.engagement.captcha) : '';
-        if (this.engagement && this.engagement.captcha.provider !== 'none' && !captchaToken) throw new ApiError('cff_captcha_required', 422);
+        let captchaToken = '';
+        if (this.engagement && this.engagement.captcha.provider !== 'none') {
+          try { captchaToken = await this.options.captcha?.(this.engagement.captcha) ?? ''; } catch { captchaToken = ''; }
+          if (this.disposed) return;
+          // A failed or expired challenge is retryable: keep the visitor on the review step with a clear message.
+          if (!captchaToken) { this.state.phase = 'ready'; this.state.error = 'captchaFailed'; return; }
+        }
         if (this.disposed) return;
         this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot, ...(captchaToken ? { captchaToken } : {}) } };
       }
@@ -381,6 +387,7 @@ export class RuntimeController {
   async retry(): Promise<void> {
     if (this.pending?.method === 'POST') await this.submit();
     else if (this.pending?.method === 'DELETE') await this.restart();
+    else if (this.state.error === 'captchaFailed') await this.submit();
     else if (!this.session) { if (this.saved) await this.reconnect(); else if (this.state.form) await this.start(); else await this.initialize(); }
     else await this.flush();
   }

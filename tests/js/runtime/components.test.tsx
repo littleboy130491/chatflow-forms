@@ -4,7 +4,7 @@ import { render, createElement } from 'preact';
 import { act } from 'preact/test-utils';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FieldInput, normalizePhone, toggleChoice } from '../../../assets/src/runtime/inputs';
-import { interpolateLink, Markdown, reactions, safeLink } from '../../../assets/src/runtime/content';
+import { interpolateLink, interpolateMarkdown, Markdown, markdownText, reactions, safeLink } from '../../../assets/src/runtime/content';
 import { phrases } from '../../../assets/src/runtime/i18n';
 import { mountRuntime } from '../../../assets/src/runtime';
 import { ApiClient } from '../../../assets/src/runtime/api';
@@ -209,6 +209,52 @@ describe('Shadow DOM mount and global API', () => {
     expect(() => window.ChatFlow.registerField('custom_test', () => null)).toThrow(); disposer();
     let handle: ReturnType<typeof mountRuntime>; await act(() => { handle = mountRuntime(host, { form: form(), preview: true, mode: 'fullpage' }); });
     window.ChatFlow.prefill({ name: 'Global' }, 42); host.hidden = true; expect(window.ChatFlow.open(42)).toBe(true); expect(host.hidden).toBe(false); expect(host.shadowRoot?.querySelector('.fullpage')).not.toBeNull();
+    await act(() => handle!.unmount());
+  });
+});
+describe('markdown merge tags', () => {
+  it('renders answers as literal text, never as links or emphasis', async () => {
+    const text = interpolateMarkdown('Hi **{{name}}**, see [docs](https://example.test/a)', { name: '[click](https://evil.test) *x* a\\b' });
+    await act(() => render(createElement(Markdown, { text }), host));
+    const links = [...host.querySelectorAll('a')];
+    expect(links.map(link => link.href)).toEqual(['https://example.test/a']);
+    expect(host.querySelector('strong')!.textContent).toBe('[click](https://evil.test) *x* a\\b');
+    expect(host.querySelector('em')).toBeNull();
+    expect(markdownText(text)).toBe('Hi [click](https://evil.test) *x* a\\b, see docs');
+  });
+});
+describe('focus and registration guards', () => {
+  it('traps popup Tab focus without landing on the honeypot and closes on Escape from outside', async () => {
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(), restUrl: '/wp-json/cff/v1/', mode: 'popup' }); });
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 503 })));
+    const shadow = host.shadowRoot!;
+    const panel = shadow.querySelector<HTMLDivElement>('.launcher-panel')!;
+    await act(() => { window.ChatFlow.open(42); });
+    const honeypot = shadow.querySelector<HTMLInputElement>('.honeypot input');
+    const buttons = [...panel.querySelectorAll<HTMLButtonElement>('button:not([disabled])')];
+    buttons.at(-1)?.focus();
+    shadow.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true }));
+    expect(shadow.activeElement).not.toBe(honeypot);
+    expect(panel.contains(shadow.activeElement)).toBe(true);
+    buttons[0]?.focus();
+    shadow.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, composed: true }));
+    expect(shadow.activeElement).not.toBe(honeypot);
+    expect(panel.contains(shadow.activeElement)).toBe(true);
+    (shadow.activeElement as HTMLElement | null)?.blur();
+    await act(() => { document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); });
+    expect(panel.hidden).toBe(true);
+    await act(() => handle!.unmount());
+  });
+  it('refuses to replace built-in field renderers', () => {
+    expect(() => window.ChatFlow.registerField('consent', () => null)).toThrow();
+    expect(() => window.ChatFlow.registerField('short_text', () => null)).toThrow();
+  });
+  it('focuses the phone number input rather than the country select', async () => {
+    const steps: [Step, ...Step[]] = [{ id: 'phone', key: 'phone', type: 'phone', label: 'Phone', messages: [] }];
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(steps), preview: true }); });
+    await vi.waitFor(() => expect((host.shadowRoot!.activeElement as HTMLInputElement | null)?.type).toBe('tel'));
     await act(() => handle!.unmount());
   });
 });

@@ -94,13 +94,13 @@ final class RestModule implements Module {
 		$this->route( '/admin/purge', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->start( $this->body( $r )['criteria'] ?? array(), (string) ( $this->body( $r )['confirmationToken'] ?? '' ), (string) ( $this->body( $r )['confirmation'] ?? '' ) ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->progress( $r['id'] ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge-log', 'GET', array( $this, 'purgeLog' ), 'cff_purge_submissions' );
-		$this->route( '/admin/settings', 'GET', fn() => $this->respond( array( 'settings' => Settings::get() ) ), 'cff_manage_settings' );
+		$this->route( '/admin/settings', 'GET', fn() => $this->respond( array( 'settings' => Settings::masked( Settings::get() ) ) ), 'cff_manage_settings' );
 		$this->route(
 			'/admin/settings',
 			'PUT',
 			function ( $r ) {
 				$settings = Settings::save( $this->body( $r )['settings'] ?? array() );
-				return $this->respond( is_wp_error( $settings ) ? $settings : array( 'settings' => $settings ) );
+				return $this->respond( is_wp_error( $settings ) ? $settings : array( 'settings' => Settings::masked( $settings ) ) );
 			},
 			'cff_manage_settings'
 		);

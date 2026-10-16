@@ -44,6 +44,20 @@ describe('replay-driven visitor controller', () => {
     expect(location.hash).toBe('');
     expect(storage.credential(42)).toBe(session().resumeToken);
   });
+  it('keeps the visitor on review after a failed captcha and submits on retry', async () => {
+    const network = server(); const base = network.fetcher.getMockImplementation()!;
+    network.fetcher.mockImplementation(async (input, init) => String(input).includes('/engagement') ? response({ captcha: { provider: 'turnstile', siteKey: 'public-key' }, analytics: { enabled: false, consentRequired: true, respectDnt: true } }) : base(input, init));
+    const envelope = form(); envelope.features.engagement = true;
+    const captcha = vi.fn().mockRejectedValueOnce(new Error('captchaUnavailable')).mockResolvedValueOnce('captcha-token');
+    const controller = new RuntimeController({ form: envelope, captcha }, network.api, new SessionStorage(localStorage));
+    await controller.initialize(); await controller.answer(null); await controller.answer('Ada'); await controller.answer(null);
+    await controller.submit();
+    expect(controller.state.phase).toBe('ready'); expect(controller.state.error).toBe('captchaFailed');
+    await controller.retry();
+    expect(controller.state.phase).toBe('done');
+    const submitted = network.fetcher.mock.calls.find(([url]) => String(url).endsWith('/submit'));
+    expect(JSON.parse(String(submitted?.[1]?.body))).toMatchObject({ captchaToken: 'captcha-token' });
+  });
   it('drops timings of steps left behind by an edited branch so saves keep working', async () => {
     const network = server();
     const branching = form([

@@ -76,8 +76,13 @@ final class Uploads {
 					return $guard; }
 				if ( null !== $guard['response'] ) {
 					return $guard['response']; }
-				if ( ! ( new RateLimiter() )->consume( 'upload:' . $id, 20, 600 ) ) {
+				$ip = ( new \ChatFlow\Tracking\IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] );
+				if ( ! ( new RateLimiter() )->consume( 'upload:' . $id, 20, 600 ) || ! ( new RateLimiter() )->consume( 'upload-ip:' . $ip, 30, 3600 ) ) {
 					return Database::error( 'cff_rate_limit', 'Please wait before uploading again.', 429 ); }
+				// Unattached uploads per form are budgeted per day so anonymous sessions cannot fill private storage.
+				$pending = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COALESCE(SUM(u.bytes),0) FROM {$wpdb->prefix}cff_uploads u INNER JOIN {$wpdb->prefix}cff_sessions s ON s.id=u.session_id WHERE s.form_id=%d AND u.submission_id IS NULL AND u.created_at>%s", $row['form_id'], gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS ) ) );
+				if ( $pending + $verified['bytes'] > (int) apply_filters( 'cff_upload_daily_pending_bytes', 1073741824, (int) $row['form_id'] ) ) {
+					return Database::error( 'cff_upload_limit', 'Uploads are temporarily unavailable for this form. Try again later.', 429 ); }
 				$usage = $wpdb->get_row( $wpdb->prepare( "SELECT COUNT(*) AS files,COALESCE(SUM(bytes),0) AS bytes FROM {$wpdb->prefix}cff_uploads WHERE session_id=%d", $row['id'] ), ARRAY_A );
 				if ( (int) $usage['files'] >= 10 || (int) $usage['bytes'] + $verified['bytes'] > 104857600 ) {
 					return Database::error( 'cff_upload_limit', 'Session upload limit reached.', 429 ); }
@@ -115,7 +120,8 @@ final class Uploads {
 							'mime'          => $verified['mime'],
 							'bytes'         => $verified['bytes'],
 							'created_at'    => Database::now(),
-							'expires_at'    => $row['expires_at'],
+							// Removed after a day unless a saved partial or submission claims it.
+							'expires_at'    => min( $row['expires_at'], gmdate( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS ) ),
 						)
 					)
 				);
@@ -196,10 +202,14 @@ final class Uploads {
 	}
 	public function cleanup(): void {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id,storage_key FROM {$wpdb->prefix}cff_uploads WHERE submission_id IS NULL AND expires_at < %s ORDER BY id LIMIT 100", Database::now() ), ARRAY_A );
-		foreach ( $rows as $row ) {
-			$this->files->remove( $row['storage_key'] );
-			Database::check( $wpdb->delete( $wpdb->prefix . 'cff_uploads', array( 'id' => $row['id'] ) ) ); }
+		for ( $batch = 0; $batch < 100; $batch++ ) {
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT id,storage_key FROM {$wpdb->prefix}cff_uploads WHERE submission_id IS NULL AND expires_at < %s ORDER BY id LIMIT 100", Database::now() ), ARRAY_A );
+			foreach ( $rows as $row ) {
+				$this->files->remove( $row['storage_key'] );
+				Database::check( $wpdb->delete( $wpdb->prefix . 'cff_uploads', array( 'id' => $row['id'] ) ) ); }
+			if ( count( $rows ) < 100 ) {
+				break; }
+		}
 	}
 	/** @return array<string,mixed>|null */
 	private function field( ?Form $form, string $id ): ?array {
