@@ -113,9 +113,11 @@ Bot|Bot
 Branching flow map|Peta alur percabangan
 Brand colour|Warna merek
 Bubble tails|Ekor gelembung
+Build a WhatsApp link|Buat tautan WhatsApp
 Build|Susun
 Builder sections|Bagian pembuat formulir
 Bulk options (one label per line)|Pilihan massal (satu label per baris)
+Button label (blank = “WhatsApp” or “Contact us”)|Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)
 Button URL (merge tags allowed)|URL tombol (tag penggabungan diizinkan)
 Button action|Tindakan tombol
 Button label|Label tombol
@@ -254,6 +256,7 @@ Devices|Perangkat
 Diff compares this draft to the current published snapshot.|Perbandingan membandingkan draf ini dengan versi terbit saat ini.
 Diff uses the draft loaded in this editor, not the historical published snapshot.|Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya.
 Direct / unknown|Langsung / tidak diketahui
+Direct contact link|Tautan kontak langsung
 Discard local edits and reload?|Buang perubahan lokal dan muat ulang?
 Display and engagement|Tampilan dan interaksi
 Display and site-wide launcher rules|Aturan tampilan dan tombol pembuka di seluruh situs
@@ -300,6 +303,7 @@ Ending messages (one per line)|Pesan penutup (satu per baris)
 Ending type|Jenis penutup
 Ending: %s|Akhir: %s
 Endings and completion|Penutup dan penyelesaian
+Enter the full number including the country code, for example 6281234567890.|Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890.
 Event name|Nama peristiwa
 Exclude page IDs (comma-separated)|ID halaman yang dikecualikan (pisahkan dengan koma)
 Exclude page IDs (exclusions win)|Kecualikan ID halaman (pengecualian diprioritaskan)
@@ -459,6 +463,7 @@ Light or dark|Terang atau gelap
 Light|Terang
 Limits|Batasan
 Link (including WhatsApp)|Tautan (termasuk WhatsApp)
+Link (WhatsApp, https, tel: or mailto:; merge tags allowed)|Tautan (WhatsApp, https, tel: atau mailto:; tag gabungan boleh)
 Link lifetime in minutes (5–1440)|Masa berlaku tautan dalam menit (5–1440)
 Live preview|Pratinjau langsung
 Live theme preview|Pratinjau tema langsung
@@ -606,6 +611,7 @@ Plain|Polos
 Playful|Santai
 Popup|Jendela pop-up
 Postcode|Kode pos
+Pre-filled message (merge tags allowed, e.g. {{name}})|Pesan otomatis (tag gabungan boleh, mis. {{name}})
 Preferred appointment date (subject to confirmation)|Tanggal janji temu yang diinginkan (perlu konfirmasi)
 Prefill URL builder|Pembuat URL isian awal
 Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.|Isian awal menyarankan jawaban yang dapat diubah; tidak melewati validasi atau memberikan persetujuan. URL dapat masuk ke riwayat dan log server: jangan sertakan data pribadi atau rahasia.
@@ -718,6 +724,8 @@ Rules apply to published settings; review and publish before they affect visitor
 Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
 Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
 Shape|Bentuk
+Show a contact button in the chat header|Tampilkan tombol kontak di header percakapan
+Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
 Sky|Langit
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
@@ -859,6 +867,7 @@ URL|URL
 URL keyboard|Keyboard URL
 URL parameter|Parameter URL
 Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.|Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur.
+Use this WhatsApp link|Gunakan tautan WhatsApp ini
 UTM campaign|Kampanye UTM
 UTM source|Sumber UTM
 UTM sources|Sumber UTM
@@ -911,6 +920,7 @@ What brings you here today?|Ada yang bisa kami bantu hari ini?
 What could we improve?|Apa yang dapat kami tingkatkan?
 What would you like help with?|Apa yang dapat kami bantu?
 What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?
+WhatsApp number with country code|Nomor WhatsApp dengan kode negara
 Where will you use the product?|Di mana Anda akan menggunakan produk ini?
 Whitelisted field keys|Kunci kolom yang diizinkan
 Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.

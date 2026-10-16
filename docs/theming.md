@@ -27,3 +27,16 @@ full **Preview** also restyles without restarting.
 Everything is stored in the form's `settings.appearance` and validated by
 `schema/settings.schema.json` on save. Colours are sanitised again in the
 visitor's browser; custom CSS stays scoped to the chat's Shadow DOM.
+
+## Talking directly on WhatsApp
+
+- **Any time:** Design → Bot → *Direct contact link* adds a button to the chat
+  header (green with the WhatsApp icon for WhatsApp links). Build the link from a
+  number and a pre-filled message; merge tags such as `{{name}}` are replaced with
+  the answers given so far when the visitor clicks. https, tel: and mailto: links
+  work too. Clicks dispatch a `cff:contact` event on the form element for
+  analytics.
+- **After submitting:** on Settings → Endings, give an ending a *Link* button and
+  use *Build a WhatsApp link*; the message can include every answer. WhatsApp
+  links (wa.me, api.whatsapp.com) are always allowed, so they do not need to be
+  listed in *Allowed external redirect hosts*.

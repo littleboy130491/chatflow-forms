@@ -337,6 +337,9 @@
       "Build": [
         "Susun"
       ],
+      "Build a WhatsApp link": [
+        "Buat tautan WhatsApp"
+      ],
       "Builder sections": [
         "Bagian pembuat formulir"
       ],
@@ -351,6 +354,9 @@
       ],
       "Button label": [
         "Label tombol"
+      ],
+      "Button label (blank = “WhatsApp” or “Contact us”)": [
+        "Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)"
       ],
       "Button text": [
         "Teks tombol"
@@ -715,6 +721,9 @@
       "Direct / unknown": [
         "Langsung / tidak diketahui"
       ],
+      "Direct contact link": [
+        "Tautan kontak langsung"
+      ],
       "Discard local edits and reload?": [
         "Buang perubahan lokal dan muat ulang?"
       ],
@@ -846,6 +855,9 @@
       ],
       "Endings and completion": [
         "Penutup dan penyelesaian"
+      ],
+      "Enter the full number including the country code, for example 6281234567890.": [
+        "Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890."
       ],
       "Event name": [
         "Nama peristiwa"
@@ -1300,6 +1312,9 @@
       "Limits": [
         "Batasan"
       ],
+      "Link (WhatsApp, https, tel: or mailto:; merge tags allowed)": [
+        "Tautan (WhatsApp, https, tel: atau mailto:; tag gabungan boleh)"
+      ],
       "Link (including WhatsApp)": [
         "Tautan (termasuk WhatsApp)"
       ],
@@ -1707,6 +1722,9 @@
       ],
       "Postcode": [
         "Kode pos"
+      ],
+      "Pre-filled message (merge tags allowed, e.g. {{name}})": [
+        "Pesan otomatis (tag gabungan boleh, mis. {{name}})"
       ],
       "Preferred appointment date (subject to confirmation)": [
         "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
@@ -2128,11 +2146,17 @@
       "Shortcode": [
         "Shortcode"
       ],
+      "Show a contact button in the chat header": [
+        "Tampilkan tombol kontak di header percakapan"
+      ],
       "Show automatically on matching pages": [
         "Tampilkan otomatis pada halaman yang sesuai"
       ],
       "Show field": [
         "Tampilkan kolom"
+      ],
+      "Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.": [
+        "Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
       ],
       "Signing secret": [
         "Rahasia penandatanganan"
@@ -2470,6 +2494,9 @@
       "Use the ChatFlow Form block or an Elementor Shortcode widget.": [
         "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
       ],
+      "Use this WhatsApp link": [
+        "Gunakan tautan WhatsApp ini"
+      ],
       "User / event": [
         "Pengguna / peristiwa"
       ],
@@ -2556,6 +2583,9 @@
       ],
       "What would you like to discuss at your appointment?": [
         "Apa yang ingin Anda diskusikan saat konsultasi?"
+      ],
+      "WhatsApp number with country code": [
+        "Nomor WhatsApp dengan kode negara"
       ],
       "Where will you use the product?": [
         "Di mana Anda akan menggunakan produk ini?"

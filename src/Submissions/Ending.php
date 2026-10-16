@@ -80,8 +80,9 @@ final class Ending {
 		$site  = wp_parse_url( home_url() );
 		if ( ! is_array( $parts ) || empty( $parts['host'] ) || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
 			return null; }
-		$same  = strtolower( $parts['host'] ) === strtolower( $site['host'] ?? '' ) && ( $parts['port'] ?? null ) === ( $site['port'] ?? null );
-		$hosts = array_map( 'strtolower', $form->settings()['completion']['allowedRedirectHosts'] ?? array() );
+		$same = strtolower( $parts['host'] ) === strtolower( $site['host'] ?? '' ) && ( $parts['port'] ?? null ) === ( $site['port'] ?? null );
+		// Official WhatsApp click-to-chat hosts are always allowed (https only, below).
+		$hosts = array_merge( array( 'wa.me', 'api.whatsapp.com' ), array_map( 'strtolower', $form->settings()['completion']['allowedRedirectHosts'] ?? array() ) );
 		if ( ! $same && ( ! in_array( strtolower( $parts['host'] ), $hosts, true ) || isset( $parts['port'] ) ) ) {
 			return null; }
 		if ( 'https' !== strtolower( $parts['scheme'] ?? '' ) && ! ( $same && 'http' === ( $parts['scheme'] ?? '' ) && 'http' === ( $site['scheme'] ?? '' ) ) ) {

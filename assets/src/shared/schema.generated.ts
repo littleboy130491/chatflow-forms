@@ -98,6 +98,10 @@ export interface Bot {
   name: string;
   avatar?: number | null;
   typingSpeed?: "off" | "fast" | "normal" | "slow";
+  contact?: {
+    label?: string;
+    url: string;
+  };
 }
 export interface Step {
   id: string;

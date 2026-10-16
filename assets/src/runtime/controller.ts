@@ -54,6 +54,8 @@ export class RuntimeController {
     if (name === 'cff:step' && typeof extra.stepId === 'string' && this.state.form.form.session.savePartial !== false) this.analytics?.add({ event: 'view', stepId: extra.stepId });
     if (name === 'cff:start') { this.analytics?.add({ event: 'view' }); if (this.session) void this.analytics?.flush(this.session); }
   }
+  /** The visitor chose the form's direct contact link (e.g. WhatsApp) instead of continuing. */
+  contactClicked(): void { this.event('cff:contact', this.state.activeId ? { stepId: this.state.activeId } : {}); }
   close(): void { if (this.session && this.state.phase !== 'done') { this.analytics?.add({ event: 'abandon', ...(this.state.activeId && this.state.form?.form.session.savePartial !== false ? { stepId: this.state.activeId } : {}) }); void this.analytics?.flush(this.session); } }
   async upload(step: Step, file: File) {
     if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new ApiError('cff_upload_unavailable', 0);

@@ -31,6 +31,7 @@ import { AiGenerate, AiRephrase } from './AiAssist';
 import { Share, shortcode } from './Share';
 import { Contrast } from './Contrast';
 import { ThemeEditor } from './ThemeEditor';
+import { ContactLinkEditor } from './Contact';
 export { mountFormsList } from './forms-list';
 import './style.css';
 
@@ -726,6 +727,7 @@ function BuilderView({
               })
             }
           />
+            <ContactLinkEditor schema={schema} onChange={setSchema} />
           </section>
           <section className="cff-card">
             <h2>{__('Typography', 'chatflow-forms')}</h2>
