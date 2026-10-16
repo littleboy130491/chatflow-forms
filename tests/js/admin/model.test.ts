@@ -325,7 +325,7 @@ describe('form files and submission helpers', () => {
     original.settings.integrations = {
       webhooks: [{
         id: 'unsafe', enabled: true, url: 'https://example.org/webhook',
-        events: ['completed'], secret: 'sensitive-signing-key',
+        events: ['completed'], secret: 'sensitive-signing-key', headers: { Authorization: 'Bearer private' },
       }],
     };
     const file = { format: 'chatflow/form', version: 1, title: original.title,
@@ -334,6 +334,7 @@ describe('form files and submission helpers', () => {
       expect((body.settings as typeof original.settings).integrations?.webhooks?.[0]).toMatchObject({
         secret: '', enabled: false,
       });
+      expect((body.settings as typeof original.settings).integrations?.webhooks?.[0]?.headers).toEqual({});
       return original;
     });
     await importForm(JSON.stringify(file), client);

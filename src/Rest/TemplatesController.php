@@ -13,8 +13,6 @@ final class TemplatesController {
 		foreach ( array(
 			array( '/admin/templates/gallery', 'GET', 'gallery' ),
 			array( '/admin/templates/gallery/(?P<slug>[a-z-]+)', 'POST', 'create' ),
-			array( '/admin/form-files/import', 'POST', 'import' ),
-			array( '/admin/forms/(?P<id>\d+)/export', 'GET', 'export' ),
 			array( '/admin/forms/(?P<id>\d+)/duplicate', 'POST', 'duplicate' ),
 		) as [$route, $method, $callback] ) {
 			register_rest_route(
@@ -138,30 +136,6 @@ final class TemplatesController {
 			unset( $hook );
 		}
 		return $settings;
-	}
-
-	public function import( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
-		if ( strlen( $request->get_body() ) > 1048576 ) {
-			return Database::error( 'cff_import_too_large', 'Form file exceeds 1 MiB.', 413 ); }
-		$data = json_decode( $request->get_body(), true );
-		if ( ! is_array( $data ) || array_diff( array_keys( $data ), array( 'format', 'version', 'title', 'schema', 'settings' ) ) || 'chatflow/form' !== ( $data['format'] ?? '' ) || 1 !== ( $data['version'] ?? 0 ) || ! is_string( $data['title'] ?? null ) || ! is_array( $data['schema'] ?? null ) || ! is_array( $data['settings'] ?? null ) ) {
-			return Database::error( 'cff_import_invalid', 'Invalid ChatFlow form file.', 422 ); }
-		return $this->respondForm( $this->forms->create( $data['title'], $data['schema'], self::safeSettings( $data['settings'] ) ) );
-	}
-
-	public function export( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
-		$form = $this->forms->getDraft( (int) $request['id'] );
-		if ( ! $form ) {
-			return Database::error( 'cff_not_found', 'Form not found.', 404 ); }
-		return $this->respond(
-			array(
-				'format'   => 'chatflow/form',
-				'version'  => 1,
-				'title'    => $form->title(),
-				'schema'   => $form->schema(),
-				'settings' => self::safeSettings( $form->settings() ),
-			)
-		);
 	}
 
 	public function duplicate( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
