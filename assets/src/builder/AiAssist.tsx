@@ -48,7 +48,7 @@ export function AiGenerate({ api, onOpen }: { api: AdminApi; onOpen: (form: Form
     <section className="cff-ai-generate" aria-label={__('Generate a form with AI', 'chatflow-forms')}>
       <h3>{__('Generate a form with AI', 'chatflow-forms')}</h3>
       <Area label={__('Describe the form you need (audience, questions, language)', 'chatflow-forms')} value={prompt} onChange={setPrompt} />
-      <p className="description">{__('Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.', 'chatflow-forms')}</p>
+      <p className="description">{__('Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review.', 'chatflow-forms')}</p>
       {error && <Notice status="error" isDismissible={false}>{error}</Notice>}
       <Button
         variant="secondary"
@@ -81,7 +81,7 @@ export function AiRephrase({ api, schema, onChange }: { api: AdminApi; schema: F
     <section className="cff-card cff-ai-rephrase">
       <h2>{__('Rephrase bot copy with AI', 'chatflow-forms')}</h2>
       <Select label={__('Tone', 'chatflow-forms')} value={tone} choices={tones.map((value) => ({ value, label: labels[value] }))} onChange={(value) => setTone(value as (typeof tones)[number])} />
-      <p className="description">{__('Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.', 'chatflow-forms')}</p>
+      <p className="description">{__('Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing.', 'chatflow-forms')}</p>
       {error && <Notice status="error" isDismissible={false}>{error}</Notice>}
       {status && <p role="status">{status}</p>}
       <Button

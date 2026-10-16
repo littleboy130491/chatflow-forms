@@ -10,7 +10,9 @@ A/B copy and order experiment|Eksperimen A/B teks dan urutan
 Accent (buttons, links, ticks)|Aksen (tombol, tautan, centang)
 Accessibility and extras|Aksesibilitas dan tambahan
 AI assist (Claude)|Asisten AI (Claude)
+AI assist|Bantuan AI
 Answer buttons|Tombol jawaban
+Anthropic (Claude)|Anthropic (Claude)
 API key (ends with the data centre, e.g. -us21)|Kunci API (diakhiri kode pusat data, mis. -us21)
 Abandon|Ditinggalkan
 Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
@@ -68,6 +70,7 @@ Any (OR)|Salah satu (ATAU)
 Any text|Teks apa pun
 Anything else to share?|Ada hal lain yang ingin disampaikan?
 Anything else we should know?|Adakah hal lain yang perlu kami ketahui?
+API key (optional for keyless gateways)|Kunci API (opsional untuk gateway tanpa kunci)
 Append options|Tambahkan pilihan
 Append submission UUID|Tambahkan UUID kiriman
 Append whitelisted answers|Tambahkan jawaban yang diizinkan
@@ -94,6 +97,7 @@ Autoresponders|Balasan otomatis
 Avatar attachment ID|ID lampiran avatar
 Average completion seconds|Rata-rata detik penyelesaian
 Average completion time|Rata-rata waktu penyelesaian
+Base URL (https, e.g. https://api.openai.com/v1)|URL dasar (https, mis. https://api.openai.com/v1)
 BCC|BCC
 Back|Kembali
 Back to submissions|Kembali ke kiriman
@@ -501,6 +505,8 @@ Minimum height|Tinggi minimum
 Minimum length|Panjang minimum
 Minimum selections|Pilihan minimum
 Mobile|Ponsel
+Model (blank = openrouter/auto)|Model (kosong = openrouter/auto)
+Model|Model
 Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.|Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard.
 More forms|Formulir berikutnya
 Move down|Pindah ke bawah
@@ -556,12 +562,16 @@ Only public HTTPS destinations. Private and loopback hosts are blocked server-si
 Only trashed forms can be restored or deleted permanently.|Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen.
 Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
 Open imported form|Buka formulir hasil impor
+OpenAI-compatible endpoint|Endpoint kompatibel OpenAI
+OpenRouter API key (sk-or-…)|Kunci API OpenRouter (sk-or-…)
+OpenRouter|OpenRouter
 Operand source|Sumber operand
 Operation|Operasi
 Operator|Operator
 Option label|Label pilihan
 Optional captcha and Akismet credentials|Kredensial captcha dan Akismet opsional
 Optional captcha provider|Penyedia captcha opsional
+Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.|Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI.
 Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.|Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI.
 Other (free-text option)|Lainnya (pilihan teks bebas)
 Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
@@ -619,6 +629,7 @@ Private captcha key|Kunci captcha privat
 Private storage unavailable.|Penyimpanan privat tidak tersedia.
 Product recommender|Rekomendasi produk
 Professional|Profesional
+Provider|Penyedia
 Proxy mode|Mode proxy
 Public site key|Kunci situs publik
 Publish|Terbitkan
@@ -635,6 +646,7 @@ Purge log|Log penghapusan
 Purge submissions|Hapus kiriman
 Qualify website project inquiries, with conditional questions.|Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat.
 Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.|Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan.
+Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing.|Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan.
 Rate window seconds|Jendela pembatasan (detik)
 Rating|Penilaian
 Rating (1–5)|Penilaian (1–5)
@@ -846,6 +858,7 @@ Typography|Tipografi
 URL|URL
 URL keyboard|Keyboard URL
 URL parameter|Parameter URL
+Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.|Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur.
 UTM campaign|Kampanye UTM
 UTM source|Sumber UTM
 UTM sources|Sumber UTM
@@ -899,6 +912,7 @@ What would you like help with?|Apa yang dapat kami bantu?
 What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?
 Where will you use the product?|Di mana Anda akan menggunakan produk ini?
 Whitelisted field keys|Kunci kolom yang diizinkan
+Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.
 Work|Pekerjaan
 Working…|Sedang diproses…
 Yes|Ya
@@ -910,6 +924,7 @@ You cannot manage settings.|Anda tidak dapat mengelola pengaturan.
 You cannot view analytics.|Anda tidak diizinkan melihat analitik.
 You cannot view submissions.|Anda tidak dapat melihat kiriman.
 Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.|Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau.
+Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review.|Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa.
 Your email|Email Anda
 Your name|Nama Anda
 Your private export is ready. Sign in as its owner to download it within 24 hours:|Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 24 jam:

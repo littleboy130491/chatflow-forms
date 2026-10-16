@@ -21,14 +21,16 @@ export function Field({
   onChange,
   type = 'text',
   help,
+  placeholder,
 }: {
   label: string;
   value: string | number | undefined;
   onChange: (value: string) => void;
   type?: ComponentProps<typeof TextControl>['type'];
   help?: string;
+  placeholder?: string;
 }) {
-  return <TextControl label={label} value={value ?? ''} type={type} help={help} onChange={onChange} />;
+  return <TextControl label={label} value={value ?? ''} type={type} help={help} placeholder={placeholder} onChange={onChange} />;
 }
 export function Area({
   label,

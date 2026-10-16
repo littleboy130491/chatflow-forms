@@ -34,11 +34,14 @@
       "A/B copy and order experiment": [
         "Eksperimen A/B teks dan urutan"
       ],
-      "AI assist (Claude)": [
-        "Asisten AI (Claude)"
+      "AI assist": [
+        "Bantuan AI"
       ],
       "API key (ends with the data centre, e.g. -us21)": [
         "Kunci API (diakhiri kode pusat data, mis. -us21)"
+      ],
+      "API key (optional for keyless gateways)": [
+        "Kunci API (opsional untuk gateway tanpa kunci)"
       ],
       "Abandon": [
         "Ditinggalkan"
@@ -193,6 +196,9 @@
       "Answered": [
         "Dijawab"
       ],
+      "Anthropic (Claude)": [
+        "Anthropic (Claude)"
+      ],
       "Anthropic API key (sk-ant-…)": [
         "Kunci API Anthropic (sk-ant-…)"
       ],
@@ -294,6 +300,9 @@
       ],
       "Back to submissions": [
         "Kembali ke kiriman"
+      ],
+      "Base URL (https, e.g. https://api.openai.com/v1)": [
+        "URL dasar (https, mis. https://api.openai.com/v1)"
       ],
       "Below 4.5:1": [
         "Di bawah 4,5:1"
@@ -1432,6 +1441,12 @@
       "Mobile": [
         "Ponsel"
       ],
+      "Model": [
+        "Model"
+      ],
+      "Model (blank = openrouter/auto)": [
+        "Model (kosong = openrouter/auto)"
+      ],
       "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.": [
         "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
       ],
@@ -1579,6 +1594,15 @@
       "Open imported form": [
         "Buka formulir hasil impor"
       ],
+      "OpenAI-compatible endpoint": [
+        "Endpoint kompatibel OpenAI"
+      ],
+      "OpenRouter": [
+        "OpenRouter"
+      ],
+      "OpenRouter API key (sk-or-…)": [
+        "Kunci API OpenRouter (sk-or-…)"
+      ],
       "Operand source": [
         "Sumber operand"
       ],
@@ -1594,8 +1618,8 @@
       "Optional captcha and Akismet credentials": [
         "Kredensial captcha dan Akismet opsional"
       ],
-      "Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.": [
-        "Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI."
+      "Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.": [
+        "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI."
       ],
       "Other (free-text option)": [
         "Lainnya (pilihan teks bebas)"
@@ -1750,6 +1774,9 @@
       "Professional": [
         "Profesional"
       ],
+      "Provider": [
+        "Penyedia"
+      ],
       "Proxy mode": [
         "Mode proxy"
       ],
@@ -1795,8 +1822,8 @@
       "Qualify website project inquiries, with conditional questions.": [
         "Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat."
       ],
-      "Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.": [
-        "Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan."
+      "Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing.": [
+        "Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan."
       ],
       "Rate window seconds": [
         "Jendela pembatasan (detik)"
@@ -2422,6 +2449,9 @@
       "Usage-based recommendations with two conditional endings.": [
         "Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat."
       ],
+      "Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.": [
+        "Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur."
+      ],
       "Use global default": [
         "Gunakan bawaan global"
       ],
@@ -2539,6 +2569,9 @@
       "Working…": [
         "Sedang diproses…"
       ],
+      "Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.": [
+        "Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan."
+      ],
       "Yes": [
         "Ya"
       ],
@@ -2563,8 +2596,8 @@
       "You cannot view submissions.": [
         "Anda tidak dapat melihat kiriman."
       ],
-      "Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.": [
-        "Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau."
+      "Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review.": [
+        "Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa."
       ],
       "Your email": [
         "Email Anda"

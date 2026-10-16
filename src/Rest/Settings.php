@@ -11,6 +11,8 @@ final class Settings {
 		array( 'spam', 'secretKey' ),
 		array( 'spam', 'akismetKey' ),
 		array( 'ai', 'apiKey' ),
+		array( 'ai', 'openrouterKey' ),
+		array( 'ai', 'compatKey' ),
 		array( 'connectors', 'slack', 'webhookUrl' ),
 		array( 'connectors', 'mailchimp', 'apiKey' ),
 		array( 'connectors', 'hubspot', 'accessToken' ),
@@ -112,7 +114,15 @@ final class Settings {
 				'footerText' => '',
 			),
 			'connectors'               => \ChatFlow\Integrations\Connectors\Connectors::defaults(),
-			'ai'                       => array( 'apiKey' => '' ),
+			'ai'                       => array(
+				'provider'        => 'anthropic',
+				'apiKey'          => '',
+				'openrouterKey'   => '',
+				'openrouterModel' => '',
+				'baseUrl'         => '',
+				'compatKey'       => '',
+				'compatModel'     => '',
+			),
 		);
 	}
 	/** @return array<string,mixed> */
@@ -182,8 +192,9 @@ final class Settings {
 			if ( ! is_int( $result['spam'][ $key ] ) || $result['spam'][ $key ] < $min || $result['spam'][ $key ] > $max ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid spam defaults.', 422 ); }
 		}
-		if ( ! is_string( $result['ai']['apiKey'] ) || ( '' !== $result['ai']['apiKey'] && ! \ChatFlow\Ai\Claude::validKey( $result['ai']['apiKey'] ) ) ) {
-			return Database::error( 'cff_settings_invalid', 'The Claude API key is malformed.', 422 );
+		$ai_error = \ChatFlow\Ai\Providers::invalid( $result['ai'] );
+		if ( null !== $ai_error ) {
+			return Database::error( 'cff_settings_invalid', $ai_error, 422 );
 		}
 		if ( ! \ChatFlow\Integrations\Connectors\Connectors::validCredentials( $result['connectors'] ) ) {
 			return Database::error( 'cff_settings_invalid', 'Connector credentials are incomplete or malformed.', 422 );

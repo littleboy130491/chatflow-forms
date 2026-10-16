@@ -45,7 +45,7 @@ function w(e, t) {
 function T(e) {
 	if (e.__P && e.__d) {
 		var n = e.__v, r = n.__e, i = [], a = [], o = v({}, n);
-		o.__v = n.__v + 1, t.vnode && t.vnode(o), ee(e.__P, o, n, e.__n, e.__P.namespaceURI, 32 & n.__u ? [r] : null, i, r ?? w(n), !!(32 & n.__u), a), o.__v = n.__v, o.__.__k[o.__i] = o, ne(i, o, a), n.__e = n.__ = null, o.__e != r && E(o);
+		o.__v = n.__v + 1, t.vnode && t.vnode(o), F(e.__P, o, n, e.__n, e.__P.namespaceURI, 32 & n.__u ? [r] : null, i, r ?? w(n), !!(32 & n.__u), a), o.__v = n.__v, o.__.__k[o.__i] = o, ne(i, o, a), n.__e = n.__ = null, o.__e != r && E(o);
 	}
 }
 function E(e) {
@@ -65,12 +65,12 @@ function O() {
 }
 function k(e, t, n, r, i, a, o, s, c, l, u) {
 	var d, f, p, g, _, v, y = r && r.__k || h, b = t.length;
-	for (c = A(n, t, y, c, b), d = 0; d < b; d++) (p = n.__k[d]) != null && (f = p.__i != -1 && y[p.__i] || m, p.__i = d, v = ee(e, p, f, i, a, o, s, c, l, u), g = p.__e, p.ref && f.ref != p.ref && (f.ref && ae(f.ref, null, p), u.push(p.ref, p.__c || g, p)), _ == null && g != null && (_ = g), 4 & p.__u ? (c = j(p, c, e), f.__e && (f.__e = null)) : typeof p.type == "function" && v !== void 0 ? c = v : g && (c = g.nextSibling), p.__u &= -7);
+	for (c = A(n, t, y, c, b), d = 0; d < b; d++) (p = n.__k[d]) != null && (f = p.__i != -1 && y[p.__i] || m, p.__i = d, v = F(e, p, f, i, a, o, s, c, l, u), g = p.__e, p.ref && f.ref != p.ref && (f.ref && ae(f.ref, null, p), u.push(p.ref, p.__c || g, p)), _ == null && g != null && (_ = g), 4 & p.__u ? (c = j(p, c, e), f.__e && (f.__e = null)) : typeof p.type == "function" && v !== void 0 ? c = v : g && (c = g.nextSibling), p.__u &= -7);
 	return n.__e = _, c;
 }
 function A(e, t, n, r, i) {
 	var a, o, s, c, l, u = n.length, d = u, f = 0;
-	for (e.__k = Array(i), a = 0; a < i; a++) (o = t[a]) != null && typeof o != "boolean" && typeof o != "function" ? (typeof o == "string" || typeof o == "number" || typeof o == "bigint" || o.constructor == String ? o = e.__k[a] = x(null, o, null, null, null) : _(o) ? o = e.__k[a] = x(S, { children: o }, null, null, null) : o.constructor === void 0 && o.__b > 0 ? o = e.__k[a] = x(o.type, o.props, o.key, o.ref ? o.ref : null, o.__v) : e.__k[a] = o, c = a + f, o.__ = e, o.__b = e.__b + 1, s = null, (l = o.__i = M(o, n, c, d)) != -1 && (d--, (s = n[l]) && (s.__u |= 2)), s == null || s.__v == null ? (l == -1 && (i > u ? f-- : i < u && f++), typeof o.type != "function" && (o.__u |= 4)) : l != c && (l == c - 1 ? f-- : l == c + 1 ? f++ : (l > c ? f-- : f++, o.__u |= 4))) : e.__k[a] = null;
+	for (e.__k = Array(i), a = 0; a < i; a++) (o = t[a]) != null && typeof o != "boolean" && typeof o != "function" ? (typeof o == "string" || typeof o == "number" || typeof o == "bigint" || o.constructor == String ? o = e.__k[a] = x(null, o, null, null, null) : _(o) ? o = e.__k[a] = x(S, { children: o }, null, null, null) : o.constructor === void 0 && o.__b > 0 ? o = e.__k[a] = x(o.type, o.props, o.key, o.ref ? o.ref : null, o.__v) : e.__k[a] = o, c = a + f, o.__ = e, o.__b = e.__b + 1, s = null, (l = o.__i = ee(o, n, c, d)) != -1 && (d--, (s = n[l]) && (s.__u |= 2)), s == null || s.__v == null ? (l == -1 && (i > u ? f-- : i < u && f++), typeof o.type != "function" && (o.__u |= 4)) : l != c && (l == c - 1 ? f-- : l == c + 1 ? f++ : (l > c ? f-- : f++, o.__u |= 4))) : e.__k[a] = null;
 	if (d) for (a = 0; a < u; a++) (s = n[a]) != null && !(2 & s.__u) && (s.__e == r && (r = w(s)), oe(s, s));
 	return r;
 }
@@ -86,7 +86,7 @@ function j(e, t, n) {
 	while (t != null && t.nodeType == 8);
 	return t;
 }
-function M(e, t, n, r) {
+function ee(e, t, n, r) {
 	var i, a, o, s = e.key, c = e.type, l = t[n], u = l != null && !(2 & l.__u);
 	if (l === null && s == null || u && s == l.key && c == l.type) return n;
 	if (r > +!!u) {
@@ -94,16 +94,16 @@ function M(e, t, n, r) {
 	}
 	return -1;
 }
-function N(e, t, n) {
+function M(e, t, n) {
 	t[0] == "-" ? e.setProperty(t, n ?? "") : e[t] = n == null ? "" : typeof n != "number" || g.test(t) ? n : n + "px";
 }
-function P(e, t, n, r, i) {
+function N(e, t, n, r, i) {
 	var a, o;
 	n: if (t == "style") {
 		if (typeof n == "string") e.style.cssText = n;
 		else {
-			if (typeof r == "string" && (e.style.cssText = r = ""), r) for (t in r) n && t in n || N(e.style, t, "");
-			if (n) for (t in n) r && n[t] == r[t] || N(e.style, t, n[t]);
+			if (typeof r == "string" && (e.style.cssText = r = ""), r) for (t in r) n && t in n || M(e.style, t, "");
+			if (n) for (t in n) r && n[t] == r[t] || M(e.style, t, n[t]);
 		}
 	} else if (t[0] == "o" && t[1] == "n") a = t != (t = t.replace(u, "$1")), o = t.toLowerCase(), t = o in e || t == "onFocusOut" || t == "onFocusIn" ? o.slice(2) : t.slice(2), e.l || (e.l = {}), e.l[t + a] = n, n ? r ? n[l] = r[l] : (n[l] = d, e.addEventListener(t, a ? p : f, a)) : e.removeEventListener(t, a ? p : f, a);
 	else {
@@ -115,7 +115,7 @@ function P(e, t, n, r, i) {
 		typeof n == "function" || (n == null || !1 === n && t[4] != "-" ? e.removeAttribute(t) : e.setAttribute(t, t == "popover" && n == 1 ? "" : n));
 	}
 }
-function F(e) {
+function P(e) {
 	return function(n) {
 		if (this.l) {
 			var r = this.l[n.type + e];
@@ -125,16 +125,16 @@ function F(e) {
 		}
 	};
 }
-function ee(e, n, r, i, a, o, s, c, l, u) {
-	var d, f, p, m, g, b, x, T, E, D, O, A, j, M, N, P, F = n.type;
+function F(e, n, r, i, a, o, s, c, l, u) {
+	var d, f, p, m, g, b, x, T, E, D, O, A, j, ee, M, N, P = n.type;
 	if (n.constructor !== void 0) return null;
 	128 & r.__u && (l = !!(32 & r.__u), o = [c = n.__e = r.__e]), (d = t.__b) && d(n);
-	n: if (typeof F == "function") {
+	n: if (typeof P == "function") {
 		f = s.length;
 		try {
-			if (E = n.props, D = F.prototype && F.prototype.render, O = (d = F.contextType) && i[d.__c], A = d ? O ? O.props.value : d.__ : i, r.__c ? T = (p = n.__c = r.__c).__ = p.__E : (D ? n.__c = p = new F(E, A) : (n.__c = p = new C(E, A), p.constructor = F, p.render = se), O && O.sub(p), p.state || (p.state = {}), p.__n = i, m = p.__d = !0, p.__h = [], p._sb = []), D && p.__s == null && (p.__s = p.state), D && F.getDerivedStateFromProps != null && (p.__s == p.state && (p.__s = v({}, p.__s)), v(p.__s, F.getDerivedStateFromProps(E, p.__s))), g = p.props, b = p.state, p.__v = n, m) D && F.getDerivedStateFromProps == null && p.componentWillMount != null && p.componentWillMount(), D && p.componentDidMount != null && p.__h.push(p.componentDidMount);
+			if (E = n.props, D = P.prototype && P.prototype.render, O = (d = P.contextType) && i[d.__c], A = d ? O ? O.props.value : d.__ : i, r.__c ? T = (p = n.__c = r.__c).__ = p.__E : (D ? n.__c = p = new P(E, A) : (n.__c = p = new C(E, A), p.constructor = P, p.render = se), O && O.sub(p), p.state || (p.state = {}), p.__n = i, m = p.__d = !0, p.__h = [], p._sb = []), D && p.__s == null && (p.__s = p.state), D && P.getDerivedStateFromProps != null && (p.__s == p.state && (p.__s = v({}, p.__s)), v(p.__s, P.getDerivedStateFromProps(E, p.__s))), g = p.props, b = p.state, p.__v = n, m) D && P.getDerivedStateFromProps == null && p.componentWillMount != null && p.componentWillMount(), D && p.componentDidMount != null && p.__h.push(p.componentDidMount);
 			else {
-				if (D && F.getDerivedStateFromProps == null && E !== g && p.componentWillReceiveProps != null && p.componentWillReceiveProps(E, A), n.__v == r.__v || !p.__e && p.shouldComponentUpdate != null && !1 === p.shouldComponentUpdate(E, p.__s, A)) {
+				if (D && P.getDerivedStateFromProps == null && E !== g && p.componentWillReceiveProps != null && p.componentWillReceiveProps(E, A), n.__v == r.__v || !p.__e && p.shouldComponentUpdate != null && !1 === p.shouldComponentUpdate(E, p.__s, A)) {
 					n.__v != r.__v && (p.props = E, p.state = p.__s, p.__d = !1), n.__e = r.__e, n.__k = r.__k, n.__k.some(function(e) {
 						e && (e.__ = n);
 					}), h.push.apply(p.__h, p._sb), p._sb = [], p.__h.length && s.push(p), c = w(r);
@@ -144,17 +144,17 @@ function ee(e, n, r, i, a, o, s, c, l, u) {
 					p.componentDidUpdate(g, b, x);
 				});
 			}
-			if (p.context = A, p.props = E, p.__P = e, p.__e = !1, j = t.__r, M = 0, D) p.state = p.__s, p.__d = !1, j && j(n), d = p.render(p.props, p.state, p.context), h.push.apply(p.__h, p._sb), p._sb = [];
+			if (p.context = A, p.props = E, p.__P = e, p.__e = !1, j = t.__r, ee = 0, D) p.state = p.__s, p.__d = !1, j && j(n), d = p.render(p.props, p.state, p.context), h.push.apply(p.__h, p._sb), p._sb = [];
 			else do
 				p.__d = !1, j && j(n), d = p.render(p.props, p.state, p.context), p.state = p.__s;
-			while (p.__d && ++M < 25);
-			p.state = p.__s, p.getChildContext != null && (i = v(v({}, i), p.getChildContext())), D && !m && p.getSnapshotBeforeUpdate != null && (x = p.getSnapshotBeforeUpdate(g, b)), N = d != null && d.type === S && d.key == null ? re(d.props.children) : d, c = k(e, _(N) ? N : [N], n, r, i, a, o, s, c, l, u), p.base = n.__e, n.__u &= -161, p.__h.length && s.push(p), T && (p.__E = p.__ = null);
+			while (p.__d && ++ee < 25);
+			p.state = p.__s, p.getChildContext != null && (i = v(v({}, i), p.getChildContext())), D && !m && p.getSnapshotBeforeUpdate != null && (x = p.getSnapshotBeforeUpdate(g, b)), M = d != null && d.type === S && d.key == null ? re(d.props.children) : d, c = k(e, _(M) ? M : [M], n, r, i, a, o, s, c, l, u), p.base = n.__e, n.__u &= -161, p.__h.length && s.push(p), T && (p.__E = p.__ = null);
 		} catch (e) {
 			if (s.length = f, n.__v = null, l || o != null) {
 				if (e.then) {
 					for (n.__u |= l ? 160 : 128; c && c.nodeType == 8 && c.nextSibling;) c = c.nextSibling;
 					o != null && (o[o.indexOf(c)] = null), n.__e = c;
-				} else if (o != null) for (P = o.length; P--;) y(o[P]);
+				} else if (o != null) for (N = o.length; N--;) y(o[N]);
 			} else n.__e = r.__e;
 			n.__k ?? (n.__k = r.__k || []), e.then || te(n), t.__e(e, n, r);
 		}
@@ -194,11 +194,11 @@ function ie(n, r, i, a, o, s, c, l, u) {
 	if (C == null) x === S || l && n.data == S || (n.data = S);
 	else {
 		if (s = C == "textarea" && S.defaultValue != null ? null : s && e.call(n.childNodes), !l && s != null) for (x = {}, d = 0; d < n.attributes.length; d++) x[(g = n.attributes[d]).name] = g.value;
-		for (d in x) g = x[d], d == "dangerouslySetInnerHTML" ? p = g : d == "children" || d in S || d == "value" && "defaultValue" in S || d == "checked" && "defaultChecked" in S || P(n, d, null, g, o);
-		for (d in S) g = S[d], d == "children" ? h = g : d == "dangerouslySetInnerHTML" ? f = g : d == "value" ? v = g : d == "checked" ? b = g : l && typeof g != "function" || x[d] === g || P(n, d, g, x[d], o);
+		for (d in x) g = x[d], d == "dangerouslySetInnerHTML" ? p = g : d == "children" || d in S || d == "value" && "defaultValue" in S || d == "checked" && "defaultChecked" in S || N(n, d, null, g, o);
+		for (d in S) g = S[d], d == "children" ? h = g : d == "dangerouslySetInnerHTML" ? f = g : d == "value" ? v = g : d == "checked" ? b = g : l && typeof g != "function" || x[d] === g || N(n, d, g, x[d], o);
 		if (f) l || p && (f.__html == p.__html || f.__html == n.innerHTML) || (n.innerHTML = f.__html), r.__k = [];
 		else if (p && (n.innerHTML = ""), k(r.type == "template" ? n.content : n, _(h) ? h : [h], r, i, a, C == "foreignObject" ? "http://www.w3.org/1999/xhtml" : o, s, c, s ? s[0] : i.__k && w(i, 0), l, u), s != null) for (d = s.length; d--;) y(s[d]);
-		l && C != "textarea" || (d = "value", C == "progress" && v == null ? n.removeAttribute("value") : v != null && (v !== n[d] || C == "progress" && !v || C == "option" && v != x[d]) && P(n, d, v, x[d], o), d = "checked", b != null && b != n[d] && P(n, d, b, x[d], o));
+		l && C != "textarea" || (d = "value", C == "progress" && v == null ? n.removeAttribute("value") : v != null && (v !== n[d] || C == "progress" && !v || C == "option" && v != x[d]) && N(n, d, v, x[d], o), d = "checked", b != null && b != n[d] && N(n, d, b, x[d], o));
 	}
 	return n;
 }
@@ -230,7 +230,7 @@ function se(e, t, n) {
 }
 function ce(n, r, i) {
 	var a, o, s, c;
-	r == document && (r = document.documentElement), t.__ && t.__(n, r), o = (a = typeof i == "function") ? null : i && i.__k || r.__k, s = [], c = [], ee(r, n = (!a && i || r).__k = b(S, null, [n]), o || m, m, r.namespaceURI, !a && i ? [i] : o ? null : r.firstChild ? e.call(r.childNodes) : null, s, !a && i ? i : o ? o.__e : r.firstChild, a, c), ne(s, n, c), n.props.children = null;
+	r == document && (r = document.documentElement), t.__ && t.__(n, r), o = (a = typeof i == "function") ? null : i && i.__k || r.__k, s = [], c = [], F(r, n = (!a && i || r).__k = b(S, null, [n]), o || m, m, r.namespaceURI, !a && i ? [i] : o ? null : r.firstChild ? e.call(r.childNodes) : null, s, !a && i ? i : o ? o.__e : r.firstChild, a, c), ne(s, n, c), n.props.children = null;
 }
 e = h.slice, t = { __e: function(e, t, n, r) {
 	for (var i, a, o; t = t.__;) if ((i = t.__c) && !i.__) try {
@@ -246,10 +246,10 @@ e = h.slice, t = { __e: function(e, t, n, r) {
 	this.__v && (this.__e = !0, e && this.__h.push(e), D(this));
 }, C.prototype.render = S, r = [], a = typeof Promise == "function" ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, o = function(e, t) {
 	return e.__v.__b - t.__v.__b;
-}, O.__r = 0, s = Math.random().toString(8), c = "__d" + s, l = "__a" + s, u = /(PointerCapture)$|Capture$/i, d = 0, f = F(!1), p = F(!0);
+}, O.__r = 0, s = Math.random().toString(8), c = "__d" + s, l = "__a" + s, u = /(PointerCapture)$|Capture$/i, d = 0, f = P(!1), p = P(!0);
 //#endregion
 //#region assets/src/runtime/styles.css?inline
-var le = ".scale{flex-wrap:wrap}.chat video,.chat img{max-width:100%;height:auto}.chat fieldset{border:0;gap:12px;padding:0;display:grid}.chat input[type=range]{width:100%}:host{--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--cff-primary:#171717;--cff-bubble-bot-bg:#f1f1f1;--cff-user-bg:#e5e5e5;--cff-text:#171717;--cff-radius:12px;--cff-font:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;--cff-width:720px;display:block;outline:none!important}*{box-sizing:border-box}.chat{font:16px/1.5 var(--cff-font);color:var(--cff-text);max-width:var(--cff-width);border-radius:var(--cff-radius);background:#fff;border:1px solid #dedede;margin-inline-start:auto;margin-inline-end:auto;overflow:hidden}.fullpage{border:0;border-radius:0;min-height:100svh}header{border-bottom:1px solid #dedede;justify-content:space-between;align-items:center;gap:8px;padding:16px;display:flex}.identity{align-items:center;gap:10px;display:flex}.identity img{object-fit:cover;border-radius:50%;width:42px;height:42px}.identity small{color:#555;display:block}.online-dot{background:#21713d;border-radius:50%;width:7px;height:7px;margin-inline-end:6px;display:inline-block}nav{gap:6px;display:flex}.progress{background:#e5e5e5;height:4px}.progress span{background:var(--cff-primary);height:100%;transition:width .25s;display:block}.conversation{scrollbar-gutter:stable;max-height:75svh;padding:20px;overflow-y:auto}.fullpage .conversation{max-height:none}.bubble{border-radius:var(--cff-radius);white-space:pre-wrap;overflow-wrap:anywhere;max-width:90%;margin-block-start:10px;margin-block-end:10px;padding:12px 16px;animation:.2s appear}.bot{background:var(--cff-bubble-bot-bg)}.user{background:var(--cff-user-bg);color:var(--cff-text);text-align:start;margin-inline-start:auto;display:block}.user small{opacity:.8;font-size:12px;display:block}.active{margin-block-start:16px;margin-block-end:16px}button,.button,input,textarea,select{font:inherit}button,.button{background:var(--cff-primary);color:#fff;border:1px solid var(--cff-primary);border-radius:var(--cff-radius);cursor:pointer;min-height:44px;padding:10px 16px;text-decoration:none;display:inline-block}nav button{color:var(--cff-text);background:0 0;border-color:#bbb;padding:8px}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a:focus-visible{outline-offset:3px;outline:3px solid #2463eb}input:focus-visible{outline-offset:3px;outline:3px solid #2463eb}textarea:focus-visible{outline-offset:3px;outline:3px solid #2463eb}select:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a{color:inherit;text-decoration:underline}label{margin-block-start:8px;margin-block-end:8px;font-weight:600;display:block}input:not([type=checkbox]),textarea,select{border-radius:var(--cff-radius);color:#171717;background:#fff;border:1px solid #999;width:100%;min-height:44px;padding:12px}textarea{resize:vertical;min-height:100px}form button{margin-block-start:12px}small,.help{font-size:13px}.help{color:#555}.input-row{align-items:center;gap:8px;display:flex}.country select{max-width:240px}.chips{flex-wrap:wrap;gap:8px;display:flex}.chip{color:var(--cff-text);text-align:start;background:0 0;border-color:#888}.chip[aria-pressed=true]{background:var(--cff-primary);color:#fff}.continue{flex-basis:100%;margin-top:8px}.cards .chip{flex:160px}.cards img{object-fit:cover;width:100%;height:100px;margin-bottom:8px;display:block}.consent{align-items:flex-start;gap:12px;font-weight:400;display:flex}.consent input{flex-shrink:0;width:24px;height:24px}.link-button{color:var(--cff-text);background:0 0;border:0;text-decoration:underline}.summary{border-radius:var(--cff-radius);border:1px solid #bbb;padding:16px}h2{margin-top:0;font-size:18px}dl{margin:0}dl>div{border-bottom:1px solid #ddd;padding-block-start:8px;padding-block-end:8px}dt{font-weight:600}dd{overflow-wrap:anywhere;margin:0}.notice{border-radius:var(--cff-radius);color:#171717;background:#f2f2f2;margin:12px;padding:16px}.notice button,.ending .button,.ending button{margin-block-start:6px;margin-block-end:6px;margin-inline-end:8px}.typing{gap:5px;width:70px;display:flex}.typing i{background:#666;border-radius:50%;width:7px;height:7px;animation:.9s infinite dot}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}footer{color:#555;border-top:1px solid #ddd;padding:12px 20px;font-size:12px}footer small{font-size:11px;display:block}.honeypot,.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.chat.dark{color:#f5f5f5;--cff-text:#f5f5f5;--cff-primary:#e5e5e5;--cff-user-bg:#3a3a3a;--cff-bubble-bot-bg:#292929;background:#171717}.dark button:not(.chip):not(.link-button):not(.user){color:#171717}.dark .help,.dark footer,.dark .identity small{color:#ccc}.dark .chip[aria-pressed=true]{color:#171717}@keyframes appear{0%{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes dot{50%{opacity:.3;transform:translateY(-2px)}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media (max-width:480px){header,.conversation{padding:12px}.bubble{max-width:96%}nav button{padding:8px;font-size:13px}.chat{border-inline-start:0;border-inline-end:0;border-radius:0}}:host([data-mode=launcher]){z-index:2147480000;width:min(420px,100vw - 32px);max-height:calc(100dvh - 32px);position:fixed;bottom:16px;right:16px}:host([data-mode=launcher][data-position=left]){left:16px;right:auto}.launcher-root{flex-direction:column;align-items:flex-end;gap:12px;display:flex}.launcher-root.is-left{align-items:flex-start}.launcher-toggle{color:#fff;background:#171717;border-radius:999px;min-width:120px;box-shadow:0 4px 22px #0003}.launcher-panel{background:#fff;border-radius:14px;flex-direction:column;width:100%;max-height:calc(100dvh - 112px);display:flex;overflow:hidden;box-shadow:0 12px 48px #0003}.launcher-panel[hidden]{display:none!important}.launcher-panel>div:first-child{flex-direction:column;flex:auto;min-height:0;display:flex}.launcher-panel .chat{border-radius:14px;flex-direction:column;flex:auto;width:100%;max-width:none;min-height:0;display:flex}.launcher-panel .chat>*{flex:none}.launcher-panel .chat>.conversation{flex:0 auto;min-height:96px}.launcher-panel footer{max-height:30dvh;overflow-y:auto}.launcher-panel .captcha{flex:none;max-height:40dvh;overflow-y:auto}.launcher-panel .captcha:empty{display:none}.launcher-panel .conversation{max-height:min(56dvh,560px)}@media (max-width:480px){:host([data-mode=launcher]){width:calc(100vw - 24px);bottom:12px;right:12px}:host([data-mode=launcher][data-position=left]){left:12px}.launcher-panel .conversation{max-height:55dvh}}:host([data-mode=popup]){z-index:2147480000;pointer-events:none;position:fixed;top:0;bottom:0;left:0;right:0;width:auto!important;max-width:none!important;margin:0!important}.popup-root{pointer-events:none;justify-content:center;align-items:center;display:flex;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop{pointer-events:auto;background:#0000008c;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop[hidden]{display:none!important}.popup-root .launcher-panel{z-index:1;pointer-events:auto;max-width:min(640px,100vw - 32px);max-height:calc(100dvh - 88px);position:relative}.popup-root .launcher-toggle{z-index:2;pointer-events:auto;position:fixed;bottom:16px;right:16px}.popup-root.is-left .launcher-toggle{left:16px;right:auto}.popup-root .conversation{max-height:min(65dvh,650px)}.score-input{flex-wrap:wrap;gap:.45rem;display:flex}.score-chip{text-align:center;min-width:2.75rem}.score-chip[aria-pressed=true]{outline-offset:2px;outline:2px solid}.slider-reading{justify-content:space-between;align-items:baseline;gap:12px;display:flex}.slider-reading output{font-weight:700}.active input[type=range]{width:100%;max-width:100%;min-height:44px}.ending:focus{outline:none}.avatar{display:none}.chat[data-style=messaging]{--m-accent:var(--cff-primary);--m-header-bg:var(--cff-header-bg);--m-header-text:var(--cff-header-text);--m-chat-bg:var(--cff-chat-bg);--m-user-text:var(--cff-user-text);border:0;flex-direction:column;display:flex;box-shadow:0 12px 40px -12px #00000040,0 0 0 1px #0000000d}.chat[data-style=messaging] header{background:var(--m-header-bg);color:var(--m-header-text);z-index:1;border:0;padding:10px 14px;position:relative;box-shadow:0 1px #0000000f}.chat[data-style=messaging] .identity{gap:12px;min-width:0}.chat[data-style=messaging] .identity img,.chat[data-style=messaging] .avatar{border-radius:50%;flex-shrink:0;width:42px;height:42px}.chat[data-style=messaging] .avatar{background:linear-gradient(135deg,color-mix(in srgb,var(--m-accent) 70%,#fff),var(--m-accent));color:#fff;text-transform:uppercase;place-items:center;font-size:18px;font-weight:600;display:grid}.chat[data-style=messaging] .identity strong{font-size:16px;font-weight:600;line-height:1.2}.chat[data-style=messaging] .identity small{color:color-mix(in srgb,var(--m-header-text) 60%,transparent);font-size:13px}.chat[data-style=messaging] .online-dot{background:var(--m-accent)}.chat[data-style=messaging] nav{gap:2px}.chat[data-style=messaging] nav button{color:var(--m-header-text);opacity:.75;background:0 0;border:0;border-radius:999px;min-height:36px;padding:6px 10px;font-size:13px}.chat[data-style=messaging] nav button:hover:not(:disabled){opacity:1;background:color-mix(in srgb,var(--m-header-text) 8%,transparent)}.chat[data-style=messaging] .progress{background:0 0;height:2px}.chat[data-style=messaging] .progress span{background:var(--m-accent)}.chat[data-style=messaging] .conversation{background-color:var(--m-chat-bg);flex:auto;padding:12px 12px 14px}.chat[data-style=messaging][data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\");background-size:160px}.chat[data-style=messaging].dark[data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23fff' stroke-opacity='.06' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\")}.chat[data-style=messaging][data-wallpaper=dots] .conversation{background-image:radial-gradient(color-mix(in srgb,currentColor 12%,transparent) 1px,transparent 1.5px);background-size:18px 18px}.chat[data-style=messaging][data-wallpaper=gradient] .conversation{background-image:linear-gradient(160deg,color-mix(in srgb,var(--m-chat-bg) 70%,#9fd8c4) 0%,color-mix(in srgb,var(--m-chat-bg) 75%,#f2e3a6) 45%,color-mix(in srgb,var(--m-chat-bg) 70%,#b9b2ef) 100%)}.chat[data-style=messaging] .step{flex-direction:column;display:flex}.chat[data-style=messaging] .bubble{max-width:min(85%,480px);margin-block-start:2px;margin-block-end:2px;padding:7px 12px 8px;font-size:15px;line-height:1.4;animation:.18s ease-out m-pop;position:relative;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .bot{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border-radius:var(--cff-radius);align-self:flex-start}.chat[data-style=messaging] .bot:not(:has(+.bot)){margin-bottom:8px}.chat[data-style=messaging] .user{background:var(--cff-user-bg);color:var(--m-user-text);border-radius:var(--cff-radius);text-align:start;cursor:pointer;border:0;align-self:flex-end;align-items:flex-end;gap:8px;min-height:0;margin-block-start:4px;margin-block-end:10px;display:flex}.chat[data-style=messaging] .user small{opacity:.6;flex-shrink:0;margin-bottom:1px;font-size:11px;line-height:1}.chat[data-style=messaging] .user small:after{content:\" ✓✓\";color:var(--m-accent);opacity:1;letter-spacing:-.18em;margin-inline-start:4px}.chat[data-style=messaging] .user:hover{filter:brightness(.97)}.chat[data-style=messaging] .user:disabled{opacity:1;cursor:default}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)){border-bottom-left-radius:4px}.chat[data-style=messaging][data-tails=on] .user{border-bottom-right-radius:4px}.chat[data-style=messaging][data-tails=on] .user:before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{left:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging][data-tails=on] .user:before{right:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging] .active{margin-block-start:6px;margin-block-end:2px}.chat[data-style=messaging] .typing{background:var(--cff-bubble-bot-bg);border-radius:var(--cff-radius);width:auto;padding:12px 14px}.chat[data-style=messaging] .typing i{background:color-mix(in srgb,var(--cff-text) 45%,transparent)}.chat[data-style=messaging] .help{color:color-mix(in srgb,var(--cff-text) 65%,transparent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 80%,transparent);border-radius:10px;padding:6px 10px;display:inline-block}.chat[data-style=messaging] .chips{gap:6px;margin-top:4px}.chat[data-style=messaging] .chip{background:var(--cff-bubble-bot-bg);color:var(--m-accent);border:1px solid color-mix(in srgb,var(--m-accent) 35%,transparent);border-radius:999px;min-height:40px;padding:8px 16px;font-weight:500;box-shadow:0 1px 1px #00000014}.chat[data-style=messaging] .chip:hover:not(:disabled){background:color-mix(in srgb,var(--m-accent) 10%,var(--cff-bubble-bot-bg))}.chat[data-style=messaging] .chip[aria-pressed=true]{background:var(--m-accent);color:#fff;border-color:var(--m-accent)}.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;max-width:480px;display:grid}.chat[data-style=messaging][data-choices=keyboard] .chip{text-align:center;color:var(--m-accent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:0;border-radius:10px;justify-content:center;font-size:14px;font-weight:600}.chat[data-style=messaging][data-choices=keyboard] .chip[aria-pressed=true]{background:var(--m-accent);color:#fff}.chat[data-style=messaging] .continue{margin-top:6px}.chat[data-style=messaging] button:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle),.chat[data-style=messaging] .button{background:var(--m-accent);border-color:var(--m-accent);color:#fff;border-radius:999px;min-height:40px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] .link-button{color:color-mix(in srgb,var(--cff-text) 70%,transparent);font-size:14px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(.input-row)>label[for]{clip:rect(0,0,0,0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}.chat[data-style=messaging] .active form:has(>textarea)>label[for]{clip:rect(0,0,0,0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}.chat[data-style=messaging] .active form .country{grid-column:1/-1;align-items:center;gap:8px;margin:0;font-size:13px;font-weight:400;display:flex}.chat[data-style=messaging] .active form>small{color:color-mix(in srgb,var(--cff-text) 60%,transparent);order:3;grid-column:1/-1}.chat[data-style=messaging] .active form .input-row input,.chat[data-style=messaging] .active form>textarea,.chat[data-style=messaging] .active select,.chat[data-style=messaging] .active .address input{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:22px;min-height:44px;padding:11px 16px;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .active form>textarea{border-radius:18px}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]{border-radius:50%;place-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;display:grid}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]{border-radius:50%;place-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;display:grid}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]:before{content:\"\";background:currentColor;width:22px;height:22px;margin-inline-start:3px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]:before{content:\"\";background:currentColor;width:22px;height:22px;margin-inline-start:3px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .summary,.chat[data-style=messaging] .notice{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:16px;box-shadow:0 1px 2px #0000001f}.chat[data-style=messaging] .notice{text-align:center;max-width:92%;margin:10px auto}.chat[data-style=messaging] .summary dl>div{border-color:color-mix(in srgb,var(--cff-text) 10%,transparent)}.chat[data-style=messaging] .ending{flex-direction:column;align-items:flex-start;display:flex}.chat[data-style=messaging] footer{background:var(--m-header-bg);color:color-mix(in srgb,var(--m-header-text) 55%,transparent);border-top:1px solid color-mix(in srgb,var(--m-header-text) 8%,transparent);text-align:center;padding:8px 14px;font-size:11px}.chat[data-style=messaging] footer small{font-size:10.5px}.chat[data-style=messaging].dark{--cff-primary:#5eb5f7;--cff-bubble-bot-bg:#182533;--cff-user-bg:#2b5278;--cff-text:#f5f5f5;--cff-header-bg:#17212b;--cff-header-text:#f5f5f5;--cff-chat-bg:#0e1621;--cff-user-text:#fff}.chat[data-style=messaging].dark button:not(.chip):not(.link-button):not(.user):not(nav button),.chat[data-style=messaging].dark .chip[aria-pressed=true]{color:#fff}@keyframes m-pop{0%{opacity:0;transform:translateY(6px)scale(.98)}to{opacity:1;transform:none}}.launcher-panel .chat[data-style=messaging]{box-shadow:none}[data-style=messaging] .launcher-toggle{background:var(--cff-primary);border-color:var(--cff-primary);color:#fff;font-weight:600}.chat[data-style=messaging]>.notice{max-width:none;box-shadow:none;text-align:center;background:color-mix(in srgb,var(--m-accent) 10%,var(--m-header-bg));color:var(--m-header-text);border-radius:0;margin:0;padding:6px 14px;font-size:12px}";
+var le = ".scale{flex-wrap:wrap}.chat video,.chat img{max-width:100%;height:auto}.chat fieldset{border:0;gap:12px;padding:0;display:grid}.chat input[type=range]{width:100%}:host{--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--cff-primary:#171717;--cff-bubble-bot-bg:#f1f1f1;--cff-user-bg:#e5e5e5;--cff-text:#171717;--cff-radius:12px;--cff-font:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;--cff-width:720px;display:block;outline:none!important}*{box-sizing:border-box}.chat{font:16px/1.5 var(--cff-font);color:var(--cff-text);max-width:var(--cff-width);border-radius:var(--cff-radius);background:#fff;border:1px solid #dedede;margin-inline-start:auto;margin-inline-end:auto;overflow:hidden}.fullpage{border:0;border-radius:0;min-height:100svh}header{border-bottom:1px solid #dedede;justify-content:space-between;align-items:center;gap:8px;padding:16px;display:flex}.identity{align-items:center;gap:10px;display:flex}.identity img{object-fit:cover;border-radius:50%;width:42px;height:42px}.identity small{color:#555;display:block}.online-dot{background:#21713d;border-radius:50%;width:7px;height:7px;margin-inline-end:6px;display:inline-block}nav{gap:6px;display:flex}.progress{background:#e5e5e5;height:4px}.progress span{background:var(--cff-primary);height:100%;transition:width .25s;display:block}.conversation{scrollbar-gutter:stable;max-height:75svh;padding:20px;overflow-y:auto}.fullpage .conversation{max-height:none}.bubble{border-radius:var(--cff-radius);white-space:pre-wrap;overflow-wrap:anywhere;max-width:90%;margin-block-start:10px;margin-block-end:10px;padding:12px 16px;animation:.2s appear}.bot{background:var(--cff-bubble-bot-bg)}.user{background:var(--cff-user-bg);color:var(--cff-text);text-align:start;margin-inline-start:auto;display:block}.user small{opacity:.8;font-size:12px;display:block}.active{margin-block-start:16px;margin-block-end:16px}button,.button,input,textarea,select{font:inherit}button,.button{background:var(--cff-primary);color:#fff;border:1px solid var(--cff-primary);border-radius:var(--cff-radius);cursor:pointer;min-height:44px;padding:10px 16px;text-decoration:none;display:inline-block}nav button{color:var(--cff-text);background:0 0;border-color:#bbb;padding:8px}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a:focus-visible{outline-offset:3px;outline:3px solid #2463eb}input:focus-visible{outline-offset:3px;outline:3px solid #2463eb}textarea:focus-visible{outline-offset:3px;outline:3px solid #2463eb}select:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a{color:inherit;text-decoration:underline}label{margin-block-start:8px;margin-block-end:8px;font-weight:600;display:block}input:not([type=checkbox]),textarea,select{border-radius:var(--cff-radius);color:#171717;background:#fff;border:1px solid #999;width:100%;min-height:44px;padding:12px}textarea{resize:vertical;min-height:100px}form button{margin-block-start:12px}small,.help{font-size:13px}.help{color:#555}.input-row{align-items:center;gap:8px;display:flex}.country select{max-width:240px}.chips{flex-wrap:wrap;gap:8px;display:flex}.chip{color:var(--cff-text);text-align:start;background:0 0;border-color:#888}.chip[aria-pressed=true]{background:var(--cff-primary);color:#fff}.continue{flex-basis:100%;margin-top:8px}.cards .chip{flex:160px}.cards img{object-fit:cover;width:100%;height:100px;margin-bottom:8px;display:block}.consent{align-items:flex-start;gap:12px;font-weight:400;display:flex}.consent input{flex-shrink:0;width:24px;height:24px}.link-button{color:var(--cff-text);background:0 0;border:0;text-decoration:underline}.summary{border-radius:var(--cff-radius);border:1px solid #bbb;padding:16px}h2{margin-top:0;font-size:18px}dl{margin:0}dl>div{border-bottom:1px solid #ddd;padding-block-start:8px;padding-block-end:8px}dt{font-weight:600}dd{overflow-wrap:anywhere;margin:0}.notice{border-radius:var(--cff-radius);color:#171717;background:#f2f2f2;margin:12px;padding:16px}.notice button,.ending .button,.ending button{margin-block-start:6px;margin-block-end:6px;margin-inline-end:8px}.typing{gap:5px;width:70px;display:flex}.typing i{background:#666;border-radius:50%;width:7px;height:7px;animation:.9s infinite dot}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}footer{color:#555;border-top:1px solid #ddd;padding:12px 20px;font-size:12px}footer small{font-size:11px;display:block}.honeypot,.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.chat.dark{color:#f5f5f5;--cff-text:#f5f5f5;--cff-primary:#e5e5e5;--cff-user-bg:#3a3a3a;--cff-bubble-bot-bg:#292929;background:#171717}.dark button:not(.chip):not(.link-button):not(.user):not(.close-chat){color:#171717}.dark .help,.dark footer,.dark .identity small{color:#ccc}.dark .chip[aria-pressed=true]{color:#171717}@keyframes appear{0%{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes dot{50%{opacity:.3;transform:translateY(-2px)}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media (max-width:480px){header,.conversation{padding:12px}.bubble{max-width:96%}nav button{padding:8px;font-size:13px}.chat{border-inline-start:0;border-inline-end:0;border-radius:0}}:host([data-mode=launcher]){z-index:2147480000;width:min(420px,100vw - 32px);max-height:calc(100dvh - 32px);position:fixed;bottom:16px;right:16px}:host([data-mode=launcher][data-position=left]){left:16px;right:auto}.launcher-root{flex-direction:column;align-items:flex-end;gap:12px;display:flex}.launcher-root.is-left{align-items:flex-start}.launcher-toggle{color:#fff;background:#171717;border-radius:50%;place-items:center;width:60px;height:60px;min-height:60px;padding:0;transition:transform .15s;display:grid;box-shadow:0 6px 24px #0003}.launcher-toggle:hover{transform:scale(1.05)}.launcher-toggle[hidden]{display:none!important}.launcher-panel{background:#fff;border-radius:14px;flex-direction:column;width:100%;max-height:calc(100dvh - 112px);display:flex;overflow:hidden;box-shadow:0 12px 48px #0003}.launcher-panel[hidden]{display:none!important}.launcher-panel>div:first-child{flex-direction:column;flex:auto;min-height:0;display:flex}.launcher-panel .chat{border-radius:14px;flex-direction:column;flex:auto;width:100%;max-width:none;min-height:0;display:flex}.launcher-panel .chat>*{flex:none}.launcher-panel .chat>.conversation{flex:0 auto;min-height:96px}.launcher-panel footer{max-height:30dvh;overflow-y:auto}.launcher-panel .captcha{flex:none;max-height:40dvh;overflow-y:auto}.launcher-panel .captcha:empty{display:none}.launcher-panel .conversation{max-height:min(56dvh,560px)}@media (max-width:480px){:host([data-mode=launcher]){width:calc(100vw - 24px);bottom:12px;right:12px}:host([data-mode=launcher][data-position=left]){left:12px}.launcher-panel .conversation{max-height:55dvh}}:host([data-mode=popup]){z-index:2147480000;pointer-events:none;position:fixed;top:0;bottom:0;left:0;right:0;width:auto!important;max-width:none!important;margin:0!important}.popup-root{pointer-events:none;justify-content:center;align-items:center;display:flex;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop{pointer-events:auto;background:#0000008c;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop[hidden]{display:none!important}.popup-root .launcher-panel{z-index:1;pointer-events:auto;max-width:min(640px,100vw - 32px);max-height:calc(100dvh - 88px);position:relative}.popup-root .launcher-toggle{z-index:2;pointer-events:auto;position:fixed;bottom:16px;right:16px}.popup-root.is-left .launcher-toggle{left:16px;right:auto}.popup-root .conversation{max-height:min(65dvh,650px)}.score-input{flex-wrap:wrap;gap:.45rem;display:flex}.score-chip{text-align:center;min-width:2.75rem}.score-chip[aria-pressed=true]{outline-offset:2px;outline:2px solid}.slider-reading{justify-content:space-between;align-items:baseline;gap:12px;display:flex}.slider-reading output{font-weight:700}.active input[type=range]{width:100%;max-width:100%;min-height:44px}.ending:focus{outline:none}.avatar{display:none}.chat[data-style=messaging]{--m-accent:var(--cff-primary);--m-header-bg:var(--cff-header-bg);--m-header-text:var(--cff-header-text);--m-chat-bg:var(--cff-chat-bg);--m-user-text:var(--cff-user-text);border:0;flex-direction:column;display:flex;box-shadow:0 12px 40px -12px #00000040,0 0 0 1px #0000000d}.chat[data-style=messaging] header{background:var(--m-header-bg);color:var(--m-header-text);z-index:1;border:0;padding:10px 14px;position:relative;box-shadow:0 1px #0000000f}.chat[data-style=messaging] .identity{gap:12px;min-width:0}.chat[data-style=messaging] .identity img,.chat[data-style=messaging] .avatar{border-radius:50%;flex-shrink:0;width:42px;height:42px}.chat[data-style=messaging] .avatar{background:linear-gradient(135deg,color-mix(in srgb,var(--m-accent) 70%,#fff),var(--m-accent));color:#fff;text-transform:uppercase;place-items:center;font-size:18px;font-weight:600;display:grid}.chat[data-style=messaging] .identity strong{font-size:16px;font-weight:600;line-height:1.2}.chat[data-style=messaging] .identity small{color:color-mix(in srgb,var(--m-header-text) 60%,transparent);font-size:13px}.chat[data-style=messaging] nav{gap:2px}.chat[data-style=messaging] nav button{color:var(--m-header-text);opacity:.75;background:0 0;border:0;border-radius:999px;min-height:36px;padding:6px 10px;font-size:13px}.chat[data-style=messaging] nav button:hover:not(:disabled){opacity:1;background:color-mix(in srgb,var(--m-header-text) 8%,transparent)}.chat[data-style=messaging] .progress{background:0 0;height:2px}.chat[data-style=messaging] .progress span{background:var(--m-accent)}.chat[data-style=messaging] .conversation{background-color:var(--m-chat-bg);flex:auto;padding:12px 12px 14px}.chat[data-style=messaging][data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\");background-size:160px}.chat[data-style=messaging].dark[data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23fff' stroke-opacity='.06' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\")}.chat[data-style=messaging][data-wallpaper=dots] .conversation{background-image:radial-gradient(color-mix(in srgb,currentColor 12%,transparent) 1px,transparent 1.5px);background-size:18px 18px}.chat[data-style=messaging][data-wallpaper=gradient] .conversation{background-image:linear-gradient(160deg,color-mix(in srgb,var(--m-chat-bg) 70%,#9fd8c4) 0%,color-mix(in srgb,var(--m-chat-bg) 75%,#f2e3a6) 45%,color-mix(in srgb,var(--m-chat-bg) 70%,#b9b2ef) 100%)}.chat[data-style=messaging] .step{flex-direction:column;display:flex}.chat[data-style=messaging] .bubble{max-width:min(85%,480px);margin-block-start:2px;margin-block-end:2px;padding:7px 12px 8px;font-size:15px;line-height:1.4;animation:.18s ease-out m-pop;position:relative;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .bot{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border-radius:var(--cff-radius);align-self:flex-start}.chat[data-style=messaging] .bot:not(:has(+.bot)){margin-bottom:8px}.chat[data-style=messaging] .user{background:var(--cff-user-bg);color:var(--m-user-text);border-radius:var(--cff-radius);text-align:start;cursor:pointer;border:0;align-self:flex-end;align-items:flex-end;gap:8px;min-height:0;margin-block-start:4px;margin-block-end:10px;display:flex}.chat[data-style=messaging] .user small{opacity:.6;flex-shrink:0;margin-bottom:1px;font-size:11px;line-height:1}.chat[data-style=messaging] .user small:after{content:\" ✓✓\";color:var(--m-accent);opacity:1;letter-spacing:-.18em;margin-inline-start:4px}.chat[data-style=messaging] .user:hover{filter:brightness(.97)}.chat[data-style=messaging] .user:disabled{opacity:1;cursor:default}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)){border-bottom-left-radius:4px}.chat[data-style=messaging][data-tails=on] .user{border-bottom-right-radius:4px}.chat[data-style=messaging][data-tails=on] .user:before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{left:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging][data-tails=on] .user:before{right:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging] .active{margin-block-start:6px;margin-block-end:2px}.chat[data-style=messaging] .typing{background:var(--cff-bubble-bot-bg);border-radius:var(--cff-radius);width:auto;padding:12px 14px}.chat[data-style=messaging] .typing i{background:color-mix(in srgb,var(--cff-text) 45%,transparent)}.chat[data-style=messaging] .help{color:color-mix(in srgb,var(--cff-text) 65%,transparent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 80%,transparent);border-radius:10px;padding:6px 10px;display:inline-block}.chat[data-style=messaging] .chips{gap:6px;margin-top:4px}.chat[data-style=messaging] .chip{background:var(--cff-bubble-bot-bg);color:var(--m-accent);border:1px solid color-mix(in srgb,var(--m-accent) 35%,transparent);border-radius:999px;min-height:40px;padding:8px 16px;font-weight:500;box-shadow:0 1px 1px #00000014}.chat[data-style=messaging] .chip:hover:not(:disabled){background:color-mix(in srgb,var(--m-accent) 10%,var(--cff-bubble-bot-bg))}.chat[data-style=messaging] .chip[aria-pressed=true]{background:var(--m-accent);color:#fff;border-color:var(--m-accent)}.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;max-width:480px;display:grid}.chat[data-style=messaging][data-choices=keyboard] .chip{text-align:center;color:var(--m-accent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:0;border-radius:10px;justify-content:center;font-size:14px;font-weight:600}.chat[data-style=messaging][data-choices=keyboard] .chip[aria-pressed=true]{background:var(--m-accent);color:#fff}.chat[data-style=messaging] .continue{margin-top:6px}.chat[data-style=messaging] button:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle):not(.close-chat),.chat[data-style=messaging] .button{background:var(--m-accent);border-color:var(--m-accent);color:#fff;border-radius:999px;min-height:40px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] .link-button{color:color-mix(in srgb,var(--cff-text) 70%,transparent);font-size:14px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(.input-row)>label[for]{clip:rect(0,0,0,0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}.chat[data-style=messaging] .active form:has(>textarea)>label[for]{clip:rect(0,0,0,0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}.chat[data-style=messaging] .active form .country{grid-column:1/-1;align-items:center;gap:8px;margin:0;font-size:13px;font-weight:400;display:flex}.chat[data-style=messaging] .active form>small{color:color-mix(in srgb,var(--cff-text) 60%,transparent);order:3;grid-column:1/-1}.chat[data-style=messaging] .active form .input-row input,.chat[data-style=messaging] .active form>textarea,.chat[data-style=messaging] .active select,.chat[data-style=messaging] .active .address input{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:22px;min-height:44px;padding:11px 16px;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .active form>textarea{border-radius:18px}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]{border-radius:50%;place-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;display:grid}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]{border-radius:50%;place-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;display:grid}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]:before{content:\"\";background:currentColor;width:22px;height:22px;margin-inline-start:3px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]:before{content:\"\";background:currentColor;width:22px;height:22px;margin-inline-start:3px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .summary,.chat[data-style=messaging] .notice{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:16px;box-shadow:0 1px 2px #0000001f}.chat[data-style=messaging] .notice{text-align:center;max-width:92%;margin:10px auto}.chat[data-style=messaging] .summary dl>div{border-color:color-mix(in srgb,var(--cff-text) 10%,transparent)}.chat[data-style=messaging] .ending{flex-direction:column;align-items:flex-start;display:flex}.chat[data-style=messaging] footer{background:var(--m-header-bg);color:color-mix(in srgb,var(--m-header-text) 55%,transparent);border-top:1px solid color-mix(in srgb,var(--m-header-text) 8%,transparent);text-align:center;padding:8px 14px;font-size:11px}.chat[data-style=messaging] footer small{font-size:10.5px}.chat[data-style=messaging].dark{--cff-primary:#5eb5f7;--cff-bubble-bot-bg:#182533;--cff-user-bg:#2b5278;--cff-text:#f5f5f5;--cff-header-bg:#17212b;--cff-header-text:#f5f5f5;--cff-chat-bg:#0e1621;--cff-user-text:#fff}.chat[data-style=messaging].dark button:not(.chip):not(.link-button):not(.user):not(nav button):not(.close-chat),.chat[data-style=messaging].dark .chip[aria-pressed=true]{color:#fff}@keyframes m-pop{0%{opacity:0;transform:translateY(6px)scale(.98)}to{opacity:1;transform:none}}.launcher-panel .chat[data-style=messaging]{box-shadow:none}[data-style=messaging] .launcher-toggle{background:var(--cff-primary);border-color:var(--cff-primary);color:#fff;font-weight:600}.chat[data-style=messaging]>.notice{max-width:none;box-shadow:none;text-align:center;background:color-mix(in srgb,var(--m-accent) 10%,var(--m-header-bg));color:var(--m-header-text);border-radius:0;margin:0;padding:6px 14px;font-size:12px}.close-chat{width:36px;height:36px;min-height:36px;color:inherit;opacity:.7;background:0 0;border:0;border-radius:50%;flex-shrink:0;place-items:center;margin-inline-start:4px;padding:0;display:grid}.close-chat:hover{opacity:1;background:color-mix(in srgb,currentColor 10%,transparent)}header nav{margin-inline-start:auto}.status-notice{margin:0}.chat[data-style=messaging] .online-dot{background:#34c759}";
 //#endregion
 //#region \0@oxc-project+runtime@0.153.0/helpers/esm/typeof.js
 function ue(e) {
@@ -11165,398 +11165,423 @@ function sa(e, t) {
 function ca(e, t) {
 	e && ((!t || t === "summary" || t === "statement" ? e.querySelector(":scope > button:not(.link-button)") : e.querySelector("input:not([type=hidden]):not([type=file]),textarea") ?? e.querySelector("select,input[type=file],button:not(.link-button)")) ?? e.querySelector("button"))?.focus({ preventScroll: !0 });
 }
-function la({ controller: e, onClose: t }) {
-	let [, n] = B(0), [r, i] = B({
+function la({ controller: e, onClose: t, closable: n = !1 }) {
+	let [, r] = B(0), [i, a] = B({
 		stepId: null,
 		count: 0
-	}), [a, o] = B(!1), [s, c] = B(""), [l, u] = B(""), [d, f] = B(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? !1), p = ke(null), m = ke(null), h = ke(null), g = ke(null), _ = e.state, v = _.form?.form, y = aa(e.options.locale ?? globalThis.document?.documentElement.lang ?? "en", v?.phrases), b = e.activeStep, x = b?.messages ?? [], C = sa(r, _.activeId), w = C >= x.length, T = (t) => ki(t, _.answers, e.meta), E = (t) => Ri(t, _.answers, e.meta);
-	Oe(() => e.subscribe(() => n((e) => e + 1)), [e]), V(() => {
-		let e = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)"), t = () => f(e?.matches ?? !1);
+	}), [o, s] = B(!1), [c, l] = B(""), [u, d] = B(""), [f, p] = B(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? !1), m = ke(null), h = ke(null), g = ke(null), _ = ke(null), v = e.state, y = v.form?.form, b = aa(e.options.locale ?? globalThis.document?.documentElement.lang ?? "en", y?.phrases), x = e.activeStep, C = x?.messages ?? [], w = sa(i, v.activeId), T = w >= C.length, E = (t) => ki(t, v.answers, e.meta), D = (t) => Ri(t, v.answers, e.meta);
+	Oe(() => e.subscribe(() => r((e) => e + 1)), [e]), V(() => {
+		let e = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)"), t = () => p(e?.matches ?? !1);
 		return e?.addEventListener("change", t), () => e?.removeEventListener("change", t);
 	}, []), V(() => {
-		i({
-			stepId: _.activeId,
+		a({
+			stepId: v.activeId,
 			count: 0
 		});
-	}, [_.activeId]), V(() => {
-		if (_.phase !== "ready" || C >= x.length) return;
-		let e = _.activeId, t = setTimeout(() => i((t) => t.stepId === e ? {
+	}, [v.activeId]), V(() => {
+		if (v.phase !== "ready" || w >= C.length) return;
+		let e = v.activeId, t = setTimeout(() => a((t) => t.stepId === e ? {
 			...t,
 			count: t.count + 1
-		} : t), oa(x[C]?.length ?? 0, v?.schema.bot.typingSpeed, d));
+		} : t), oa(C[w]?.length ?? 0, y?.schema.bot.typingSpeed, f));
 		return () => clearTimeout(t);
 	}, [
-		_.activeId,
-		_.phase,
-		C,
-		x.length,
-		d,
-		v?.schema.bot.typingSpeed
+		v.activeId,
+		v.phase,
+		w,
+		C.length,
+		f,
+		y?.schema.bot.typingSpeed
 	]), V(() => {
-		if (w && _.phase === "ready" && (ca(p.current, b?.type), b?.type === "statement" && b.settings?.autoContinue)) {
+		if (T && v.phase === "ready" && (ca(m.current, x?.type), x?.type === "statement" && x.settings?.autoContinue)) {
 			let t = setTimeout(() => {
 				e.answer(null);
-			}, d ? 0 : 250);
+			}, f ? 0 : 250);
 			return () => clearTimeout(t);
 		}
 	}, [
-		_.activeId,
-		w,
-		_.phase,
-		b?.settings?.autoContinue,
-		d,
+		v.activeId,
+		T,
+		v.phase,
+		x?.settings?.autoContinue,
+		f,
 		e
 	]), V(() => {
-		_.phase === "done" && h.current?.focus({ preventScroll: !0 });
-	}, [_.phase]), V(() => {
-		a && g.current?.querySelector("button:not([disabled])")?.focus({ preventScroll: !0 });
-	}, [a]);
-	let D = () => {
-		o(!1), requestAnimationFrame(() => ca(p.current, b?.type));
+		v.phase === "done" && g.current?.focus({ preventScroll: !0 });
+	}, [v.phase]), V(() => {
+		o && _.current?.querySelector("button:not([disabled])")?.focus({ preventScroll: !0 });
+	}, [o]);
+	let O = () => {
+		s(!1), requestAnimationFrame(() => ca(m.current, x?.type));
 	};
 	V(() => {
-		m.current?.scrollIntoView?.({
-			behavior: d ? "auto" : "smooth",
+		h.current?.scrollIntoView?.({
+			behavior: f ? "auto" : "smooth",
 			block: "nearest"
 		});
 	}, [
-		C,
-		_.activeId,
-		_.error,
-		_.phase,
-		d
+		w,
+		v.activeId,
+		v.error,
+		v.phase,
+		f
 	]), V(() => {
-		let t = _.completion;
-		if (e.options.preview || _.phase !== "done" || !t?.redirectUrl) return;
+		let t = v.completion;
+		if (e.options.preview || v.phase !== "done" || !t?.redirectUrl) return;
 		let n = Q(t.redirectUrl);
 		if (!n || !/^https?:/.test(n)) return;
-		let r = v?.schema.endings.find((e) => e.id === t.ending.id), i = setTimeout(() => location.assign(n), Math.min(3e4, Math.max(0, r?.delayMs ?? 0)));
+		let r = y?.schema.endings.find((e) => e.id === t.ending.id), i = setTimeout(() => location.assign(n), Math.min(3e4, Math.max(0, r?.delayMs ?? 0)));
 		return () => clearTimeout(i);
 	}, [
-		_.completion,
-		_.phase,
+		v.completion,
+		v.phase,
 		e,
-		v
+		y
 	]);
-	let O = (e, t) => /* @__PURE__ */ Z("div", {
+	let k = (e, t) => /* @__PURE__ */ Z("div", {
 		className: "bubble bot",
-		children: /* @__PURE__ */ Z(Bi, { text: E(e) })
-	}, t), k = () => /* @__PURE__ */ Z("section", {
+		children: /* @__PURE__ */ Z(Bi, { text: D(e) })
+	}, t), A = () => /* @__PURE__ */ Z("section", {
 		className: "summary",
-		"aria-label": y("summary"),
-		children: [/* @__PURE__ */ Z("h2", { children: y("summary") }), /* @__PURE__ */ Z("dl", { children: (_.path?.visited ?? []).map((e) => v?.schema.steps.find((t) => t.id === e)).filter((e) => !!e && ![
+		"aria-label": b("summary"),
+		children: [/* @__PURE__ */ Z("h2", { children: b("summary") }), /* @__PURE__ */ Z("dl", { children: (v.path?.visited ?? []).map((e) => y?.schema.steps.find((t) => t.id === e)).filter((e) => !!e && ![
 			"hidden",
 			"statement",
 			"summary",
 			"media",
 			"calculated"
-		].includes(e.type) && Object.prototype.hasOwnProperty.call(_.answers, e.key)).map((t) => /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("dt", { children: t.label }), /* @__PURE__ */ Z("dd", { children: [
-			Vi(t, _.answers[t.key], y),
+		].includes(e.type) && Object.prototype.hasOwnProperty.call(v.answers, e.key)).map((t) => /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("dt", { children: t.label }), /* @__PURE__ */ Z("dd", { children: [
+			Vi(t, v.answers[t.key], b),
 			" ",
 			/* @__PURE__ */ Z("button", {
 				className: "link-button",
-				disabled: _.busy,
+				disabled: v.busy,
 				onClick: () => e.edit(t.id),
-				"aria-label": `${y("edit")}: ${t.label}`,
-				children: y("edit")
+				"aria-label": `${b("edit")}: ${t.label}`,
+				children: b("edit")
 			})
 		] })] }, t.id)) })]
-	}), A = /* @__PURE__ */ Z("button", {
-		disabled: _.busy || _.error === "submissionPending",
-		onClick: () => o(!0),
-		children: y("startOver")
-	}), j = _.error && /* @__PURE__ */ Z("div", {
+	}), j = /* @__PURE__ */ Z("button", {
+		disabled: v.busy || v.error === "submissionPending",
+		onClick: () => s(!0),
+		children: b("startOver")
+	}), ee = v.error && /* @__PURE__ */ Z("div", {
 		className: "notice",
 		role: "alert",
-		children: [/* @__PURE__ */ Z("p", { children: y(_.error) }), !_.conflict && /* @__PURE__ */ Z("button", {
-			disabled: _.busy || _.offline,
+		children: [/* @__PURE__ */ Z("p", { children: b(v.error) }), !v.conflict && /* @__PURE__ */ Z("button", {
+			disabled: v.busy || v.offline,
 			onClick: () => void e.retry(),
-			children: y("retry")
+			children: b("retry")
 		})]
-	}), M = v?.schema.bot.avatar ? v.media?.[v.schema.bot.avatar] : null, N = M ? Q(M.url) : null, P = v?.appearance ?? {}, F = P.style === "messaging" ? {
+	}), M = y?.schema.bot.avatar ? y.media?.[y.schema.bot.avatar] : null, N = M ? Q(M.url) : null, P = y?.appearance ?? {}, F = P.style === "messaging" ? {
 		"data-style": "messaging",
 		"data-wallpaper": P.wallpaper ?? "doodle",
 		"data-choices": P.choiceStyle ?? "keyboard",
 		"data-tails": P.bubbleTails === !1 ? "off" : "on"
-	} : {}, ee = v?.schema.bot.name ?? "ChatFlow";
+	} : {}, te = y?.schema.bot.name ?? "ChatFlow";
 	return /* @__PURE__ */ Z("section", {
 		className: `chat ${e.options.mode === "fullpage" ? "fullpage" : ""}`,
 		...F,
 		dir: globalThis.document?.documentElement.dir === "rtl" ? "rtl" : "ltr",
-		"aria-label": v?.title ?? "ChatFlow",
-		"aria-busy": _.busy,
+		"aria-label": y?.title ?? "ChatFlow",
+		"aria-busy": v.busy,
 		children: [
-			/* @__PURE__ */ Z("header", { children: [/* @__PURE__ */ Z("div", {
-				className: "identity",
-				children: [N && /^https?:/.test(N) ? /* @__PURE__ */ Z("img", {
-					src: N,
-					alt: M?.alt ?? y("botAvatar")
-				}) : /* @__PURE__ */ Z("span", {
-					className: "avatar",
-					"aria-hidden": "true",
-					children: [...ee.trim()][0] ?? ""
-				}), /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("strong", { children: ee }), /* @__PURE__ */ Z("small", { children: [/* @__PURE__ */ Z("span", {
-					className: "online-dot",
-					"aria-hidden": "true"
-				}), y(_.offline ? "offline" : "online")] })] })]
-			}), /* @__PURE__ */ Z("nav", {
-				"aria-label": y("back"),
-				children: [/* @__PURE__ */ Z("button", {
-					disabled: _.busy || _.phase !== "ready" || !e.visibleSteps.some((e) => e.id !== _.activeId && Object.prototype.hasOwnProperty.call(_.answers, e.key)),
-					onClick: () => e.back(),
-					children: y("back")
-				}), A]
-			})] }),
+			/* @__PURE__ */ Z("header", { children: [
+				/* @__PURE__ */ Z("div", {
+					className: "identity",
+					children: [N && /^https?:/.test(N) ? /* @__PURE__ */ Z("img", {
+						src: N,
+						alt: M?.alt ?? b("botAvatar")
+					}) : /* @__PURE__ */ Z("span", {
+						className: "avatar",
+						"aria-hidden": "true",
+						children: [...te.trim()][0] ?? ""
+					}), /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("strong", { children: te }), /* @__PURE__ */ Z("small", { children: [/* @__PURE__ */ Z("span", {
+						className: "online-dot",
+						"aria-hidden": "true"
+					}), b(v.offline ? "offline" : "online")] })] })]
+				}),
+				/* @__PURE__ */ Z("nav", {
+					"aria-label": b("back"),
+					children: [/* @__PURE__ */ Z("button", {
+						disabled: v.busy || v.phase !== "ready" || !e.visibleSteps.some((e) => e.id !== v.activeId && Object.prototype.hasOwnProperty.call(v.answers, e.key)),
+						onClick: () => e.back(),
+						children: b("back")
+					}), j]
+				}),
+				n && /* @__PURE__ */ Z("button", {
+					type: "button",
+					className: "close-chat",
+					"aria-label": b("closeChat"),
+					onClick: t,
+					children: /* @__PURE__ */ Z("svg", {
+						viewBox: "0 0 24 24",
+						width: "20",
+						height: "20",
+						"aria-hidden": "true",
+						children: /* @__PURE__ */ Z("path", {
+							d: "M6 6l12 12M18 6L6 18",
+							stroke: "currentColor",
+							"stroke-width": "2.2",
+							"stroke-linecap": "round",
+							fill: "none"
+						})
+					})
+				})
+			] }),
 			/* @__PURE__ */ Z("div", {
 				className: "progress",
 				role: "progressbar",
-				"aria-label": y("progress"),
+				"aria-label": b("progress"),
 				"aria-valuemin": 0,
 				"aria-valuemax": 100,
-				"aria-valuenow": Math.round(_.phase === "done" ? 100 : _.path?.progress ?? 0),
-				children: /* @__PURE__ */ Z("span", { style: { width: `${_.phase === "done" ? 100 : _.path?.progress ?? 0}%` } })
+				"aria-valuenow": Math.round(v.phase === "done" ? 100 : v.path?.progress ?? 0),
+				children: /* @__PURE__ */ Z("span", { style: { width: `${v.phase === "done" ? 100 : v.path?.progress ?? 0}%` } })
 			}),
 			e.options.preview && /* @__PURE__ */ Z("p", {
 				className: "notice",
-				children: y("preview")
+				children: b("preview")
 			}),
 			!e.options.preview && globalThis.location?.protocol === "http:" && !["localhost", "127.0.0.1"].includes(location.hostname) && /* @__PURE__ */ Z("p", {
 				className: "notice",
 				role: "alert",
-				children: y("insecure")
+				children: b("insecure")
 			}),
 			/* @__PURE__ */ Z("main", {
 				className: "conversation",
 				children: [
-					a && /* @__PURE__ */ Z("section", {
-						ref: g,
+					o && /* @__PURE__ */ Z("section", {
+						ref: _,
 						className: "notice",
 						role: "alertdialog",
 						"aria-modal": "false",
-						"aria-label": y("confirmRestart"),
+						"aria-label": b("confirmRestart"),
 						onKeyDown: (e) => {
-							e.key === "Escape" && (e.stopPropagation(), D());
+							e.key === "Escape" && (e.stopPropagation(), O());
 						},
 						children: [
-							/* @__PURE__ */ Z("p", { children: y("confirmRestart") }),
+							/* @__PURE__ */ Z("p", { children: b("confirmRestart") }),
 							/* @__PURE__ */ Z("button", {
-								disabled: _.offline || _.busy,
+								disabled: v.offline || v.busy,
 								onClick: () => {
-									o(!1), e.restart();
+									s(!1), e.restart();
 								},
-								children: y("startOver")
+								children: b("startOver")
 							}),
 							/* @__PURE__ */ Z("button", {
-								onClick: D,
-								children: y("cancel")
+								onClick: O,
+								children: b("cancel")
 							})
 						]
 					}),
-					_.phase === "loading" && /* @__PURE__ */ Z("p", {
+					v.phase === "loading" && /* @__PURE__ */ Z("p", {
 						role: "status",
-						children: y("loading")
+						children: b("loading")
 					}),
-					_.phase === "resume" && /* @__PURE__ */ Z("section", {
+					v.phase === "resume" && /* @__PURE__ */ Z("section", {
 						className: "notice",
 						children: [
-							/* @__PURE__ */ Z("p", { children: y(_.newerVersion ? "newerVersion" : "welcomeBack") }),
+							/* @__PURE__ */ Z("p", { children: b(v.newerVersion ? "newerVersion" : "welcomeBack") }),
 							/* @__PURE__ */ Z("button", {
-								disabled: _.busy,
+								disabled: v.busy,
 								onClick: () => void e.continueSaved(),
-								children: y(_.newerVersion ? "continueOld" : "continue")
+								children: b(v.newerVersion ? "continueOld" : "continue")
 							}),
-							A
+							j
 						]
 					}),
-					_.phase !== "resume" && e.visibleSteps.map((t) => /* @__PURE__ */ Z("section", {
+					v.phase !== "resume" && e.visibleSteps.map((t) => /* @__PURE__ */ Z("section", {
 						className: "step",
 						"aria-label": t.label,
 						children: [
-							(t.id === _.activeId && _.phase === "ready" ? t.messages.slice(0, C) : t.messages).map((e, t) => O(e, t)),
-							t.id !== _.activeId && Object.prototype.hasOwnProperty.call(_.answers, t.key) && /* @__PURE__ */ Z("button", {
+							(t.id === v.activeId && v.phase === "ready" ? t.messages.slice(0, w) : t.messages).map((e, t) => k(e, t)),
+							t.id !== v.activeId && Object.prototype.hasOwnProperty.call(v.answers, t.key) && /* @__PURE__ */ Z("button", {
 								className: "bubble user",
-								disabled: _.busy || _.phase !== "ready",
+								disabled: v.busy || v.phase !== "ready",
 								onClick: () => e.edit(t.id),
-								"aria-label": `${y("edit")}: ${t.label}: ${Vi(t, _.answers[t.key], y)}`,
-								children: [Vi(t, _.answers[t.key], y), /* @__PURE__ */ Z("small", { children: y("edit") })]
+								"aria-label": `${b("edit")}: ${t.label}: ${Vi(t, v.answers[t.key], b)}`,
+								children: [Vi(t, v.answers[t.key], b), /* @__PURE__ */ Z("small", { children: b("edit") })]
 							}),
-							t.id !== _.activeId && Fi(t, _.answers[t.key]).map((e, t) => O(e, `reaction-${t}`))
+							t.id !== v.activeId && Fi(t, v.answers[t.key]).map((e, t) => k(e, `reaction-${t}`))
 						]
 					}, t.id)),
 					/* @__PURE__ */ Z("div", {
 						className: "sr-only",
 						"aria-live": "polite",
 						"aria-atomic": "false",
-						children: _.phase === "ready" ? x.slice(0, C).map((e, t) => /* @__PURE__ */ Z("p", { children: zi(E(e)) }, `${_.activeId}-${t}`)) : _.phase === "done" ? /* @__PURE__ */ Z("p", { children: y("complete") }) : null
+						children: v.phase === "ready" ? C.slice(0, w).map((e, t) => /* @__PURE__ */ Z("p", { children: zi(D(e)) }, `${v.activeId}-${t}`)) : v.phase === "done" ? /* @__PURE__ */ Z("p", { children: b("complete") }) : null
 					}),
-					_.phase === "ready" && b && /* @__PURE__ */ Z("div", {
-						ref: p,
+					v.phase === "ready" && x && /* @__PURE__ */ Z("div", {
+						ref: m,
 						className: "active",
-						children: [!w && /* @__PURE__ */ Z("div", {
+						children: [!T && /* @__PURE__ */ Z("div", {
 							className: "typing bubble bot",
 							role: "status",
-							"aria-label": y("typing"),
+							"aria-label": b("typing"),
 							children: [
 								/* @__PURE__ */ Z("i", {}),
 								/* @__PURE__ */ Z("i", {}),
 								/* @__PURE__ */ Z("i", {})
 							]
-						}), w && /* @__PURE__ */ Z(S, { children: [
-							b.helpText && /* @__PURE__ */ Z("p", {
-								id: `help-${b.id}`,
+						}), T && /* @__PURE__ */ Z(S, { children: [
+							x.helpText && /* @__PURE__ */ Z("p", {
+								id: `help-${x.id}`,
 								className: "help",
-								children: /* @__PURE__ */ Z(Bi, { text: E(b.helpText) })
+								children: /* @__PURE__ */ Z(Bi, { text: D(x.helpText) })
 							}),
-							_.fieldError && /* @__PURE__ */ Z("p", {
-								id: `error-${b.id}`,
+							v.fieldError && /* @__PURE__ */ Z("p", {
+								id: `error-${x.id}`,
 								className: "bubble bot",
 								role: "alert",
-								children: y(_.fieldError)
+								children: b(v.fieldError)
 							}),
-							b.type === "summary" && k(),
-							["statement", "summary"].includes(b.type) ? /* @__PURE__ */ Z("button", {
-								disabled: _.busy,
+							x.type === "summary" && A(),
+							["statement", "summary"].includes(x.type) ? /* @__PURE__ */ Z("button", {
+								disabled: v.busy,
 								onClick: async () => {
-									await e.answer(null), b.type === "summary" && !e.state.activeId && await e.submit(s);
+									await e.answer(null), x.type === "summary" && !e.state.activeId && await e.submit(c);
 								},
-								children: b.settings?.buttonLabel ?? y(b.type === "summary" ? "submit" : "continue")
+								children: x.settings?.buttonLabel ?? b(x.type === "summary" ? "submit" : "continue")
 							}) : /* @__PURE__ */ Z(na, {
 								step: {
-									...b,
-									label: T(b.label),
+									...x,
+									label: E(x.label),
 									settings: {
-										...b.settings,
-										...b.settings?.consentText ? { consentText: E(b.settings.consentText) } : {}
+										...x.settings,
+										...x.settings?.consentText ? { consentText: D(x.settings.consentText) } : {}
 									}
 								},
-								value: e.inputValue(b),
-								disabled: _.busy || _.conflict || !!_.completion,
-								phrase: y,
+								value: e.inputValue(x),
+								disabled: v.busy || v.conflict || !!v.completion,
+								phrase: b,
 								onAnswer: (t) => void e.answer(t),
-								..._.form?.features.uploads && !e.options.preview ? { upload: (t) => e.upload(b, t) } : {},
-								..._.fieldError ? { error: y(_.fieldError) } : {},
-								...v?.media ? { media: v.media } : {}
-							}, `${b.id}:${JSON.stringify(e.inputValue(b))}`),
+								...v.form?.features.uploads && !e.options.preview ? { upload: (t) => e.upload(x, t) } : {},
+								...v.fieldError ? { error: b(v.fieldError) } : {},
+								...y?.media ? { media: y.media } : {}
+							}, `${x.id}:${JSON.stringify(e.inputValue(x))}`),
 							e.canSkip && /* @__PURE__ */ Z("button", {
 								className: "link-button",
-								disabled: _.busy || _.conflict,
+								disabled: v.busy || v.conflict,
 								onClick: () => void e.answer(null),
-								children: y("skip")
+								children: b("skip")
 							})
 						] })]
-					}, b.id),
-					_.phase === "ready" && !b && /* @__PURE__ */ Z("div", {
-						ref: p,
-						children: [k(), /* @__PURE__ */ Z("button", {
-							disabled: _.busy || _.offline || _.conflict,
-							onClick: () => void e.submit(s),
-							children: y(_.error === "submissionPending" ? "retry" : "submit")
+					}, x.id),
+					v.phase === "ready" && !x && /* @__PURE__ */ Z("div", {
+						ref: m,
+						children: [A(), /* @__PURE__ */ Z("button", {
+							disabled: v.busy || v.offline || v.conflict,
+							onClick: () => void e.submit(c),
+							children: b(v.error === "submissionPending" ? "retry" : "submit")
 						})]
 					}),
-					_.phase === "submitting" && /* @__PURE__ */ Z("p", {
+					v.phase === "submitting" && /* @__PURE__ */ Z("p", {
 						role: "status",
-						children: y("loading")
+						children: b("loading")
 					}),
-					_.phase === "done" && _.completion && /* @__PURE__ */ Z("section", {
-						ref: h,
+					v.phase === "done" && v.completion && /* @__PURE__ */ Z("section", {
+						ref: g,
 						tabIndex: -1,
 						className: "ending",
-						"aria-label": y("complete"),
+						"aria-label": b("complete"),
 						children: [
-							_.completion.ending.messages.map((e, t) => O(e, t)),
-							_.completion.redirectUrl && !e.options.preview && /* @__PURE__ */ Z("p", {
+							v.completion.ending.messages.map((e, t) => k(e, t)),
+							v.completion.redirectUrl && !e.options.preview && /* @__PURE__ */ Z("p", {
 								role: "status",
-								children: y("redirecting")
+								children: b("redirecting")
 							}),
-							_.completion.ending.buttons.map((n) => {
-								let r = n.url ? Q(Pi(n.url, _.answers, e.meta)) : null;
+							v.completion.ending.buttons.map((n) => {
+								let r = n.url ? Q(Pi(n.url, v.answers, e.meta)) : null;
 								return n.action === "restart" ? /* @__PURE__ */ Z("button", {
-									onClick: () => o(!0),
-									children: T(n.label)
+									onClick: () => s(!0),
+									children: E(n.label)
 								}, n.id) : n.action === "close" ? /* @__PURE__ */ Z("button", {
 									onClick: t,
-									children: T(n.label)
+									children: E(n.label)
 								}, n.id) : n.action === "link" && r ? /* @__PURE__ */ Z("a", {
 									className: "button",
 									href: r,
 									target: "_blank",
 									rel: "noopener noreferrer",
-									children: T(n.label)
+									children: E(n.label)
 								}, n.id) : null;
 							})
 						]
 					}),
-					_.conflict && /* @__PURE__ */ Z("section", {
+					v.conflict && /* @__PURE__ */ Z("section", {
 						className: "notice",
 						role: "alert",
 						children: [
-							/* @__PURE__ */ Z("p", { children: y("conflict") }),
+							/* @__PURE__ */ Z("p", { children: b("conflict") }),
 							/* @__PURE__ */ Z("button", {
-								disabled: _.busy || _.offline,
+								disabled: v.busy || v.offline,
 								onClick: () => void e.resolveConflict(!1),
-								children: y("useServer")
+								children: b("useServer")
 							}),
 							/* @__PURE__ */ Z("button", {
-								disabled: _.busy || _.offline,
+								disabled: v.busy || v.offline,
 								onClick: () => void e.resolveConflict(!0),
-								children: y("useLocal")
+								children: b("useLocal")
 							})
 						]
 					}),
-					j,
-					/* @__PURE__ */ Z("div", { ref: m })
+					ee,
+					/* @__PURE__ */ Z("div", { ref: h })
 				]
 			}),
-			!e.options.preview && /* @__PURE__ */ Z(S, { children: [/* @__PURE__ */ Z("label", {
-				className: "honeypot",
-				"aria-hidden": "true",
-				children: [y("honeypot"), /* @__PURE__ */ Z("input", {
-					type: "text",
-					name: "cff_website_check",
-					maxLength: 255,
-					autoComplete: "off",
-					tabIndex: -1,
-					value: s,
-					onInput: (e) => c(e.currentTarget.value)
-				})]
-			}), /* @__PURE__ */ Z("footer", { children: [
-				/* @__PURE__ */ Z("span", {
-					role: "status",
-					children: _.offline ? y("offline") : _.storageUnavailable ? y("storageUnavailable") : ""
+			!e.options.preview && /* @__PURE__ */ Z(S, { children: [
+				/* @__PURE__ */ Z("label", {
+					className: "honeypot",
+					"aria-hidden": "true",
+					children: [b("honeypot"), /* @__PURE__ */ Z("input", {
+						type: "text",
+						name: "cff_website_check",
+						maxLength: 255,
+						autoComplete: "off",
+						tabIndex: -1,
+						value: c,
+						onInput: (e) => l(e.currentTarget.value)
+					})]
 				}),
-				!_.offline && !_.storageUnavailable && y(_.dirty ? "unsaved" : "saved"),
-				v?.session.resumeEnabled && /* @__PURE__ */ Z("small", { children: y("sessionStorage") }),
-				v?.session.magicLinks?.enabled && _.phase === "ready" && /* @__PURE__ */ Z("div", {
+				/* @__PURE__ */ Z("span", {
+					className: "sr-only",
+					role: "status",
+					children: v.offline ? b("offline") : v.storageUnavailable ? b("storageUnavailable") : ""
+				}),
+				(v.offline || v.storageUnavailable || y?.session.magicLinks?.enabled && v.phase === "ready") && /* @__PURE__ */ Z("footer", { children: [(v.offline || v.storageUnavailable) && /* @__PURE__ */ Z("p", {
+					className: "status-notice",
+					children: b(v.offline ? "offline" : "storageUnavailable")
+				}), y?.session.magicLinks?.enabled && v.phase === "ready" && /* @__PURE__ */ Z("div", {
 					className: "cff-magic",
 					children: [
 						/* @__PURE__ */ Z("button", {
-							disabled: _.busy || _.offline || _.conflict,
+							disabled: v.busy || v.offline || v.conflict,
 							onClick: () => {
-								window.confirm(y("magicEmailConfirm")) && e.magicLink("email").then(() => u(y("magicEmailAccepted"))).catch(() => u(y("magicEmailError")));
+								window.confirm(b("magicEmailConfirm")) && e.magicLink("email").then(() => d(b("magicEmailAccepted"))).catch(() => d(b("magicEmailError")));
 							},
-							children: y("magicEmail")
+							children: b("magicEmail")
 						}),
-						v.session.magicLinks.whatsapp && /* @__PURE__ */ Z("button", {
-							disabled: _.busy || _.offline || _.conflict,
+						y.session.magicLinks.whatsapp && /* @__PURE__ */ Z("button", {
+							disabled: v.busy || v.offline || v.conflict,
 							onClick: () => {
-								window.confirm(y("magicShareConfirm")) && e.magicLink("whatsapp").then(async (e) => {
-									if (!e.link) u(y("magicShareError"));
+								window.confirm(b("magicShareConfirm")) && e.magicLink("whatsapp").then(async (e) => {
+									if (!e.link) d(b("magicShareError"));
 									else try {
-										navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), u(y("magicCopied")));
+										navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), d(b("magicCopied")));
 									} catch {
-										u(y("magicCancelled"));
+										d(b("magicCancelled"));
 									}
-								}).catch(() => u(y("magicShareError")));
+								}).catch(() => d(b("magicShareError")));
 							},
-							children: y("magicShare")
+							children: b("magicShare")
 						}),
 						/* @__PURE__ */ Z("small", {
 							role: "status",
-							children: l
+							children: u
 						})
 					]
-				})
-			] })] })
+				})] })
+			] })
 		]
 	});
 }
@@ -12483,7 +12508,10 @@ function Ka(e) {
 		errors: [...e.state.path?.errors ?? []]
 	};
 }
-function qa(e, t = {}) {
+function qa(e) {
+	return e.mode === "launcher" || e.mode === "popup";
+}
+function Ja(e, t = {}) {
 	$.get(e)?.handle.unmount();
 	let n = t.form?.form.id ?? t.formId ?? Number(e.dataset.formId);
 	if (!Number.isSafeInteger(n) || n <= 0) throw TypeError("Invalid form ID");
@@ -12517,78 +12545,83 @@ function qa(e, t = {}) {
 		detail: n,
 		bubbles: !0,
 		composed: !0
-	}))), f, p = () => {}, m = () => {
-		let t = d.state.form?.form.appearance;
-		if (!t) return;
-		let n = t.inheritFont ? void 0 : Na(t.googleFont);
-		n !== f && (p(), f = n, p = n ? za(e.ownerDocument, n) : () => {});
-		let r = t.style === "messaging" ? Wa : Ua, i = (e) => ka(t[e]) ?? r[e], a = {
-			"--cff-primary": i("primary"),
-			"--cff-bubble-bot-bg": i("botBubbleBackground"),
-			"--cff-user-bg": i("userBubbleBackground"),
-			"--cff-text": i("textColor"),
-			"--cff-header-bg": i("headerBackground"),
-			"--cff-header-text": i("headerText"),
-			"--cff-chat-bg": i("chatBackground"),
-			"--cff-user-text": i("userTextColor"),
-			"--cff-font": t.inheritFont ? "inherit" : n ? `"${n}", ${Aa(t.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : Aa(t.font),
-			"--cff-radius": Number.isFinite(t.radius) ? `${Math.max(0, Math.min(128, t.radius))}px` : void 0,
-			"--cff-width": Number.isFinite(t.width) ? `${Math.max(280, Math.min(2e3, t.width))}px` : void 0
+	}))), f, p = () => {}, m = (t = !1) => {
+		let n = (d.state.form ?? c.form)?.form.appearance;
+		if (!n) return;
+		let r = n.inheritFont || t ? void 0 : Na(n.googleFont);
+		r !== f && (p(), f = r, p = r ? za(e.ownerDocument, r) : () => {});
+		let i = n.style === "messaging" ? Wa : Ua, a = (e) => ka(n[e]) ?? i[e], l = {
+			"--cff-primary": a("primary"),
+			"--cff-bubble-bot-bg": a("botBubbleBackground"),
+			"--cff-user-bg": a("userBubbleBackground"),
+			"--cff-text": a("textColor"),
+			"--cff-header-bg": a("headerBackground"),
+			"--cff-header-text": a("headerText"),
+			"--cff-chat-bg": a("chatBackground"),
+			"--cff-user-text": a("userTextColor"),
+			"--cff-font": n.inheritFont ? "inherit" : r ? `"${r}", ${Aa(n.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : Aa(n.font),
+			"--cff-radius": Number.isFinite(n.radius) ? `${Math.max(0, Math.min(128, n.radius))}px` : void 0,
+			"--cff-width": Number.isFinite(n.width) ? `${Math.max(280, Math.min(2e3, n.width))}px` : void 0
 		};
-		for (let [e, t] of Object.entries(a)) t ? s.style.setProperty(e, t) : s.style.removeProperty(e);
-		let c = t.theme === "dark" || t.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches;
-		s.querySelector(".chat")?.classList.toggle("dark", !!c), t.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = ja(t.customCss);
-	}, h = d.subscribe(m), g = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
-	g?.addEventListener("change", m);
-	let _ = () => d.setOffline(navigator.onLine === !1), v = (e) => {
+		for (let [e, t] of Object.entries(l)) t ? s.style.setProperty(e, t) : s.style.removeProperty(e);
+		let u = n.theme === "dark" || n.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches;
+		s.querySelector(".chat")?.classList.toggle("dark", !!u), n.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = ja(n.customCss);
+	}, h = () => m(), g = d.subscribe(h);
+	qa(c) && m(!0);
+	let _ = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
+	_?.addEventListener("change", h);
+	let v = () => d.setOffline(navigator.onLine === !1), y = (e) => {
 		e.key?.startsWith(`cff:session:${n}:`) && d.markConflict();
 	};
-	t.preview || (window.addEventListener("online", _), window.addEventListener("offline", _), window.addEventListener("storage", v));
-	let y = c.mode === "popup", b = c.mode === "launcher" || y, x = `cff-overlay-${++Ga}`, S = !1, C = null, w = null, T = null, E = null, D = s, O = null, k = null, A = !1, j = !1, M = () => {
-		A || (A = !0, _(), d.initialize().then(() => {
+	t.preview || (window.addEventListener("online", v), window.addEventListener("offline", v), window.addEventListener("storage", y));
+	let b = c.mode === "popup", x = c.mode === "launcher" || b, S = `cff-overlay-${++Ga}`, C = !1, w = null, T = null, E = null, D = null, O = s, k = null, A = null, j = !1, ee = !1, M = () => {
+		j || (j = !0, v(), d.initialize().then(() => {
 			m(), N();
 		}));
 	}, N = () => {
-		if (t.preview || j || !u || e.hidden || d.state.phase === "error") return;
+		if (t.preview || ee || !u || e.hidden || d.state.phase === "error") return;
 		let r = d.state.form?.form.version;
-		r && (j = !0, u.view(n, r).catch(() => void 0));
+		r && (ee = !0, u.view(n, r).catch(() => void 0));
 	}, P = aa(c.locale), F = (t) => {
-		if (O && k) {
-			if (!t && !k.hidden && d.close(), e.hidden = !1, k.hidden = !t, y) {
+		if (k && A) {
+			if (!t && !A.hidden && d.close(), e.hidden = !1, A.hidden = !t, b) {
 				let e = s.querySelector(".popup-backdrop");
 				e && (e.hidden = !t);
 			}
-			t && (S = !0), O.textContent = P(t ? "closeChat" : "openChat"), O.setAttribute("aria-expanded", String(t)), t ? (M(), k.focus({ preventScroll: !0 })) : O.focus({ preventScroll: !0 });
+			t && (C = !0), k.hidden = t, k.setAttribute("aria-expanded", String(t)), t ? (M(), A.focus({ preventScroll: !0 })) : k.focus({ preventScroll: !0 });
 		}
 	};
-	if (b) {
+	if (x) {
 		let t = document.createElement("div");
-		if (t.className = y ? "launcher-root popup-root" : "launcher-root", e.dataset.position === "left" && t.classList.add("is-left"), O = document.createElement("button"), O.type = "button", O.className = "launcher-toggle", O.textContent = P("openChat"), O.setAttribute("aria-controls", x), O.setAttribute("aria-expanded", "false"), k = document.createElement("div"), k.className = "launcher-panel", k.id = x, k.role = "dialog", k.setAttribute("aria-label", P("formDialog")), y && k.setAttribute("aria-modal", "true"), k.tabIndex = -1, k.hidden = !0, y) {
+		t.className = b ? "launcher-root popup-root" : "launcher-root", e.dataset.position === "left" && t.classList.add("is-left"), k = document.createElement("button"), k.type = "button", k.className = "launcher-toggle", k.innerHTML = "<svg viewBox=\"0 0 24 24\" width=\"28\" height=\"28\" aria-hidden=\"true\" focusable=\"false\"><path fill=\"currentColor\" d=\"M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 22l4.5-2.2c1 .3 2.1.5 3.3.5 5.5 0 10-3.9 10-8.6S17.5 3 12 3z\"/></svg>";
+		let n = document.createElement("span");
+		if (n.className = "sr-only", n.textContent = P("openChat"), k.append(n), k.setAttribute("aria-controls", S), k.setAttribute("aria-expanded", "false"), A = document.createElement("div"), A.className = "launcher-panel", A.id = S, A.role = "dialog", A.setAttribute("aria-label", P("formDialog")), b && A.setAttribute("aria-modal", "true"), A.tabIndex = -1, A.hidden = !0, b) {
 			let e = document.createElement("div");
 			e.className = "popup-backdrop", e.hidden = !0, e.addEventListener("click", () => F(!1)), t.append(e);
 		}
-		t.append(k, O), s.append(t), D = document.createElement("div"), k.append(D, l), O.addEventListener("click", () => F(k.hidden));
-		let n = (e) => {
-			if (!k || k.hidden) return;
-			let t = e.composedPath().includes(k);
-			if (e.key === "Escape" && (t || y) && (e.preventDefault(), F(!1)), y && e.key === "Tab") {
-				let t = [...k.querySelectorAll("button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]")].filter((e) => e.tabIndex >= 0 && !e.closest(".honeypot,[hidden],[aria-hidden=\"true\"]")), n = t[0], r = t.at(-1), a = i.activeElement;
-				!n || !r ? (e.preventDefault(), k.focus()) : e.shiftKey && (!k.contains(a) || a === n || a === k) ? (e.preventDefault(), r.focus()) : !e.shiftKey && (a === r || !k.contains(a)) && (e.preventDefault(), n.focus());
+		t.append(A, k), s.append(t), O = document.createElement("div"), A.append(O, l), k.addEventListener("click", () => F(A.hidden));
+		let r = (e) => {
+			if (!A || A.hidden) return;
+			let t = e.composedPath().includes(A);
+			if (e.key === "Escape" && (t || b) && (e.preventDefault(), F(!1)), b && e.key === "Tab") {
+				let t = [...A.querySelectorAll("button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]")].filter((e) => e.tabIndex >= 0 && !e.closest(".honeypot,[hidden],[aria-hidden=\"true\"]")), n = t[0], r = t.at(-1), a = i.activeElement;
+				!n || !r ? (e.preventDefault(), A.focus()) : e.shiftKey && (!A.contains(a) || a === n || a === A) ? (e.preventDefault(), r.focus()) : !e.shiftKey && (a === r || !A.contains(a)) && (e.preventDefault(), n.focus());
 			}
 		};
-		s.addEventListener("keydown", n), E = (e) => {
-			e.composedPath().includes(s) || n(e);
-		}, document.addEventListener("keydown", E);
+		s.addEventListener("keydown", r), D = (e) => {
+			e.composedPath().includes(s) || r(e);
+		}, document.addEventListener("keydown", D);
 	}
-	b || s.after(l), ce(/* @__PURE__ */ Z(la, {
+	x || s.after(l), ce(/* @__PURE__ */ Z(la, {
 		controller: d,
+		closable: x,
 		onClose: () => {
-			b ? F(!1) : t.preview || (d.close(), e.hidden = !0);
+			x ? F(!1) : t.preview || (d.close(), e.hidden = !0);
 		}
-	}), D);
-	let ee = {
+	}), O);
+	let te = {
 		unmount: () => {
-			C && clearTimeout(C), w && window.removeEventListener("scroll", w), T && document.removeEventListener("click", T), E && document.removeEventListener("keydown", E), h(), p(), g?.removeEventListener("change", m), d.dispose(), ce(null, D), i.replaceChildren(), window.removeEventListener("online", _), window.removeEventListener("offline", _), window.removeEventListener("storage", v), $.delete(e);
+			w && clearTimeout(w), T && window.removeEventListener("scroll", T), E && document.removeEventListener("click", E), D && document.removeEventListener("keydown", D), g(), p(), _?.removeEventListener("change", h), d.dispose(), ce(null, O), i.replaceChildren(), window.removeEventListener("online", v), window.removeEventListener("offline", v), window.removeEventListener("storage", y), $.delete(e);
 		},
 		prefill: (e) => d.prefillAnswers(e),
 		getState: () => Ka(d),
@@ -12597,33 +12630,33 @@ function qa(e, t = {}) {
 			t.preview && d.setAppearance(e);
 		},
 		open: () => {
-			b ? F(!0) : (e.hidden = !1, M(), e.scrollIntoView?.({
+			x ? F(!0) : (e.hidden = !1, M(), e.scrollIntoView?.({
 				behavior: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
 				block: "start"
 			}), (e.shadowRoot?.querySelector(".active input:not([type=hidden]),.active textarea,.active select,.active button") ?? e.shadowRoot?.querySelector(".chat"))?.focus({ preventScroll: !0 }));
 		}
 	};
 	if ($.set(e, {
-		handle: ee,
+		handle: te,
 		id: n,
 		controller: d
-	}), b && !t.preview) {
-		T = (e) => {
+	}), x && !t.preview) {
+		E = (e) => {
 			(e.target instanceof Element ? e.target.closest("[data-cff-open]") : null)?.dataset.cffOpen === String(n) && (e.preventDefault(), F(!0));
-		}, document.addEventListener("click", T);
+		}, document.addEventListener("click", E);
 		let t = e.dataset.autoOpen;
-		t !== void 0 && t !== "" && /^\d+$/.test(t) && (C = setTimeout(() => {
-			!S && !e.hidden && F(!0);
+		t !== void 0 && t !== "" && /^\d+$/.test(t) && (w = setTimeout(() => {
+			!C && !e.hidden && F(!0);
 		}, Math.min(3600, Number(t)) * 1e3));
 		let r = e.dataset.scrollPercent;
-		r !== void 0 && r !== "" && /^\d+$/.test(r) && (w = () => {
+		r !== void 0 && r !== "" && /^\d+$/.test(r) && (T = () => {
 			let t = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-			!S && !e.hidden && t > 0 && window.scrollY / t * 100 >= Number(r) && (F(!0), w && window.removeEventListener("scroll", w));
-		}, window.addEventListener("scroll", w, { passive: !0 }));
+			!C && !e.hidden && t > 0 && window.scrollY / t * 100 >= Number(r) && (F(!0), T && window.removeEventListener("scroll", T));
+		}, window.addEventListener("scroll", T, { passive: !0 }));
 	}
-	return b || M(), ee;
+	return x || M(), te;
 }
-function Ja(e = document) {
+function Ya(e = document) {
 	for (let t of e.querySelectorAll("cff-chat[data-form-id]")) {
 		if ($.has(t)) continue;
 		let e = {}, n = t.querySelector("script[type=\"application/json\"][data-cff-schema]");
@@ -12631,7 +12664,7 @@ function Ja(e = document) {
 			e.form = JSON.parse(n.textContent ?? "");
 		} catch {}
 		try {
-			qa(t, e);
+			Ja(t, e);
 		} catch {
 			t.textContent = "ChatFlow: configuration error";
 		}
@@ -12645,7 +12678,7 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { controller: t } of $.values()) t.options.analyticsOptOut = e;
 	},
 	open: (e) => {
-		Ja();
+		Ya();
 		let t = [...$.keys()].find((t) => $.get(t)?.id === Number(e));
 		return t ? ($.get(t).handle.open(), !0) : !1;
 	},
@@ -12653,6 +12686,6 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { handle: n, id: r } of $.values()) (t === void 0 || Number(t) === r) && n.prefill(e);
 	},
 	registerField: Wi
-}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ja(), { once: !0 }) : Ja());
+}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ya(), { once: !0 }) : Ya());
 //#endregion
-export { Ja as autoMount, qa as mountRuntime, Wi as registerField };
+export { Ya as autoMount, Ja as mountRuntime, Wi as registerField };

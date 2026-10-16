@@ -296,3 +296,24 @@ describe('messaging theme', () => {
     await act(() => handle!.unmount());
   });
 });
+describe('launcher chrome', () => {
+  it('styles the closed launcher from an embedded form without loading fonts, closes with the header button and has no status footer', async () => {
+    const envelope = form(); envelope.form.appearance = { style: 'messaging', googleFont: 'Inter' };
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true, mode: 'launcher' }); });
+    const shadow = host.shadowRoot!;
+    const root = [...shadow.children].find(element => element.tagName === 'DIV') as HTMLElement;
+    expect(root.dataset.style).toBe('messaging');
+    expect(document.head.querySelector('link[href*="fonts.googleapis.com"]')).toBeNull();
+    const toggle = shadow.querySelector<HTMLButtonElement>('.launcher-toggle')!;
+    await act(() => toggle.click());
+    expect(toggle.hidden).toBe(true);
+    await vi.waitFor(() => expect(shadow.querySelector('.close-chat')).not.toBeNull());
+    expect(shadow.querySelector('footer')).toBeNull();
+    await act(() => shadow.querySelector<HTMLButtonElement>('.close-chat')!.click());
+    expect(shadow.querySelector<HTMLElement>('.launcher-panel')!.hidden).toBe(true);
+    expect(toggle.hidden).toBe(false);
+    expect(shadow.activeElement).toBe(toggle);
+    await act(() => handle!.unmount());
+  });
+});

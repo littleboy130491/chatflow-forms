@@ -28,11 +28,14 @@ msgstr "Pernyataan sambutan yang siap dilengkapi pertanyaan Anda."
 msgid "A/B copy and order experiment"
 msgstr "Eksperimen A/B teks dan urutan"
 
-msgid "AI assist (Claude)"
-msgstr "Asisten AI (Claude)"
+msgid "AI assist"
+msgstr "Bantuan AI"
 
 msgid "API key (ends with the data centre, e.g. -us21)"
 msgstr "Kunci API (diakhiri kode pusat data, mis. -us21)"
+
+msgid "API key (optional for keyless gateways)"
+msgstr "Kunci API (opsional untuk gateway tanpa kunci)"
 
 msgid "Abandon"
 msgstr "Ditinggalkan"
@@ -187,6 +190,9 @@ msgstr "Nilai jawaban"
 msgid "Answered"
 msgstr "Dijawab"
 
+msgid "Anthropic (Claude)"
+msgstr "Anthropic (Claude)"
+
 msgid "Anthropic API key (sk-ant-…)"
 msgstr "Kunci API Anthropic (sk-ant-…)"
 
@@ -288,6 +294,9 @@ msgstr "Kembali"
 
 msgid "Back to submissions"
 msgstr "Kembali ke kiriman"
+
+msgid "Base URL (https, e.g. https://api.openai.com/v1)"
+msgstr "URL dasar (https, mis. https://api.openai.com/v1)"
 
 msgid "Below 4.5:1"
 msgstr "Di bawah 4,5:1"
@@ -1426,6 +1435,12 @@ msgstr "Pilihan minimum"
 msgid "Mobile"
 msgstr "Ponsel"
 
+msgid "Model"
+msgstr "Model"
+
+msgid "Model (blank = openrouter/auto)"
+msgstr "Model (kosong = openrouter/auto)"
+
 msgid "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons."
 msgstr "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
 
@@ -1573,6 +1588,15 @@ msgstr "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
 msgid "Open imported form"
 msgstr "Buka formulir hasil impor"
 
+msgid "OpenAI-compatible endpoint"
+msgstr "Endpoint kompatibel OpenAI"
+
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgid "OpenRouter API key (sk-or-…)"
+msgstr "Kunci API OpenRouter (sk-or-…)"
+
 msgid "Operand source"
 msgstr "Sumber operand"
 
@@ -1588,8 +1612,8 @@ msgstr "Label pilihan"
 msgid "Optional captcha and Akismet credentials"
 msgstr "Kredensial captcha dan Akismet opsional"
 
-msgid "Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off."
-msgstr "Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI."
+msgid "Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off."
+msgstr "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI."
 
 msgid "Other (free-text option)"
 msgstr "Lainnya (pilihan teks bebas)"
@@ -1744,6 +1768,9 @@ msgstr "Rekomendasi produk"
 msgid "Professional"
 msgstr "Profesional"
 
+msgid "Provider"
+msgstr "Penyedia"
+
 msgid "Proxy mode"
 msgstr "Mode proxy"
 
@@ -1789,8 +1816,8 @@ msgstr "Hapus kiriman"
 msgid "Qualify website project inquiries, with conditional questions."
 msgstr "Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat."
 
-msgid "Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing."
-msgstr "Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan."
+msgid "Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing."
+msgstr "Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan."
 
 msgid "Rate window seconds"
 msgstr "Jendela pembatasan (detik)"
@@ -2416,6 +2443,9 @@ msgstr "Formulir tanpa judul"
 msgid "Usage-based recommendations with two conditional endings."
 msgstr "Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat."
 
+msgid "Use any OpenRouter model ID. Requests only go to providers that support structured JSON output."
+msgstr "Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur."
+
 msgid "Use global default"
 msgstr "Gunakan bawaan global"
 
@@ -2533,6 +2563,9 @@ msgstr "Pekerjaan"
 msgid "Working…"
 msgstr "Sedang diproses…"
 
+msgid "Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed."
+msgstr "Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan."
+
 msgid "Yes"
 msgstr "Ya"
 
@@ -2557,8 +2590,8 @@ msgstr "Anda tidak diizinkan melihat analitik."
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
 
-msgid "Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review."
-msgstr "Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau."
+msgid "Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review."
+msgstr "Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa."
 
 msgid "Your email"
 msgstr "Email Anda"

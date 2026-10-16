@@ -1,5 +1,6 @@
 /** @jsxRuntime classic */
 /** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -41,7 +42,7 @@ export interface GlobalSettings {
     ga4: { measurementId: string; apiSecret: string };
     meta_capi: { pixelId: string; accessToken: string; testEventCode: string };
   };
-  ai?: { apiKey: string };
+  ai?: { provider?: AiProvider; apiKey?: string; openrouterKey?: string; openrouterModel?: string; baseUrl?: string; compatKey?: string; compatModel?: string };
 }
 type ConnectorCredentials = NonNullable<GlobalSettings['connectors']>;
 /** Credential inputs per provider; leave a provider blank to turn it off. */
@@ -61,6 +62,7 @@ const credentialFields: { type: keyof ConnectorCredentials; title: string; field
 ];
 /** The server never returns stored secrets; it sends this mask, and keeps the secret if the mask comes back. */
 export const SECRET_MASK = '********';
+type AiProvider = 'anthropic' | 'openrouter' | 'openai';
 const secretHelp = (value: string | undefined): { help?: string } =>
   value === SECRET_MASK ? { help: __('Saved. Leave unchanged to keep it, or clear the field to remove it.', 'chatflow-forms') } : {};
 export function Settings({ api }: { api: AdminApi }) {
@@ -85,6 +87,8 @@ export function Settings({ api }: { api: AdminApi }) {
     setSettings(next);
     setSaved(false);
   };
+  // Each provider keeps its own fields, so switching providers never loses a saved key.
+  const setAi = (patch: NonNullable<GlobalSettings['ai']>) => settings && update({ ...settings, ai: { ...settings.ai, ...patch } });
   return (
     <main className="cff-admin">
       <h1>{__('ChatFlow settings', 'chatflow-forms')}</h1>
@@ -283,10 +287,33 @@ export function Settings({ api }: { api: AdminApi }) {
             <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
           </section>
           <section className="cff-card">
-            <h2>{__('AI assist (Claude)', 'chatflow-forms')}</h2>
-            <p>{__('Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.', 'chatflow-forms')}</p>
-            <Field label={__('Anthropic API key (sk-ant-…)', 'chatflow-forms')} type="password" value={settings.ai?.apiKey ?? ''} {...secretHelp(settings.ai?.apiKey)}
-              onChange={(value) => update({ ...settings, ai: { apiKey: value.trim() } })} />
+            <h2>{__('AI assist', 'chatflow-forms')}</h2>
+            <p>{__('Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.', 'chatflow-forms')}</p>
+            <Select label={__('Provider', 'chatflow-forms')} value={settings.ai?.provider ?? 'anthropic'}
+              choices={[
+                { value: 'anthropic', label: __('Anthropic (Claude)', 'chatflow-forms') },
+                { value: 'openrouter', label: __('OpenRouter', 'chatflow-forms') },
+                { value: 'openai', label: __('OpenAI-compatible endpoint', 'chatflow-forms') },
+              ]}
+              onChange={(provider) => setAi({ provider: provider as AiProvider })} />
+            {(settings.ai?.provider ?? 'anthropic') === 'anthropic' && <Field label={__('Anthropic API key (sk-ant-…)', 'chatflow-forms')} type="password" value={settings.ai?.apiKey ?? ''} {...secretHelp(settings.ai?.apiKey)}
+              onChange={(value) => setAi({ apiKey: value.trim() })} />}
+            {settings.ai?.provider === 'openrouter' && <>
+              <Field label={__('OpenRouter API key (sk-or-…)', 'chatflow-forms')} type="password" value={settings.ai?.openrouterKey ?? ''} {...secretHelp(settings.ai?.openrouterKey)}
+                onChange={(value) => setAi({ openrouterKey: value.trim() })} />
+              <Field label={__('Model (blank = openrouter/auto)', 'chatflow-forms')} value={settings.ai?.openrouterModel ?? ''} placeholder="openai/gpt-4o-mini"
+                onChange={(value) => setAi({ openrouterModel: value.trim() })} />
+              <p className="description">{__('Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.', 'chatflow-forms')}</p>
+            </>}
+            {settings.ai?.provider === 'openai' && <>
+              <Field label={__('Base URL (https, e.g. https://api.openai.com/v1)', 'chatflow-forms')} type="url" value={settings.ai?.baseUrl ?? ''} placeholder="https://api.openai.com/v1"
+                onChange={(value) => setAi({ baseUrl: value.trim() })} />
+              <Field label={__('API key (optional for keyless gateways)', 'chatflow-forms')} type="password" value={settings.ai?.compatKey ?? ''} {...secretHelp(settings.ai?.compatKey)}
+                onChange={(value) => setAi({ compatKey: value.trim() })} />
+              <Field label={__('Model', 'chatflow-forms')} value={settings.ai?.compatModel ?? ''} placeholder="gpt-4o-mini"
+                onChange={(value) => setAi({ compatModel: value.trim() })} />
+              <p className="description">{__('Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.', 'chatflow-forms')}</p>
+            </>}
           </section>
           <section className="cff-card">
             <h2>{__('Connector credentials', 'chatflow-forms')}</h2>
