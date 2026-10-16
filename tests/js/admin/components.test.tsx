@@ -11,7 +11,7 @@ import { ConnectorSettings } from '../../../assets/src/builder/ConnectorSettings
 import { SettingsEditor } from '../../../assets/src/builder/FormSettings';
 import { AiGenerate, applyRewrites, copyItems } from '../../../assets/src/builder/AiAssist';
 import type { FormSettings } from '../../../assets/src/builder/api';
-import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
+import { cleanupPreview, previewKey, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
 import { Purge } from '../../../assets/src/submissions/Purge';
 import { Filters } from '../../../assets/src/submissions/Filters';
 import { downloadExport } from '../../../assets/src/submissions/Export';
@@ -214,6 +214,15 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     expect(unmount).toHaveBeenCalledTimes(1);
     expect(destroy).toHaveBeenCalledTimes(1);
     expect(legacy).toHaveBeenCalledTimes(1);
+  });
+  it('restarts the preview only for rendered changes, not autosave bookkeeping or map layout', () => {
+    const form = blankForm(),
+      key = previewKey(form);
+    expect(previewKey({ ...form, id: 12, draftRevision: 4, version: 2, slug: 'saved' })).toBe(key);
+    expect(previewKey({ ...form, schema: { ...form.schema, flowPositions: [{ id: 'x', x: 1, y: 2 }] } })).toBe(key);
+    expect(previewKey({ ...form, settings: { ...form.settings, privacy: { storeMeta: false } } })).toBe(key);
+    expect(previewKey({ ...form, schema: { ...form.schema, bot: { ...form.schema.bot, name: 'Bo' } } })).not.toBe(key);
+    expect(previewKey({ ...form, settings: { ...form.settings, appearance: { theme: 'dark' } } })).not.toBe(key);
   });
   it('uses only positive preview IDs and explicitly projects requested WordPress media', async () => {
     const form = blankForm();
