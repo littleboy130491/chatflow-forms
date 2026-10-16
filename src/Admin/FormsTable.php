@@ -137,7 +137,7 @@ final class FormsTable extends \WP_List_Table {
 
 	/** @param array<string,mixed> $item */
 	public function column_name( $item ): string {
-		if ( 'trash' === $item['status'] ) {
+		if ( 'trash' === ( $item['status'] ?? '' ) ) {
 			$actions = array(
 				'untrash' => '<a href="' . esc_url( AdminModule::trashActionUrl( 'restore', (int) $item['id'] ) ) . '">' . esc_html__( 'Restore', 'chatflow-forms' ) . '</a>',
 				'delete'  => '<a class="submitdelete" href="' . esc_url( AdminModule::trashActionUrl( 'delete', (int) $item['id'] ) ) . '" data-cff-confirm="' . esc_attr__( 'Delete this form permanently? This cannot be undone. Forms that still have submissions cannot be deleted.', 'chatflow-forms' ) . '">' . esc_html__( 'Delete permanently', 'chatflow-forms' ) . '</a>',
