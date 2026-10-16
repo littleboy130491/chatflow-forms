@@ -109,7 +109,7 @@ final class FrontendModule implements Module {
 			$form = $this->forms->getPublished( (int) $id );
 			if ( ! $form ) {
 				continue; }
-			$display  = $form->settings()['display'] ?? array();
+			$display = $form->settings()['display'] ?? array();
 			if ( ! in_array( $display['mode'] ?? '', array( 'launcher', 'popup' ), true ) || ! self::eligible( $display['launcher'] ?? array(), $page_id ) ) {
 				continue; }
 			return array(

@@ -72,7 +72,7 @@ final class AdminModule implements Module {
 		if ( 'forms' === $name ) {
 			$table = new FormsTable( $this->forms );
 			$table->prepare_items();
-			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'New form', 'chatflow-forms' ) . '</a></h1><div id="cff-admin-root"></div><div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
+			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'New form', 'chatflow-forms' ) . '</a></h1><div id="cff-form-start"></div><div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
 			$table->views();
 			$table->search_box( __( 'Search forms', 'chatflow-forms' ), 'cff-forms' );
 			$table->display();
@@ -98,7 +98,7 @@ final class AdminModule implements Module {
 		}
 		$config = $this->config( $screen );
 		wp_add_inline_script( 'cff-' . $entry, 'window.cffAdmin=' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ';', 'before' );
-		$mount = 'forms' === $screen ? 'mountFormsList(document.getElementById("cff-forms-list"),window.cffAdmin);window.CFFAdmin.builder.mountFormStart(document.getElementById("cff-admin-root"),window.cffAdmin)' : 'mount' . ucfirst( $entry ) . '(document.getElementById("cff-admin-root"),window.cffAdmin)';
+		$mount = 'forms' === $screen ? 'mountFormsList(document.getElementById("cff-forms-list"),window.cffAdmin);window.CFFAdmin.builder.mountFormStart(document.getElementById("cff-form-start"),window.cffAdmin)' : 'mount' . ucfirst( $entry ) . '(document.getElementById("cff-admin-root"),window.cffAdmin)';
 		wp_add_inline_script( 'cff-' . $entry, 'window.CFFAdmin.' . $entry . '.' . $mount . ';' );
 	}
 
