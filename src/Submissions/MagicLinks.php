@@ -68,7 +68,9 @@ final class MagicLinks implements Module {
 					return self::GENERIC; }
 				$ip    = ( new \ChatFlow\Tracking\IpResolver() )->resolve( $_SERVER, \ChatFlow\Rest\Settings::get()['proxy'] ?? array() );
 				$limit = new RateLimiter();
-				if ( ! $limit->consume( 'magic:session:' . $row['id'], 3, 3600 ) || ! $limit->consume( 'magic:ip:' . $ip, 15, 3600 ) || 'email' === $channel && ! $limit->consume( 'magic:recipient:' . hash( 'sha256', strtolower( $email ) ), 3, 3600 ) ) {
+				// The per-form cap bounds mail sent to visitor-typed addresses even across many IPs.
+				$form_cap = (int) apply_filters( 'cff_magic_link_form_hourly_limit', 50, (int) $row['form_id'] );
+				if ( ! $limit->consume( 'magic:session:' . $row['id'], 3, 3600 ) || ! $limit->consume( 'magic:ip:' . $ip, 15, 3600 ) || 'email' === $channel && ( ! $limit->consume( 'magic:recipient:' . hash( 'sha256', strtolower( $email ) ), 3, 3600 ) || ! $limit->consume( 'magic:form:' . $row['form_id'], max( 1, $form_cap ), 3600 ) ) ) {
 					return self::GENERIC; }
 				$token   = rtrim( strtr( base64_encode( random_bytes( 32 ) ), '+/', '-_' ), '=' );
 				$expires = gmdate( 'Y-m-d H:i:s', min( strtotime( $row['expires_at'] . ' UTC' ), time() + max( 5, min( 1440, (int) ( $config['ttlMinutes'] ?? 30 ) ) ) * 60 ) );

@@ -14,15 +14,34 @@ export function reactions(step: Step, value: unknown): string[] {
   const selected = value && typeof value === 'object' && !Array.isArray(value) ? (value as { value?: unknown }).value : value;
   return (step.options ?? []).filter(option => option.reaction && (Array.isArray(selected) ? selected.includes(option.value) : selected === option.value)).map(option => option.reaction!);
 }
+/** Backslash-escape Markdown syntax in substituted values so they always render as literal text. */
+export function escapeMarkdown(value: string): string {
+  return value.replace(/[\\[\]()*]/g, '\\$&');
+}
+function escapeValues<T>(value: T): T {
+  if (typeof value === 'string') return escapeMarkdown(value) as T;
+  if (Array.isArray(value)) return value.map(escapeValues) as T;
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, escapeValues(item)])) as T;
+  return value;
+}
+/** Interpolate merge tags into Markdown copy; answers and metadata can never add links or emphasis. */
+export function interpolateMarkdown(template: string, answers: AnswerMap, meta: AnswerMap = {}): string {
+  return interpolate(template, escapeValues(answers), escapeValues(meta));
+}
+/** Plain text of a Markdown message, for live regions and other non-visual output. */
+export function markdownText(text: string): string {
+  return text.replace(/\\([\\[\]()*])|\[((?:\\.|[^\]\\\n])+)\]\(([^\s)]+)\)|\*\*((?:\\.|[^*\\\n])+)\*\*|\*((?:\\.|[^*\\\n])+)\*/g, (_all, escaped?: string, label?: string, _href?: string, strong?: string, em?: string) => escaped ?? markdownText(label ?? strong ?? em ?? ''));
+}
 export function Markdown({ text }: { text: string }) {
   const parts: ComponentChildren[] = [];
-  const pattern = /\[([^\]\n]+)\]\(([^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/g;
+  const pattern = /\\([\\[\]()*])|\[((?:\\.|[^\]\\\n])+)\]\(([^\s)]+)\)|\*\*((?:\\.|[^*\\\n])+)\*\*|\*((?:\\.|[^*\\\n])+)\*/g;
   let last = 0;
   for (const match of text.matchAll(pattern)) {
     parts.push(text.slice(last, match.index));
-    if (match[1] && match[2]) { const href = safeLink(match[2]); parts.push(href ? <a href={href} target="_blank" rel="noopener noreferrer">{match[1]}</a> : match[1]); }
-    else if (match[3]) parts.push(<strong>{match[3]}</strong>);
-    else if (match[4]) parts.push(<em>{match[4]}</em>);
+    if (match[1]) parts.push(match[1]);
+    else if (match[2] && match[3]) { const href = safeLink(match[3]); const label = markdownText(match[2]); parts.push(href ? <a href={href} target="_blank" rel="noopener noreferrer">{label}</a> : label); }
+    else if (match[4]) parts.push(<strong>{markdownText(match[4])}</strong>);
+    else if (match[5]) parts.push(<em>{markdownText(match[5])}</em>);
     last = match.index + match[0].length;
   }
   parts.push(text.slice(last));

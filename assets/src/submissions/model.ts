@@ -1,5 +1,18 @@
+import { __ } from '@wordpress/i18n';
 import type { FormDTO } from '../builder/api';
 export type Status = 'completed' | 'partial' | 'abandoned' | 'spam' | 'trash';
+export const statuses: Status[] = ['completed', 'partial', 'abandoned', 'spam', 'trash'];
+/** Translated label for a stored submission status. */
+export function statusLabel(status: string): string {
+  const labels: Record<Status, string> = {
+    completed: __('Completed', 'chatflow-forms'),
+    partial: __('Partial', 'chatflow-forms'),
+    abandoned: __('Abandoned', 'chatflow-forms'),
+    spam: __('Spam', 'chatflow-forms'),
+    trash: __('Trash', 'chatflow-forms'),
+  };
+  return labels[status as Status] ?? status;
+}
 export interface SubmissionDTO {
   id: number;
   uuid: string;

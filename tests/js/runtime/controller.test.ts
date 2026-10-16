@@ -32,6 +32,50 @@ function server() {
   return { fetcher, api: new ApiClient('/cff/v1/', fetcher, async () => {}), setRemote: (answers: AnswerMap, revision: number) => { remote = session(answers, revision); }, deny: (mode: typeof deny) => { deny = mode; } };
 }
 describe('replay-driven visitor controller', () => {
+  it('keeps the credential from a magic link so a reload resumes the same session', async () => {
+    const network = server();
+    const storage = new SessionStorage(localStorage);
+    network.fetcher.mockImplementationOnce(async () => response(form()));
+    history.replaceState(null, '', '/page#cff-magic=' + 'a'.repeat(43));
+    const magic = vi.spyOn(network.api, 'magicResume').mockResolvedValue(session({ name: 'Ada' }, 3));
+    const controller = new RuntimeController({ formId: 42 }, network.api, storage);
+    await controller.initialize();
+    expect(magic).toHaveBeenCalledOnce();
+    expect(location.hash).toBe('');
+    expect(storage.credential(42)).toBe(session().resumeToken);
+  });
+  it('keeps the visitor on review after a failed captcha and submits on retry', async () => {
+    const network = server(); const base = network.fetcher.getMockImplementation()!;
+    network.fetcher.mockImplementation(async (input, init) => String(input).includes('/engagement') ? response({ captcha: { provider: 'turnstile', siteKey: 'public-key' }, analytics: { enabled: false, consentRequired: true, respectDnt: true } }) : base(input, init));
+    const envelope = form(); envelope.features.engagement = true;
+    const captcha = vi.fn().mockRejectedValueOnce(new Error('captchaUnavailable')).mockResolvedValueOnce('captcha-token');
+    const controller = new RuntimeController({ form: envelope, captcha }, network.api, new SessionStorage(localStorage));
+    await controller.initialize(); await controller.answer(null); await controller.answer('Ada'); await controller.answer(null);
+    await controller.submit();
+    expect(controller.state.phase).toBe('ready'); expect(controller.state.error).toBe('captchaFailed');
+    await controller.retry();
+    expect(controller.state.phase).toBe('done');
+    const submitted = network.fetcher.mock.calls.find(([url]) => String(url).endsWith('/submit'));
+    expect(JSON.parse(String(submitted?.[1]?.body))).toMatchObject({ captchaToken: 'captcha-token' });
+  });
+  it('drops timings of steps left behind by an edited branch so saves keep working', async () => {
+    const network = server();
+    const branching = form([
+      { id: 'route', key: 'route', type: 'yes_no', label: 'Route', messages: ['Route?'], logic: [{ if: { field: 'route', op: 'eq', value: false }, then: { action: 'jump', to: 'other' } }] },
+      { id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'], logic: [{ if: { all: [] }, then: { action: 'jump', to: 'review' } }] },
+      { id: 'other', key: 'other', type: 'short_text', label: 'Other', messages: ['Other?'] },
+      { id: 'review', key: 'review', type: 'summary', label: 'Review', messages: ['Check'] },
+    ]);
+    const controller = new RuntimeController({ form: branching }, network.api, new SessionStorage(localStorage));
+    await controller.initialize();
+    await controller.answer(true); await controller.answer('Ada');
+    controller.edit('route'); await controller.answer(false);
+    await controller.flush();
+    const patches = network.fetcher.mock.calls.filter(([, init]) => init?.method === 'PATCH');
+    const last = JSON.parse(String(patches.at(-1)?.[1]?.body)) as { stepTimings: Record<string, number> };
+    expect(Object.keys(last.stepTimings)).not.toContain('name');
+    expect(Object.keys(last.stepTimings)).toContain('route');
+  });
   it('recomputes the shared score/outcome fixture on edit and submits without supplying computed answers', async () => {
     const original = powerFixture.schema as unknown as FormSchema;
     const schema = applyVariant(original, original.experiments![0]!.variants[1]!);

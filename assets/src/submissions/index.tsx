@@ -13,7 +13,7 @@ import { Settings } from './Settings';
 import { Tools } from './Tools';
 import { Analytics } from './Analytics';
 import { Export } from './Export';
-import { displayValue, freezeFilters } from './model';
+import { displayValue, freezeFilters, statusLabel } from './model';
 import type { Filters as FilterValues, Status, SubmissionDTO } from './model';
 import { answerColumns, answerKeys, readAnswerColumns } from './answer-columns';
 import '../builder/style.css';
@@ -72,7 +72,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
       });
     return () => abort.abort();
   }, [api, applied, page, perPage, revision]);
-  const bulk = async (changes: { isRead?: boolean; isStarred?: boolean; status?: Status } | 'delete' | 'permanent') => {
+  const bulk = async (changes: { isRead?: boolean; isStarred?: boolean; status?: Status | 'restore' } | 'delete' | 'permanent') => {
     if (!selected.length) return;
     if (changes === 'delete' && !window.confirm(__('Trash all selected submissions?', 'chatflow-forms')))
       return;
@@ -227,7 +227,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
         )}
         {can(api.config, 'export_submissions') && <Button disabled={!selected.length} onClick={() => { setExportSelected(true); setExporting(true); }}>{__('Export selected', 'chatflow-forms')}</Button>}
         {can(api.config, 'delete_submissions') && can(api.config, 'edit_submissions') && applied.status === 'trash' && <Button isDestructive disabled={!selected.length || busy} onClick={() => { void bulk('permanent'); }}>{__('Permanently delete selected', 'chatflow-forms')}</Button>}
-        {can(api.config, 'edit_submissions') && ['trash', 'spam'].includes(applied.status ?? '') && <Button disabled={!selected.length || busy} onClick={() => { void bulk({ status: 'completed' }); }}>{__('Restore selected to Completed', 'chatflow-forms')}</Button>}
+        {can(api.config, 'edit_submissions') && ['trash', 'spam'].includes(applied.status ?? '') && <Button disabled={!selected.length || busy} onClick={() => { void bulk({ status: 'restore' }); }}>{__('Restore selected', 'chatflow-forms')}</Button>}
       </div>
       {exporting && can(api.config, 'export_submissions') && (
         <Export api={api} filters={applied} ids={exportSelected ? selected : []} />
@@ -275,7 +275,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                 <td>
                   {item.createdAt}
                   <small>
-                    {item.status} · {item.progress}%
+                    {statusLabel(item.status)} · {item.progress}%
                   </small>
                 </td>
                 {columns.map(key => <td key={key}>{displayValue(item.answers[key]).slice(0, 160) || '—'}</td>)}

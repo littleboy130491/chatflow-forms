@@ -84,7 +84,11 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
         resumeDays: 30,
         abandonDays: 30,
       },
-      ...defaults,
+      // Privacy, retention and spam values are inherited from global Settings at
+      // runtime, so they are never copied in. The theme has no runtime fallback;
+      // the global "default theme" seeds new forms only.
+      // New forms start with the messaging look; existing forms keep their saved style.
+      appearance: { ...defaults.appearance, style: 'messaging' },
     },
   };
 }
@@ -131,6 +135,8 @@ export interface DraftState {
   saved: string;
   saving: boolean;
   conflict: ApiError | null;
+  /** Another admin holds the WordPress edit lock; saving can be retried once it clears. */
+  locked: boolean;
   error: string;
   history: FormDTO[];
   future: FormDTO[];
@@ -155,6 +161,7 @@ export class DraftController {
       saved: form.id ? editable(form) : '',
       saving: false,
       conflict: null,
+      locked: false,
       error: '',
       history: [],
       future: [],
@@ -261,13 +268,11 @@ export class DraftController {
                 status: saved.status,
               },
         saved: editable(saved),
+        locked: false,
       });
       return this.state.form;
     } catch (error) {
-      this.emit({
-        conflict: error instanceof ApiError && error.status === 409 ? error : null,
-        error: error instanceof Error ? error.message : __('Save failed.', 'chatflow-forms'),
-      });
+      this.fail(error, __('Save failed.', 'chatflow-forms'));
       throw error;
     } finally {
       this.inflight = null;
@@ -306,24 +311,47 @@ export class DraftController {
                 draftRevision: published.draftRevision,
               },
         saved: editable(published),
+        locked: false,
       });
       return published;
     } catch (error) {
-      this.emit({
-        conflict: error instanceof ApiError && error.status === 409 ? error : null,
-        error: error instanceof Error ? error.message : __('Publish failed.', 'chatflow-forms'),
-      });
+      this.fail(error, __('Publish failed.', 'chatflow-forms'));
       throw error;
     } finally {
       this.inflight = null;
       this.emit({ saving: false });
     }
   }
+  /** Only a draft-revision conflict pauses saving; an edit lock is transient and retryable. */
+  private fail(error: unknown, fallback: string): void {
+    const code = error instanceof ApiError ? error.code : '';
+    const locked = code === 'cff_form_locked';
+    this.emit({
+      conflict: error instanceof ApiError && code === 'cff_revision_conflict' ? error : null,
+      locked,
+      error: locked
+        ? __(
+            'This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.',
+            'chatflow-forms',
+          )
+        : error instanceof Error
+          ? error.message
+          : fallback,
+    });
+  }
   async reload(): Promise<void> {
     if (this.inflight) await this.inflight.catch(() => undefined);
     const latest = await this.api.request<FormDTO>(`admin/forms/${this.state.form.id}`);
     this.generation++;
-    this.emit({ form: latest, saved: editable(latest), conflict: null, error: '', history: [], future: [] });
+    this.emit({
+      form: latest,
+      saved: editable(latest),
+      conflict: null,
+      locked: false,
+      error: '',
+      history: [],
+      future: [],
+    });
   }
   async rebaseLocal(): Promise<void> {
     if (this.inflight) await this.inflight.catch(() => undefined);

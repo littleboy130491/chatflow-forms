@@ -865,7 +865,15 @@
             "Open Sans"
           ],
           "default": "system"
-        }
+        },
+        "style": { "enum": ["classic", "messaging"], "default": "classic" },
+        "headerBackground": { "type": "string", "maxLength": 32 },
+        "headerText": { "type": "string", "maxLength": 32 },
+        "chatBackground": { "type": "string", "maxLength": 32 },
+        "userTextColor": { "type": "string", "maxLength": 32 },
+        "wallpaper": { "enum": ["none", "doodle", "dots", "gradient"] },
+        "choiceStyle": { "enum": ["chips", "keyboard"] },
+        "bubbleTails": { "type": "boolean" }
       }
     },
     "notification": {

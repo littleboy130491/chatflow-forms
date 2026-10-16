@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { AdminApi, errorMessage, queryString } from '../builder/api';
 import { Button, Field, Notice } from '../builder/controls';
 import { FormAnalytics } from './FormAnalytics';
+import { defaultRange } from './analytics-dates';
 
 interface Breakdown { label: string; count: number }
 interface Dropoff extends Breakdown { formId: number; stepId: string }
@@ -30,10 +31,12 @@ function BreakdownTable({ title, rows }: { title: string; rows: Breakdown[] }) {
   </section>;
 }
 export function Analytics({ api }: { api: AdminApi }) {
+  // This overview aggregates by UTC calendar day; the per-form panel uses the site time zone.
+  const initial = defaultRange('UTC');
   const [formId, setFormId] = useState('0');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [filters, setFilters] = useState({ formId: '0', from: '', to: '' });
+  const [from, setFrom] = useState(initial.from);
+  const [to, setTo] = useState(initial.to);
+  const [filters, setFilters] = useState({ formId: '0', ...initial });
   const [report, setReport] = useState<AnalyticsReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -51,7 +54,7 @@ export function Analytics({ api }: { api: AdminApi }) {
     { label: __('View → start', 'chatflow-forms'), value: report.viewStartRate === null ? '—' : `${report.viewStartRate}%` },
     { label: __('Starts', 'chatflow-forms'), value: report.counts.starts.toLocaleString() },
     { label: __('Completed', 'chatflow-forms'), value: report.counts.completed.toLocaleString() },
-    { label: __('Completion rate', 'chatflow-forms'), value: `${report.completionRate}%` },
+    { label: __('Completion rate (completed ÷ starts)', 'chatflow-forms'), value: `${report.completionRate}%` },
     { label: __('Partial', 'chatflow-forms'), value: report.counts.partial.toLocaleString() },
     { label: __('Abandoned', 'chatflow-forms'), value: report.counts.abandoned.toLocaleString() },
     { label: __('Average completion time', 'chatflow-forms'), value: report.avgDurationMs === null ? '—' : `${Math.round(report.avgDurationMs / 1000)} s` },
@@ -61,13 +64,13 @@ export function Analytics({ api }: { api: AdminApi }) {
     <div className="cff-analytics-filters">
       <Field label={__('Form ID (0 = all)', 'chatflow-forms')} type="number" value={formId} onChange={setFormId} />
       <Field label={__('From (UTC)', 'chatflow-forms')} type="date" value={from} onChange={setFrom} />
-      <Field label={__('To (UTC)', 'chatflow-forms')} type="date" value={to} onChange={setTo} />
+      <Field label={__('To (UTC, inclusive)', 'chatflow-forms')} type="date" value={to} onChange={setTo} />
       <Button disabled={loading} onClick={() => setFilters({ formId: formId || '0', from, to })}>{__('Apply filters', 'chatflow-forms')}</Button>
     </div>
     {error && <Notice status="error" isDismissible={false}>{error}</Notice>}
     {loading && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
     {report && !loading && <>
-      <p>{report.from} – {report.to}</p>
+      <p>{report.from} – {report.to} · {__('Dates in UTC', 'chatflow-forms')}</p>
       <div className="cff-analytics-kpis">{kpis.map((item) => <section className="cff-card" key={item.label}><h2>{item.label}</h2><strong>{item.value}</strong></section>)}</div>
       <div className="cff-settings-grid">
         <BreakdownTable title={__('UTM sources', 'chatflow-forms')} rows={report.sources} />

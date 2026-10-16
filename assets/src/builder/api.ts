@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 export type { FormSchema, FormSettings, FormDTO, Page, Step, Condition, Ending } from '../shared/contracts';
 export type { Rule, Option, Group } from '../shared/schema.generated';
+import { allowFieldTypes } from '../shared/logic/fields';
 import type { AdminConfig as SharedAdminConfig } from '../shared/contracts';
 import type { FormSettings } from '../shared/contracts';
 export type Capability =
@@ -16,6 +17,8 @@ export interface AdminConfig extends SharedAdminConfig {
   capabilities?: Partial<Record<Capability, boolean>>;
   adminUrl?: string;
   siteUrl?: string;
+  /** Site time zone (IANA name or "+HH:MM" offset) used by site-timezone reports. */
+  timezone?: string;
   fullpageBase?: string;
   tools?: boolean;
   preview?: boolean;
@@ -39,7 +42,10 @@ export class AdminApi {
   constructor(
     public readonly config: AdminConfig,
     private readonly transport: typeof fetch = (input, init) => globalThis.fetch(input, init),
-  ) {}
+  ) {
+    // Server-registered extension types (cff_field_types) must not fail client diagnostics.
+    allowFieldTypes(config.features?.fieldTypes ?? []);
+  }
   async request<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     if (
       !path.startsWith('admin/') ||

@@ -94,13 +94,13 @@ final class RestModule implements Module {
 		$this->route( '/admin/purge', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->start( $this->body( $r )['criteria'] ?? array(), (string) ( $this->body( $r )['confirmationToken'] ?? '' ), (string) ( $this->body( $r )['confirmation'] ?? '' ) ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge/(?P<id>[a-fA-F0-9-]{36})', 'GET', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->progress( $r['id'] ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge-log', 'GET', array( $this, 'purgeLog' ), 'cff_purge_submissions' );
-		$this->route( '/admin/settings', 'GET', fn() => $this->respond( array( 'settings' => Settings::get() ) ), 'cff_manage_settings' );
+		$this->route( '/admin/settings', 'GET', fn() => $this->respond( array( 'settings' => Settings::masked( Settings::get() ) ) ), 'cff_manage_settings' );
 		$this->route(
 			'/admin/settings',
 			'PUT',
 			function ( $r ) {
 				$settings = Settings::save( $this->body( $r )['settings'] ?? array() );
-				return $this->respond( is_wp_error( $settings ) ? $settings : array( 'settings' => $settings ) );
+				return $this->respond( is_wp_error( $settings ) ? $settings : array( 'settings' => Settings::masked( $settings ) ) );
 			},
 			'cff_manage_settings'
 		);
@@ -375,7 +375,7 @@ final class RestModule implements Module {
 			if ( isset( $body[ $key ] ) && ! is_bool( $body[ $key ] ) ) {
 				return Database::error( 'cff_invalid_changes', 'Boolean required.', 422 ); }
 		}
-		if ( isset( $body['status'] ) && ! in_array( $body['status'], array( 'completed', 'partial', 'abandoned', 'spam', 'trash' ), true ) || isset( $body['note'] ) && ( ! is_string( $body['note'] ) || strlen( $body['note'] ) > 10000 ) ) {
+		if ( isset( $body['status'] ) && ! in_array( $body['status'], array( 'completed', 'partial', 'abandoned', 'spam', 'trash', 'restore' ), true ) || isset( $body['note'] ) && ( ! is_string( $body['note'] ) || strlen( $body['note'] ) > 10000 ) ) {
 			return Database::error( 'cff_invalid_changes', 'Invalid status or note.', 422 ); }
 		return $body;
 	}
@@ -383,7 +383,11 @@ final class RestModule implements Module {
 		$body = $this->changes( $this->body( $r ) );
 		if ( is_wp_error( $body ) ) {
 			return $body;
-		} $submission = $this->submissions->update( (int) $r['id'], $body );
+		}
+		if ( 'trash' === ( $body['status'] ?? '' ) && ! current_user_can( 'cff_delete_submissions' ) ) {
+			return Database::error( 'cff_forbidden', 'Trashing submissions requires the delete capability.', 403 );
+		}
+		$submission = $this->submissions->update( (int) $r['id'], $body );
 		return $this->respond( $submission ? $submission->admin() : Database::error( 'cff_not_found', 'Submission not found.', 404 ) ); }
 	public function deleteSubmission( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id   = (int) $r['id'];

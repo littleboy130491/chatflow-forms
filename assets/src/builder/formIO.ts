@@ -60,6 +60,7 @@ export function parseFormFile(json: string): FormFile {
       ...hook,
       secret: '',
       enabled: false,
+      headers: {},
     })) as NonNullable<NonNullable<FormSettings['integrations']>['webhooks']>;
   return { ...form, settings };
 }

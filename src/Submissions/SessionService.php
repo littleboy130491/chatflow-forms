@@ -172,7 +172,8 @@ final class SessionService {
 	public function get( string $id, string $token ): array|\WP_Error {
 		global $wpdb;
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}cff_sessions WHERE public_id=%s", $id ), ARRAY_A );
-		if ( ! $row || ! $this->verify( $row, $token ) ) {
+		// Completed, closed or expired sessions no longer expose their answers or mint request tokens.
+		if ( ! $row || 'active' !== $row['status'] || strtotime( $row['expires_at'] . ' UTC' ) <= time() || ! $this->verify( $row, $token ) ) {
 			return $this->unauthorized(); }
 		$form = $this->snapshot( $row );
 		if ( is_wp_error( $form ) ) {
@@ -217,7 +218,10 @@ final class SessionService {
 				$context    = CookieSources::context( $form->schema(), Database::decode( $row['context'] ) );
 				$submission = $row['submission_id'] ? $this->submissions->get( (int) $row['submission_id'] ) : null;
 				$revision   = (int) $row['revision'] + 1;
+				$scrub      = false;
 				if ( 'delete' === $operation ) {
+					// Nothing durable keeps this session's answers or metadata after a restart without a partial.
+					$scrub = ! $submission || ( $form->settings()['sessions']['deletePartialOnRestart'] ?? false );
 					if ( $submission ) {
 						if ( $form->settings()['sessions']['deletePartialOnRestart'] ?? false ) {
 							$this->submissions->removeForRestart( $submission->id() );
@@ -305,7 +309,9 @@ final class SessionService {
 					}
 				}
 				$changes['revision'] = $revision;
-				if ( isset( $replay ) ) {
+				if ( $scrub ) {
+					unset( $context['_answers'], $context['_meta'] );
+				} elseif ( isset( $replay ) ) {
 					$context['_answers'] = $replay['answers'];
 				}
 				$changes['context']      = Database::json( $context );
@@ -343,7 +349,8 @@ final class SessionService {
 		if ( count( $parts ) !== 3 || strlen( $token ) > 2048 ) {
 			return false; }
 		$claims = Database::decode( base64_decode( strtr( $parts[1], '-_', '+/' ), true ) );
-		if ( ! is_int( $claims['iat'] ?? null ) ) {
+		// Receipts replay only for a day after the token was issued, not for any token ever minted.
+		if ( ! is_int( $claims['iat'] ?? null ) || $claims['iat'] < time() - DAY_IN_SECONDS ) {
 			return false; }
 		return null !== $this->signer->verify(
 			$token,
@@ -511,11 +518,15 @@ final class SessionService {
 			$timings = (array) $timings; }
 		if ( ! is_array( $timings ) || count( $timings ) > 500 ) {
 			return Database::error( 'cff_invalid_timings', 'Invalid step timings.', 422 ); }
+		$kept = array();
 		foreach ( $timings as $id => $ms ) {
-			if ( ! in_array( $id, $visited, true ) || ! is_int( $ms ) || $ms < 0 || $ms > 604800000 ) {
+			if ( ! is_int( $ms ) || $ms < 0 || $ms > 604800000 ) {
 				return Database::error( 'cff_invalid_timings', 'Invalid step timing.', 422 ); }
+			// Steps left behind by an edited branch are dropped, not rejected: the visitor can still finish.
+			if ( in_array( $id, $visited, true ) ) {
+				$kept[ $id ] = $ms; }
 		}
-		return $timings;
+		return $kept;
 	}
 	/**
 	 * @param array<string,mixed> $meta

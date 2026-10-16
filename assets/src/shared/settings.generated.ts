@@ -861,6 +861,14 @@ export interface Appearance {
   width?: number;
   customCss?: string;
   googleFont?: "system" | "Inter" | "Roboto" | "Open Sans";
+  style?: "classic" | "messaging";
+  headerBackground?: string;
+  headerText?: string;
+  chatBackground?: string;
+  userTextColor?: string;
+  wallpaper?: "none" | "doodle" | "dots" | "gradient";
+  choiceStyle?: "chips" | "keyboard";
+  bubbleTails?: boolean;
 }
 export interface Notification {
   id: string;

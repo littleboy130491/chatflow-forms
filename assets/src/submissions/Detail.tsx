@@ -3,13 +3,13 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { Fragment, useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { interpolate } from '../shared/logic/index';
 import type { AnswerMap } from '../shared/contracts';
 import { Area, Button, Notice, Select } from '../builder/controls';
 import { can, errorMessage } from '../builder/api';
 import type { AdminApi } from '../builder/api';
-import { displayValue } from './model';
+import { displayValue, statuses, statusLabel } from './model';
 import type { Status, SubmissionDetail, SubmissionDTO } from './model';
 import { downloadUpload, storedIp, uploadIds } from './downloads';
 export interface Activity {
@@ -198,11 +198,12 @@ export function Detail({
               <Select
                 label={__('Status', 'chatflow-forms')}
                 value={detail.status}
-                choices={['completed', 'partial', 'abandoned', 'spam', 'trash'].map((value) => ({
-                  value,
-                  label: value,
-                }))}
+                choices={statuses
+                  .filter((value) => value !== 'trash' || value === detail.status || can(api.config, 'delete_submissions'))
+                  .map((value) => ({ value, label: statusLabel(value) }))}
                 onChange={(status) => {
+                  if (status === detail.status) return;
+                  if (!window.confirm(sprintf(__('Change this submission to “%s”?', 'chatflow-forms'), statusLabel(status)))) return;
                   void update({ status: status as Status });
                 }}
               />

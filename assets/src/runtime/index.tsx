@@ -9,18 +9,24 @@ import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
 import { phrases } from './i18n';
 import { googleFont, systemFont, type GoogleFont } from '../shared/fonts';
 import { acquireGoogleFont } from './fonts';
-import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
+import type { AnswerMap, FieldProps, PublicForm, RuntimeOptions } from './types';
 import { captchaToken } from './captcha';
 export type { RuntimeOptions, FieldProps, PublicForm } from './types';
 export { registerField } from './registry';
 
 export interface RuntimeHandle {
   unmount(): void;
+  /** Preview only: restyle the running form without restarting its conversation. */
+  setAppearance(appearance: Appearance): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
   jumpToStep(id: string): boolean;
   open(): void;
 }
+type Appearance = NonNullable<PublicForm['form']['appearance']>;
+type ThemeColor = 'primary' | 'botBubbleBackground' | 'userBubbleBackground' | 'textColor' | 'headerBackground' | 'headerText' | 'chatBackground' | 'userTextColor';
+const classicDefaults: Record<ThemeColor, string | undefined> = { primary: undefined, botBubbleBackground: undefined, userBubbleBackground: undefined, textColor: undefined, headerBackground: '#ffffff', headerText: '#171717', chatBackground: '#ffffff', userTextColor: '#171717' };
+const messagingDefaults: Record<ThemeColor, string> = { primary: '#3390ec', botBubbleBackground: '#ffffff', userBubbleBackground: '#e1fec6', textColor: '#000000', headerBackground: '#ffffff', headerText: '#000000', chatBackground: '#dbe6ee', userTextColor: '#000000' };
 const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number; controller: RuntimeController }>();
 let overlayCounter = 0;
 function previewState(controller: RuntimeController) {
@@ -52,10 +58,14 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     if (!value) return;
     const font = value.inheritFont ? undefined : googleFont(value.googleFont);
     if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
-    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
+    // Messaging style has its own defaults; explicit theme colours always win.
+    const base = value.style === 'messaging' ? messagingDefaults : classicDefaults;
+    const color = (key: keyof typeof base) => safeColor(value[key]) ?? base[key];
+    const entries = { '--cff-primary': color('primary'), '--cff-bubble-bot-bg': color('botBubbleBackground'), '--cff-user-bg': color('userBubbleBackground'), '--cff-text': color('textColor'), '--cff-header-bg': color('headerBackground'), '--cff-header-text': color('headerText'), '--cff-chat-bg': color('chatBackground'), '--cff-user-text': color('userTextColor'), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
     for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     const dark = value.theme === 'dark' || (value.theme === 'auto' && globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches);
     root.querySelector('.chat')?.classList.toggle('dark', Boolean(dark));
+    if (value.style === 'messaging') root.dataset.style = 'messaging'; else delete root.dataset.style;
     customization.textContent = scopedAppearanceCss(value.customCss);
   };
   const unsubscribe = controller.subscribe(appearance);
@@ -70,6 +80,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   let autoTimer: ReturnType<typeof setTimeout> | null = null;
   let scrollHandler: (() => void) | null = null;
   let openTrigger: ((event: MouseEvent) => void) | null = null;
+  let keyHandler: ((event: KeyboardEvent) => void) | null = null;
   let chatRoot = root;
   let toggle: HTMLButtonElement | null = null;
   let panel: HTMLDivElement | null = null;
@@ -139,34 +150,42 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     chatRoot = document.createElement('div');
     panel.append(chatRoot, captchaRoot);
     toggle.addEventListener('click', () => setOpen(panel!.hidden));
-    root.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && panel && !panel.hidden) {
+    // Listen on the document so Escape and the popup's Tab trap still work after the focused
+    // control unmounts (focus falls back to <body>, outside the shadow tree).
+    const onKey = (event: KeyboardEvent) => {
+      if (!panel || panel.hidden) return;
+      const inside = event.composedPath().includes(panel);
+      if (event.key === 'Escape' && (inside || isPopup)) {
         event.preventDefault();
         setOpen(false);
       }
-      if (isPopup && event.key === 'Tab' && panel && !panel.hidden) {
-        const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]')];
+      if (isPopup && event.key === 'Tab') {
+        const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]')].filter(item => item.tabIndex >= 0 && !item.closest('.honeypot,[hidden],[aria-hidden="true"]'));
         const first = items[0], last = items.at(-1);
         const active = shadow.activeElement;
         if (!first || !last) { event.preventDefault(); panel.focus(); }
-        else if (event.shiftKey && (panel.contains(active) ? active === first : true)) { event.preventDefault(); last.focus(); }
+        else if (event.shiftKey && (panel.contains(active) ? active === first || active === panel : true)) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && (active === last || !panel.contains(active))) { event.preventDefault(); first.focus(); }
       }
-    });
+    };
+    root.addEventListener('keydown', onKey);
+    keyHandler = event => { if (!event.composedPath().includes(root)) onKey(event); };
+    document.addEventListener('keydown', keyHandler);
   }
   if (!isLauncher) root.after(captchaRoot);
   render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, chatRoot);
   const handle: RuntimeHandle = {
-    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); if (keyHandler) document.removeEventListener('keydown', keyHandler); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
     jumpToStep: id => controller.jumpToStep(id),
+    setAppearance: next => { if (options.preview) controller.setAppearance(next); },
     open: () => {
       if (isLauncher) { setOpen(true); return; }
       host.hidden = false;
       initialize();
       host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true });
+      (host.shadowRoot?.querySelector<HTMLElement>('.active input:not([type=hidden]),.active textarea,.active select,.active button') ?? host.shadowRoot?.querySelector<HTMLElement>('.chat'))?.focus({ preventScroll: true });
     },
   };
   mounted.set(host, { handle, id, controller });

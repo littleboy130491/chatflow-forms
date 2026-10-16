@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Select, Notice } from './controls';
 import { errorMessage, safeHttpUrl } from './api';
 import type { AdminConfig, FormDTO } from './api';
-import type { PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
+import type { AnswerMap, PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
 
 export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnvelope {
   const session = form.settings.sessions ?? {};
@@ -34,6 +34,7 @@ export interface PreviewHandle {
   destroy?: () => void;
   jumpToStep?: (id: string) => void;
   getState?: () => unknown;
+  setAppearance?: (appearance: PublicSchemaEnvelope['form']['appearance']) => void;
 }
 export async function resolvePreviewMedia(envelope: PublicSchemaEnvelope): Promise<void> {
   const media = (
@@ -72,7 +73,7 @@ export async function resolvePreviewMedia(envelope: PublicSchemaEnvelope): Promi
 interface RuntimeModule {
   mountRuntime: (
     host: HTMLElement,
-    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext },
+    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext; previewAnswers?: AnswerMap },
   ) => PreviewHandle | (() => void) | void;
 }
 export function cleanupPreview(handle: PreviewHandle | (() => void) | void): void {
@@ -97,6 +98,7 @@ export async function mountPublicPreview(
   config: AdminConfig,
   context: ReplayContext = {},
   isCurrent: () => boolean = () => true,
+  extra: { previewAnswers?: AnswerMap } = {},
 ): Promise<PreviewHandle | (() => void) | void> {
   const url = `${config.pluginUrl}build/runtime/runtime.js`;
   const runtime = (await import(/* webpackIgnore: true */ url)) as RuntimeModule;
@@ -108,8 +110,26 @@ export async function mountPublicPreview(
     preview: true,
     locale: config.locale,
     context: { now: new Date().toISOString(), ...context },
+    ...extra,
   });
 }
+/**
+ * Stable identity of what the preview renders. Autosave bookkeeping (IDs,
+ * revisions) and map layout are excluded so they never restart a preview, and
+ * appearance is applied live to the running preview instead.
+ */
+export function previewKey(form: FormDTO): string {
+  const { flowPositions: _layout, ...schema } = form.schema;
+  void _layout;
+  return JSON.stringify({
+    title: form.title,
+    schema,
+    phrases: form.settings.phrases ?? null,
+    sessions: form.settings.sessions ?? null,
+    defaultEndingId: form.settings.completion?.defaultEndingId ?? null,
+  });
+}
+export const PREVIEW_DEBOUNCE_MS = 600;
 export function Preview({
   form,
   config,
@@ -120,17 +140,28 @@ export function Preview({
   onClose: () => void;
 }) {
   const host = useRef<HTMLDivElement>(null),
-    handle = useRef<PreviewHandle | (() => void) | void>();
+    handle = useRef<PreviewHandle | (() => void) | void>(),
+    latest = useRef(form);
+  latest.current = form;
+  const key = previewKey(form);
+  const [mountedKey, setMountedKey] = useState(key),
+    [restarts, setRestarts] = useState(0);
   const [, setReady] = useState(0);
   const [error, setError] = useState(''),
     [mobile, setMobile] = useState(false),
     [debug, setDebug] = useState<unknown>(null);
   useEffect(() => {
+    if (key === mountedKey) return;
+    const timer = setTimeout(() => setMountedKey(key), PREVIEW_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [key, mountedKey]);
+  useEffect(() => {
     let cancelled = false;
     setError('');
+    setDebug(null);
     const current = host.current;
     if (!current) return;
-    mountDraft(current, form, config, () => !cancelled)
+    mountDraft(current, latest.current, config, () => !cancelled)
       .then((result) => {
         if (cancelled) cleanupPreview(result);
         else {
@@ -146,12 +177,24 @@ export function Preview({
       cleanupPreview(handle.current);
       handle.current = undefined;
     };
-  }, [form, config]);
+  }, [mountedKey, restarts, config]);
+  const appearance = JSON.stringify(form.settings.appearance ?? config.defaults?.appearance ?? {});
+  useEffect(() => {
+    const current = handle.current;
+    if (current && typeof current === 'object') current.setAppearance?.(JSON.parse(appearance) as PublicSchemaEnvelope['form']['appearance']);
+  }, [appearance]);
+  const restart = () => {
+    setMountedKey(key);
+    setRestarts((value) => value + 1);
+  };
   const previewHandle = typeof handle.current === 'object' ? handle.current : undefined;
   return (
     <aside className="cff-preview" role="dialog" aria-label={__('Draft preview', 'chatflow-forms')}>
       <h2>{__('Draft preview — no sessions or jobs', 'chatflow-forms')}</h2>
       <Button onClick={onClose}>{__('Close preview', 'chatflow-forms')}</Button>
+      <Button variant="secondary" onClick={restart}>
+        {__('Restart preview', 'chatflow-forms')}
+      </Button>
       <Button onClick={() => setMobile(!mobile)}>
         {mobile ? __('Desktop', 'chatflow-forms') : __('Mobile', 'chatflow-forms')}
       </Button>
@@ -159,6 +202,9 @@ export function Preview({
         <Notice status="error" isDismissible={false}>
           {error}
         </Notice>
+      )}
+      {key !== mountedKey && (
+        <p className="cff-preview-pending">{__('Applying your latest changes…', 'chatflow-forms')}</p>
       )}
       <div ref={host} style={{ width: mobile ? 360 : '100%', maxWidth: '100%', minHeight: 480 }} />
       {previewHandle?.jumpToStep && (

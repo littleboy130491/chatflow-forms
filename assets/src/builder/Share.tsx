@@ -9,6 +9,14 @@ import type { AdminConfig, FormDTO } from './api';
 import { errorMessage } from './api';
 import { Field, Notice } from './controls';
 
+/** Shortcode matching the form's own display settings. */
+export function shortcode(form: FormDTO): string {
+  const display = form.settings.display ?? {};
+  const mode = display.mode ?? 'inline';
+  const position =
+    (mode === 'launcher' || mode === 'popup') && display.launcher?.position === 'left' ? ' position="left"' : '';
+  return `[chatflow id="${form.id}" mode="${mode}"${position}]`;
+}
 export function Share({ form, config }: { form: FormDTO; config: AdminConfig }) {
   const [values, setValues] = useState<Record<string, string>>({}), [qr, setQr] = useState(''), [error, setError] = useState('');
   const base = `${config.siteUrl ?? location.origin + '/'}${config.fullpageBase ?? 'chat'}/${form.slug}/`;
@@ -26,6 +34,6 @@ export function Share({ form, config }: { form: FormDTO; config: AdminConfig }) 
     <h3>{__('Prefill URL builder', 'chatflow-forms')}</h3>
     <p>{__('Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.', 'chatflow-forms')}</p>
     {form.schema.steps.filter(step => !['hidden', 'calculated', 'file_upload', 'consent', 'statement', 'summary', 'media', 'address'].includes(step.type)).map(step => <Field key={step.id} label={step.label} value={values[step.key] ?? ''} onChange={value => setValues({ ...values, [step.key]: value })} />)}
-    <p>{__('Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.', 'chatflow-forms')}</p>
+    <p>{__('Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”.', 'chatflow-forms')}</p>
   </section>;
 }

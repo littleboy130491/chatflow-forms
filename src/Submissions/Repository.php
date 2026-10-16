@@ -235,7 +235,11 @@ final class Repository {
 					if ( isset( $changes[ $key ] ) ) {
 										$data[ $column ] = $changes[ $key ] ? 1 : 0; }
 				}
-				if ( isset( $changes['status'] ) ) {
+				if ( isset( $changes['status'] ) && 'restore' === $changes['status'] ) {
+					// Restore from trash/spam to the status implied by the row's own lifecycle timestamps.
+					$row            = $wpdb->get_row( $wpdb->prepare( "SELECT completed_at,abandoned_at FROM {$wpdb->prefix}cff_submissions WHERE id=%d", $id ), ARRAY_A );
+					$data['status'] = ! empty( $row['completed_at'] ) ? 'completed' : ( ! empty( $row['abandoned_at'] ) ? 'abandoned' : 'partial' );
+				} elseif ( isset( $changes['status'] ) ) {
 					$data['status'] = $changes['status']; }
 				Database::check( $wpdb->update( $wpdb->prefix . 'cff_submissions', $data, array( 'id' => $id ) ) );
 				if ( isset( $changes['note'] ) ) {

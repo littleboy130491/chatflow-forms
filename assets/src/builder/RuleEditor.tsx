@@ -28,6 +28,47 @@ const operators: Predicate['op'][] = [
   'date_after',
   'age_gte',
 ];
+export const operatorLabels: Record<Predicate['op'], string> = {
+  eq: __('equals', 'chatflow-forms'),
+  neq: __('does not equal', 'chatflow-forms'),
+  contains: __('contains', 'chatflow-forms'),
+  not_contains: __('does not contain', 'chatflow-forms'),
+  in: __('is one of', 'chatflow-forms'),
+  not_in: __('is not one of', 'chatflow-forms'),
+  gt: __('is greater than', 'chatflow-forms'),
+  gte: __('is at least', 'chatflow-forms'),
+  lt: __('is less than', 'chatflow-forms'),
+  lte: __('is at most', 'chatflow-forms'),
+  between: __('is between', 'chatflow-forms'),
+  is_empty: __('is empty', 'chatflow-forms'),
+  is_not_empty: __('is not empty', 'chatflow-forms'),
+  starts_with: __('starts with', 'chatflow-forms'),
+  matches: __('matches pattern', 'chatflow-forms'),
+  date_before: __('date is before', 'chatflow-forms'),
+  date_after: __('date is after', 'chatflow-forms'),
+  age_gte: __('age is at least', 'chatflow-forms'),
+};
+const actions = ['show', 'hide', 'jump', 'end', 'require', 'unrequire', 'set_variable'] as const;
+export const actionLabels: Record<(typeof actions)[number], string> = {
+  show: __('Show field', 'chatflow-forms'),
+  hide: __('Hide field', 'chatflow-forms'),
+  jump: __('Jump to field', 'chatflow-forms'),
+  end: __('End with', 'chatflow-forms'),
+  require: __('Make field required', 'chatflow-forms'),
+  unrequire: __('Make field optional', 'chatflow-forms'),
+  set_variable: __('Set variable', 'chatflow-forms'),
+};
+const actionChoices = () => actions.map((action) => ({ value: action, label: actionLabels[action] }));
+const sourceLabels: Record<'answer' | 'hidden' | 'url', string> = {
+  answer: __('Answer', 'chatflow-forms'),
+  hidden: __('Hidden field', 'chatflow-forms'),
+  url: __('URL parameter', 'chatflow-forms'),
+};
+const operationLabels: Record<'set' | 'add' | 'subtract', string> = {
+  set: __('Set to', 'chatflow-forms'),
+  add: __('Add', 'chatflow-forms'),
+  subtract: __('Subtract', 'chatflow-forms'),
+};
 export function firstCondition(schema: FormSchema): Condition {
   return { field: schema.steps[0]?.key ?? 'field', source: 'answer', op: 'eq', value: '' };
 }
@@ -102,7 +143,7 @@ export function ConditionEditor({
       <Select
         label={__('Operand source', 'chatflow-forms')}
         value={value.source ?? 'answer'}
-        choices={['answer', 'hidden', 'url'].map((source) => ({ value: source, label: source }))}
+        choices={(['answer', 'hidden', 'url'] as const).map((source) => ({ value: source, label: sourceLabels[source] }))}
         onChange={(source) => onChange({ ...value, source: source as NonNullable<Predicate['source']> })}
       />
       {(value.source ?? 'answer') === 'answer' ? (
@@ -122,7 +163,7 @@ export function ConditionEditor({
       <Select
         label={__('Operator', 'chatflow-forms')}
         value={value.op}
-        choices={operators.map((op) => ({ value: op, label: op }))}
+        choices={operators.map((op) => ({ value: op, label: operatorLabels[op] }))}
         onChange={(op) =>
           onChange({
             ...value,
@@ -208,19 +249,16 @@ export function RuleEditor({
             onChange={(condition) => set(index, { ...rule, if: condition })}
           />
           {rule.then.action === 'set_variable' ? (<>
-            <Select label={__('Action', 'chatflow-forms')} value="set_variable" choices={['show', 'hide', 'jump', 'end', 'require', 'unrequire', 'set_variable'].map(action => ({ value: action, label: action }))} onChange={action => set(index, { ...rule, then: { action: action as 'jump', to: schema.steps[0]?.id ?? '' } })} />
+            <Select label={__('Action', 'chatflow-forms')} value="set_variable" choices={actionChoices()} onChange={action => set(index, { ...rule, then: { action: action as 'jump', to: schema.steps[0]?.id ?? '' } })} />
             <Select label={__('Variable', 'chatflow-forms')} value={rule.then.key} choices={(schema.variables ?? []).map(v => ({ value: v.key, label: v.key }))} onChange={key => set(index, { ...rule, then: { ...scoring(rule), key } })} />
-            <Select label={__('Operation', 'chatflow-forms')} value={rule.then.operation} choices={['set', 'add', 'subtract'].map(value => ({ value, label: value }))} onChange={operation => set(index, { ...rule, then: { ...scoring(rule), operation: operation as 'set' | 'add' | 'subtract' } })} />
+            <Select label={__('Operation', 'chatflow-forms')} value={rule.then.operation} choices={(['set', 'add', 'subtract'] as const).map(value => ({ value, label: operationLabels[value] }))} onChange={operation => set(index, { ...rule, then: { ...scoring(rule), operation: operation as 'set' | 'add' | 'subtract' } })} />
             <Field label={__('Value', 'chatflow-forms')} value={String(rule.then.value ?? '')} onChange={value => set(index, { ...rule, then: { ...scoring(rule), value: schema.variables?.find(v => v.key === scoring(rule).key)?.type === 'number' ? Number(value) : schema.variables?.find(v => v.key === scoring(rule).key)?.type === 'boolean' ? value === 'true' : value } })} />
           </>) : (
             <>
               <Select
                 label={__('Action', 'chatflow-forms')}
                 value={rule.then.action}
-                choices={['show', 'hide', 'jump', 'end', 'require', 'unrequire', 'set_variable'].map((action) => ({
-                  value: action,
-                  label: action,
-                }))}
+                choices={actionChoices()}
                 onChange={(action) =>
                   set(index, {
                     ...rule,

@@ -14,11 +14,12 @@ export function UploadInput({ step, upload, onAnswer, disabled, phrase, value, e
   const [busy, setBusy] = useState(false); const [failed, setFailed] = useState(false); const [name, setName] = useState('');
   const max = Math.min(52428800, step.validation?.maxBytes ?? 10485760);
   return <div><label for={`input-${step.id}`}>{step.label}</label><input id={`input-${step.id}`} type="file" disabled={disabled || busy || !upload} accept={step.validation?.mimeTypes?.join(',')} onChange={async event => {
-    const file = event.currentTarget.files?.[0]; if (!file || !upload) return;
-    setFailed(false); if (file.size > max || file.size < 1) { setFailed(true); return; }
+    const input = event.currentTarget; const file = input.files?.[0]; if (!file || !upload) return;
+    setFailed(false); if (file.size > max || file.size < 1) { setFailed(true); input.value = ''; return; }
     setBusy(true);
     try { const result = await upload(file); setName(result.name); onAnswer(result.uploadId); }
-    catch { setFailed(true); }
+    // Clear the picker so choosing the same file again retries the upload.
+    catch { setFailed(true); input.value = ''; }
     finally { setBusy(false); }
   }} /><small>{phrase('uploadLimit')} {Math.round(max / 1048576 * 10) / 10} MB</small>{busy && <p role="status">{phrase('uploading')}</p>}{failed && <p role="alert">{phrase('uploadFailed')}</p>}{error && <p role="alert">{error}</p>}{!upload && <p role="alert">{phrase('unsupported')}</p>}{(name || typeof value === 'string') && <p>{name || phrase('uploadSaved')}</p>}{(!step.required || typeof value === 'string') && <button disabled={disabled || busy || !upload} onClick={() => onAnswer(value ?? null)}>{phrase('continue')}</button>}</div>;
 }

@@ -117,8 +117,14 @@ final class PrivacyModule implements Module {
 	 * @return array<string,mixed>
 	 */
 	public function erasePersonal( string $email, int $page = 1 ): array {
-		// Always consume the first surviving batch: deletion must not shift an offset.
-		$ids      = $this->emailIds( $email, 1 );
+		// A cursor past the last examined ID: deletions cannot shift it, and rows that are kept
+		// (no matching email field) cannot be returned again and loop the eraser forever.
+		$cursor_key = 'cff_erase_' . hash( 'sha256', strtolower( $email ) );
+		if ( 1 === $page ) {
+			delete_transient( $cursor_key ); }
+		$ids = $this->emailIds( $email, 1, (int) get_transient( $cursor_key ) );
+		if ( $ids ) {
+			set_transient( $cursor_key, max( $ids ), 3600 ); }
 		$removed  = false;
 		$retained = false;
 		$messages = array();
@@ -143,18 +149,19 @@ final class PrivacyModule implements Module {
 	/**
 	 * @return list<int>
 	 */
-	private function emailIds( string $email, int $page ): array {
+	private function emailIds( string $email, int $page, int $after = 0 ): array {
 		global $wpdb;
 		if ( ! is_email( $email ) ) {
 			return array(); }
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT s.id FROM {$wpdb->prefix}cff_submissions s JOIN {$wpdb->prefix}cff_submission_values v ON v.submission_id=s.id WHERE v.value_text=%s ORDER BY s.id LIMIT 100 OFFSET %d", strtolower( $email ), ( $page - 1 ) * 100 ) ) );
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT s.id FROM {$wpdb->prefix}cff_submissions s JOIN {$wpdb->prefix}cff_submission_values v ON v.submission_id=s.id WHERE v.value_text=%s AND s.id>%d ORDER BY s.id LIMIT 100 OFFSET %d", strtolower( $email ), $after, ( $page - 1 ) * 100 ) ) );
 	}
 	private function matchesEmailField( \ChatFlow\Submissions\Submission $submission, string $email ): bool {
 		$form = $this->forms->getVersion( $submission->formId(), $submission->formVersion() );
 		if ( ! $form ) {
 			return false; }
 		foreach ( $form->schema()['steps'] as $step ) {
-			if ( 'email' === $step['type'] && strtolower( (string) ( $submission->answers()[ $step['key'] ] ?? '' ) ) === strtolower( $email ) ) {
+			$is_email = 'email' === $step['type'] || ( 'short_text' === $step['type'] && 'email' === ( $step['validation']['format'] ?? '' ) );
+			if ( $is_email && strtolower( (string) ( $submission->answers()[ $step['key'] ] ?? '' ) ) === strtolower( $email ) ) {
 				return true; }
 		}
 		return false;
@@ -168,9 +175,8 @@ final class PrivacyModule implements Module {
 			$ids    = $wpdb->get_col( "SELECT DISTINCT form_id FROM {$wpdb->prefix}cff_submissions" );
 			foreach ( $ids as $id ) {
 				$form = $this->forms->getDraft( (int) $id );
-				if ( ! $form ) {
-						continue; }
-				$privacy = $form->settings()['privacy'] ?? array();
+				// Trashed or deleted forms keep their submissions under the global retention policy.
+				$privacy = $form ? ( $form->settings()['privacy'] ?? array() ) : array();
 				if ( ! ( $privacy['retentionEnabled'] ?? $global['retention']['enabled'] ) ) {
 					continue; }
 				$days     = $privacy['retentionDays'] ?? $global['retention']['days'];
@@ -187,9 +193,37 @@ final class PrivacyModule implements Module {
 					$criteria['status']        = array( 'partial', 'abandoned' );
 					$purge->queue( $purge->bounds( $criteria ), $criteria, 0 ); }
 			}
-			Database::check( $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}cff_rate_limits WHERE expires_at<%s LIMIT 1000", Database::now() ) ) );
-			// Keep completed receipt rows until their submission/session is explicitly removed.
-			Database::check( $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}cff_requests WHERE expires_at<%s LIMIT 1000", Database::now() ) ) );
+			// Batched so busy sites cannot outgrow a single daily pass; bounded per run. Completed
+			// receipt rows have no expiry and stay until their submission/session is removed.
+			foreach ( array( 'cff_rate_limits', 'cff_requests' ) as $table ) {
+				for ( $i = 0; $i < 100; $i++ ) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed table names.
+					$deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}{$table} WHERE expires_at<%s LIMIT 1000", Database::now() ) );
+					Database::check( $deleted );
+					if ( $deleted < 1000 ) {
+						break; }
+				}
+			}
+			$this->purgeOrphanSessions();
+	}
+	/** Closed or expired sessions that never produced a submission, with their events and links. */
+	public function purgeOrphanSessions( int $days = 30 ): int {
+		global $wpdb;
+		$removed = 0;
+		for ( $i = 0; $i < 100; $i++ ) {
+			$ids = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}cff_sessions WHERE submission_id IS NULL AND status IN ('closed','expired') AND COALESCE(closed_at,expires_at)<%s ORDER BY id LIMIT 500", gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS ) ) ) );
+			if ( ! $ids ) {
+				break; }
+			$in = implode( ',', $ids );
+			foreach ( array( 'cff_events', 'cff_magic_links' ) as $table ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- IDs are integers from the query above.
+				Database::check( $wpdb->query( "DELETE FROM {$wpdb->prefix}{$table} WHERE session_id IN ({$in})" ) ); }
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- IDs are integers from the query above.
+			$deleted = $wpdb->query( "DELETE FROM {$wpdb->prefix}cff_sessions WHERE id IN ({$in})" );
+			Database::check( $deleted );
+			$removed += (int) $deleted;
+		}
+		return $removed;
 	}
 	public function abandon(): void {
 		global $wpdb;

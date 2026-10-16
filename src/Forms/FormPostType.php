@@ -12,6 +12,8 @@ final class FormPostType {
 				),
 				'public'       => false,
 				'show_ui'      => true,
+				// The builder is the only editing UI; the raw classic screens are redirected in AdminModule.
+				'show_in_menu' => false,
 				'show_in_rest' => false,
 				'rewrite'      => false,
 				'query_var'    => false,

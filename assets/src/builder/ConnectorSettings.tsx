@@ -19,6 +19,12 @@ export const connectorLabels: Record<ConnectorType, string> = {
   ga4: 'Google Analytics 4',
   meta_capi: 'Meta Conversions API',
 };
+/** Delivery events shared by connectors and webhooks. */
+export const deliveryEventLabels: Record<'completed' | 'partial' | 'abandoned', string> = {
+  completed: __('Completed submission', 'chatflow-forms'),
+  partial: __('Partial submission saved', 'chatflow-forms'),
+  abandoned: __('Abandoned submission', 'chatflow-forms'),
+};
 /** Which per-form options each provider uses; mirrors the PHP connector checks. */
 export const connectorNeeds: Record<ConnectorType, { email?: 'required' | 'optional'; phone?: boolean; consent: 'required' | 'optional'; fields?: string; list?: boolean; tags?: boolean; eventName?: string; message?: boolean }> = {
   slack: { consent: 'optional', message: true },
@@ -61,7 +67,7 @@ export function ConnectorSettings({ schema, integrations, onChange }: { schema: 
             {(['completed', 'partial', 'abandoned'] as const).map((event) => (
               <Check
                 key={event}
-                label={event}
+                label={deliveryEventLabels[event]}
                 value={(connector.events as string[]).includes(event)}
                 onChange={(checked) => change({ events: (checked ? [...connector.events, event] : connector.events.filter((item) => item !== event)) as Connector['events'] })}
               />

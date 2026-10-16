@@ -3,9 +3,10 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, errorMessage } from '../builder/api';
 import { Button, Field, Notice, Select } from '../builder/controls';
+import { defaultRange } from './analytics-dates';
 
 export interface FormAnalyticsReport {
   from: string; to: string; timezone: string; views: number; starts: number; completions: number;
@@ -17,9 +18,11 @@ export interface FormAnalyticsReport {
 }
 /** Per-form step funnel, experiment variants and answer distributions from anonymous events. */
 export function FormAnalytics({ api }: {api: AdminApi}) {
-  const today = new Date().toISOString().slice(0, 10);
-  const [from, setFrom] = useState(new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10));
-  const [to, setTo] = useState(today), [formId, setFormId] = useState('');
+  // Same default period as the overview (last 30 days), but in the site time zone this report uses.
+  const timezone = api.config.timezone || 'UTC';
+  const [initial] = useState(() => defaultRange(timezone));
+  const [from, setFrom] = useState(initial.from);
+  const [to, setTo] = useState(initial.to), [formId, setFormId] = useState('');
   const [forms, setForms] = useState<{id: number; title: string}[]>([]), [search, setSearch] = useState('');
   const [page, setPage] = useState(1), [pages, setPages] = useState(0);
   const [report, setReport] = useState<FormAnalyticsReport | null>(null), [error, setError] = useState('');
@@ -39,8 +42,8 @@ export function FormAnalytics({ api }: {api: AdminApi}) {
       <Select label={__('Form', 'chatflow-forms')} value={formId} choices={[{value:'', label:__('Choose a form', 'chatflow-forms')}, ...forms.map((form) => ({value:String(form.id), label:form.title}))]} onChange={(id) => {setFormId(id); setReport(null);}} />
       <Button disabled={page <= 1} onClick={() => setPage(page - 1)}>{__('Previous forms', 'chatflow-forms')}</Button>
       <Button disabled={page >= pages} onClick={() => setPage(page + 1)}>{__('Next forms', 'chatflow-forms')}</Button>
-      <Field type="date" label={__('From', 'chatflow-forms')} value={from} onChange={setFrom} />
-      <Field type="date" label={__('To (inclusive)', 'chatflow-forms')} value={to} onChange={setTo} />
+      <Field type="date" label={__('From (site timezone)', 'chatflow-forms')} value={from} onChange={setFrom} />
+      <Field type="date" label={__('To (site timezone, inclusive)', 'chatflow-forms')} value={to} onChange={setTo} />
       <Button variant="primary" disabled={busy || !formId || !from || !to} onClick={async () => {
         setBusy(true); setError(''); setReport(null);
         try { setReport(await api.request<FormAnalyticsReport>(`admin/analytics/form?formId=${formId}&from=${from}&to=${to}`)); }
@@ -50,11 +53,11 @@ export function FormAnalytics({ api }: {api: AdminApi}) {
     {busy && <p role="status">{__('Loading analytics…', 'chatflow-forms')}</p>}
     {report && <>
       <section className="cff-card"><h2>{__('Funnel', 'chatflow-forms')}</h2>
-        <p>{report.from} – {report.to} ({report.timezone})</p>
+        <p>{report.from} – {report.to} · {sprintf(/* translators: %s: site time zone */ __('Dates in site timezone (%s)', 'chatflow-forms'), report.timezone)}</p>
         <dl>{[
-          [__('Recorded views', 'chatflow-forms'), report.views], [__('Server starts', 'chatflow-forms'), report.starts],
-          [__('Server completions', 'chatflow-forms'), report.completions], [__('Period completion/start ratio', 'chatflow-forms'), report.completionRate === null ? '—' : `${report.completionRate}%`],
-          [__('Average completion seconds', 'chatflow-forms'), Math.round(report.averageDurationMs / 1000)],
+          [__('Views (impressions)', 'chatflow-forms'), report.views], [__('Starts', 'chatflow-forms'), report.starts],
+          [__('Completed', 'chatflow-forms'), report.completions], [__('Completion rate (completed ÷ starts)', 'chatflow-forms'), report.completionRate === null ? '—' : `${report.completionRate}%`],
+          [__('Average completion time', 'chatflow-forms'), report.completions ? `${Math.round(report.averageDurationMs / 1000)} s` : '—'],
         ].map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
         <p>{__('Starts and completions are independent period totals, not a cohort conversion rate; resumed sessions can make the ratio exceed 100%. Opt-out, consent, DNT/GPC and retention can reduce recorded views.', 'chatflow-forms')}</p>
       </section>
