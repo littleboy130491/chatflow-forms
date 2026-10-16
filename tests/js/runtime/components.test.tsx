@@ -2,7 +2,7 @@
 /** @jsxImportSource preact */
 import { render, createElement } from 'preact';
 import { act } from 'preact/test-utils';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FieldInput, normalizePhone, toggleChoice } from '../../../assets/src/runtime/inputs';
 import { interpolateLink, Markdown, reactions, safeLink } from '../../../assets/src/runtime/content';
 import { phrases } from '../../../assets/src/runtime/i18n';
@@ -17,6 +17,9 @@ import type { Step } from '../../../assets/src/runtime/types';
 let host: HTMLDivElement;
 beforeEach(() => { host = document.createElement('div'); document.body.appendChild(host); localStorage.clear(); });
 afterEach(() => { render(null, host); host.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+// Preact schedules after-paint work with a 100 ms fallback timer that calls cancelAnimationFrame;
+// let it run before jsdom tears down its globals so it cannot throw after the file ends.
+afterAll(() => new Promise<void>(resolve => { setTimeout(resolve, 150); }));
 const field = (type: Step['type'], props: Partial<Step> = {}): Step => ({ id: 'field', key: 'field', label: 'Accessible label', messages: [], type, ...props });
 const choice = field('single_choice', { options: [{ id: 'a', value: 'a', label: 'A' }, { id: 'b', value: 'b', label: 'B' }, { id: 'other', value: 'other', label: 'Other', isOther: true }] });
 async function mountInput(step: Step, value?: unknown, disabled = false) {
