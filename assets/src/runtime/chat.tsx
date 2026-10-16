@@ -17,6 +17,11 @@ export function revealedMessageCount(reveal: { stepId: string | null; count: num
   return reveal.stepId === activeId ? reveal.count : 0;
 }
 
+/** A statement shows a button only when the builder asks to wait (autoContinue: false); otherwise it continues by itself. */
+export function waitsForButton(step: Pick<Step, 'type' | 'settings'>): boolean {
+  return step.type !== 'statement' || step.settings?.autoContinue === false;
+}
+
 /** Focus the step's primary control: the text input over a phone country select, and the submit button over a summary's Edit links. */
 export function focusActive(root: HTMLElement | null, type?: Step['type']): void {
   if (!root) return;
@@ -65,8 +70,9 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   useEffect(() => {
     if (!enabled || state.phase !== 'ready') return;
     focusActive(active.current, step?.type);
-    if (step?.type === 'statement' && step.settings?.autoContinue) {
-      const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 250);
+    if (step?.type === 'statement' && waitsForButton(step) === false) {
+      // Statements flow straight on after their messages, like a chat; a short pause lets the last one be read.
+      const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 600);
       return () => clearTimeout(timer);
     }
   }, [state.activeId, enabled, state.phase, step?.settings?.autoContinue, reduced, controller]);
@@ -117,7 +123,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
           {step.helpText && <p id={`help-${step.id}`} className="help"><Markdown text={interpolateRich(step.helpText)} /></p>}
           {state.fieldError && <p id={`error-${step.id}`} className="bubble bot" role="alert">{phrase(state.fieldError)}</p>}
           {step.type === 'summary' && summary()}
-          {['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
+          {step.type === 'statement' && !waitsForButton(step) ? null : ['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
           {controller.canSkip && <button className="link-button" disabled={state.busy || state.conflict} onClick={() => void controller.answer(null)}>{phrase('skip')}</button>}
         </>}
       </div>}

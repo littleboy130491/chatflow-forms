@@ -256,9 +256,6 @@ msgstr "Masa cookie atribusi (hari)"
 msgid "Auto (follow visitor device)"
 msgstr "Otomatis (ikuti perangkat pengunjung)"
 
-msgid "Auto-continue statement"
-msgstr "Lanjutkan pernyataan secara otomatis"
-
 msgid "Auto-open after seconds (blank = off)"
 msgstr "Buka otomatis setelah detik (kosong = nonaktif)"
 
@@ -2523,6 +2520,9 @@ msgstr "Frasa khusus pengunjung"
 
 msgid "Visitor text"
 msgstr "Teks pengunjung"
+
+msgid "Wait for the visitor to press a button"
+msgstr "Tunggu pengunjung menekan tombol"
 
 msgid "Wallpaper"
 msgstr "Wallpaper"

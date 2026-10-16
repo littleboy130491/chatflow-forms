@@ -11162,10 +11162,13 @@ function oa(e, t = "normal", n = !1) {
 function sa(e, t) {
 	return e.stepId === t ? e.count : 0;
 }
-function ca(e, t) {
+function ca(e) {
+	return e.type !== "statement" || e.settings?.autoContinue === !1;
+}
+function la(e, t) {
 	e && ((!t || t === "summary" || t === "statement" ? e.querySelector(":scope > button:not(.link-button)") : e.querySelector("input:not([type=hidden]):not([type=file]),textarea") ?? e.querySelector("select,input[type=file],button:not(.link-button)")) ?? e.querySelector("button"))?.focus({ preventScroll: !0 });
 }
-function la({ controller: e, onClose: t, closable: n = !1 }) {
+function ua({ controller: e, onClose: t, closable: n = !1 }) {
 	let [, r] = B(0), [i, a] = B({
 		stepId: null,
 		count: 0
@@ -11193,10 +11196,10 @@ function la({ controller: e, onClose: t, closable: n = !1 }) {
 		f,
 		y?.schema.bot.typingSpeed
 	]), V(() => {
-		if (T && v.phase === "ready" && (ca(m.current, x?.type), x?.type === "statement" && x.settings?.autoContinue)) {
+		if (T && v.phase === "ready" && (la(m.current, x?.type), x?.type === "statement" && ca(x) === !1)) {
 			let t = setTimeout(() => {
 				e.answer(null);
-			}, f ? 0 : 250);
+			}, f ? 0 : 600);
 			return () => clearTimeout(t);
 		}
 	}, [
@@ -11212,7 +11215,7 @@ function la({ controller: e, onClose: t, closable: n = !1 }) {
 		o && _.current?.querySelector("button:not([disabled])")?.focus({ preventScroll: !0 });
 	}, [o]);
 	let O = () => {
-		s(!1), requestAnimationFrame(() => ca(m.current, x?.type));
+		s(!1), requestAnimationFrame(() => la(m.current, x?.type));
 	};
 	V(() => {
 		h.current?.scrollIntoView?.({
@@ -11436,7 +11439,7 @@ function la({ controller: e, onClose: t, closable: n = !1 }) {
 								children: b(v.fieldError)
 							}),
 							x.type === "summary" && A(),
-							["statement", "summary"].includes(x.type) ? /* @__PURE__ */ Z("button", {
+							x.type === "statement" && !ca(x) ? null : ["statement", "summary"].includes(x.type) ? /* @__PURE__ */ Z("button", {
 								disabled: v.busy,
 								onClick: async () => {
 									await e.answer(null), x.type === "summary" && !e.state.activeId && await e.submit(c);
@@ -11587,7 +11590,7 @@ function la({ controller: e, onClose: t, closable: n = !1 }) {
 }
 //#endregion
 //#region assets/src/shared/prefill.ts
-function ua(e, t) {
+function da(e, t) {
 	let n = new URLSearchParams(e), r = {};
 	for (let e of t.steps) {
 		if ([
@@ -11612,8 +11615,8 @@ function ua(e, t) {
 }
 //#endregion
 //#region assets/src/runtime/persistence.ts
-var da = class {
-	constructor(e = fa(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
+var fa = class {
+	constructor(e = pa(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
 		I(this, "store", void 0), I(this, "doc", void 0), I(this, "secure", void 0), I(this, "now", void 0), this.store = e, this.doc = t, this.secure = n, this.now = r;
 	}
 	key(e, t) {
@@ -11627,7 +11630,7 @@ var da = class {
 				let r = this.store.key(n);
 				if (!r?.startsWith(`cff:session:${e}:`)) continue;
 				let i = JSON.parse(this.store.getItem(r) ?? "null");
-				!pa(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
+				!ma(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
 			}
 			return t;
 		} catch {
@@ -11667,37 +11670,37 @@ var da = class {
 		} catch {}
 	}
 };
-function fa() {
+function pa() {
 	try {
 		return globalThis.localStorage;
 	} catch {
 		return;
 	}
 }
-function pa(e) {
+function ma(e) {
 	if (!e || typeof e != "object") return !1;
 	let t = e;
 	return Number.isSafeInteger(t.formId) && Number.isSafeInteger(t.version) && typeof t.sessionId == "string" && typeof t.resumeToken == "string" && /^r1\.[A-Za-z0-9_-]+\.\d+\.[A-Za-z0-9_-]+$/.test(t.resumeToken) && typeof t.expiresAt == "string" && Number.isFinite(Date.parse(t.expiresAt)) && Number.isSafeInteger(t.revision) && !!t.answers && typeof t.answers == "object" && !Array.isArray(t.answers) && Array.isArray(t.acknowledged) && t.acknowledged.every((e) => typeof e == "string") && typeof t.dirty == "boolean" && !!t.stepTimings && typeof t.stepTimings == "object";
 }
 //#endregion
 //#region assets/src/tracking/index.ts
-var ma = "cff_ft";
-function ha(e) {
+var ha = "cff_ft";
+function ga(e) {
 	return !!e.enabled && !(e.consentRequired && !e.consentGranted) && (e.respectDnt === !1 || globalThis.navigator?.doNotTrack !== "1");
 }
-var ga = [
+var _a = [
 	"source",
 	"medium",
 	"campaign",
 	"term",
 	"content"
-], _a = [
+], va = [
 	"gclid",
 	"fbclid",
 	"msclkid",
 	"ttclid"
 ];
-function va(e) {
+function ya(e) {
 	try {
 		let t = new URL(e);
 		return ["http:", "https:"].includes(t.protocol) ? `${t.origin}${t.pathname}`.slice(0, 2048) : "";
@@ -11705,14 +11708,14 @@ function va(e) {
 		return "";
 	}
 }
-function ya(e = {}, t = fa(), n = {
+function ba(e = {}, t = pa(), n = {
 	href: globalThis.location?.href ?? "",
 	referrer: globalThis.document?.referrer ?? ""
 }, r = Date.now()) {
-	if (!ha(e)) return Sa(t), {};
+	if (!ga(e)) return Ca(t), {};
 	try {
 		let e = JSON.parse(t?.getItem("cff_ft") ?? "null");
-		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return ba(e);
+		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return xa(e);
 	} catch {}
 	let i;
 	try {
@@ -11722,70 +11725,70 @@ function ya(e = {}, t = fa(), n = {
 	}
 	if (!["http:", "https:"].includes(i.protocol)) return {};
 	let a = {}, o = {};
-	for (let e of ga) {
+	for (let e of _a) {
 		let t = i.searchParams.get(`utm_${e}`);
 		t && (a[e] = t.slice(0, 255));
 	}
-	for (let e of _a) {
+	for (let e of va) {
 		let t = i.searchParams.get(e);
 		t && (o[e] = t.slice(0, 255));
 	}
 	let s = {
-		landingPage: va(n.href),
-		landingReferrer: va(n.referrer),
+		landingPage: ya(n.href),
+		landingReferrer: ya(n.referrer),
 		utm: a,
 		clickIds: o,
 		expiresAt: r + Math.min(90, Math.max(1, Number.isFinite(e.days) ? e.days : 30)) * 864e5
 	};
 	try {
-		t?.setItem(ma, JSON.stringify(s));
+		t?.setItem(ha, JSON.stringify(s));
 	} catch {}
-	return ba(s);
+	return xa(s);
 }
-function ba(e) {
+function xa(e) {
 	let t = {}, n = {};
-	for (let n of ga) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
-	for (let t of _a) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
+	for (let n of _a) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
+	for (let t of va) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
 	return {
-		landingPage: va(e.landingPage ?? ""),
-		landingReferrer: va(e.landingReferrer ?? ""),
+		landingPage: ya(e.landingPage ?? ""),
+		landingReferrer: ya(e.landingReferrer ?? ""),
 		utm: t,
 		clickIds: n
 	};
 }
-function xa(e = {}) {
-	return ha(e) ? {
-		...ya(e),
+function Sa(e = {}) {
+	return ga(e) ? {
+		...ba(e),
 		pageTitle: globalThis.document?.title?.slice(0, 500) ?? "",
-		pageUrl: va(globalThis.location?.href ?? ""),
-		referrer: va(globalThis.document?.referrer ?? ""),
+		pageUrl: ya(globalThis.location?.href ?? ""),
+		referrer: ya(globalThis.document?.referrer ?? ""),
 		locale: globalThis.navigator?.language?.slice(0, 35) ?? "",
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		screen: globalThis.screen ? `${screen.width}x${screen.height}` : ""
-	} : (Sa(), {});
+	} : (Ca(), {});
 }
-function Sa(e = fa()) {
+function Ca(e = pa()) {
 	try {
-		e?.removeItem(ma);
+		e?.removeItem(ha);
 	} catch {}
 }
-typeof window < "u" && window.cffTracking?.enabled && ya(window.cffTracking);
+typeof window < "u" && window.cffTracking?.enabled && ba(window.cffTracking);
 //#endregion
 //#region assets/src/runtime/engagement.ts
-function Ca(e, t, n) {
+function wa(e, t, n) {
 	let r = globalThis.navigator;
 	return e.enabled && !n && !r?.globalPrivacyControl && !(e.respectDnt && r?.doNotTrack === "1") && (!e.consentRequired || t);
 }
-var wa = class {
+var Ta = class {
 	constructor(e, t, n, r) {
 		I(this, "api", void 0), I(this, "config", void 0), I(this, "consent", void 0), I(this, "optOut", void 0), I(this, "events", []), I(this, "sent", 0), I(this, "busy", !1), this.api = e, this.config = t, this.consent = n, this.optOut = r;
 	}
 	add(e) {
-		Ca(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
+		wa(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
 	}
 	async flush(e) {
 		if (!this.busy) {
-			if (!Ca(this.config, this.consent(), this.optOut())) this.events = [];
+			if (!wa(this.config, this.consent(), this.optOut())) this.events = [];
 			else {
 				this.busy = !0;
 				try {
@@ -11805,13 +11808,13 @@ var wa = class {
 			}
 		}
 	}
-}, Ta = (e) => [
+}, Ea = (e) => [
 	"statement",
 	"summary",
 	"media"
-].includes(e.type), Ea = class {
+].includes(e.type), Da = class {
 	async loadEngagement() {
-		this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version && (this.engagement = null, this.analytics = null, this.state.form.features.engagement && (this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version), this.analytics = new wa(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
+		this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version && (this.engagement = null, this.analytics = null, this.state.form.features.engagement && (this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version), this.analytics = new Ta(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
 			try {
 				return this.options.analyticsOptOut === !0 || localStorage.getItem("cff_analytics_optout") === "1";
 			} catch {
@@ -11819,7 +11822,7 @@ var wa = class {
 			}
 		})), this.engagementVersion = this.state.form.form.version);
 	}
-	constructor(e, t, n = new da(), r = () => {}) {
+	constructor(e, t, n = new fa(), r = () => {}) {
 		I(this, "options", void 0), I(this, "api", void 0), I(this, "storage", void 0), I(this, "emit", void 0), I(this, "state", {
 			phase: "loading",
 			form: null,
@@ -11883,7 +11886,7 @@ var wa = class {
 				return;
 			}
 			this.prefill = {
-				...ua(globalThis.location?.search ?? "", this.state.form.form.schema),
+				...da(globalThis.location?.search ?? "", this.state.form.form.schema),
 				...this.prefill
 			}, await this.loadEngagement();
 			let n = this.state.form.form;
@@ -11906,7 +11909,7 @@ var wa = class {
 	}
 	displayBeforeCurrent() {
 		let e = this.state.form.form.schema.steps;
-		return (this.session?.visited ?? []).filter((t) => t !== this.session?.currentStepId && e.some((e) => e.id === t && Ta(e)));
+		return (this.session?.visited ?? []).filter((t) => t !== this.session?.currentStepId && e.some((e) => e.id === t && Ea(e)));
 	}
 	async adopt(e) {
 		if (!this.disposed) {
@@ -11941,7 +11944,7 @@ var wa = class {
 						this.pendingStart = {
 							token: t.startToken,
 							key: pe(),
-							meta: xa(this.options.tracking ?? globalThis.window?.cffTracking),
+							meta: Sa(this.options.tracking ?? globalThis.window?.cffTracking),
 							prefill: {},
 							version: e.version
 						};
@@ -11971,7 +11974,7 @@ var wa = class {
 			t = Mi(e.form.schema, n, this.context, "partial");
 		}
 		this.state.path = t, this.state.answers = t.answers, t.errors.length && (this.state.error = "invalid", this.state.phase = "error");
-		let n = this.editing ?? t.visited.find((t) => e.form.schema.steps.some((e) => e.id === t && Ta(e)) && !this.state.acknowledged.includes(t)) ?? t.currentStepId;
+		let n = this.editing ?? t.visited.find((t) => e.form.schema.steps.some((e) => e.id === t && Ea(e)) && !this.state.acknowledged.includes(t)) ?? t.currentStepId;
 		this.state.activeId !== n && (this.state.activeId = n ?? null, this.stepStarted = Date.now(), n && this.event("cff:step", { stepId: n })), this.notify();
 	}
 	get activeStep() {
@@ -11979,7 +11982,7 @@ var wa = class {
 	}
 	get canSkip() {
 		let e = this.activeStep;
-		if (!e || e.type === "consent" || Ta(e)) return !1;
+		if (!e || e.type === "consent" || Ea(e)) return !1;
 		let t = Mi(this.state.form.form.schema, {
 			...this.state.answers,
 			[e.key]: null
@@ -11998,7 +12001,7 @@ var wa = class {
 	async answer(e) {
 		let t = this.activeStep;
 		if (!t || this.state.busy || this.pending?.method === "POST" || this.state.conflict) return;
-		if (this.state.fieldError = null, Ta(t)) {
+		if (this.state.fieldError = null, Ea(t)) {
 			this.timings[t.id] = (this.timings[t.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted), this.state.acknowledged = [.../* @__PURE__ */ new Set([...this.state.acknowledged, t.id])], this.compute(), this.persist();
 			return;
 		}
@@ -12014,13 +12017,13 @@ var wa = class {
 	edit(e) {
 		if (this.state.busy || this.state.phase !== "ready" || this.pending?.method === "POST") return;
 		let t = this.state.path, n = this.state.form?.form.schema.steps.find((t) => t.id === e);
-		if (!t?.visited.includes(e) || !n || Ta(n) || n.type === "hidden" || n.type === "calculated") return;
+		if (!t?.visited.includes(e) || !n || Ea(n) || n.type === "hidden" || n.type === "calculated") return;
 		this.editing = e, this.state.fieldError = null;
 		let r = t.visited.indexOf(e);
 		this.state.acknowledged = this.state.acknowledged.filter((e) => t.visited.indexOf(e) < r), this.compute();
 	}
 	back() {
-		let e = this.visibleSteps.filter((e) => !Ta(e) && e.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, e.key)), t = e[e.length - 1];
+		let e = this.visibleSteps.filter((e) => !Ea(e) && e.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, e.key)), t = e[e.length - 1];
 		t && (this.edit(t.id), this.session && (this.analytics?.add({
 			event: "back",
 			stepId: t.id
@@ -12057,7 +12060,7 @@ var wa = class {
 		].includes(e.type) ? void 0 : this.prefill[e.key]) ?? e.defaultValue;
 	}
 	inputAnswers() {
-		let e = new Set(this.state.form.form.schema.steps.filter((e) => !Ta(e) && e.type !== "hidden" && e.type !== "calculated").map((e) => e.key));
+		let e = new Set(this.state.form.form.schema.steps.filter((e) => !Ea(e) && e.type !== "hidden" && e.type !== "calculated").map((e) => e.key));
 		return Object.fromEntries(Object.entries(this.state.answers).filter(([t]) => e.has(t)));
 	}
 	async magicLink(e) {
@@ -12283,7 +12286,7 @@ var wa = class {
 		}
 		this.session || (this.state.phase = "error"), this.pending?.method === "POST" && (t.status === 0 || t.status >= 500 || t.code.includes("pending")) && (this.state.error = "submissionPending"), this.state.error !== "expired" && this.persist(), this.notify();
 	}
-}, Da = /* @__PURE__ */ new Set([
+}, Oa = /* @__PURE__ */ new Set([
 	"color",
 	"background-color",
 	"border-color",
@@ -12309,17 +12312,17 @@ var wa = class {
 	"width",
 	"height",
 	"opacity"
-]), Oa = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
-function ka(e) {
-	if (!e || Oa.test(e) || /var\s*\(/i.test(e)) return;
+]), ka = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
+function Aa(e) {
+	if (!e || ka.test(e) || /var\s*\(/i.test(e)) return;
 	let t = document.createElement("span").style;
 	return t.color = e, t.color || void 0;
 }
-function Aa(e) {
+function ja(e) {
 	return e && /^[\w\s,"'-]{1,255}$/.test(e) ? e : void 0;
 }
-function ja(e) {
-	if (!e || e.length > 2e4 || Oa.test(e)) return "";
+function Ma(e) {
+	if (!e || e.length > 2e4 || ka.test(e)) return "";
 	let t = e.replace(/\/\*[\s\S]*?\*\//g, ""), n = [...t.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
 	return t.replace(/([^{}]+)\{([^{}]*)\}/g, "").trim() ? "" : n.map(([, e, t]) => {
 		if (!e || !t || !/^[\w\s.#,:>-]+$/.test(e) || /:(?!(?:hover|focus-visible|focus|disabled|active|checked)(?:\b|$))/i.test(e)) return "";
@@ -12327,7 +12330,7 @@ function ja(e) {
 			let t = e.indexOf(":");
 			if (t < 1) return [];
 			let n = e.slice(0, t).trim().toLowerCase(), r = e.slice(t + 1).trim();
-			if (!Da.has(n) || !r || Oa.test(r) || /var\s*\(/i.test(r)) return [];
+			if (!Oa.has(n) || !r || ka.test(r) || /var\s*\(/i.test(r)) return [];
 			let i = document.createElement("span").style;
 			return i.setProperty(n, r), i.getPropertyValue(n) ? [`${n}:${i.getPropertyValue(n)}`] : [];
 		});
@@ -12336,24 +12339,24 @@ function ja(e) {
 }
 //#endregion
 //#region assets/src/shared/fonts.ts
-var Ma = [
+var Na = [
 	"Inter",
 	"Roboto",
 	"Open Sans"
 ];
-function Na(e) {
-	return Ma.find((t) => t === e);
-}
 function Pa(e) {
-	if (!Na(e)) throw TypeError("Unsupported Google font.");
+	return Na.find((t) => t === e);
+}
+function Fa(e) {
+	if (!Pa(e)) throw TypeError("Unsupported Google font.");
 	let t = new URL("https://fonts.googleapis.com/css2");
 	return t.searchParams.set("family", `${e}:wght@400;600`), t.searchParams.set("display", "swap"), t.href;
 }
 //#endregion
 //#region assets/src/runtime/fonts.ts
-var Fa = 65536, Ia = /* @__PURE__ */ new WeakMap();
-function La(e, t) {
-	if (!Na(t) || e.length > Fa) throw Error("Invalid font stylesheet.");
+var Ia = 65536, La = /* @__PURE__ */ new WeakMap();
+function Ra(e, t) {
+	if (!Pa(t) || e.length > Ia) throw Error("Invalid font stylesheet.");
 	let n = e.replace(/\/\*[\s\S]*?\*\//g, "");
 	if (/[\\<>]/.test(n)) throw Error("Invalid font stylesheet.");
 	let r = [...n.matchAll(/@font-face\s*\{([^{}]+)\}/g)];
@@ -12381,32 +12384,32 @@ function La(e, t) {
 		return `@font-face{font-family:"${t}";font-style:normal;font-weight:${n.get("font-weight")};font-display:swap;src:url("${r[1]}") format("${r[3]}");${i ? `unicode-range:${i};` : ""}}`;
 	}).join("\n");
 }
-async function Ra(e, t) {
-	let n = await fetch(Pa(e), {
+async function za(e, t) {
+	let n = await fetch(Fa(e), {
 		credentials: "omit",
 		referrerPolicy: "no-referrer",
 		redirect: "error",
 		mode: "cors",
 		signal: t
 	});
-	if (!n.ok || n.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "text/css" || Number(n.headers.get("content-length") ?? 0) > Fa || !n.body) throw Error("Font stylesheet unavailable.");
+	if (!n.ok || n.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "text/css" || Number(n.headers.get("content-length") ?? 0) > Ia || !n.body) throw Error("Font stylesheet unavailable.");
 	let r = n.body.getReader(), i = new TextDecoder(), a = "", o = 0;
 	try {
 		for (;;) {
 			let { done: e, value: t } = await r.read();
 			if (e) break;
-			if (o += t.byteLength, o > Fa) throw await r.cancel(), Error("Font stylesheet too large.");
+			if (o += t.byteLength, o > Ia) throw await r.cancel(), Error("Font stylesheet too large.");
 			a += i.decode(t, { stream: !0 });
 		}
-		return La(a + i.decode(), e);
+		return Ra(a + i.decode(), e);
 	} finally {
 		r.releaseLock();
 	}
 }
-function za(e, t) {
-	if (!Na(t)) return () => {};
-	let n = Ia.get(e);
-	n || (n = /* @__PURE__ */ new Map(), Ia.set(e, n));
+function Ba(e, t) {
+	if (!Pa(t)) return () => {};
+	let n = La.get(e);
+	n || (n = /* @__PURE__ */ new Map(), La.set(e, n));
 	let r = n.get(t);
 	if (!r) {
 		r = {
@@ -12415,7 +12418,7 @@ function za(e, t) {
 			abort: new AbortController()
 		}, r.style.dataset.cffGoogleFont = t, n.set(t, r);
 		let i = r, a = setTimeout(() => i.abort.abort(), 5e3);
-		Ra(t, i.abort.signal).then((t) => {
+		za(t, i.abort.signal).then((t) => {
 			!i.abort.signal.aborted && i.refs && (i.style.textContent = t, e.head.append(i.style));
 		}).catch(() => {}).finally(() => clearTimeout(a));
 	}
@@ -12427,9 +12430,9 @@ function za(e, t) {
 }
 //#endregion
 //#region assets/src/runtime/captcha.ts
-var Ba = /* @__PURE__ */ new Map();
-function Va(e) {
-	let t = Ba.get(e);
+var Va = /* @__PURE__ */ new Map();
+function Ha(e) {
+	let t = Va.get(e);
 	if (t) return t;
 	let n = new Promise((t, n) => {
 		let r = document.createElement("script"), i = setTimeout(() => {
@@ -12441,12 +12444,12 @@ function Va(e) {
 			clearTimeout(i), r.remove(), n(/* @__PURE__ */ Error("captchaUnavailable"));
 		}, document.head.append(r);
 	});
-	return Ba.set(e, n), n.catch(() => Ba.delete(e)), n;
+	return Va.set(e, n), n.catch(() => Va.delete(e)), n;
 }
-async function Ha(e, t) {
+async function Ua(e, t) {
 	if (e.provider === "none") return "";
 	if (!e.siteKey) throw Error("captchaUnavailable");
-	if (e.provider === "recaptcha") return await Va(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`), new Promise((t, n) => {
+	if (e.provider === "recaptcha") return await Ha(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`), new Promise((t, n) => {
 		let r = setTimeout(() => n(/* @__PURE__ */ Error("captchaUnavailable")), 12e4);
 		window.grecaptcha?.ready(() => {
 			window.grecaptcha.execute(e.siteKey, { action: "cff_submit" }).then((e) => {
@@ -12457,7 +12460,7 @@ async function Ha(e, t) {
 		});
 	});
 	let n = e.provider;
-	await Va(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
+	await Ha(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
 	let r = n === "turnstile" ? window.turnstile : window.hcaptcha;
 	if (!r) throw Error("captchaUnavailable");
 	return new Promise((n, i) => {
@@ -12479,7 +12482,7 @@ async function Ha(e, t) {
 }
 //#endregion
 //#region assets/src/runtime/index.tsx
-var Ua = {
+var Wa = {
 	primary: void 0,
 	botBubbleBackground: void 0,
 	userBubbleBackground: void 0,
@@ -12488,7 +12491,7 @@ var Ua = {
 	headerText: "#171717",
 	chatBackground: "#ffffff",
 	userTextColor: "#171717"
-}, Wa = {
+}, Ga = {
 	primary: "#3390ec",
 	botBubbleBackground: "#ffffff",
 	userBubbleBackground: "#e1fec6",
@@ -12497,8 +12500,8 @@ var Ua = {
 	headerText: "#000000",
 	chatBackground: "#dbe6ee",
 	userTextColor: "#000000"
-}, $ = /* @__PURE__ */ new Map(), Ga = 0;
-function Ka(e) {
+}, $ = /* @__PURE__ */ new Map(), Ka = 0;
+function qa(e) {
 	return {
 		phase: e.state.phase,
 		visited: [...e.state.path?.visited ?? []],
@@ -12508,10 +12511,10 @@ function Ka(e) {
 		errors: [...e.state.path?.errors ?? []]
 	};
 }
-function qa(e) {
+function Ja(e) {
 	return e.mode === "launcher" || e.mode === "popup";
 }
-function Ja(e, t = {}) {
+function Ya(e, t = {}) {
 	$.get(e)?.handle.unmount();
 	let n = t.form?.form.id ?? t.formId ?? Number(e.dataset.formId);
 	if (!Number.isSafeInteger(n) || n <= 0) throw TypeError("Invalid form ID");
@@ -12540,17 +12543,17 @@ function Ja(e, t = {}) {
 			"popup"
 		].includes(e.dataset.mode ?? "") ? e.dataset.mode : "inline")
 	}, l = document.createElement("div");
-	l.className = "captcha", c.captcha ?? (c.captcha = (e) => Ha(e, l));
-	let u = t.preview ? null : new me(r), d = new Ea(c, u, void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
+	l.className = "captcha", c.captcha ?? (c.captcha = (e) => Ua(e, l));
+	let u = t.preview ? null : new me(r), d = new Da(c, u, void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
 		detail: n,
 		bubbles: !0,
 		composed: !0
 	}))), f, p = () => {}, m = (t = !1) => {
 		let n = (d.state.form ?? c.form)?.form.appearance;
 		if (!n) return;
-		let r = n.inheritFont || t ? void 0 : Na(n.googleFont);
-		r !== f && (p(), f = r, p = r ? za(e.ownerDocument, r) : () => {});
-		let i = n.style === "messaging" ? Wa : Ua, a = (e) => ka(n[e]) ?? i[e], l = {
+		let r = n.inheritFont || t ? void 0 : Pa(n.googleFont);
+		r !== f && (p(), f = r, p = r ? Ba(e.ownerDocument, r) : () => {});
+		let i = n.style === "messaging" ? Ga : Wa, a = (e) => Aa(n[e]) ?? i[e], l = {
 			"--cff-primary": a("primary"),
 			"--cff-bubble-bot-bg": a("botBubbleBackground"),
 			"--cff-user-bg": a("userBubbleBackground"),
@@ -12559,22 +12562,22 @@ function Ja(e, t = {}) {
 			"--cff-header-text": a("headerText"),
 			"--cff-chat-bg": a("chatBackground"),
 			"--cff-user-text": a("userTextColor"),
-			"--cff-font": n.inheritFont ? "inherit" : r ? `"${r}", ${Aa(n.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : Aa(n.font),
+			"--cff-font": n.inheritFont ? "inherit" : r ? `"${r}", ${ja(n.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : ja(n.font),
 			"--cff-radius": Number.isFinite(n.radius) ? `${Math.max(0, Math.min(128, n.radius))}px` : void 0,
 			"--cff-width": Number.isFinite(n.width) ? `${Math.max(280, Math.min(2e3, n.width))}px` : void 0
 		};
 		for (let [e, t] of Object.entries(l)) t ? s.style.setProperty(e, t) : s.style.removeProperty(e);
 		let u = n.theme === "dark" || n.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches;
-		s.querySelector(".chat")?.classList.toggle("dark", !!u), n.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = ja(n.customCss);
+		s.querySelector(".chat")?.classList.toggle("dark", !!u), n.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = Ma(n.customCss);
 	}, h = () => m(), g = d.subscribe(h);
-	qa(c) && m(!0);
+	Ja(c) && m(!0);
 	let _ = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
 	_?.addEventListener("change", h);
 	let v = () => d.setOffline(navigator.onLine === !1), y = (e) => {
 		e.key?.startsWith(`cff:session:${n}:`) && d.markConflict();
 	};
 	t.preview || (window.addEventListener("online", v), window.addEventListener("offline", v), window.addEventListener("storage", y));
-	let b = c.mode === "popup", x = c.mode === "launcher" || b, S = `cff-overlay-${++Ga}`, C = !1, w = null, T = null, E = null, D = null, O = s, k = null, A = null, j = !1, ee = !1, M = () => {
+	let b = c.mode === "popup", x = c.mode === "launcher" || b, S = `cff-overlay-${++Ka}`, C = !1, w = null, T = null, E = null, D = null, O = s, k = null, A = null, j = !1, ee = !1, M = () => {
 		j || (j = !0, v(), d.initialize().then(() => {
 			m(), N();
 		}));
@@ -12612,7 +12615,7 @@ function Ja(e, t = {}) {
 			e.composedPath().includes(s) || r(e);
 		}, document.addEventListener("keydown", D);
 	}
-	x || s.after(l), ce(/* @__PURE__ */ Z(la, {
+	x || s.after(l), ce(/* @__PURE__ */ Z(ua, {
 		controller: d,
 		closable: x,
 		onClose: () => {
@@ -12624,7 +12627,7 @@ function Ja(e, t = {}) {
 			w && clearTimeout(w), T && window.removeEventListener("scroll", T), E && document.removeEventListener("click", E), D && document.removeEventListener("keydown", D), g(), p(), _?.removeEventListener("change", h), d.dispose(), ce(null, O), i.replaceChildren(), window.removeEventListener("online", v), window.removeEventListener("offline", v), window.removeEventListener("storage", y), $.delete(e);
 		},
 		prefill: (e) => d.prefillAnswers(e),
-		getState: () => Ka(d),
+		getState: () => qa(d),
 		jumpToStep: (e) => d.jumpToStep(e),
 		setAppearance: (e) => {
 			t.preview && d.setAppearance(e);
@@ -12656,7 +12659,7 @@ function Ja(e, t = {}) {
 	}
 	return x || M(), te;
 }
-function Ya(e = document) {
+function Xa(e = document) {
 	for (let t of e.querySelectorAll("cff-chat[data-form-id]")) {
 		if ($.has(t)) continue;
 		let e = {}, n = t.querySelector("script[type=\"application/json\"][data-cff-schema]");
@@ -12664,7 +12667,7 @@ function Ya(e = document) {
 			e.form = JSON.parse(n.textContent ?? "");
 		} catch {}
 		try {
-			Ja(t, e);
+			Ya(t, e);
 		} catch {
 			t.textContent = "ChatFlow: configuration error";
 		}
@@ -12678,7 +12681,7 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { controller: t } of $.values()) t.options.analyticsOptOut = e;
 	},
 	open: (e) => {
-		Ya();
+		Xa();
 		let t = [...$.keys()].find((t) => $.get(t)?.id === Number(e));
 		return t ? ($.get(t).handle.open(), !0) : !1;
 	},
@@ -12686,6 +12689,6 @@ typeof window < "u" && (window.ChatFlow = {
 		for (let { handle: n, id: r } of $.values()) (t === void 0 || Number(t) === r) && n.prefill(e);
 	},
 	registerField: Wi
-}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Ya(), { once: !0 }) : Ya());
+}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => Xa(), { once: !0 }) : Xa());
 //#endregion
-export { Ya as autoMount, Ja as mountRuntime, Wi as registerField };
+export { Xa as autoMount, Ya as mountRuntime, Wi as registerField };

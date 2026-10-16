@@ -262,9 +262,6 @@
       "Auto (follow visitor device)": [
         "Otomatis (ikuti perangkat pengunjung)"
       ],
-      "Auto-continue statement": [
-        "Lanjutkan pernyataan secara otomatis"
-      ],
       "Auto-open after seconds (blank = off)": [
         "Buka otomatis setelah detik (kosong = nonaktif)"
       ],
@@ -2529,6 +2526,9 @@
       ],
       "Visitor text": [
         "Teks pengunjung"
+      ],
+      "Wait for the visitor to press a button": [
+        "Tunggu pengunjung menekan tombol"
       ],
       "Wallpaper": [
         "Wallpaper"

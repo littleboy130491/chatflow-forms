@@ -157,7 +157,9 @@ describe('Shadow DOM mount and global API', () => {
     await act(() => { handle = mountRuntime(host, { form: form(), preview: true }); });
     await vi.waitFor(() => expect(host.shadowRoot?.textContent).toContain('Hello'));
     expect(host.shadowRoot?.querySelector('style')).not.toBeNull(); expect(document.head.querySelector('style')).toBeNull(); expect(handle!.getState().currentStepId).toBe('intro');
-    handle!.prefill({ name: 'Prefilled' }); await act(() => host.shadowRoot!.querySelector<HTMLButtonElement>('.active button')!.click());
+    // The intro statement has no button: it continues by itself after its messages.
+    expect(host.shadowRoot!.querySelector('.active button')).toBeNull();
+    handle!.prefill({ name: 'Prefilled' });
     await vi.waitFor(() => expect(host.shadowRoot!.querySelector<HTMLInputElement>('.active input')?.value).toBe('Prefilled'));
     expect(host.shadowRoot?.querySelector('[aria-live=polite]')).not.toBeNull(); expect(fetcher).not.toHaveBeenCalled(); expect(writes).not.toHaveBeenCalled(); expect(clears).not.toHaveBeenCalled();
     await act(() => handle!.unmount()); expect(host.shadowRoot?.childElementCount).toBe(0);
@@ -315,5 +317,23 @@ describe('launcher chrome', () => {
     expect(toggle.hidden).toBe(false);
     expect(shadow.activeElement).toBe(toggle);
     await act(() => handle!.unmount());
+  });
+});
+describe('statement steps', () => {
+  it('continue by themselves unless the builder asks to wait for a button', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const steps: [Step, ...Step[]] = [
+      { id: 'hello', key: 'hello', type: 'statement', label: 'Hello', messages: ['Welcome'], settings: { autoContinue: false, buttonLabel: 'Start' } },
+      { id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] },
+    ];
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(steps), preview: true }); });
+    await act(() => { vi.advanceTimersByTime(2000); });
+    expect(handle!.getState().currentStepId).toBe('hello');
+    const start = [...host.shadowRoot!.querySelectorAll<HTMLButtonElement>('.active button')].find(button => button.textContent === 'Start')!;
+    await act(async () => { start.click(); await Promise.resolve(); });
+    expect(handle!.getState().currentStepId).toBe('name');
+    await act(() => handle!.unmount());
+    vi.useRealTimers();
   });
 });
