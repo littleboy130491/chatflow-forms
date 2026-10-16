@@ -101,6 +101,45 @@ export interface Bot {
   contact?: {
     label?: string;
     url: string;
+    color?: string;
+    textColor?: string;
+    icon?: "auto" | "whatsapp" | "chat" | "phone" | "email" | "none";
+    hours?: {
+      enabled?: boolean;
+      timezone?: string;
+      days?: {
+        mon?: {
+          from: string;
+          to: string;
+        };
+        tue?: {
+          from: string;
+          to: string;
+        };
+        wed?: {
+          from: string;
+          to: string;
+        };
+        thu?: {
+          from: string;
+          to: string;
+        };
+        fri?: {
+          from: string;
+          to: string;
+        };
+        sat?: {
+          from: string;
+          to: string;
+        };
+        sun?: {
+          from: string;
+          to: string;
+        };
+      };
+      outside?: "hide" | "message";
+      message?: string;
+    };
   };
 }
 export interface Step {

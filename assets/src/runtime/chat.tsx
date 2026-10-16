@@ -5,6 +5,8 @@ import { RuntimeController } from './controller';
 import { answerLabel, interpolateLink, interpolateMarkdown, Markdown, markdownText, reactions, safeLink } from './content';
 import { FieldInput } from './inputs';
 import { isWhatsapp } from '../shared/whatsapp';
+import { isOpen } from '../shared/hours';
+import { safeColor } from './appearance';
 import { phrases } from './i18n';
 import type { Step } from './types';
 
@@ -16,6 +18,18 @@ export function typingDelay(length: number, speed: 'off' | 'fast' | 'normal' | '
 /** A new step must not inherit the previous step's completed typing animation. */
 export function revealedMessageCount(reveal: { stepId: string | null; count: number }, activeId: string | null): number {
   return reveal.stepId === activeId ? reveal.count : 0;
+}
+
+const contactIcons = {
+  whatsapp: 'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z',
+  chat: 'M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 22l4.5-2.2c1 .3 2.1.5 3.3.5 5.5 0 10-3.9 10-8.6S17.5 3 12 3z',
+  phone: 'M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z',
+  email: 'M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4 7.3V17h16V7.3zM5.2 7l6.8 4.2L18.8 7z',
+} as const;
+/** "auto" (or unset) picks the icon from the link: WhatsApp, phone (tel:), email (mailto:) or chat. */
+export function contactIconFor(url: string, icon?: 'auto' | 'whatsapp' | 'chat' | 'phone' | 'email' | 'none'): keyof typeof contactIcons | 'none' {
+  if (icon && icon !== 'auto') return icon;
+  return isWhatsapp(url) ? 'whatsapp' : url.startsWith('tel:') ? 'phone' : url.startsWith('mailto:') ? 'email' : 'chat';
 }
 
 /** A statement shows a button only when the builder asks to wait (autoContinue: false); otherwise it continues by itself. */
@@ -38,6 +52,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [magicStatus, setMagicStatus] = useState('');
+  const [clock, setClock] = useState(() => Date.now());
   const [reduced, setReduced] = useState(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
   const active = useRef<HTMLDivElement>(null);
   const last = useRef<HTMLDivElement>(null);
@@ -56,6 +71,9 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const interpolateRich = (text: string) => interpolateMarkdown(text, state.answers, controller.meta);
 
   useLayoutEffect(() => controller.subscribe(() => rerender(n => n + 1)), [controller]);
+  // Opening hours of the contact button are re-checked every minute while the chat is open.
+  const scheduled = Boolean(controller.state.form?.form.schema.bot.contact?.hours?.enabled);
+  useEffect(() => { if (!scheduled) return; const timer = setInterval(() => setClock(Date.now()), 60000); return () => clearInterval(timer); }, [scheduled]);
   useEffect(() => {
     const query = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
     const change = () => setReduced(query?.matches ?? false);
@@ -103,17 +121,21 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const messaging = look.style === 'messaging';
   const styleAttributes = messaging ? { 'data-style': 'messaging', 'data-wallpaper': look.wallpaper ?? 'doodle', 'data-choices': look.choiceStyle ?? 'keyboard', 'data-tails': look.bubbleTails === false ? 'off' : 'on' } : {};
   const botName = form?.schema.bot.name ?? 'ChatFlow';
-  // Optional direct contact (e.g. WhatsApp) for visitors who would rather talk than fill in the form.
-  const contactUrl = form?.schema.bot.contact?.url ? safeLink(interpolateLink(form.schema.bot.contact.url, state.answers, controller.meta)) : null;
-  const contactLabel = form?.schema.bot.contact?.label || phrase(contactUrl && isWhatsapp(contactUrl) ? 'whatsapp' : 'contactUs');
-  const contact = contactUrl && <a className={`contact-link${isWhatsapp(contactUrl) ? ' is-whatsapp' : ''}`} href={contactUrl} target="_blank" rel="noopener noreferrer" aria-label={`${contactLabel} (${phrase('opensNewTab')})`} onClick={() => controller.contactClicked()}>
-    {isWhatsapp(contactUrl)
-      ? <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z" /></svg>
-      : <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 22l4.5-2.2c1 .3 2.1.5 3.3.5 5.5 0 10-3.9 10-8.6S17.5 3 12 3z" /></svg>}
+  // Optional direct contact (e.g. WhatsApp) below the conversation, for visitors who would rather talk than fill in the form.
+  const contactSettings = form?.schema.bot.contact;
+  const contactUrl = contactSettings?.url ? safeLink(interpolateLink(contactSettings.url, state.answers, controller.meta)) : null;
+  const contactIcon = contactUrl ? contactIconFor(contactUrl, contactSettings?.icon) : 'none';
+  const contactLabel = contactSettings?.label || phrase(contactUrl && isWhatsapp(contactUrl) ? 'whatsapp' : 'contactUs');
+  const contactBackground = safeColor(contactSettings?.color), contactText = safeColor(contactSettings?.textColor);
+  const contactOpen = isOpen(contactSettings?.hours, new Date(clock));
+  const contactClosedMessage = !contactOpen && contactSettings?.hours?.outside === 'message' && contactSettings.hours.message ? interpolateText(contactSettings.hours.message) : '';
+  const contact = contactUrl && contactOpen && <a className={`contact-link${isWhatsapp(contactUrl) ? ' is-whatsapp' : ''}`} href={contactUrl} target="_blank" rel="noopener noreferrer" aria-label={`${contactLabel} (${phrase('opensNewTab')})`} onClick={() => controller.contactClicked()}
+    style={{ ...(contactBackground ? { background: contactBackground, borderColor: contactBackground } : {}), ...(contactText ? { color: contactText } : {}) }}>
+    {contactIcon !== 'none' && <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d={contactIcons[contactIcon]} /></svg>}
     <span>{contactLabel}</span>
   </a>;
   return <section className={`chat ${controller.options.mode === 'fullpage' ? 'fullpage' : ''}`} {...styleAttributes} dir={globalThis.document?.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'} aria-label={form?.title ?? 'ChatFlow'} aria-busy={state.busy}>
-    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav>{contact}{closable && <button type="button" className="close-chat" aria-label={phrase('closeChat')} onClick={onClose}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></button>}</header>
+    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav>{closable && <button type="button" className="close-chat" aria-label={phrase('closeChat')} onClick={onClose}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></button>}</header>
     <div className="progress" role="progressbar" aria-label={phrase('progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(state.phase === 'done' ? 100 : state.path?.progress ?? 0)}><span style={{ width: `${state.phase === 'done' ? 100 : state.path?.progress ?? 0}%` }} /></div>
     {controller.options.preview && <p className="notice">{phrase('preview')}</p>}
     {!controller.options.preview && globalThis.location?.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(location.hostname) && <p className="notice" role="alert">{phrase('insecure')}</p>}
@@ -151,6 +173,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
       {error}
       <div ref={last} />
     </main>
+    {(contact || contactClosedMessage) && <div className="contact-bar">{contact || <p className="contact-closed">{contactClosedMessage}</p>}</div>}
     {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><span className="sr-only" role="status">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{(state.offline || state.storageUnavailable || (form?.session.magicLinks?.enabled && state.phase === 'ready')) && <footer>{(state.offline || state.storageUnavailable) && <p className="status-notice">{phrase(state.offline ? 'offline' : 'storageUnavailable')}</p>}
       {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
         <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicEmailConfirm'))) return; void controller.magicLink('email').then(() => setMagicStatus(phrase('magicEmailAccepted'))).catch(() => setMagicStatus(phrase('magicEmailError'))); }}>{phrase('magicEmail')}</button>

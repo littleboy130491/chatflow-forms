@@ -9,7 +9,7 @@ import { phrases } from '../../../assets/src/runtime/i18n';
 import { mountRuntime } from '../../../assets/src/runtime';
 import { ApiClient } from '../../../assets/src/runtime/api';
 import { RuntimeController } from '../../../assets/src/runtime/controller';
-import { revealedMessageCount, typingDelay } from '../../../assets/src/runtime/chat';
+import { contactIconFor, revealedMessageCount, typingDelay } from '../../../assets/src/runtime/chat';
 import { safeColor, safeFont, scopedAppearanceCss } from '../../../assets/src/runtime/appearance';
 import { form } from './helpers';
 import type { Step } from '../../../assets/src/runtime/types';
@@ -338,21 +338,70 @@ describe('statement steps', () => {
   });
 });
 describe('direct contact link', () => {
-  it('shows a WhatsApp button in the header with answers merged into the message', async () => {
+  it('shows a WhatsApp button below the conversation with answers merged into the message', async () => {
     const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }, { id: 'more', key: 'more', type: 'short_text', label: 'More', messages: ['More?'] }]);
     envelope.form.schema.bot.contact = { url: 'https://wa.me/6281234567890?text=Hi%20{{name}}' };
     let handle: ReturnType<typeof mountRuntime>;
     await act(() => { handle = mountRuntime(host, { form: envelope, preview: true, previewAnswers: { name: 'Ada & Co' } }); });
-    const link = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('header a.contact-link'); expect(found).not.toBeNull(); return found!; });
+    const link = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('.contact-bar a.contact-link'); expect(found).not.toBeNull(); return found!; });
     expect(link.classList.contains('is-whatsapp')).toBe(true);
-    expect(link.textContent).toBe('WhatsApp');
+    expect(link.textContent).toBe('Chat on WhatsApp');
+    expect(host.shadowRoot!.querySelector('header .contact-link')).toBeNull();
     expect(link.href).toBe('https://wa.me/6281234567890?text=Hi%20Ada%20%26%20Co');
     expect(link.target).toBe('_blank');
     expect(link.rel).toContain('noopener');
     await act(() => handle!.unmount());
     envelope.form.schema.bot.contact = { url: 'javascript:alert(1)', label: 'Bad' };
     await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
-    expect(host.shadowRoot!.querySelector('header a.contact-link')).toBeNull();
+    expect(host.shadowRoot!.querySelector('a.contact-link')).toBeNull();
     await act(() => handle!.unmount());
+  });
+});
+describe('contact button customisation', () => {
+  it('picks the icon from the link unless one is chosen, and applies safe custom colours', async () => {
+    expect(contactIconFor('https://wa.me/62812')).toBe('whatsapp');
+    expect(contactIconFor('tel:+62812')).toBe('phone');
+    expect(contactIconFor('mailto:a@b.test')).toBe('email');
+    expect(contactIconFor('https://example.test/')).toBe('chat');
+    expect(contactIconFor('https://wa.me/62812', 'none')).toBe('none');
+    const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }]);
+    envelope.form.schema.bot.contact = { url: 'https://wa.me/62812', label: 'Talk to us', color: '#111827', textColor: '#fde047', icon: 'phone' };
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    const link = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('.contact-bar a'); expect(found).not.toBeNull(); return found!; });
+    expect(link.textContent).toBe('Talk to us');
+    expect(link.style.background).toContain('rgb(17, 24, 39)');
+    expect(link.style.color).toBe('rgb(253, 224, 71)');
+    expect(link.querySelector('svg')).not.toBeNull();
+    await act(() => handle!.unmount());
+    envelope.form.schema.bot.contact = { url: 'https://wa.me/62812', color: 'url(https://evil.test/x)', icon: 'none' };
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    const plain = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('.contact-bar a'); expect(found).not.toBeNull(); return found!; });
+    expect(plain.getAttribute('style') ?? '').not.toContain('evil');
+    expect(plain.querySelector('svg')).toBeNull();
+    await act(() => handle!.unmount());
+  });
+});
+describe('contact working hours', () => {
+  it('shows the custom message instead of the button outside working hours, or hides it', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-17T02:30:00Z')); // Saturday morning in Jakarta
+    const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }]);
+    envelope.form.schema.bot.contact = { url: 'https://wa.me/62812', hours: { enabled: true, timezone: 'Asia/Jakarta', days: { mon: { from: '09:00', to: '17:00' } }, outside: 'message', message: 'We reply Mon 09:00–17:00 WIB.' } };
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.contact-closed')?.textContent).toBe('We reply Mon 09:00–17:00 WIB.'));
+    expect(host.shadowRoot!.querySelector('.contact-link')).toBeNull();
+    await act(() => handle!.unmount());
+    envelope.form.schema.bot.contact.hours!.outside = 'hide';
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.chat')).not.toBeNull());
+    expect(host.shadowRoot!.querySelector('.contact-bar')).toBeNull();
+    await act(() => handle!.unmount());
+    vi.setSystemTime(new Date('2026-10-19T03:00:00Z')); // Monday 10:00 in Jakarta
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.contact-link')).not.toBeNull());
+    await act(() => handle!.unmount());
+    vi.useRealTimers();
   });
 });
