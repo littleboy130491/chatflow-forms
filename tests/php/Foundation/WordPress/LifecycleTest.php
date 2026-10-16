@@ -109,7 +109,9 @@ final class LifecycleTest extends \WP_UnitTestCase {
 		$schema['steps'][0]['id'] = 'stp_file_upload';
 		$schema['steps'][0]['type'] = 'file_upload';
 		$this->assertNotWPError( $r->saveDraft( $draft->id(), $schema, array(), 2 ) );
-		$this->assertSame( 'cff_invalid_schema', $r->publish( $draft->id(), 3 )->get_error_code() );
+		$this->assertNotWPError( $r->publish( $draft->id(), 3 ) );
+		$schema['steps'][0]['type'] = 'invented';
+		$this->assertSame( 'cff_invalid_schema', $r->saveDraft( $draft->id(), $schema, array(), 3 )->get_error_code() );
 	}
 
 	public function testMultisiteInitializationAndNetworkLifecycle(): void {

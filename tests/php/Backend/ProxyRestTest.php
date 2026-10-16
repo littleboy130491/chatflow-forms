@@ -58,7 +58,7 @@ final class ProxyRestTest extends TestCase {
 			$s = $start->get_data();
 			self::assertIsObject( $s['answers'] );
 			self::assertIsObject( $s['context']['url'] );
-			self::assertSame( Database::json( $s ), Database::json( $call( 'POST', 'sessions', $start_body, $headers )->get_data() ) );
+			self::assertSame( hash( 'sha256', Database::json( $s ) ), hash( 'sha256', Database::json( $call( 'POST', 'sessions', $start_body, $headers )->get_data() ) ) );
 			$patch = $call(
 				'PATCH',
 				'sessions/' . $s['sessionId'],

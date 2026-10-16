@@ -1,0 +1,13 @@
+[
+  {"name":"default local", "appearance":{}, "valid":true},
+  {"name":"explicit system", "appearance":{"googleFont":"system"}, "valid":true},
+  {"name":"Inter", "appearance":{"googleFont":"Inter"}, "valid":true},
+  {"name":"Roboto", "appearance":{"googleFont":"Roboto"}, "valid":true},
+  {"name":"Open Sans", "appearance":{"googleFont":"Open Sans"}, "valid":true},
+  {"name":"unknown family", "appearance":{"googleFont":"Unknown"}, "valid":false},
+  {"name":"not an arbitrary URL", "appearance":{"googleFont":"https://evil.test/font.css"}, "valid":false},
+  {"name":"not CSS", "appearance":{"googleFont":"Inter;@import url(https://evil.test)"}, "valid":false},
+  {"name":"not an object", "appearance":{"googleFont":{"family":"Inter","url":"https://evil.test"}}, "valid":false},
+  {"name":"not an unbounded list", "appearance":{"googleFont":["Inter","Roboto"]}, "valid":false},
+  {"name":"no arbitrary source setting", "appearance":{"googleFont":"Inter", "googleFontUrl":"https://evil.test"}, "valid":false}
+]

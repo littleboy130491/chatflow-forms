@@ -1,0 +1,40 @@
+{
+  "name": "power-variant-order",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": { "name": "Imajiner" },
+    "steps": [
+      { "id": "amount", "key": "amount", "type": "number", "label": "Amount", "messages": ["Base amount"], "required": true },
+      { "id": "age", "key": "age", "type": "number", "label": "Age", "messages": ["Base age"], "required": true },
+      { "id": "score_step", "key": "score_step", "type": "statement", "label": "Score", "messages": ["Scoring"], "logic": [
+        { "if": { "field": "amount", "op": "eq", "value": 4 }, "then": { "action": "set_variable", "key": "score", "operation": "add", "value": 3 } }
+      ] },
+      { "id": "bonus", "key": "bonus", "type": "calculated", "label": "Bonus", "messages": ["Calculated"], "settings": { "expression": "answer.amount * 2 + variable.score" } },
+      { "id": "review", "key": "review", "type": "summary", "label": "Review", "messages": ["Review"] }
+    ],
+    "variables": [{ "key": "score", "type": "number", "default": 2 }],
+    "endings": [
+      { "id": "done", "type": "message", "messages": ["Done"] },
+      { "id": "vip", "type": "message", "messages": ["VIP"] }
+    ],
+    "outcomes": [{ "if": { "field": "bonus", "op": "gt", "value": 10 }, "endingId": "vip" }],
+    "experiments": [{ "id": "copy_order", "enabled": true, "variants": [
+      { "id": "a", "weight": 50 },
+      { "id": "b", "weight": 50, "copy": [{ "stepId": "age", "messages": ["Variant age"] }], "stepOrder": ["age", "amount", "score_step", "bonus", "review"] }
+    ] }]
+  },
+  "variant": "b",
+  "answers": { "age": 20, "amount": 4 },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": ["age", "amount", "score_step", "bonus", "review"],
+    "answers": { "age": 20, "amount": 4, "bonus": 13 },
+    "variables": { "score": 5 },
+    "currentStepId": null,
+    "endingId": "vip",
+    "progress": 100,
+    "errors": [],
+    "discardedKeys": []
+  }
+}

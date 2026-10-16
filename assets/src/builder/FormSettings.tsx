@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
+import { EmailTemplates } from './EmailTemplates';
 import { errorMessage } from './api';
 import type { AdminApi, FormDTO, FormSettings, FormSchema, Ending } from './api';
 import type { Notification, Webhook } from '../shared/settings.generated';
@@ -66,7 +67,14 @@ export function HtmlEditor({ value, onChange }: { value: string; onChange: (valu
     </label>
   );
 }
+/** Strict page ID list: any invalid entry rejects the whole input rather than guessing. */
+export function pageIds(value: string): number[] {
+  const parts = value.split(',').map((part) => part.trim()).filter(Boolean);
+  if (parts.length > 500 || parts.some((part) => !/^[1-9]\d*$/.test(part) || !Number.isSafeInteger(Number(part)))) return [];
+  return [...new Set(parts.map(Number))];
+}
 function EmailCard({
+  api,
   notification,
   schema,
   onChange,
@@ -75,6 +83,7 @@ function EmailCard({
   test,
   preview,
 }: {
+  api: AdminApi;
   notification: Notification;
   schema: FormSchema;
   onChange: (notification: Notification) => void;
@@ -96,6 +105,7 @@ function EmailCard({
   return (
     <fieldset className="cff-card">
       <legend>{notification.id}</legend>
+      <EmailTemplates api={api} content={notification} onLoad={content => onChange({ ...notification, ...content })} />
       <Check
         label={__('Enabled', 'chatflow-forms')}
         value={notification.enabled}
@@ -526,8 +536,6 @@ export function SettingsEditor({
     onChange({ ...settings, [key]: value });
   const setLauncher = (changes: Partial<typeof launcher>) =>
     set('display', { ...display, launcher: { ...launcher, ...changes } });
-  const pageIds = (input: string) =>
-    [...new Set(input.split(',').map((value) => value.trim()).filter((value) => /^\d+$/.test(value)).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0))].slice(0, 500);
   const test = async (notificationId: string, to: string) => {
     if (!form.id || !form.version)
       throw new Error(__('Publish the form before sending test mail.', 'chatflow-forms'));
@@ -582,6 +590,12 @@ export function SettingsEditor({
           value={settings.sessions?.abandonDays ?? 30}
           onChange={(value) => set('sessions', { ...settings.sessions, abandonDays: Number(value) })}
         />
+        <h3>{__('Cross-device resume links', 'chatflow-forms')}</h3>
+        <Check label={__('Enable one-time email resume links', 'chatflow-forms')} value={settings.sessions?.magicLinks?.enabled ?? false} onChange={enabled => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, enabled } })} />
+        <Check label={__('Allow user-initiated WhatsApp sharing', 'chatflow-forms')} value={settings.sessions?.magicLinks?.whatsapp ?? false} onChange={whatsapp => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, whatsapp } })} />
+        <Select label={__('Recipient email field', 'chatflow-forms')} value={settings.sessions?.magicLinks?.emailField ?? ''} choices={[{ value: '', label: __('Choose an email field', 'chatflow-forms') }, ...form.schema.steps.filter(step => step.type === 'email').map(step => ({ value: step.key, label: step.label }))]} onChange={emailField => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, emailField } })} />
+        <Field label={__('Link lifetime in minutes (5–1440)', 'chatflow-forms')} type="number" value={settings.sessions?.magicLinks?.ttlMinutes ?? 30} onChange={ttlMinutes => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, ttlMinutes: Number(ttlMinutes) } })} />
+        <p>{__('Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.', 'chatflow-forms')}</p>
         <Check
           label={__('Notify on abandoned contact leads', 'chatflow-forms')}
           value={notifications.notifyAbandoned}
@@ -634,7 +648,8 @@ export function SettingsEditor({
             value={includePages}
             onChange={(value) => {
               setIncludePages(value);
-              setLauncher({ includePageIds: pageIds(value) as NonNullable<typeof launcher.includePageIds> });
+              const ids = pageIds(value);
+              if (!value.trim() || ids.length) setLauncher({ includePageIds: ids as NonNullable<typeof launcher.includePageIds> });
             }}
           />
           <Field
@@ -642,7 +657,8 @@ export function SettingsEditor({
             value={excludePages}
             onChange={(value) => {
               setExcludePages(value);
-              setLauncher({ excludePageIds: pageIds(value) as NonNullable<typeof launcher.excludePageIds> });
+              const ids = pageIds(value);
+              if (!value.trim() || ids.length) setLauncher({ excludePageIds: ids as NonNullable<typeof launcher.excludePageIds> });
             }}
           />
           <p>{__('Page exclusions take precedence. A published form is required for automatic placement.', 'chatflow-forms')}</p>
@@ -747,12 +763,17 @@ export function SettingsEditor({
             onChange={(value) => set('spam', { ...settings.spam, [item.key]: Number(value) })}
           />
         ))}
-        <p>{__('Captcha and Akismet are optional later features, not enabled here.', 'chatflow-forms')}</p>
+        <Select label={__('Optional captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
+          choices={['none','turnstile','hcaptcha','recaptcha'].map((value)=>({value,label:value}))}
+          onChange={(captcha)=>set('spam',{...settings.spam,captcha:captcha as NonNullable<NonNullable<FormSettings['spam']>['captcha']>})} />
+        <Check label={__('Use optional Akismet check', 'chatflow-forms')} value={settings.spam?.akismetEnabled ?? false} onChange={(akismetEnabled)=>set('spam',{...settings.spam,akismetEnabled})} />
+        <p>{__('Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
       </section>
       <section className="cff-card">
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>
         {(notifications.admin ?? []).map((notification) => (
           <EmailCard
+            api={api}
             key={notification.id}
             notification={notification}
             schema={form.schema}
@@ -807,6 +828,7 @@ export function SettingsEditor({
         />
         {(notifications.autoresponders ?? []).map((notification) => (
           <EmailCard
+            api={api}
             key={notification.id}
             notification={notification}
             schema={form.schema}

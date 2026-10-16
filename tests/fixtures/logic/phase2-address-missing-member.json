@@ -1,0 +1,58 @@
+{
+  "name": "phase2-address-missing-member",
+  "schema": {
+    "schemaVersion": 1,
+    "bot": {
+      "name": "Imajiner"
+    },
+    "steps": [
+      {
+        "id": "answer",
+        "key": "answer",
+        "type": "address",
+        "messages": [
+          "Silakan isi"
+        ],
+        "label": "answer",
+        "required": true
+      }
+    ],
+    "endings": [
+      {
+        "id": "done",
+        "type": "message",
+        "messages": [
+          "Selesai"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "answer": {
+      "city": "Paris"
+    }
+  },
+  "context": {},
+  "mode": "complete",
+  "expected": {
+    "visited": [
+      "answer"
+    ],
+    "answers": {},
+    "variables": {},
+    "currentStepId": "answer",
+    "endingId": null,
+    "progress": 0,
+    "errors": [
+      {
+        "path": "/answers/answer",
+        "code": "required",
+        "message": "Enter a valid configured address.",
+        "fieldKey": "answer"
+      }
+    ],
+    "discardedKeys": [
+      "answer"
+    ]
+  }
+}

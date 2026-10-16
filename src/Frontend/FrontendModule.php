@@ -35,8 +35,22 @@ final class FrontendModule implements Module {
 		add_action( 'wp_enqueue_scripts', array( $this, 'tracking' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueueSiteWide' ) );
 		add_action( 'wp_footer', array( $this, 'siteWide' ), 19 );
+		add_action( 'cff_retention', array( $this, 'cleanupUploads' ) );
 		foreach ( array( 'rocket_delay_js_exclusions', 'rocket_exclude_defer_js', 'litespeed_optm_js_defer_exc', 'autoptimize_filter_js_exclude' ) as $filter ) {
 			add_filter( $filter, array( $this, 'optimizerExclusions' ) ); }
+	}
+	public function cleanupUploads(): void {
+		try {
+			( new Uploads() )->cleanup(); } catch ( \Throwable $error ) {
+			/* Keep records for retry if private storage is unavailable. */ }
+	}
+	/** @param array<string,mixed> $rules */
+	public static function eligible( array $rules, int $page_id ): bool {
+		$include = array_map( 'absint', (array) ( $rules['includePageIds'] ?? array() ) );
+		$exclude = array_map( 'absint', (array) ( $rules['excludePageIds'] ?? array() ) );
+		if ( ! ( $rules['enabled'] ?? false ) || in_array( $page_id, $exclude, true ) ) {
+			return false; }
+		return ! $include || in_array( $page_id, $include, true );
 	}
 	public function rewrite(): void {
 		$base = Settings::get()['fullpageBase'];
@@ -95,13 +109,8 @@ final class FrontendModule implements Module {
 			$form = $this->forms->getPublished( (int) $id );
 			if ( ! $form ) {
 				continue; }
-			$display  = $form->settings()['display'] ?? array();
-			$launcher = $display['launcher'] ?? array();
-			if ( ! ( $launcher['enabled'] ?? false ) || ! in_array( $display['mode'] ?? '', array( 'launcher', 'popup' ), true ) ) {
-				continue; }
-			$include = array_map( 'absint', $launcher['includePageIds'] ?? array() );
-			$exclude = array_map( 'absint', $launcher['excludePageIds'] ?? array() );
-			if ( in_array( $page_id, $exclude, true ) || ( $include && ! in_array( $page_id, $include, true ) ) ) {
+			$display = $form->settings()['display'] ?? array();
+			if ( ! in_array( $display['mode'] ?? '', array( 'launcher', 'popup' ), true ) || ! self::eligible( $display['launcher'] ?? array(), $page_id ) ) {
 				continue; }
 			return array(
 				'form'    => $form,

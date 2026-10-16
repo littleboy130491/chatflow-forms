@@ -388,7 +388,7 @@ final class MvpGateTest extends \WP_UnitTestCase {
 	public function testTemplateGalleryCreatesOnlyUnpublishedValidatedForms(): void {
 		$service = new \ChatFlow\Templates\Templates();
 		$catalog = \ChatFlow\Templates\Templates::catalog();
-		$this->assertSame( array( 'imajiner-survey', 'contact-request', 'customer-feedback' ), array_column( $catalog, 'id' ) );
+		$this->assertSame( array( 'imajiner-survey', 'contact-request', 'customer-feedback', 'lead-capture', 'health-intake', 'product-recommender', 'feedback-nps', 'appointment-request' ), array_column( $catalog, 'id' ) );
 		$admin = get_current_user_id();
 		wp_set_current_user( 0 );
 		$this->assertSame( 403, $this->request( 'GET', 'admin/templates' )->get_status() );
@@ -397,7 +397,7 @@ final class MvpGateTest extends \WP_UnitTestCase {
 		$nonce = array( 'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ) );
 		$list = $this->request( 'GET', 'admin/templates', array(), $nonce );
 		$this->assertSame( 200, $list->get_status() );
-		$this->assertCount( 3, $list->get_data()['items'] );
+		$this->assertCount( 8, $list->get_data()['items'] );
 		foreach ( $catalog as $item ) {
 			$path = 'admin/templates/' . $item['id'];
 			$definition = $this->request( 'GET', $path, array(), $nonce );

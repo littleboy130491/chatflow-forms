@@ -44,6 +44,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "magicLinks": { "type": "object", "additionalProperties": false, "properties": {
+          "enabled": { "type": "boolean" }, "whatsapp": { "type": "boolean" },
+          "emailField": { "type": "string", "maxLength": 64 },
+          "ttlMinutes": { "type": "integer", "minimum": 5, "maximum": 1440 }
+        } },
         "savePartial": {
           "type": "boolean"
         },
@@ -1016,6 +1021,10 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "confetti": {
+          "type": "boolean",
+          "default": false
+        },
         "theme": {
           "enum": [
             "light",
@@ -1059,6 +1068,16 @@
         "customCss": {
           "type": "string",
           "maxLength": 20000
+        },
+        "googleFont": {
+          "type": "string",
+          "enum": [
+            "system",
+            "Inter",
+            "Roboto",
+            "Open Sans"
+          ],
+          "default": "system"
         }
       }
     },

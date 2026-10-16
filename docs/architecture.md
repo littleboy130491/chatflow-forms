@@ -1,6 +1,6 @@
 # ChatFlow composition contracts (v1)
 
-The integration now registers all seven production modules below. React admin,
+The integration now registers all nine production modules below. React admin,
 Preact Shadow DOM runtime, visitor/admin REST, durable sessions/submissions,
 privacy tools and delivery jobs are implemented. See docs/mvp-checks.md for
 executed shell checks and untested acceptance criteria. PLAN.md is preserved
@@ -26,6 +26,8 @@ The integrator constructs these exact modules, in this order:
 5. `ChatFlow\Admin\AdminModule(FormRepository $forms)`
 6. `ChatFlow\Integrations\IntegrationsModule(FormRepository $forms)`
 7. `ChatFlow\Notifications\NotificationsModule(FormRepository $forms)`
+8. `ChatFlow\Admin\Translations()` (optional WPML/Polylang display hooks)
+9. `ChatFlow\Integrations\Elementor\ElementorModule()` (only registers a widget when Elementor is loaded)
 
 `Registry` is `ChatFlow\Fields\Registry`, `Engine` is `ChatFlow\Logic\Engine`.
 Both have no-argument defaults (`new Engine(new Registry())` is also supported).
@@ -43,13 +45,15 @@ only used by developer tools and tests.
 
 Canonical definitions: schema/form.schema.json and schema/settings.schema.json
 (Draft 2020-12, schemaVersion=1). No arbitrary unknown field types or properties.
-All plan types are recognised; enabled v1 publish types are short_text, long_text,
+All plan types are recognised; original v1 publish types are short_text, long_text,
 email, phone, number, date, single_choice, multi_choice, yes_no, consent, hidden,
 statement, **summary**. rating/scale/nps/slider/file_upload/address/media are
-reserved known types: drafts may hold them, publishing rejects unsupported_type
-unless the integrator explicitly enables a real implementation through
-`cff_publishable_field_types`. Summary is in v1 for the survey, not postponed.
-Optional scoring/captcha/launcher features must not be advertised as working.
+enabled by the Phase 2 integration with matching PHP/TS sanitization, validation
+and shared replay fixtures. Publishing uses the active registry (20 types),
+filterable via `cff_publishable_field_types`. Summary remains supported for the
+original survey. Optional provider credentials never enter cached public schemas;
+the pinned, no-store engagement endpoint exposes only the provider/site key and
+analytics flags. See docs/phase2-integration.md for checks and acceptance gaps.
 
 Steps have immutable `id` and unique `key`; option IDs are immutable and values
 unique within a step. IDs for steps/options/groups/endings/buttons are globally
@@ -64,7 +68,7 @@ Current drafts are never used to validate an existing submission or deliver a jo
 `ChatFlow\Forms\SchemaValidator`:
 - `validate(array $schema): array` issues; structural and cross-reference checks.
 - `validateSettings(array $settings, ?array $schema=null): array` issues.
-- `validatePublishable(array $schema, array $enabledTypes=V1_TYPES): array` issues.
+- `validatePublishable(array $schema, array $enabledTypes=ENABLED_TYPES): array` issues.
 Issues are `{path: JSON-pointer, code: string, message: string}`; empty means valid.
 Schema definitions are loaded locally, no network resolution. Schemas are <=1MiB,
 <=500 steps, <=200 options per field, <=100 rules per field. JSON objects must be
@@ -169,7 +173,7 @@ loops and summary. Phase 0 has shared **schema** fixtures, not fake engine fixtu
 
 Namespace `cff/v1`. All responses JSON. Public schema envelope
 `{form:{id,title,slug,version,schema,appearance,phrases,session:{resumeEnabled,
-resumePrompt,resumeDays}},features:{fieldTypes:string[],uploads:boolean}}`.
+resumePrompt,resumeDays}},features:{fieldTypes:string[],uploads:boolean,engagement:boolean}}`.
 Never spread Form::toArray into this; explicitly whitelist public fields. GET
 `/forms/{id}` published only, cacheable with version/hash ETag, no nonce/tokens.
 Public inline `<cff-chat data-form-id="42" data-rest-url=".../cff/v1/">` can include
@@ -199,8 +203,12 @@ Exact handshake and routes (credential **never in a URL/path/query**):
   `{version,revision,answers,honeypot:string,captchaToken?:string}` →
   `{submission:{uuid,status:'completed'},ending:{id,type,messages:string[],
   buttons:Button[]},redirectUrl?:string}`; identical response on same idempotent retry.
-- `POST /uploads` same request-token, multipart `{sessionId,version,fieldId,file}`
-  → `{uploadId,mime,bytes,name}`; **only register when secure uploads are real**.
+- `POST /sessions/{id}/uploads` request-token and idempotency headers, multipart `{fieldId,file}`
+  → `{uploadId,mime,bytes,name}`; validates pinned field/MIME/extension/size and private storage.
+- `GET /forms/{id}/engagement?version={pinnedVersion}` safe, no-store CAPTCHA/analytics config.
+- `POST /sessions/{id}/events` request-token header, capped `view/answer/back/abandon` only;
+  no raw payload/answers/URLs/secrets are stored.
+- `GET /admin/uploads/{uploadUuid}` capability and nonce protected private streaming.
 
 SessionEnvelope `{sessionId,formId,version,revision,status:'active'|'completed'|
 'closed'|'expired',answers,visited,currentStepId,progress,requestToken,
@@ -279,7 +287,7 @@ the exact cff capability (no public admin token). Listing uses page/perPage (<=1
 - POST `/admin/submissions/{id}/retry` edit_submissions `{deliveryId}` → `{queued:true}`.
 
 Admin JSON global `window.cffAdmin = {restUrl,nonce,pluginUrl,screen:'builder'|
-'submissions'|'settings',formId?:number,locale,features:{fieldTypes,uploads}}`.
+'submissions'|'settings'|'analytics',formId?:number,locale,features:{fieldTypes,uploads,xlsx}}`.
 restUrl includes trailing /cff/v1/; nonce is wp_rest **only on uncached admin pages**.
 Preview calls real runtime `mountRuntime(host,{form:schemaEnvelope,preview:true})`
 with draft public projection. Preview must never create sessions or send jobs.

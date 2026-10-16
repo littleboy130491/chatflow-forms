@@ -70,11 +70,11 @@ export interface ExportOptions {
   columns: string[];
   headerStyle: 'labels' | 'keys';
   delimiter: ',' | ';';
-  format: 'csv';
+  format: 'csv' | 'xlsx';
 }
 export interface ExportJob {
   exportId: number;
-  status: 'queued' | 'running' | 'ready' | 'failed';
+  status: 'queued' | 'running' | 'ready' | 'failed' | 'expired';
   rowCount?: number;
   downloadUrl?: string;
   expiresAt?: string;
@@ -99,6 +99,7 @@ export function exportOptions(
   columns: string[],
   headerStyle: 'labels' | 'keys',
   delimiter: ',' | ';',
+  format: 'csv' | 'xlsx' = 'csv',
 ): ExportOptions {
   return {
     ...(filters.formId ? { formId: filters.formId } : {}),
@@ -107,6 +108,6 @@ export function exportOptions(
     columns: [...columns],
     headerStyle,
     delimiter,
-    format: 'csv',
+    format,
   };
 }

@@ -5,7 +5,8 @@ use ChatFlow\Vendor\Opis\JsonSchema\Validator;
 use ChatFlow\Vendor\Opis\JsonSchema\Errors\ErrorFormatter;
 
 final class SchemaValidator {
-	public const V1_TYPES = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'rating', 'scale', 'nps', 'slider', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
+	public const V1_TYPES      = array( 'short_text', 'long_text', 'email', 'phone', 'number', 'rating', 'scale', 'nps', 'slider', 'date', 'single_choice', 'multi_choice', 'yes_no', 'consent', 'hidden', 'statement', 'summary' );
+	public const ENABLED_TYPES = array( ...self::V1_TYPES, 'address', 'media', 'file_upload', 'calculated' );
 
 	/** @param array<string,mixed> $schema
 	 *  @return list<array{path:string,code:string,message:string}>
@@ -22,6 +23,9 @@ final class SchemaValidator {
 		$variables = array_column( $schema['variables'] ?? array(), 'key' );
 		foreach ( $schema['steps'] as $index => $step ) {
 			$path = '/steps/' . $index;
+			if ( 'hidden' === $step['type'] && 'cookie' === ( $step['settings']['source'] ?? '' ) && ! \ChatFlow\Security\CookieSources::allows( $step['settings']['sourceKey'] ?? $step['key'] ) ) {
+				$errors[] = $this->error( $path . '/settings/sourceKey', 'restricted_cookie', \ChatFlow\Security\CookieSources::MESSAGE );
+			}
 			$this->unique( $step['id'], $ids, $path . '/id', $errors );
 			$this->unique( $step['key'], $keys, $path . '/key', $errors );
 			$values = array();
@@ -82,7 +86,7 @@ final class SchemaValidator {
 				$errors[] = $this->error( '/variables/' . $index . '/default', 'type', 'Variable default must match its type.' );
 			}
 		}
-		return $errors;
+		return array_merge( $errors, \ChatFlow\Logic\PowerDiagnostics::diagnose( $schema ) );
 	}
 
 	/** @param array<string,mixed> $settings
@@ -92,6 +96,14 @@ final class SchemaValidator {
 	public function validateSettings( array $settings, ?array $schema = null ): array {
 		$errors  = $this->validateDocument( (object) $settings, 'settings' );
 		$default = $settings['completion']['defaultEndingId'] ?? null;
+		$magic   = $settings['sessions']['magicLinks'] ?? array();
+		if ( $schema && ( $magic['enabled'] ?? false ) ) {
+			$fields = array_column( $schema['steps'], 'type', 'key' );
+			if ( 'email' !== ( $fields[ $magic['emailField'] ?? '' ] ?? null ) ) {
+				$errors[] = $this->error( '/sessions/magicLinks/emailField', 'invalid_email_field', 'Magic links require a configured email field.' ); }
+			if ( ! ( $settings['sessions']['savePartial'] ?? true ) || ! ( $settings['sessions']['resumeEnabled'] ?? true ) ) {
+				$errors[] = $this->error( '/sessions/magicLinks/enabled', 'resume_disabled', 'Cross-device resume requires partial saving and resume to be enabled.' ); }
+		}
 		if ( $schema && $default && ! in_array( $default, array_column( $schema['endings'], 'id' ), true ) ) {
 			$errors[] = $this->error( '/completion/defaultEndingId', 'unknown_ending', 'Unknown default ending.' );
 		}
@@ -102,7 +114,7 @@ final class SchemaValidator {
 	 *  @param list<string> $enabled_types
 	 *  @return list<array{path:string,code:string,message:string}>
 	 */
-	public function validatePublishable( array $schema, array $enabled_types = self::V1_TYPES ): array {
+	public function validatePublishable( array $schema, array $enabled_types = self::ENABLED_TYPES ): array {
 		$errors = $this->validate( $schema );
 		if ( $errors ) {
 			return $errors;

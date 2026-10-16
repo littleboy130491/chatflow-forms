@@ -7,6 +7,7 @@ parameters:
         - tests/php/constants.php
         - tests/php/Backend/static-constants.php
         - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+        - vendor/damian-elenbaas/elementor-stubs/elementor-stubs.php
     scanDirectories:
         - vendor-prefixed
         - vendor/woocommerce/action-scheduler

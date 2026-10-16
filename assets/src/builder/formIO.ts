@@ -13,6 +13,7 @@ export function exportForm(form: FormDTO): FormFile {
     settings.integrations.webhooks = settings.integrations.webhooks.map((hook) => ({
       ...hook,
       secret: '',
+      headers: {},
       enabled: false,
     })) as NonNullable<NonNullable<FormSettings['integrations']>['webhooks']>;
   return {

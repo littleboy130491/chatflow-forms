@@ -8,9 +8,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { diagnoseSchema } from '../shared/logic/index';
-import { Button, Check, Field, Notice, Select } from './controls';
+import { Area, Button, Check, Field, Notice, Select } from './controls';
 import { AdminApi, can, errorMessage } from './api';
-import type { AdminConfig, FormDTO, FormSchema, Page, Step } from './api';
+import type { AdminConfig, FormDTO, FormSchema, Step } from './api';
 import {
   blankForm,
   DraftController,
@@ -19,12 +19,17 @@ import {
   publishDiff,
   reorder,
   uid,
-  v1Types,
 } from './model';
 import { Inspector, SortableItem } from './Inspector';
 import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
-import { downloadForm, importForm } from './formIO';
+import { importForm } from './formIO';
+import { googleFont, googleFonts } from '../shared/fonts';
+import { FlowMap } from './FlowMap';
+import { PowerEditor } from './PowerEditor';
+import { Share } from './Share';
+import { Contrast } from './Contrast';
+export { mountFormsList } from './forms-list';
 import './style.css';
 
 export const fieldLabels: Record<string, string> = {
@@ -37,6 +42,10 @@ export const fieldLabels: Record<string, string> = {
   scale: __('Scale (1–10)', 'chatflow-forms'),
   nps: __('NPS (0–10)', 'chatflow-forms'),
   slider: __('Slider', 'chatflow-forms'),
+  calculated: __('Calculated number', 'chatflow-forms'),
+  file_upload: __('File upload', 'chatflow-forms'),
+  address: __('Address', 'chatflow-forms'),
+  media: __('Media', 'chatflow-forms'),
   date: __('Date', 'chatflow-forms'),
   single_choice: __('Single choice', 'chatflow-forms'),
   multi_choice: __('Multiple choice', 'chatflow-forms'),
@@ -52,24 +61,13 @@ export interface TemplateSummary {
   description: string;
   locale: string;
 }
-export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
-  const [page, setPage] = useState(1),
-    [forms, setForms] = useState<Page<FormDTO> | null>(null),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
+/** Start panel: blank form, JSON import and the starter template gallery. */
+export function FormStart({ api, onOpen }: { api: AdminApi; onOpen: (form: FormDTO) => void }) {
+  const [error, setError] = useState(''),
     [importing, setImporting] = useState(false),
     [templates, setTemplates] = useState<TemplateSummary[]>([]),
     [templatesLoading, setTemplatesLoading] = useState(true),
     [creatingTemplate, setCreatingTemplate] = useState('');
-  const load = () => {
-    setBusy(true);
-    api
-      .request<Page<FormDTO>>(`admin/forms?page=${page}&perPage=20`)
-      .then(setForms)
-      .catch((err) => setError(errorMessage(err)))
-      .finally(() => setBusy(false));
-  };
-  useEffect(load, [api, page]);
   useEffect(() => {
     let active = true;
     api.request<{ items: TemplateSummary[] }>('admin/templates')
@@ -79,8 +77,8 @@ export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
     return () => { active = false; };
   }, [api]);
   return (
-    <section>
-      <h1>{__('ChatFlow Forms', 'chatflow-forms')}</h1>
+    <section className="cff-form-start">
+      <h2>{__('Create a form', 'chatflow-forms')}</h2>
       <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
         {__('New blank form', 'chatflow-forms')}
       </Button>
@@ -89,7 +87,7 @@ export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
         <input
           type="file"
           accept=".json,application/json"
-          disabled={busy || importing}
+          disabled={importing}
           onChange={async (event) => {
             const input = event.currentTarget;
             const file = input.files?.[0];
@@ -123,7 +121,7 @@ export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
               <span className="cff-template-locale">{template.locale.replace('_', '-')}</span>
               <Button
                 variant="secondary"
-                disabled={busy || importing || Boolean(creatingTemplate)}
+                disabled={importing || Boolean(creatingTemplate)}
                 onClick={async () => {
                   setCreatingTemplate(template.id);
                   setError('');
@@ -147,92 +145,6 @@ export function FormsList({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
           {error}
         </Notice>
       )}
-      <table className="widefat striped">
-        <thead>
-          <tr>
-            <th>{__('Name', 'chatflow-forms')}</th>
-            <th>{__('Status / version', 'chatflow-forms')}</th>
-            <th>{__('Shortcode', 'chatflow-forms')}</th>
-            <th>{__('Actions', 'chatflow-forms')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forms?.items.map((form) => (
-            <tr key={form.id}>
-              <td>
-                <Button variant="link" onClick={() => onOpen(form)}>
-                  {form.title}
-                </Button>
-              </td>
-              <td>
-                {form.status} / {form.version}
-              </td>
-              <td>
-                <code>{`[chatflow id="${form.id}"]`}</code>
-                <Button
-                  onClick={() => {
-                    navigator.clipboard
-                      .writeText(`[chatflow id="${form.id}"]`)
-                      .catch((err) => setError(errorMessage(err)));
-                  }}
-                >
-                  {__('Copy', 'chatflow-forms')}
-                </Button>
-              </td>
-              <td>
-                <Button onClick={() => onOpen(form)}>{__('Edit', 'chatflow-forms')}</Button>
-                <Button onClick={() => downloadForm(form)}>{__('Export form JSON', 'chatflow-forms')}</Button>
-                <Button
-                  onClick={() => {
-                    const copy = structuredClone(form);
-                    onOpen({
-                      ...copy,
-                      id: 0,
-                      slug: '',
-                      version: 0,
-                      draftRevision: 0,
-                      status: 'draft',
-                      title: `${form.title} (${__('Copy', 'chatflow-forms')})`,
-                    });
-                  }}
-                >
-                  {__('Duplicate', 'chatflow-forms')}
-                </Button>
-                <Button
-                  isDestructive
-                  disabled={busy}
-                  onClick={async () => {
-                    if (
-                      window.confirm(
-                        __('Trash this form? New visitors cannot start it afterwards.', 'chatflow-forms'),
-                      )
-                    ) {
-                      try {
-                        await api.request(`admin/forms/${form.id}`, 'DELETE');
-                        load();
-                      } catch (err) {
-                        setError(errorMessage(err));
-                      }
-                    }
-                  }}
-                >
-                  {__('Trash', 'chatflow-forms')}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {busy && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
-      <Button disabled={page <= 1 || busy} onClick={() => setPage(page - 1)}>
-        {__('Previous', 'chatflow-forms')}
-      </Button>
-      <span>
-        {page} / {Math.max(1, Math.ceil((forms?.total ?? 0) / 20))}
-      </span>
-      <Button disabled={busy || page * 20 >= (forms?.total ?? 0)} onClick={() => setPage(page + 1)}>
-        {__('Next', 'chatflow-forms')}
-      </Button>
     </section>
   );
 }
@@ -284,10 +196,19 @@ function BuilderView({
   const [tab, setTab] = useState('build'),
     [selected, setSelected] = useState(schema.steps[0]?.id ?? ''),
     [marked, setMarked] = useState<string[]>([]),
-    [preview, setPreview] = useState(false),
+    [preview, setPreview] = useState(api.config.preview === true),
     [search, setSearch] = useState(''),
     [publishConfirm, setPublishConfirm] = useState(false);
-  const [baseline, setBaseline] = useState<FormSchema | null>(form.version ? structuredClone(schema) : null);
+  const [baseline, setBaseline] = useState<FormSchema | null>(null);
+  const [baselineError, setBaselineError] = useState('');
+  useEffect(() => {
+    if (!form.version || !form.id) return;
+    let active = true;
+    void api.request<FormDTO>(`admin/forms/${form.id}/published`).then(live => {
+      if (active) { setBaseline(live.schema); setBaselineError(''); }
+    }).catch(err => { if (active) { setBaseline(null); setBaselineError(errorMessage(err)); } });
+    return () => { active = false; };
+  }, [api, form.id, form.version]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -302,13 +223,21 @@ function BuilderView({
     setSelected(next.id);
   };
   const dirty = controller.dirty();
+  const [lockError, setLockError] = useState('');
+  useEffect(() => {
+    if (!form.id) return;
+    let active = true;
+    const acquire = () => { void api.request(`admin/forms/${form.id}/lock`, 'POST', {}).then(() => { if (active) setLockError(''); }).catch(err => { if (active) setLockError(errorMessage(err)); }); };
+    acquire(); const timer = setInterval(acquire, 60000);
+    return () => { active = false; clearInterval(timer); };
+  }, [api, form.id]);
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!controller.state.conflict && controller.dirty() && !controller.state.saving)
+      if (!lockError && !controller.state.conflict && controller.dirty() && !controller.state.saving)
         void controller.save().catch(() => undefined);
     }, 10000);
     return () => clearInterval(timer);
-  }, [controller]);
+  }, [controller, lockError]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => {
       if (controller.dirty()) {
@@ -350,7 +279,7 @@ function BuilderView({
           {__('Redo', 'chatflow-forms')}
         </Button>
         <Button
-          disabled={state.saving || Boolean(state.conflict)}
+          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError)}
           onClick={() => {
             void controller.save().catch(() => undefined);
           }}
@@ -360,7 +289,7 @@ function BuilderView({
         <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
         <Button
           variant="primary"
-          disabled={state.saving || Boolean(state.conflict)}
+          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
           onClick={() => setPublishConfirm(true)}
         >
           {__('Publish', 'chatflow-forms')}
@@ -371,6 +300,8 @@ function BuilderView({
           {state.error}
         </Notice>
       )}
+      {lockError && <Notice status="warning" isDismissible={false}>{lockError}</Notice>}
+      {baselineError && <Notice status="error" isDismissible={false}>{baselineError}</Notice>}
       {state.conflict && (
         <Notice status="warning" isDismissible={false}>
           <p>
@@ -420,7 +351,7 @@ function BuilderView({
           {form.version > 0 && (
             <p>
               {__(
-                'Diff uses the draft loaded in this editor, not the historical published snapshot.',
+                'Diff compares this draft to the current published snapshot.',
                 'chatflow-forms',
               )}
             </p>
@@ -428,7 +359,7 @@ function BuilderView({
           <Button onClick={() => setPublishConfirm(false)}>{__('Cancel', 'chatflow-forms')}</Button>
           <Button
             variant="primary"
-            disabled={state.saving}
+            disabled={state.saving || Boolean(lockError) || (form.version > 0 && !baseline)}
             onClick={async () => {
               try {
                 const published = await controller.publish();
@@ -478,7 +409,6 @@ function BuilderView({
               {api.config.features.fieldTypes
                 .filter(
                   (type) =>
-                    v1Types.includes(type) &&
                     (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase()),
                 )
                 .map((type) => (
@@ -668,12 +598,24 @@ function BuilderView({
                 ))}
             </tbody>
           </table>
-          <p>{__('Scoring and visual node graphs are not enabled in MVP.', 'chatflow-forms')}</p>
+          <FlowMap schema={schema} onChange={setSchema} onSelect={id => { setSelected(id); setTab('build'); }} />
+          <PowerEditor schema={schema} onChange={setSchema} />
         </section>
       )}
       {tab === 'design' && (
         <section className="cff-card">
           <h2>{__('Design basics', 'chatflow-forms')}</h2>
+          <Contrast appearance={form.settings.appearance} />
+          <Area label={__('Scoped custom CSS (inside the Shadow DOM)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
+          <Select label={__('Theme preset', 'chatflow-forms')} value="" choices={[
+            {value:'',label:__('Choose a preset', 'chatflow-forms')},
+            {value:'neutral',label:__('Neutral light', 'chatflow-forms')},
+            {value:'dark',label:__('Neutral dark', 'chatflow-forms')},
+          ]} onChange={(preset)=>{if (!preset) return; edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,
+            theme:preset === 'dark' ? 'dark' : 'light', primary:preset === 'dark' ? '#d4d4d4' : '#262626',botBubbleBackground:preset === 'dark' ? '#262626' : '#f5f5f5',userBubbleBackground:preset === 'dark' ? '#404040' : '#e5e5e5',textColor:preset === 'dark' ? '#fafafa' : '#171717',radius:8,
+          }}}));}} />
+          <Check label={__('Confetti on completion (off by default)', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
+            onChange={(confetti)=>edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,confetti}}}))} />
           <Field
             label={__('Bot name', 'chatflow-forms')}
             value={schema.bot.name}
@@ -742,19 +684,26 @@ function BuilderView({
               }
             />
           ))}
+          <Select
+            label={__('Font source', 'chatflow-forms')}
+            value={form.settings.appearance?.googleFont ?? 'system'}
+            choices={[{ value: 'system', label: __('System / local — no ChatFlow font requests', 'chatflow-forms') }, ...googleFonts.map(font => ({ value: font, label: font }))]}
+            onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, googleFont: googleFont(font) ?? 'system', inheritFont: false } } }))}
+          />
+          <p>{__('Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.', 'chatflow-forms')}</p>
           <Check
             label={__('Inherit theme font', 'chatflow-forms')}
             value={form.settings.appearance?.inheritFont}
             onChange={(inheritFont) =>
               edit((value) => ({
                 ...value,
-                settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont } },
+                settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont, ...(inheritFont ? { googleFont: 'system' as const } : {}) } },
               }))
             }
           />
           <p>
             {__(
-              'Check colour contrast in the real preview. Optional custom effects are not enabled.',
+              'Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.',
               'chatflow-forms',
             )}
           </p>
@@ -790,7 +739,7 @@ function BuilderView({
           ) : (
             <p>{__('Save this draft first to get its form ID.', 'chatflow-forms')}</p>
           )}
-          <p>{__('Launcher, popup and QR tools are optional later features.', 'chatflow-forms')}</p>
+          {form.id > 0 && <Share form={form} config={api.config} />}
         </section>
       )}
       {preview && <Preview form={form} config={api.config} onClose={() => setPreview(false)} />}
@@ -799,7 +748,7 @@ function BuilderView({
 }
 function AdminBuilder({ config }: { config: AdminConfig }) {
   const api = useMemo(() => new AdminApi(config), [config]);
-  const [form, setForm] = useState<FormDTO | null>(null),
+  const [form, setForm] = useState<FormDTO | null>(() => !config.formId && new URLSearchParams(window.location.search).get('blank') === '1' ? blankForm(config.defaults) : null),
     [error, setError] = useState(''),
     [loading, setLoading] = useState(Boolean(config.formId));
   useEffect(() => {
@@ -825,13 +774,24 @@ function AdminBuilder({ config }: { config: AdminConfig }) {
         </Notice>
       )}
       {form ? (
-        <Builder api={api} initial={form} onBack={() => setForm(null)} />
+        <Builder api={api} initial={form} onBack={() => { const url = new URL(config.adminUrl ?? "admin.php", window.location.href); url.searchParams.set("page", "cff-forms"); window.location.assign(url.href); }} />
       ) : (
-        <FormsList api={api} onOpen={setForm} />
+        <FormStart api={api} onOpen={setForm} />
       )}
     </Fragment>
   );
 }
 export function mountBuilder(root: HTMLElement, config: AdminConfig = window.cffAdmin): void {
   createRoot(root).render(<AdminBuilder config={config} />);
+}
+/** Forms list page: the start panel opens the builder screen for the created draft. */
+export function mountFormStart(root: HTMLElement, config: AdminConfig = window.cffAdmin): void {
+  const api = new AdminApi(config);
+  const open = (form: FormDTO) => {
+    const url = new URL(config.adminUrl ?? 'admin.php', window.location.href);
+    url.searchParams.set('page', 'cff-builder');
+    if (form.id) url.searchParams.set('formId', String(form.id)); else url.searchParams.set('blank', '1');
+    window.location.assign(url.href);
+  };
+  createRoot(root).render(can(config, 'manage_forms') ? <FormStart api={api} onOpen={open} /> : null);
 }

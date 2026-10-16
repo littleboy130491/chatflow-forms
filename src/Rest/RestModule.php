@@ -27,7 +27,19 @@ final class RestModule implements Module {
 		add_filter( 'rest_pre_dispatch', array( $this, 'requestBoundary' ), 10, 3 );
 	}
 	public function routes(): void {
+		( new UploadController() )->register();
+		( new AnalyticsController( $this->forms ) )->register();
+		( new TemplatesController( $this->forms ) )->register();
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
+		$this->route( '/forms/(?P<id>\d+)/engagement', 'GET', array( $this, 'engagement' ) );
+		$this->route(
+			'/sessions/(?P<id>[a-f0-9-]{36})/events',
+			'POST',
+			function ( $r ) {
+				$guard = UploadSession::guard( $r );
+				return is_wp_error( $guard ) ? $guard : $this->respond( ( new \ChatFlow\Frontend\EventCollector() )->collect( $r['id'], $r->get_header( 'X-CFF-Request-Token' ) ?? '', $this->body( $r ), $_SERVER ) );
+			}
+		);
 		$this->route( '/forms/(?P<id>\d+)/start-token', 'POST', array( $this, 'startToken' ) );
 		$this->route( '/forms/(?P<id>\d+)/view', 'POST', array( $this, 'formView' ) );
 		$this->route( '/sessions', 'POST', fn( $r ) => $this->respond( $this->sessions->start( $this->body( $r ), $r->get_header( 'X-CFF-Start-Token' ) ?? '', $r->get_header( 'Idempotency-Key' ) ?? '' ), 201 ) );
@@ -43,16 +55,30 @@ final class RestModule implements Module {
 		$this->route( '/admin/forms', 'GET', array( $this, 'formsList' ), 'cff_manage_forms' );
 		$this->route( '/admin/forms', 'POST', fn( $r ) => $this->respond( $this->forms->create( (string) ( $this->body( $r )['title'] ?? '' ), $this->body( $r )['schema'] ?? array(), $this->body( $r )['settings'] ?? array() ), 201 ), 'cff_manage_forms' );
 		$this->route( '/admin/forms/(?P<id>\d+)', 'GET', fn( $r ) => $this->respond( $this->forms->getDraft( (int) $r['id'] ) ?? Database::error( 'cff_not_found', 'Form not found.', 404 ) ), 'cff_manage_forms' );
+		$this->route( '/admin/forms/(?P<id>\d+)/published', 'GET', fn( $r ) => $this->respond( $this->forms->getPublished( (int) $r['id'] ) ?? Database::error( 'cff_not_found', 'Published form not found.', 404 ) ), 'cff_manage_forms' );
+		$this->route( '/admin/forms/(?P<id>\d+)/lock', 'POST', fn( $r ) => $this->respond( \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] ) ), 'cff_manage_forms' );
 		$this->route(
 			'/admin/forms/(?P<id>\d+)',
 			'PUT',
 			function ( $r ) {
+				$lock = \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] );
+				if ( is_wp_error( $lock ) ) {
+					return $lock;
+				}
 				$body = $this->body( $r );
 				return $this->respond( $this->forms->saveDraft( (int) $r['id'], $body['schema'] ?? array(), $body['settings'] ?? array(), (int) ( $body['draftRevision'] ?? 0 ), isset( $body['title'] ) ? (string) $body['title'] : null ) );
 			},
 			'cff_manage_forms'
 		);
-		$this->route( '/admin/forms/(?P<id>\d+)/publish', 'POST', fn( $r ) => $this->respond( $this->forms->publish( (int) $r['id'], (int) ( $this->body( $r )['draftRevision'] ?? 0 ) ) ), 'cff_manage_forms' );
+		$this->route(
+			'/admin/forms/(?P<id>\d+)/publish',
+			'POST',
+			function ( $r ) {
+				$lock = \ChatFlow\Forms\EditLock::acquire( (int) $r['id'] );
+				return is_wp_error( $lock ) ? $lock : $this->respond( $this->forms->publish( (int) $r['id'], (int) ( $this->body( $r )['draftRevision'] ?? 0 ) ) );
+			},
+			'cff_manage_forms'
+		);
 		$this->route( '/admin/forms/(?P<id>\d+)', 'DELETE', array( $this, 'trashForm' ), 'cff_manage_forms' );
 		$this->route( '/admin/analytics', 'GET', fn( $r ) => $this->respond( ( new \ChatFlow\Analytics\Report( $this->forms ) )->run( (int) ( $r['formId'] ?? 0 ), $r['from'] ?? null, $r['to'] ?? null ) ), 'cff_view_submissions' );
 		$this->route( '/admin/submissions', 'GET', array( $this, 'submissionsList' ), 'cff_view_submissions' );
@@ -61,6 +87,7 @@ final class RestModule implements Module {
 		$this->route( '/admin/submissions/(?P<id>\d+)', 'DELETE', array( $this, 'deleteSubmission' ), 'cff_delete_submissions' );
 		$this->route( '/admin/submissions/bulk', 'POST', array( $this, 'bulk' ), 'cff_edit_submissions' );
 		$this->route( '/admin/submissions/export', 'POST', fn( $r ) => $this->respond( ( new Export( $this->forms, $this->submissions ) )->create( $this->body( $r ) ) ), 'cff_export_submissions' );
+		$this->route( '/admin/export-forms', 'GET', array( $this, 'exportForms' ), 'cff_export_submissions' );
 		$this->route( '/admin/exports/(?P<id>\d+)', 'GET', fn( $r ) => $this->respond( ( new Export( $this->forms, $this->submissions ) )->progress( (int) $r['id'] ) ), 'cff_export_submissions' );
 		$this->route( '/admin/purge/preview', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->preview( $this->body( $r )['criteria'] ?? array() ) ), 'cff_purge_submissions' );
 		$this->route( '/admin/purge', 'POST', fn( $r ) => $this->respond( ( new Purge( $this->submissions ) )->start( $this->body( $r )['criteria'] ?? array(), (string) ( $this->body( $r )['confirmationToken'] ?? '' ), (string) ( $this->body( $r )['confirmation'] ?? '' ) ) ), 'cff_purge_submissions' );
@@ -142,7 +169,7 @@ final class RestModule implements Module {
 		$form = $this->forms->getPublished( (int) $r['id'], null === $version ? null : (int) $version );
 		if ( ! $form ) {
 			return Database::error( 'cff_not_found', 'Published form not found.', 404 ); }
-		$envelope = PublicProjection::build( $form, $this->fields->types() );
+		$envelope = apply_filters( 'cff_public_display', PublicProjection::build( $form, $this->fields->types() ) );
 		$etag     = '"' . hash( 'sha256', Database::json( $envelope ) ) . '"';
 		$response = new \WP_REST_Response( $r->get_header( 'If-None-Match' ) === $etag ? null : $envelope, $r->get_header( 'If-None-Match' ) === $etag ? 304 : 200 );
 		$response->header( 'ETag', $etag );
@@ -158,6 +185,14 @@ final class RestModule implements Module {
 		}
 		$do_not_track = '1' === $r->get_header( 'DNT' ) || '1' === $r->get_header( 'Sec-GPC' );
 		return $this->respond( ( new \ChatFlow\Analytics\ViewCounter( $this->forms ) )->record( (int) $r['id'], $version, $do_not_track ) );
+	}
+
+	public function engagement( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
+		$version = $r->get_param( 'version' );
+		if ( null !== $version && ( ! ctype_digit( (string) $version ) || (int) $version < 1 ) ) {
+			return Database::error( 'cff_invalid_version', 'Invalid version.', 422 ); }
+		$form = $this->forms->getPublished( (int) $r['id'], null === $version ? null : (int) $version );
+		return $form ? $this->respond( \ChatFlow\Frontend\Engagement::config( $form ) ) : Database::error( 'cff_not_found', 'Published form not found.', 404 );
 	}
 	public function startToken( \WP_REST_Request $r ): \WP_REST_Response|\WP_Error {
 		$id      = (int) $r['id'];
@@ -238,11 +273,43 @@ final class RestModule implements Module {
 		foreach ( $query->posts as $post ) {
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
-				$items[] = $form->toArray(); }
+				$item               = $form->toArray();
+				$item['statistics'] = \ChatFlow\Forms\Statistics::get( $form->id() );
+				$items[]            = $item;
+			}
 		}
 		return $this->respond(
 			array(
 				'items'   => $items,
+				'total'   => $query->found_posts,
+				'page'    => $page,
+				'perPage' => $per,
+			)
+		);
+	}
+	public function exportForms( \WP_REST_Request $r ): \WP_REST_Response {
+		[$page, $per] = $this->pagination( $r );
+		$id           = absint( $r->get_param( 'id' ) );
+		$query        = new \WP_Query(
+			array(
+				'post_type'      => 'cff_form',
+				'post_status'    => array( 'draft', 'publish' ),
+				'posts_per_page' => $id ? 1 : $per,
+				'paged'          => $id ? 1 : $page,
+				'post__in'       => $id ? array( $id ) : null,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			)
+		);
+		return $this->respond(
+			array(
+				'items'   => array_map(
+					static fn( $post ) => array(
+						'id'    => $post->ID,
+						'title' => $post->post_title,
+					),
+					$query->posts
+				),
 				'total'   => $query->found_posts,
 				'page'    => $page,
 				'perPage' => $per,
@@ -380,7 +447,7 @@ final class RestModule implements Module {
 					'ip'             => ( new IpResolver() )->resolve( $_SERVER, Settings::get()['proxy'] ),
 					'smtpDetected'   => defined( 'WPMS_ON' ) || defined( 'FLUENTMAIL' ) || class_exists( 'Postman' ),
 					'fieldTypes'     => $this->fields->types(),
-					'uploads'        => false,
+					'uploads'        => in_array( 'file_upload', $this->fields->types(), true ),
 				)
 			);
 	}

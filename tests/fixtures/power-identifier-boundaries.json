@@ -1,0 +1,5 @@
+[
+  {"experimentLength":32,"variantLength":31,"valid":true,"combinedLength":64},
+  {"experimentLength":31,"variantLength":32,"valid":true,"combinedLength":64},
+  {"experimentLength":32,"variantLength":32,"valid":false,"combinedLength":65}
+]

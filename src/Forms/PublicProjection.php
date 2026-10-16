@@ -5,10 +5,12 @@ use ChatFlow\Integrations\HookDispatcher;
 
 final class PublicProjection {
 	/**
-	 * @param list<string> $types
+	 * @param list<string>|null $types
 	 * @return array<string,mixed> */
-	public static function build( Form $form, array $types = SchemaValidator::V1_TYPES ): array {
-		$schema = $form->schema();
+	public static function build( Form $form, ?array $types = null ): array {
+		$types ??= ( new \ChatFlow\Fields\Registry() )->types();
+		$schema = \ChatFlow\Security\CookieSources::projection( $form->schema() );
+		unset( $schema['experiments'] );
 		// Cookie/default hidden sources stay on the server until an uncached handshake.
 		foreach ( $schema['steps'] as &$step ) {
 			if ( 'hidden' === $step['type'] ) {
@@ -31,17 +33,24 @@ final class PublicProjection {
 					'resumePrompt'  => $session['resumePrompt'] ?? true,
 					'resumeDays'    => $session['resumeDays'] ?? 30,
 					'savePartial'   => $session['savePartial'] ?? true,
+					'magicLinks'    => array(
+						'enabled'  => $session['magicLinks']['enabled'] ?? false,
+						'whatsapp' => $session['magicLinks']['whatsapp'] ?? false,
+					),
 				),
 			),
 			'features' => array(
 				'fieldTypes' => $types,
-				'uploads'    => false,
+				'uploads'    => in_array( 'file_upload', $types, true ),
+				'engagement' => true,
 			),
 		);
 		$ids      = array();
 		if ( ! empty( $schema['bot']['avatar'] ) ) {
 			$ids[] = $schema['bot']['avatar']; }
 		foreach ( $schema['steps'] as $step ) {
+			if ( ! empty( $step['settings']['media']['attachmentId'] ) ) {
+				$ids[] = $step['settings']['media']['attachmentId']; }
 			foreach ( $step['options'] ?? array() as $option ) {
 				if ( ! empty( $option['image'] ) ) {
 					$ids[] = $option['image']; }
@@ -50,6 +59,9 @@ final class PublicProjection {
 		$media = array();
 		foreach ( array_unique( $ids ) as $id ) {
 			$url = wp_get_attachment_image_url( (int) $id, 'large' );
+			if ( ! $url ) {
+				$url = wp_get_attachment_url( (int) $id );
+			}
 			if ( $url ) {
 				$media[ (string) $id ] = array(
 					'url' => esc_url_raw( $url ),
@@ -57,7 +69,11 @@ final class PublicProjection {
 				); }
 		}
 		$envelope['form']['media'] = (object) $media;
-		$filtered                  = HookDispatcher::filter( 'cff_public_schema', $envelope, array( $form ) );
+		$hook_envelope             = $envelope;
+		foreach ( array( 'appearance', 'phrases', 'media' ) as $key ) {
+			$hook_envelope['form'][ $key ] = clone $envelope['form'][ $key ];
+		}
+		$filtered = HookDispatcher::filter( 'cff_public_schema', $hook_envelope, array( $form ) );
 		// Filters can safely customize display copy; never expand the credential/settings boundary.
 		if ( is_array( $filtered ) ) {
 			foreach ( array( 'appearance', 'phrases' ) as $key ) {

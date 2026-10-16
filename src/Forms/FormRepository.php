@@ -122,9 +122,9 @@ final class FormRepository {
 			$expected_revision,
 			function ( Form $draft ) use ( $wpdb, $id ): Form|\WP_Error {
 				/** @var list<string> $types */
-				$types  = apply_filters( 'cff_publishable_field_types', SchemaValidator::V1_TYPES );
+				$types  = apply_filters( 'cff_publishable_field_types', ( new \ChatFlow\Fields\Registry() )->types() );
 				$errors = array_merge( $this->validator->validatePublishable( $draft->schema(), $types ), $this->validator->validateSettings( $draft->settings(), $draft->schema() ) );
-				$errors = array_merge( $errors, $this->phaseOneSettingsIssues( $draft->settings() ) );
+				$errors = array_merge( $errors, $this->integrationSettingsIssues( $draft->settings() ) );
 				if ( $errors ) {
 					return $this->invalid( $errors );
 				}
@@ -186,20 +186,8 @@ final class FormRepository {
 	/** @param array<string,mixed> $settings
 	 * @return list<array{path:string,code:string,message:string}>
 	 */
-	private function phaseOneSettingsIssues( array $settings ): array {
+	private function integrationSettingsIssues( array $settings ): array {
 		$issues = array();
-		foreach ( array(
-			'/spam/captcha'        => ! in_array( $settings['spam']['captcha'] ?? 'none', array( 'none', '' ), true ),
-			'/spam/akismetEnabled' => ! empty( $settings['spam']['akismetEnabled'] ),
-			'/display/mode'        => ! in_array( $settings['display']['mode'] ?? 'inline', array( 'inline', 'fullpage', 'launcher', 'popup' ), true ),
-		) as $path => $unsupported ) {
-			if ( $unsupported ) {
-				$issues[] = array(
-					'path'    => $path,
-					'code'    => 'unsupported_feature',
-					'message' => 'This optional feature is not enabled in Phase 1.',
-				); }
-		}
 		foreach ( $settings['integrations']['webhooks'] ?? array() as $index => $webhook ) {
 			if ( empty( $webhook['enabled'] ) ) {
 				continue;

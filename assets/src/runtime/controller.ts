@@ -1,8 +1,10 @@
 import { replay } from '../shared/logic';
+import { readPrefill } from '../shared/prefill';
 import { collectMeta } from '../tracking';
 import { ApiClient, ApiError, uuid } from './api';
 import { SessionStorage, type SavedSession } from './persistence';
 import type { AnswerMap, Completion, PublicForm, ReplayContext, ReplayResult, RuntimeOptions, Session, Step } from './types';
+import { RuntimeAnalytics, type EngagementConfig } from './engagement';
 
 export interface RuntimeState {
   phase: 'loading' | 'resume' | 'ready' | 'submitting' | 'done' | 'error';
@@ -12,11 +14,12 @@ export interface RuntimeState {
   storageUnavailable: boolean; completion: Completion | null;
 }
 type Mutation = { method: 'PATCH' | 'DELETE' | 'POST'; body: Record<string, unknown>; key: string };
-const display = (step: Step) => step.type === 'statement' || step.type === 'summary';
+const display = (step: Step) => ['statement', 'summary', 'media'].includes(step.type);
 
 export class RuntimeController {
   state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
   private listeners = new Set<() => void>();
+  private renewal: Promise<void> | null = null;
   private session: Session | null = null;
   private context: ReplayContext = { hidden: {}, url: {}, meta: {}, now: new Date().toISOString() };
   private pending: Mutation | null = null;
@@ -29,13 +32,38 @@ export class RuntimeController {
   private submittedOnce = false;
   private editing: string | null = null;
   private prefill: AnswerMap;
+  private engagement: EngagementConfig | null = null;
+  private analytics: RuntimeAnalytics | null = null;
+  private engagementVersion = 0;
+  private async loadEngagement(): Promise<void> {
+    if (!this.state.form || this.options.preview || this.engagementVersion === this.state.form.form.version) return;
+    this.engagement = null; this.analytics = null;
+    if (this.state.form.features.engagement) {
+      this.engagement = await this.api!.request<EngagementConfig>(`forms/${this.state.form.form.id}/engagement`, 'GET', undefined, {}, 'no-store', this.state.form.form.version);
+      this.analytics = new RuntimeAnalytics(this.api!, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => { try { return this.options.analyticsOptOut === true || localStorage.getItem('cff_analytics_optout') === '1'; } catch { return this.options.analyticsOptOut === true; } });
+    }
+    this.engagementVersion = this.state.form.form.version;
+  }
   constructor(public readonly options: RuntimeOptions, private readonly api: ApiClient | null, private readonly storage = new SessionStorage(), private readonly emit: (name: string, detail: Record<string, unknown>) => void = () => {}) { this.prefill = options.prefill ?? {}; if (options.preview && options.context) this.context = options.context; }
   subscribe(listener: () => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   dispose(): void { this.disposed = true; this.listeners.clear(); }
   private notify(): void { if (!this.disposed) for (const listener of this.listeners) listener(); }
-  private event(name: string, extra: Record<string, unknown> = {}): void { if (!this.options.preview && this.state.form) this.emit(name, { formId: this.state.form.form.id, version: this.state.form.form.version, ...extra }); }
+  private event(name: string, extra: Record<string, unknown> = {}): void {
+    if (this.options.preview || !this.state.form) return;
+    this.emit(name, { formId: this.state.form.form.id, version: this.state.form.form.version, ...extra });
+    if (name === 'cff:step' && typeof extra.stepId === 'string' && this.state.form.form.session.savePartial !== false) this.analytics?.add({ event: 'view', stepId: extra.stepId });
+    if (name === 'cff:start') { this.analytics?.add({ event: 'view' }); if (this.session) void this.analytics?.flush(this.session); }
+  }
+  close(): void { if (this.session && this.state.phase !== 'done') { this.analytics?.add({ event: 'abandon', ...(this.state.activeId && this.state.form?.form.session.savePartial !== false ? { stepId: this.state.activeId } : {}) }); void this.analytics?.flush(this.session); } }
+  async upload(step: Step, file: File) {
+    if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new ApiError('cff_upload_unavailable', 0);
+    return this.ownerOperation(() => this.api!.upload(this.session!, step.id, file));
+  }
 
   async initialize(): Promise<void> {
+    const fragment = this.options.preview ? null : globalThis.location?.hash.match(/^#cff-magic=([A-Za-z0-9_-]{43})$/);
+    const magic = fragment?.[1];
+    if (globalThis.location?.hash.startsWith('#cff-magic=')) globalThis.history.replaceState(globalThis.history.state, '', globalThis.location.pathname + globalThis.location.search);
     try {
       const formId = this.options.form?.form.id ?? this.options.formId;
       if (!this.options.preview && formId) this.saved = this.storage.read(formId);
@@ -43,7 +71,14 @@ export class RuntimeController {
       if (this.disposed) return;
       this.latest = this.state.form;
       if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
+      this.prefill = { ...readPrefill(globalThis.location?.search ?? '', this.state.form.form.schema), ...this.prefill };
+      await this.loadEngagement();
       const form = this.state.form.form;
+      if (magic) {
+        await this.adopt(await this.api!.magicResume(form.id, magic));
+        this.state.acknowledged = this.displayBeforeCurrent();
+        this.compute(); this.state.phase = 'ready'; return;
+      }
       this.saved = form.session.resumeEnabled ? this.storage.read(form.id) : null;
       const token = form.session.resumeEnabled ? this.storage.credential(form.id) : null;
       if (token) {
@@ -87,6 +122,9 @@ export class RuntimeController {
       if (pinned.form.version !== session.version) throw new ApiError('cff_version_conflict', 409);
       this.state.form = pinned;
     }
+    if (session.schema) this.state.form = { ...this.state.form, form: { ...this.state.form.form, schema: session.schema } };
+    await this.loadEngagement();
+    if (this.disposed) return;
     this.session = session;
     this.context = session.context ?? this.context;
     this.state.answers = session.answers;
@@ -143,7 +181,7 @@ export class RuntimeController {
   get visibleSteps(): Step[] {
     const form = this.state.form; if (!form || !this.state.path) return [];
     const index = this.state.path.visited.indexOf(this.state.activeId ?? '');
-    return this.state.path.visited.slice(0, index < 0 ? undefined : index + 1).map(id => form.form.schema.steps.find(step => step.id === id)!).filter(step => step && step.type !== 'hidden');
+    return this.state.path.visited.slice(0, index < 0 ? undefined : index + 1).map(id => form.form.schema.steps.find(step => step.id === id)!).filter(step => step && step.type !== 'hidden' && step.type !== 'calculated');
   }
   async answer(value: unknown): Promise<void> {
     const step = this.activeStep;
@@ -162,11 +200,12 @@ export class RuntimeController {
     this.state.answers = candidate; this.editing = null; this.state.dirty = true;
     this.compute(); this.persist();
     if (this.state.form!.form.session.savePartial !== false) await this.flush();
+    if (this.session && !this.state.dirty) { this.analytics?.add({ event: 'answer', stepId: step.id }); void this.analytics?.flush(this.session); }
   }
   edit(id: string): void {
     if (this.state.busy || this.state.phase !== 'ready' || this.pending?.method === 'POST') return;
     const path = this.state.path; const step = this.state.form?.form.schema.steps.find(step => step.id === id);
-    if (!path?.visited.includes(id) || !step || display(step) || step.type === 'hidden') return;
+    if (!path?.visited.includes(id) || !step || display(step) || step.type === 'hidden' || step.type === 'calculated') return;
     this.editing = id; this.state.fieldError = null;
     const cut = path.visited.indexOf(id);
     this.state.acknowledged = this.state.acknowledged.filter(key => path.visited.indexOf(key) < cut);
@@ -174,17 +213,28 @@ export class RuntimeController {
   }
   back(): void {
     const steps = this.visibleSteps.filter(step => !display(step) && step.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, step.key));
-    const previous = steps[steps.length - 1]; if (previous) this.edit(previous.id);
+    const previous = steps[steps.length - 1]; if (previous) { this.edit(previous.id); if (this.session) { this.analytics?.add({ event: 'back', stepId: previous.id }); void this.analytics?.flush(this.session); } }
   }
   prefillAnswers(answers: AnswerMap): void {
     if (this.state.phase === 'done' || this.pending?.method === 'POST') return;
     this.prefill = { ...this.prefill, ...answers };
     this.notify();
   }
+  jumpToStep(id: string): boolean {
+    const step = this.state.form?.form.schema.steps.find(step => step.id === id);
+    if (!this.options.preview || !step || step.type === 'hidden' || step.type === 'calculated') return false;
+    this.editing = id; this.state.activeId = id; this.state.phase = 'ready';
+    this.state.error = null; this.state.fieldError = null; this.notify(); return true;
+  }
   inputValue(step: Step): unknown { return this.state.answers[step.key] ?? this.prefill[step.key] ?? step.defaultValue; }
   private inputAnswers(): AnswerMap {
-    const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden').map(step => step.key));
+    const keys = new Set(this.state.form!.form.schema.steps.filter(step => !display(step) && step.type !== 'hidden' && step.type !== 'calculated').map(step => step.key));
     return Object.fromEntries(Object.entries(this.state.answers).filter(([key]) => keys.has(key))) as AnswerMap;
+  }
+  async magicLink(channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
+    if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new ApiError('cff_magic_unavailable', 0);
+    if (this.state.dirty) await this.flush();
+    return this.ownerOperation(() => this.api!.magicLink(this.session!, channel));
   }
   private persist(): void {
     if (!this.session && this.saved && this.state.offline && !this.options.preview) {
@@ -196,18 +246,34 @@ export class RuntimeController {
   }
   private async mutate<T>(operation: Mutation): Promise<T> {
     if (!this.session) throw new ApiError('cff_session_expired', 401);
-    if (!(operation.method === 'POST' && this.submittedOnce) && Date.parse(this.session.requestExpiresAt) <= Date.now() + 5000 && this.session.resumeToken) {
-      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
-      if (this.disposed) throw new ApiError('cff_cancelled', 0);
-      this.session = { ...fresh, answers: this.session.answers };
-    }
+    if (!(operation.method === 'POST' && this.submittedOnce)) await this.renewCredential();
     try { if (operation.method === 'POST') this.submittedOnce = true; return await this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key); }
     catch (error) {
       if (!(error instanceof ApiError) || error.status !== 401 || !this.session.resumeToken) throw error;
-      const fresh = await this.api!.resume(this.session.formId, this.session.resumeToken);
-      if (this.disposed) throw new ApiError('cff_cancelled', 0);
-      this.session = { ...fresh, answers: this.session.answers };
+      await this.renewCredential(true);
       return this.api!.mutate<T>(this.session, operation.method, operation.body, operation.key);
+    }
+  }
+  private async renewCredential(force = false): Promise<void> {
+    if (!this.session || !this.api) throw new ApiError('cff_session_expired', 401);
+    if (!force && Date.parse(this.session.requestExpiresAt) > Date.now() + 5000) return;
+    if (!this.session.resumeToken) throw new ApiError('cff_session_expired', 401);
+    if (!this.renewal) {
+      const current = this.session;
+      this.renewal = this.api.resume(current.formId, current.resumeToken!).then(fresh => {
+        if (this.disposed) throw new ApiError('cff_cancelled', 0);
+        if (fresh.status !== 'active') throw new ApiError('cff_session_expired', 401);
+        this.session = { ...fresh, answers: current.answers }; this.persist();
+      }).finally(() => { this.renewal = null; });
+    }
+    await this.renewal;
+  }
+  private async ownerOperation<T>(call: () => Promise<T>): Promise<T> {
+    await this.renewCredential();
+    try { return await call(); }
+    catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 401 || !this.session?.resumeToken) throw error;
+      await this.renewCredential(true); return call();
     }
   }
   async flush(): Promise<void> {
@@ -230,7 +296,7 @@ export class RuntimeController {
   async submit(honeypot = ''): Promise<void> {
     if (this.disposed || this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
     if (this.state.activeId && !this.pending) return;
-    const validation = replay(this.state.form!.form.schema, this.state.answers, this.context, 'complete');
+    const validation = replay(this.state.form!.form.schema, this.inputAnswers(), this.context, 'complete');
     if (validation.errors.length && !this.pending) { this.state.fieldError = 'invalid'; this.notify(); return; }
     if (this.options.preview) {
       const ending = this.state.form!.form.schema.endings.find(e => e.id === validation.endingId) ?? this.state.form!.form.schema.endings[0];
@@ -240,7 +306,13 @@ export class RuntimeController {
     if (this.pending?.method !== 'POST') { await this.flush(); if (this.state.dirty && this.state.form!.form.session.savePartial !== false) return; }
     this.state.busy = true; this.state.phase = 'submitting'; this.state.error = null; this.notify();
     try {
-      if (!this.pending) this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot } };
+      if (!this.pending) {
+        const captchaToken = this.engagement && this.engagement.captcha.provider !== 'none' ? await this.options.captcha?.(this.engagement.captcha) : '';
+        if (this.engagement && this.engagement.captcha.provider !== 'none' && !captchaToken) throw new ApiError('cff_captcha_required', 422);
+        if (this.disposed) return;
+        this.pending = { method: 'POST', key: uuid(), body: { version: this.session!.version, revision: this.session!.revision, answers: this.inputAnswers(), honeypot, ...(captchaToken ? { captchaToken } : {}) } };
+      }
+      if (this.session) await this.analytics?.flush(this.session);
       this.state.completion = await this.mutate<Completion>(this.pending);
       if (this.disposed) return;
       this.pending = null; this.state.phase = 'done'; this.state.dirty = false;

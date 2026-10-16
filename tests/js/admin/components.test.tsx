@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminApi } from '../../../assets/src/builder/api';
 import type { AdminConfig, FormDTO } from '../../../assets/src/builder/api';
 import { blankForm, v1Types } from '../../../assets/src/builder/model';
-import { FormsList } from '../../../assets/src/builder/index';
+import { FormStart } from '../../../assets/src/builder/index';
 import { JsonEditor } from '../../../assets/src/builder/controls';
 import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
 import { Purge } from '../../../assets/src/submissions/Purge';
@@ -82,7 +82,7 @@ const config: AdminConfig = {
   screen: 'builder',
   locale: 'en_US',
   capabilities: { manage_forms: true, purge_submissions: true },
-  features: { fieldTypes: v1Types, uploads: false },
+  features: { fieldTypes: v1Types, uploads: false, xlsx: false },
 };
 let container: HTMLDivElement, root: ReturnType<typeof createRoot>;
 beforeEach(() => {
@@ -137,7 +137,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
       throw new Error('Unexpected admin endpoint: ' + path);
     });
     api.request = request as unknown as AdminApi['request'];
-    await act(async () => root.render(createElement(FormsList, { api, onOpen: open })));
+    await act(async () => root.render(createElement(FormStart, { api, onOpen: open })));
     await vi.waitFor(() => expect(container.textContent).toContain('Contact request'));
     expect(container.textContent).toContain('Collect inquiries.');
     await click('Use template');
@@ -155,7 +155,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
       throw new Error('Template could not be created.');
     });
     api.request = request as unknown as AdminApi['request'];
-    await act(async () => root.render(createElement(FormsList, { api, onOpen: open })));
+    await act(async () => root.render(createElement(FormStart, { api, onOpen: open })));
     await vi.waitFor(() => expect(container.textContent).toContain('Customer feedback'));
     await click('Use template');
     expect(container.querySelector('[role=alert]')?.textContent).toContain('Template could not be created.');
@@ -235,7 +235,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     expect(container.textContent).not.toContain('Answer field key');
     await click('Preview count');
     expect(request).toHaveBeenCalledWith('admin/purge/preview', 'POST', {
-      criteria: { status: 'spam', olderThanDays: 360 },
+      criteria: { olderThanDays: 360 },
     });
     expect(button('Permanently purge').disabled).toBe(true);
     await change('Type DELETE to confirm', 'delete');
@@ -261,7 +261,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     await change('Type DELETE to confirm', 'DELETE');
     await click('Permanently purge');
     expect(request).toHaveBeenLastCalledWith('admin/purge', 'POST', {
-      criteria: { status: 'spam', olderThanDays: 360 },
+      criteria: { olderThanDays: 360 },
       confirmationToken: 'unit-preview',
       confirmation: 'DELETE',
     });

@@ -7,7 +7,10 @@ import { RuntimeController } from './controller';
 import { registerField } from './registry';
 import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
 import { phrases } from './i18n';
+import { googleFont, systemFont, type GoogleFont } from '../shared/fonts';
+import { acquireGoogleFont } from './fonts';
 import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
+import { captchaToken } from './captcha';
 export type { RuntimeOptions, FieldProps, PublicForm } from './types';
 export { registerField } from './registry';
 
@@ -15,9 +18,10 @@ export interface RuntimeHandle {
   unmount(): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
-  open?(): void;
+  jumpToStep(id: string): boolean;
+  open(): void;
 }
-const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number }>();
+const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number; controller: RuntimeController }>();
 let overlayCounter = 0;
 function previewState(controller: RuntimeController) {
   return { phase: controller.state.phase, visited: [...(controller.state.path?.visited ?? [])], currentStepId: controller.state.activeId, variables: { ...controller.state.path?.variables }, progress: controller.state.path?.progress ?? 0, errors: [...(controller.state.path?.errors ?? [])] };
@@ -37,12 +41,18 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const customization = document.createElement('style');
   const root = document.createElement('div'); shadow.replaceChildren(style, customization, root);
   const config: RuntimeOptions = { ...options, formId: id, locale: options.locale ?? host.dataset.locale ?? document.documentElement.lang ?? 'en', mode: options.mode ?? (['fullpage', 'launcher', 'popup'].includes(host.dataset.mode ?? '') ? host.dataset.mode as 'fullpage' | 'launcher' | 'popup' : 'inline') };
+  const captchaRoot = document.createElement('div'); captchaRoot.className = 'captcha';
+  config.captcha ??= config => captchaToken(config, captchaRoot);
   const api = options.preview ? null : new ApiClient(restUrl!);
   const controller = new RuntimeController(config, api, undefined, (name, detail) => host.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true })));
+  let selectedFont: GoogleFont | undefined;
+  let releaseFont: () => void = () => {};
   const appearance = () => {
     const value = controller.state.form?.form.appearance;
     if (!value) return;
-    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : safeFont(value.font), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
+    const font = value.inheritFont ? undefined : googleFont(value.googleFont);
+    if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
+    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
     for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     const dark = value.theme === 'dark' || (value.theme === 'auto' && globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches);
     root.querySelector('.chat')?.classList.toggle('dark', Boolean(dark));
@@ -59,11 +69,18 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   let autoOpened = false;
   let autoTimer: ReturnType<typeof setTimeout> | null = null;
   let scrollHandler: (() => void) | null = null;
+  let openTrigger: ((event: MouseEvent) => void) | null = null;
   let chatRoot = root;
   let toggle: HTMLButtonElement | null = null;
   let panel: HTMLDivElement | null = null;
   let initialized = false;
   let viewReported = false;
+  const initialize = () => {
+    if (initialized) return;
+    initialized = true;
+    connection();
+    void controller.initialize().then(() => { appearance(); trackView(); });
+  };
   const trackView = () => {
     if (options.preview || viewReported || !api || host.hidden || controller.state.phase === 'error') return;
     const version = controller.state.form?.form.version;
@@ -75,6 +92,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   const label = phrases(config.locale);
   const setOpen = (value: boolean) => {
     if (!toggle || !panel) return;
+    if (!value && !panel.hidden) controller.close();
     host.hidden = false;
     panel.hidden = !value;
     if (isPopup) {
@@ -85,11 +103,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     toggle.textContent = label(value ? 'closeChat' : 'openChat');
     toggle.setAttribute('aria-expanded', String(value));
     if (value) {
-      if (!initialized) {
-        initialized = true;
-        connection();
-        void controller.initialize().then(() => { appearance(); trackView(); });
-      }
+      initialize();
       panel.focus({ preventScroll: true });
     } else {
       toggle.focus({ preventScroll: true });
@@ -97,7 +111,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   };
   if (isLauncher) {
     const wrapper = document.createElement('div');
-    wrapper.className = isPopup ? 'launcher-root popup-root' : 'launcher-root';    if (host.dataset.position === 'left') wrapper.classList.add('is-left');
+    wrapper.className = isPopup ? 'launcher-root popup-root' : 'launcher-root';
+    if (host.dataset.position === 'left') wrapper.classList.add('is-left');
     toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'launcher-toggle';
@@ -121,7 +136,8 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     }
     wrapper.append(panel, toggle);
     root.append(wrapper);
-    chatRoot = panel;
+    chatRoot = document.createElement('div');
+    panel.append(chatRoot, captchaRoot);
     toggle.addEventListener('click', () => setOpen(panel!.hidden));
     root.addEventListener('keydown', event => {
       if (event.key === 'Escape' && panel && !panel.hidden) {
@@ -138,15 +154,29 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       }
     });
   }
-  render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) host.hidden = true; }} />, chatRoot);
+  if (!isLauncher) root.after(captchaRoot);
+  render(<Chat controller={controller} onClose={() => { if (isLauncher) setOpen(false); else if (!options.preview) { controller.close(); host.hidden = true; } }} />, chatRoot);
   const handle: RuntimeHandle = {
-    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); unsubscribe(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
+    unmount: () => { if (autoTimer) clearTimeout(autoTimer); if (scrollHandler) window.removeEventListener('scroll', scrollHandler); if (openTrigger) document.removeEventListener('click', openTrigger); unsubscribe(); releaseFont(); colorScheme?.removeEventListener('change', appearance); controller.dispose(); render(null, chatRoot); shadow.replaceChildren(); window.removeEventListener('online', connection); window.removeEventListener('offline', connection); window.removeEventListener('storage', externalChange); mounted.delete(host); },
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
-    ...(isLauncher ? { open: () => setOpen(true) } : {}),
+    jumpToStep: id => controller.jumpToStep(id),
+    open: () => {
+      if (isLauncher) { setOpen(true); return; }
+      host.hidden = false;
+      initialize();
+      host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true });
+    },
   };
-  mounted.set(host, { handle, id });
+  mounted.set(host, { handle, id, controller });
   if (isLauncher && !options.preview) {
+    // Same-page controls such as <button data-cff-open="123"> open this launcher or popup.
+    openTrigger = event => {
+      const trigger = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-cff-open]') : null;
+      if (trigger?.dataset.cffOpen === String(id)) { event.preventDefault(); setOpen(true); }
+    };
+    document.addEventListener('click', openTrigger);
     const seconds = host.dataset.autoOpen;
     if (seconds !== undefined && seconds !== '' && /^\d+$/.test(seconds)) {
       autoTimer = setTimeout(() => { if (!autoOpened && !host.hidden) setOpen(true); }, Math.min(3600, Number(seconds)) * 1000);
@@ -163,13 +193,13 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       window.addEventListener('scroll', scrollHandler, { passive: true });
     }
   }
-  if (!isLauncher) { connection(); void controller.initialize().then(() => { appearance(); trackView(); }); }
+  if (!isLauncher) initialize();
   return handle;
 }
 
 declare global {
   interface Window {
-    ChatFlow: { open(formId: string | number): boolean; prefill(answers: AnswerMap, formId?: string | number): void; registerField(type: string, renderer: ComponentType<FieldProps>): () => void };
+    ChatFlow: { open(formId: string | number): boolean; prefill(answers: AnswerMap, formId?: string | number): void; registerField(type: string, renderer: ComponentType<FieldProps>): () => void; optOutAnalytics(optOut?: boolean): void };
   }
 }
 
@@ -184,14 +214,11 @@ export function autoMount(root: Pick<Document, 'querySelectorAll'> = document): 
 }
 if (typeof window !== 'undefined') {
   window.ChatFlow = {
+    optOutAnalytics(optOut = true) { try { localStorage.setItem('cff_analytics_optout', optOut ? '1' : '0'); } catch { /* Storage may be disabled. */ } for (const { controller } of mounted.values()) controller.options.analyticsOptOut = optOut; },
     open: id => {
       autoMount(); const host = [...mounted.keys()].find(h => mounted.get(h)?.id === Number(id));
       if (!host) return false;
-      host.hidden = false;
-      const handle = mounted.get(host)?.handle;
-      if (handle?.open) { handle.open(); return true; }
-      host.scrollIntoView?.({ behavior: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      host.shadowRoot?.querySelector<HTMLElement>('input,button,textarea,select')?.focus({ preventScroll: true }); return true;
+      mounted.get(host)!.handle.open(); return true;
     },
     prefill: (answers, id) => { for (const { handle, id: formId } of mounted.values()) if (id === undefined || Number(id) === formId) handle.prefill(answers); },
     registerField,

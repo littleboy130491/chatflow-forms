@@ -10,7 +10,7 @@ import { Filters } from './Filters';
 import type { PurgeCriteria, PurgeJob, PurgePreview, Status } from './model';
 import { useJobProgress } from './useJobProgress';
 export function Purge({ api }: { api: AdminApi }) {
-  const [criteria, setCriteria] = useState<PurgeCriteria>({ status: 'spam', olderThanDays: 360 }),
+  const [criteria, setCriteria] = useState<PurgeCriteria>({ olderThanDays: 360 }),
     [preview, setPreview] = useState<PurgePreview | null>(null),
     [confirmation, setConfirmation] = useState(''),
     [job, setJob] = useState<PurgeJob | null>(null),
@@ -36,6 +36,9 @@ export function Purge({ api }: { api: AdminApi }) {
           'Permanently deletes matching data in bounded batches. This cannot be undone. Preview first.',
           'chatflow-forms',
         )}
+      </Notice>
+      <Notice status="warning" isDismissible={false}>
+        {__('A matching purge-preview CSV snapshot is not available. Export each affected form separately before deleting; ordinary exports are not an exact preview backup when rows change.', 'chatflow-forms')}
       </Notice>
       <fieldset disabled={busy}>
         <Select

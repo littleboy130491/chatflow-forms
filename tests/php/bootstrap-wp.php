@@ -1,6 +1,7 @@
 <?php
 $root = dirname( __DIR__, 2 );
 $test_dir = getenv( 'WP_TESTS_DIR' ) ?: '/wordpress-phpunit';
+putenv( 'CFF_UPLOAD_TEST_CONFIG=' . ( defined( 'WP_TESTS_CONFIG_FILE_PATH' ) ? WP_TESTS_CONFIG_FILE_PATH : $test_dir . '/wp-tests-config.php' ) );
 if ( ! defined( 'CFF_PRIVATE_DIR' ) ) {
 	$private_dir = sys_get_temp_dir() . '/cff-wp-tests-' . bin2hex( random_bytes( 16 ) );
 	if ( ! mkdir( $private_dir, 0700 ) ) {

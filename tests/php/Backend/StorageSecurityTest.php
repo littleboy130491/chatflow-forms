@@ -130,7 +130,7 @@ final class StorageSecurityTest extends TestCase {
 		remove_filter( 'cff_public_schema', $callback );
 		self::assertArrayNotHasKey( 'settings', $public['form'] );
 		self::assertArrayNotHasKey( 'privateSecret', $public );
-		self::assertFalse( $public['features']['uploads'] );
+		self::assertTrue( $public['features']['uploads'] );
 		self::assertArrayNotHasKey( 'unknown_secret_key!', (array) $public['form']['phrases'] );
 	}
 	public function testIdempotencyCanonicalRetryConflictsPendingAndRollback(): void {

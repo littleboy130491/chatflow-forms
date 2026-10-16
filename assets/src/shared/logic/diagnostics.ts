@@ -1,6 +1,8 @@
 import type { Action, Condition, FormSchema, ValidationIssue } from '../contracts';
 import { issue, numeric, regex } from './value';
-import { V1_FIELD_TYPES } from './fields';
+import { ENABLED_FIELD_TYPES } from './fields';
+import { powerDiagnostics } from './power';
+import { allowedCookieSource, cookieSourceMessage } from '../cookies';
 
 export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const errors: ValidationIssue[] = [];
@@ -19,6 +21,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const endings = new Set(schema.endings.map(e => e.id));
   const unique = (id: string, path: string): void => { if (ids.has(id)) add(path, 'duplicate_id', 'IDs must be globally unique.'); ids.add(id); };
   schema.steps.forEach((s, i) => {
+    if (s.type === 'hidden' && s.settings?.source === 'cookie' && !allowedCookieSource(s.settings.sourceKey ?? s.key)) add(`/steps/${i}/settings/sourceKey`, 'restricted_cookie', cookieSourceMessage);
     if (keys.has(s.key)) add(`/steps/${i}/key`, 'duplicate_key', 'Field keys must be unique.');
     keys.set(s.key, i); stepIds.set(s.id, i); unique(s.id, `/steps/${i}/id`);
     const values = new Set<string>();
@@ -54,7 +57,7 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
   const skippable = new Set([...schema.steps.filter(s => s.hiddenByDefault).map(s => s.id), ...allRules.filter(r => r.then.action === 'hide').map(r => (r.then as { to: string }).to)]);
   schema.steps.forEach((s, i) => {
     const path = `/steps/${i}`;
-    if (!(V1_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
+    if (!(ENABLED_FIELD_TYPES as readonly string[]).includes(s.type)) add(path + '/type', 'unsupported_type', 'This field type is not supported.');
     if (s.validation?.pattern !== undefined && !regex(s.validation.pattern)) add(path + '/validation/pattern', 'invalid_pattern', 'The validation pattern is not supported.');
     if (s.validation?.mxCheck) add(path + '/validation/mxCheck', 'unsupported_validation', 'MX checking is not enabled.');
     if (['single_choice', 'multi_choice'].includes(s.type) && !s.options?.length) add(path + '/options', 'missing_options', 'Choice fields need at least one option.');
@@ -110,5 +113,5 @@ export function diagnoseSchema(schema: FormSchema): ValidationIssue[] {
     if (fallsThrough || skippable.has(s.id)) queue.push(i + 1);
   }
   schema.steps.forEach((_s, i) => { if (!reachable.has(i)) add(`/steps/${i}`, 'unreachable_step', 'No possible navigation path reaches this step.'); });
-  return errors;
+  return [...errors, ...powerDiagnostics(schema)];
 }

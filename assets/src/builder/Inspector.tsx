@@ -46,11 +46,13 @@ function OptionEditor({
   onChange,
   onDelete,
   allowOther,
+  schema,
 }: {
   option: Option;
   onChange: (option: Option) => void;
   onDelete: () => void;
   allowOther: boolean;
+  schema: FormSchema;
 }) {
   return (
     <fieldset className="cff-option">
@@ -101,6 +103,7 @@ function OptionEditor({
           onChange={(isOther) => onChange({ ...option, isOther })}
         />
       )}
+      <details><summary>{__('Logic', 'chatflow-forms')}</summary><RuleEditor schema={schema} rules={option.logic ?? []} onChange={(logic) => onChange({ ...option, logic })} /></details>
       <Button isDestructive onClick={onDelete}>
         {__('Remove option', 'chatflow-forms')}
       </Button>
@@ -246,6 +249,7 @@ export function Inspector({
                       <OptionEditor
                         allowOther={step.type === 'single_choice'}
                         option={option}
+                        schema={schema}
                         onChange={(next) =>
                           setOptions((step.options ?? []).map((item) => (item.id === next.id ? next : item)))
                         }
@@ -299,6 +303,7 @@ export function Inspector({
               {__('Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.', 'chatflow-forms')}
             </p>
           )}
+          {step.type === 'calculated' && <Field label={__('Arithmetic expression (answer.key, variable.key)', 'chatflow-forms')} value={settings.expression ?? ''} onChange={expression => patchSettings({ expression })} />}
           {step.type === 'phone' && (
             <Field
               label={__('Default country (ISO code)', 'chatflow-forms')}
@@ -306,6 +311,13 @@ export function Inspector({
               onChange={(country) => patchSettings({ country: country.toUpperCase() })}
             />
           )}
+          {step.type === 'address' && (['street','city','postcode','country'] as const).map((field) => <Check key={field} label={field} value={(settings.addressFields ?? ['street','city','postcode','country']).some((value)=>value===field)}
+            onChange={(checked)=>{const fields=settings.addressFields ?? ['street','city','postcode','country'];const next=checked ? [...fields.filter((value)=>value!==field),field] : fields.filter((value)=>value!==field);patchSettings({addressFields:next as NonNullable<Step['settings']>['addressFields'] & {length:number}});}} />)}
+          {step.type === 'media' && <Fragment>
+            <Select label={__('Media type','chatflow-forms')} value={settings.media?.type ?? 'image'} choices={['image','video','gif'].map((value)=>({value,label:value}))} onChange={(type)=>patchSettings({media:{url:settings.media?.url ?? '',...settings.media,type:type as 'image'|'video'|'gif'}})} />
+            <Field label={__('HTTPS media URL','chatflow-forms')} value={settings.media?.url ?? ''} onChange={(url)=>patchSettings({media:{type:'image',...settings.media,url}})} />
+            <Field label={__('Alternative text','chatflow-forms')} value={settings.media?.alt ?? ''} onChange={(alt)=>patchSettings({media:{type:'image',url:'',...settings.media,alt}})} />
+          </Fragment>}
           <Field
             label={__('Autocomplete', 'chatflow-forms')}
             value={settings.autocomplete}
@@ -370,6 +382,7 @@ export function Inspector({
                 value={settings.sourceKey}
                 onChange={(sourceKey) => patchSettings({ sourceKey })}
               />
+              {settings.source === 'cookie' && <p>{__('Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.', 'chatflow-forms')}</p>}
               <Field
                 label={__('Default value', 'chatflow-forms')}
                 value={typeof step.defaultValue === 'string' ? step.defaultValue : ''}
@@ -381,6 +394,10 @@ export function Inspector({
       )}
       {tab === 'validation' && (
         <Fragment>
+          {step.type === 'file_upload' && <Fragment>
+            <Field label={__('Maximum bytes per file','chatflow-forms')} type="number" value={validation.maxBytes ?? ''} onChange={(value)=>onChange({...step,validation:{...validation,maxBytes:Number(value)}})} />
+            <Field label={__('Allowed MIME types (comma separated)','chatflow-forms')} value={(validation.mimeTypes ?? []).join(',')} onChange={(value)=>onChange({...step,validation:{...validation,mimeTypes:value.split(',').map((mime)=>mime.trim()).filter(Boolean)}})} />
+          </Fragment>}
           {['short_text', 'long_text', 'email', 'phone'].includes(step.type) && (
             <Fragment>
               {(['minLength', 'maxLength'] as const).map((key) => (

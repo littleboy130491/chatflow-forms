@@ -17,3 +17,10 @@
 .cff-analytics-row>div:first-child{display:flex;justify-content:space-between;gap:16px}
 .cff-analytics-track{height:6px;background:#e2e4e7;border-radius:99px;overflow:hidden;margin-top:5px}
 .cff-analytics-track span{display:block;height:100%;background:#2271b1;border-radius:99px}
+@media print {
+  #adminmenumain, #wpadminbar, #wpfooter, .cff-admin-nav, .cff-detail button, .cff-detail .cff-toolbar, .cff-detail form { display: none !important; }
+  #wpcontent { margin-left: 0; }
+  .cff-detail { color: #000; background: #fff; }
+  .cff-replay li, .cff-detail dl > div { break-inside: avoid; }
+}
+.cff-form-analytics{margin-top:32px}

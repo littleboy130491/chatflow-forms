@@ -31,6 +31,12 @@ final class Settings {
 				'minSeconds'        => 2,
 				'rateLimit'         => 10,
 				'rateWindowSeconds' => 600,
+				'captcha'           => 'none',
+				'siteKey'           => '',
+				'secretKey'         => '',
+				'minScore'          => 0.5,
+				'akismetEnabled'    => false,
+				'akismetKey'        => '',
 			),
 			'proxy'                    => array(
 				'mode'          => 'automatic',
@@ -55,6 +61,11 @@ final class Settings {
 	 */
 	public static function save( array $input ): array|\WP_Error {
 		$defaults = self::defaults();
+		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email' ) as $group ) {
+			if ( isset( $input[ $group ] ) && ! is_array( $input[ $group ] ) ) {
+				return Database::error( 'cff_settings_invalid', 'Invalid settings group.', 422 );
+			}
+		}
 		if ( array_diff( array_keys( $input ), array_keys( $defaults ) ) ) {
 			return Database::error( 'cff_settings_invalid', 'Unknown global setting.', 422 ); }
 		$result = array_replace_recursive( self::get(), $input );
@@ -90,8 +101,16 @@ final class Settings {
 		$old = self::get();
 		if ( null !== $result['retention']['partialDays'] && ( ! is_int( $result['retention']['partialDays'] ) || $result['retention']['partialDays'] < 1 || $result['retention']['partialDays'] > 36500 ) ) {
 			return Database::error( 'cff_settings_invalid', 'Invalid partial retention.', 422 ); }
-		if ( ! is_bool( $result['spam']['honeypotEnabled'] ) ) {
+		if ( ! is_bool( $result['spam']['honeypotEnabled'] ) || ! is_bool( $result['spam']['akismetEnabled'] ) || ! in_array( $result['spam']['captcha'], array( 'none', 'turnstile', 'hcaptcha', 'recaptcha' ), true ) || ! is_numeric( $result['spam']['minScore'] ) || ! is_int( $result['spam']['minScore'] ) && ! is_float( $result['spam']['minScore'] ) || $result['spam']['minScore'] < 0 || $result['spam']['minScore'] > 1 ) {
 			return Database::error( 'cff_settings_invalid', 'Invalid honeypot setting.', 422 ); }
+		foreach ( array( 'siteKey', 'secretKey', 'akismetKey' ) as $key ) {
+			if ( ! is_string( $result['spam'][ $key ] ) || strlen( $result['spam'][ $key ] ) > 500 || preg_match( '/[\x00-\x20\x7f]/', $result['spam'][ $key ] ) ) {
+				return Database::error( 'cff_settings_invalid', 'Invalid provider key.', 422 );
+			}
+		}
+		if ( 'none' !== $result['spam']['captcha'] && ( '' === $result['spam']['siteKey'] || '' === $result['spam']['secretKey'] ) || $result['spam']['akismetEnabled'] && '' === $result['spam']['akismetKey'] ) {
+			return Database::error( 'cff_settings_invalid', 'Enabled providers require their keys.', 422 );
+		}
 		foreach ( array(
 			'minSeconds'        => array( 0, 60 ),
 			'rateLimit'         => array( 1, 1000 ),

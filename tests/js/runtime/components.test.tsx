@@ -2,7 +2,7 @@
 /** @jsxImportSource preact */
 import { render, createElement } from 'preact';
 import { act } from 'preact/test-utils';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FieldInput, normalizePhone, toggleChoice } from '../../../assets/src/runtime/inputs';
 import { interpolateLink, Markdown, reactions, safeLink } from '../../../assets/src/runtime/content';
 import { phrases } from '../../../assets/src/runtime/i18n';
@@ -17,6 +17,9 @@ import type { Step } from '../../../assets/src/runtime/types';
 let host: HTMLDivElement;
 beforeEach(() => { host = document.createElement('div'); document.body.appendChild(host); localStorage.clear(); });
 afterEach(() => { render(null, host); host.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+// Preact schedules after-paint work with a 100 ms fallback timer that calls cancelAnimationFrame;
+// let it run before jsdom tears down its globals so it cannot throw after the file ends.
+afterAll(() => new Promise<void>(resolve => { setTimeout(resolve, 150); }));
 const field = (type: Step['type'], props: Partial<Step> = {}): Step => ({ id: 'field', key: 'field', label: 'Accessible label', messages: [], type, ...props });
 const choice = field('single_choice', { options: [{ id: 'a', value: 'a', label: 'A' }, { id: 'b', value: 'b', label: 'B' }, { id: 'other', value: 'other', label: 'Other', isOther: true }] });
 async function mountInput(step: Step, value?: unknown, disabled = false) {
@@ -97,9 +100,9 @@ describe('Phase 1 inputs and accessible keyboard interaction', () => {
     await act(submit);
     expect(onAnswer).toHaveBeenCalledWith(16);
   });
-  it('does not accept a disabled choice or silently render reserved upload types', async () => {
+  it('does not accept a disabled choice or silently enable unavailable uploads', async () => {
     const onAnswer = await mountInput(choice, undefined, true); host.querySelector('button')!.click(); expect(onAnswer).not.toHaveBeenCalled();
-    await act(() => render(null, host)); await mountInput(field('file_upload')); expect(host.querySelector('[role=alert]')?.textContent).toContain('not available'); expect(host.querySelector('input')).toBeNull();
+    await act(() => render(null, host)); await mountInput(field('file_upload')); expect(host.querySelector('[role=alert]')?.textContent).toContain('not available'); expect(host.querySelector<HTMLInputElement>('input')?.disabled).toBe(true);
   });
 });
 describe('safe content, translations and motion', () => {
@@ -159,8 +162,8 @@ describe('Shadow DOM mount and global API', () => {
     expect(host.shadowRoot?.querySelector('[aria-live=polite]')).not.toBeNull(); expect(fetcher).not.toHaveBeenCalled(); expect(writes).not.toHaveBeenCalled(); expect(clears).not.toHaveBeenCalled();
     await act(() => handle!.unmount()); expect(host.shadowRoot?.childElementCount).toBe(0);
   });
-  it('rejects unimplemented display modes and insecure cross-origin REST endpoints', () => {
-    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'invalid' as 'inline' })).toThrow('Unsupported display mode');
+  it('rejects unknown display modes and insecure cross-origin REST endpoints', () => {
+    expect(() => mountRuntime(host, { form: form(), preview: true, mode: 'unknown' as 'inline' })).toThrow('Unsupported display mode');
     expect(() => mountRuntime(host, { formId: 42, restUrl: 'https://third-party.test/wp-json/cff/v1/' })).toThrow('cff_unsafe_endpoint');
   });
   it('keeps launcher collapsed until clicked and supports Escape, focus and programmatic open', async () => {
