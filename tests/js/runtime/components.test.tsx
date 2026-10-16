@@ -258,3 +258,41 @@ describe('focus and registration guards', () => {
     await act(() => handle!.unmount());
   });
 });
+describe('messaging theme', () => {
+  it('renders the messaging style with theme defaults and restyles a preview live', async () => {
+    const envelope = form(); envelope.form.appearance = { style: 'messaging', wallpaper: 'dots', bubbleTails: false };
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
+    const shadow = host.shadowRoot!;
+    await vi.waitFor(() => expect(shadow.querySelector('.chat')).not.toBeNull());
+    const chat = shadow.querySelector<HTMLElement>('.chat')!;
+    expect(chat.dataset.style).toBe('messaging');
+    expect(chat.dataset.wallpaper).toBe('dots');
+    expect(chat.dataset.choices).toBe('keyboard');
+    expect(chat.dataset.tails).toBe('off');
+    expect(shadow.querySelector('.avatar')?.textContent).toBe('I');
+    // Theme variables live on the shadow root's container element.
+    const vars = (name: string) => ([...shadow.children].find(element => element.tagName === 'DIV') as HTMLElement).style.getPropertyValue(name);
+    expect(vars('--cff-primary')).toBe('#3390ec');
+    expect(vars('--cff-chat-bg')).not.toBe('');
+    await act(() => handle!.setAppearance({ style: 'messaging', primary: '#008069', choiceStyle: 'chips' }));
+    expect(chat.dataset.choices).toBe('chips');
+    expect(vars('--cff-primary')).toBe('rgb(0, 128, 105)');
+    await act(() => handle!.setAppearance({ style: 'classic' }));
+    expect(shadow.querySelector('.chat')!.hasAttribute('data-style')).toBe(false);
+    await act(() => handle!.unmount());
+  });
+  it('ignores live appearance changes outside previews and shows sample answers only in previews', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 503 })));
+    let handle: ReturnType<typeof mountRuntime>;
+    await act(() => { handle = mountRuntime(host, { form: form(), restUrl: '/wp-json/cff/v1/', previewAnswers: { name: 'Injected' } }); });
+    await act(() => handle!.setAppearance({ style: 'messaging' }));
+    expect(host.shadowRoot!.querySelector('.chat')?.hasAttribute('data-style') ?? false).toBe(false);
+    expect(host.shadowRoot!.textContent).not.toContain('Injected');
+    await act(() => handle!.unmount());
+    const steps: [Step, ...Step[]] = [{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }, { id: 'mail', key: 'mail', type: 'email', label: 'Email', messages: ['Email?'] }];
+    await act(() => { handle = mountRuntime(host, { form: form(steps), preview: true, previewAnswers: { name: 'Ada' } }); });
+    await vi.waitFor(() => expect(host.shadowRoot!.querySelector('.bubble.user')?.textContent).toContain('Ada'));
+    await act(() => handle!.unmount());
+  });
+});

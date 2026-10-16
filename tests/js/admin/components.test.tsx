@@ -12,6 +12,7 @@ import { SettingsEditor } from '../../../assets/src/builder/FormSettings';
 import { AiGenerate, applyRewrites, copyItems } from '../../../assets/src/builder/AiAssist';
 import type { FormSettings } from '../../../assets/src/builder/api';
 import { cleanupPreview, previewKey, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
+import { applyPalette, palettes, sampleEnvelope, ThemeEditor } from '../../../assets/src/builder/ThemeEditor';
 import { Purge } from '../../../assets/src/submissions/Purge';
 import { Filters } from '../../../assets/src/submissions/Filters';
 import { downloadExport } from '../../../assets/src/submissions/Export';
@@ -222,7 +223,8 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     expect(previewKey({ ...form, schema: { ...form.schema, flowPositions: [{ id: 'x', x: 1, y: 2 }] } })).toBe(key);
     expect(previewKey({ ...form, settings: { ...form.settings, privacy: { storeMeta: false } } })).toBe(key);
     expect(previewKey({ ...form, schema: { ...form.schema, bot: { ...form.schema.bot, name: 'Bo' } } })).not.toBe(key);
-    expect(previewKey({ ...form, settings: { ...form.settings, appearance: { theme: 'dark' } } })).not.toBe(key);
+    // Appearance is pushed into the running preview (setAppearance), so it never restarts it.
+    expect(previewKey({ ...form, settings: { ...form.settings, appearance: { theme: 'dark' } } })).toBe(key);
   });
   it('uses only positive preview IDs and explicitly projects requested WordPress media', async () => {
     const form = blankForm();
@@ -429,7 +431,7 @@ describe('per-form settings inherit global defaults', () => {
       },
     });
     const form = blankForm(api.config.defaults);
-    expect(form.settings.appearance).toEqual({ theme: 'dark' });
+    expect(form.settings.appearance).toEqual({ theme: 'dark', style: 'messaging' });
     expect(form.settings).not.toHaveProperty('privacy');
     expect(form.settings).not.toHaveProperty('spam');
     let latest: FormSettings = form.settings;
@@ -469,5 +471,25 @@ describe('per-form settings inherit global defaults', () => {
     expect(latest.spam).toEqual({ minSeconds: 7, captcha: 'none' });
     await click('Use global default');
     expect(latest.spam).toEqual({ captcha: 'none' });
+  });
+});
+describe('chat theme editor', () => {
+  it('applies palettes and individual colours without losing other theme choices', async () => {
+    const form = blankForm();
+    form.settings.appearance = { style: 'messaging', choiceStyle: 'chips', radius: 20 };
+    const changed = vi.fn();
+    await act(async () => root.render(createElement(ThemeEditor, { form, config, onChange: changed })));
+    await act(async () => (container.querySelector<HTMLButtonElement>('button[aria-label="Night"]')!).click());
+    expect(changed).toHaveBeenLastCalledWith(expect.objectContaining({ style: 'messaging', theme: 'dark', primary: '#5eb5f7', chatBackground: '#0e1621', choiceStyle: 'chips', radius: 20 }));
+    await click('Plain');
+    expect(changed).toHaveBeenLastCalledWith(expect.objectContaining({ wallpaper: 'none', choiceStyle: 'chips' }));
+    await act(async () => [...container.querySelectorAll<HTMLButtonElement>('.cff-style-cards button')].find(button => button.querySelector('strong')?.textContent === 'Classic')!.click());
+    expect(changed).toHaveBeenLastCalledWith(expect.objectContaining({ style: 'classic', radius: 20 }));
+  });
+  it('builds a sample conversation that shows answered and pending bubbles', () => {
+    const envelope = sampleEnvelope(blankForm(), config);
+    expect(envelope.form.schema.steps.map(step => step.type)).toEqual(['single_choice', 'single_choice', 'summary']);
+    expect(envelope.form.schema.bot.typingSpeed).toBe('off');
+    expect(applyPalette({ wallpaper: 'dots', bubbleTails: false }, palettes()[1]!)).toMatchObject({ style: 'messaging', wallpaper: 'doodle', bubbleTails: false, primary: '#008069' });
   });
 });

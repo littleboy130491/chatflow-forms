@@ -7,7 +7,10 @@ A published conversational form.|Formulir percakapan yang telah diterbitkan.
 A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
 A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
+Accent (buttons, links, ticks)|Aksen (tombol, tautan, centang)
+Accessibility and extras|Aksesibilitas dan tambahan
 AI assist (Claude)|Asisten AI (Claude)
+Answer buttons|Tombol jawaban
 API key (ends with the data centre, e.g. -us21)|Kunci API (diakhiri kode pusat data, mis. -us21)
 Abandon|Ditinggalkan
 Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
@@ -73,6 +76,7 @@ Apply filters|Terapkan filter
 Applying your latest changes…|Menerapkan perubahan terbaru Anda…
 Appointment request|Permintaan janji temu
 Arithmetic expression (answer.key, variable.key)|Ekspresi aritmetika (answer.key, variable.key)
+Ask a question|Ajukan pertanyaan
 Ask before resuming|Tanya sebelum melanjutkan
 Assign variants to new sessions|Tetapkan varian ke sesi baru
 Assistant|Asisten
@@ -97,11 +101,14 @@ Below 4.5:1|Di bawah 4,5:1
 Blank|Kosong
 Body HTML / merge tags|Isi HTML / tag penggabungan
 Bot bubble colour|Warna gelembung bot
+Bot bubble|Gelembung bot
 Bot message|Pesan bot
 Bot name|Nama bot
 Bot text|Teks bot
+Bot|Bot
 Branching flow map|Peta alur percabangan
 Brand colour|Warna merek
+Bubble tails|Ekor gelembung
 Build|Susun
 Builder sections|Bagian pembuat formulir
 Bulk options (one label per line)|Pilihan massal (satu label per baris)
@@ -118,7 +125,10 @@ Captcha provider|Penyedia captcha
 Change this submission to “%s”?|Ubah kiriman ini menjadi “%s”?
 Cards|Kartu
 Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
+Chat background|Latar percakapan
+Chat theme|Tema percakapan
 Chat width (240–1600)|Lebar percakapan (240–1600)
+Chat width|Lebar percakapan
 ChatFlow|ChatFlow
 ChatFlow Form|Formulir ChatFlow
 ChatFlow Forms|Formulir ChatFlow
@@ -144,11 +154,13 @@ Choose email field|Pilih kolom email
 Choose form|Pilih formulir
 Choose template|Pilih templat
 City|Kota
+Classic|Klasik
 Close preview|Tutup pratinjau
 Closing date (UTC ISO 8601, blank = never)|Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)
 Cloudflare Turnstile|Cloudflare Turnstile
 Collect a name, email address, topic, message, and permission to reply.|Kumpulkan nama, alamat email, topik, pesan, dan izin untuk membalas.
 Collected metadata|Metadata yang dikumpulkan
+Colours|Warna
 Column keys (comma-separated; blank = all)|Kunci kolom (pisahkan dengan koma; kosong = semua)
 Column preferences cannot be saved in this browser.|Preferensi kolom tidak dapat disimpan di peramban ini.
 Comma|Koma
@@ -189,6 +201,7 @@ Copy|Salin
 Copy stored IP|Salin IP tersimpan
 Copy the ID from ChatFlow Forms. Only published forms render.|Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan.
 Corner radius (0–32)|Radius sudut (0–32)
+Corner radius|Radius sudut
 Country|Negara
 Create a form|Buat formulir
 Create draft|Buat draf
@@ -200,6 +213,7 @@ Cross-device resume links|Tautan lanjutkan di perangkat lain
 Custom CSS, focus indicators and real device behavior require separate visual checks.|CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah.
 Custom headers (private)|Header khusus (pribadi)
 Customer feedback|Umpan balik pelanggan
+Dark mode uses its own built-in colours.|Mode gelap memakai warna bawaannya sendiri.
 Dark|Gelap
 Date|Tanggal
 Dates in UTC|Tanggal dalam UTC
@@ -212,6 +226,7 @@ Default ending|Penutup bawaan
 Default theme for new forms|Tema bawaan untuk formulir baru
 Default theme|Tema bawaan
 Default value|Nilai bawaan
+Default|Bawaan
 Delay in seconds (0 = immediate)|Jeda dalam detik (0 = langsung)
 Delete field|Hapus kolom
 Delete partial on start over|Hapus kiriman sebagian saat mulai ulang
@@ -242,6 +257,8 @@ Display defaults|Tampilan bawaan
 Display mode|Mode tampilan
 Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft.|Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab (minimum nol), bukan bukti sesi ditinggalkan; percabangan, penolakan pelacakan, dan riwayat tersimpan memengaruhi hitungan. Label menggunakan draf saat ini.
 Do not store|Jangan simpan
+Doodles|Coretan
+Dots|Titik-titik
 Double opt-in (subscriber confirms by email)|Konfirmasi ganda (pelanggan mengonfirmasi lewat email)
 Download (authenticated, expiring)|Unduh (memerlukan autentikasi, memiliki masa berlaku)
 Download QR code|Unduh kode QR
@@ -313,6 +330,7 @@ Find a form|Cari formulir
 First bot message|Pesan bot pertama
 First-touch attribution|Atribusi kunjungan pertama
 Floating launcher|Tombol chat mengambang
+Follow device|Ikuti perangkat
 Font source|Sumber font
 Font stack|Daftar font
 Footer text|Teks kaki email
@@ -347,6 +365,7 @@ Full-page URL and QR code|URL halaman penuh dan kode QR
 Fullpage|Halaman penuh
 Fullpage base slug|Slug dasar halaman penuh
 Funnel|Alur konversi
+Get a quote|Minta penawaran
 GIF|GIF
 Gather experience ratings, suggestions, and recommendation intent without contact details.|Kumpulkan penilaian pengalaman, saran, dan niat merekomendasikan tanpa detail kontak.
 Generate a form with AI|Buat formulir dengan AI
@@ -355,11 +374,18 @@ Generating draft…|Membuat draf…
 Global email layout|Tata letak email global
 Global setting: %d days.|Pengaturan global: %d hari.
 Global setting: same as completed submissions.|Pengaturan global: sama dengan kiriman selesai.
+Goal|Tujuan
 Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.|Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan.
 Google reCAPTCHA v3|Google reCAPTCHA v3
+Gradient|Gradien
+Graphite|Grafit
+Great choice. When would you like to start?|Pilihan bagus. Kapan Anda ingin mulai?
 Great|Sangat baik
 Group selected|Kelompokkan yang dipilih
 Group title|Judul grup
+Header background|Latar header
+Header text|Teks header
+Hi there! 👋|Halo! 👋
 HTTPS media URL|URL media HTTPS
 Headers|Header
 Health intake|Permintaan konsultasi kesehatan
@@ -404,8 +430,10 @@ Invalid file download destination.|Tujuan unduhan berkas tidak valid.
 Invalid form action.|Tindakan formulir tidak valid.
 Jump to field|Lompat ke kolom
 Jump to step (preview only)|Lompat ke langkah (hanya pratinjau)
+Just exploring|Hanya melihat-lihat
 Keep local edits (explicit override)|Pertahankan perubahan lokal (timpa secara eksplisit)
 Keep local edits on the latest revision? The next save can replace another admin’s changes.|Pertahankan perubahan lokal pada revisi terbaru? Penyimpanan berikutnya dapat menimpa perubahan admin lain.
+Keyboard grid|Kisi keyboard
 Key|Kunci
 Key (lowercase)|Kunci (huruf kecil)
 Keyboard hint|Petunjuk keyboard
@@ -418,14 +446,18 @@ Last submission|Jawaban terakhir
 Launcher|Tombol pembuka
 Launcher position|Posisi tombol chat
 Launcher, popup and QR tools are optional later features.|Peluncur, popup, dan alat QR merupakan fitur opsional mendatang.
+Lavender|Lavender
 Lead capture|Pengumpulan prospek
 Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers.|Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan.
 Leave with unsaved changes?|Keluar dengan perubahan yang belum disimpan?
 Left|Kiri
+Light or dark|Terang atau gelap
 Light|Terang
 Limits|Batasan
 Link (including WhatsApp)|Tautan (termasuk WhatsApp)
 Link lifetime in minutes (5–1440)|Masa berlaku tautan dalam menit (5–1440)
+Live preview|Pratinjau langsung
+Live theme preview|Pratinjau tema langsung
 Live|Aktif
 Live version|Versi aktif
 Live version %d|Versi aktif %d
@@ -451,6 +483,7 @@ Maximum|Maksimum
 Maximum bytes per file|Batas byte per berkas
 Maximum length|Panjang maksimum
 Maximum selections|Pilihan maksimum
+Meadow|Padang
 Measurement ID (G-…)|Measurement ID (G-…)
 Measurement Protocol API secret|Rahasia API Measurement Protocol
 Media|Media
@@ -459,6 +492,7 @@ Merge tag|Tag gabung
 Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url="https://…"]Label[/cff_button].|Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url="https://…"]Label[/cff_button].
 Message|Pesan
 Message intro (merge tags allowed)|Pembuka pesan (boleh memakai merge tag)
+Messaging|Perpesanan
 Metadata and consent|Metadata dan persetujuan
 Minimum|Minimum
 Minimum age|Usia minimum
@@ -467,10 +501,12 @@ Minimum height|Tinggi minimum
 Minimum length|Panjang minimum
 Minimum selections|Pilihan minimum
 Mobile|Ponsel
+Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.|Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard.
 More forms|Formulir berikutnya
 Move down|Pindah ke bawah
 Move up|Pindah ke atas
 Multiple choice|Pilihan jamak
+Night|Malam
 NPS (0–10)|NPS (0–10)
 Name|Nama
 Name, email and a message; no external integrations.|Nama, email, dan pesan; tanpa integrasi eksternal.
@@ -532,6 +568,7 @@ Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondi
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
 Page exclusions take precedence. A published form is required for automatic placement.|Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis.
 Page metadata|Metadata halaman
+Palette|Palet
 Partial retention days (blank = same as completed submissions)|Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)
 Partial|Sebagian
 Partial retention and spam defaults|Retensi kiriman sebagian dan perlindungan spam bawaan
@@ -549,10 +586,13 @@ Permanently purge|Hapus secara permanen
 Phone|Telepon
 Phone question (optional, sent hashed)|Pertanyaan telepon (opsional, dikirim dalam bentuk hash)
 Phrase key → translated text|Kunci frasa → teks terjemahan
+Pills|Pil
 Pixel (dataset) ID|ID Pixel (dataset)
 Placeholder|Teks petunjuk
 Plain Q&A|Tanya jawab biasa
+Plain, compact bubbles that blend into any page.|Gelembung sederhana dan ringkas yang menyatu dengan halaman apa pun.
 Plain-text version|Versi teks biasa
+Plain|Polos
 Playful|Santai
 Popup|Jendela pop-up
 Postcode|Kode pos
@@ -663,7 +703,10 @@ Right|Kanan
 Rows per page|Baris per halaman
 Rule %d|Aturan %d
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
+Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
 Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
+Shape|Bentuk
+Sky|Langit
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
 Sample answers must be an object.|Contoh jawaban harus berupa objek.
@@ -739,6 +782,7 @@ Store tracking metadata|Simpan metadata pelacakan
 Store user agent|Simpan agen pengguna
 Stored value|Nilai tersimpan
 Street|Jalan
+Style|Gaya
 Subject|Subjek
 Submission|Kiriman
 Submissions|Kiriman
@@ -747,6 +791,7 @@ Submissions per rate window|Kiriman per jendela pembatasan
 Submit attempts per visitor IP per rate window|Percobaan kirim per IP pengunjung per jendela batas
 Subtract|Kurangi
 Summary|Ringkasan
+Sunset|Senja
 System / local — no ChatFlow font requests|Sistem / lokal — tanpa permintaan font ChatFlow
 System status|Status sistem
 Tablet|Tablet
@@ -765,6 +810,7 @@ The captcha provider and its credentials are configured in global Settings; a fo
 The export form must match the active form filter. Change the filter or select its form before exporting.|Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor.
 The form could not be changed. Please try again.|Formulir tidak dapat diubah. Silakan coba lagi.
 The frozen form snapshot is unavailable.|Snapshot formulir yang dibekukan tidak tersedia.
+The live preview is unavailable. Rebuild the plugin assets.|Pratinjau langsung tidak tersedia. Bangun ulang aset plugin.
 The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
 The runtime preview is unavailable. Rebuild the plugin assets.|Pratinjau runtime tidak tersedia. Bangun ulang aset plugin.
 Theme|Tema
@@ -773,6 +819,8 @@ This form is locked by another admin who is editing it. Your local edits are kep
 This form still has submissions. Purge them in Tools before deleting the form permanently.|Formulir ini masih memiliki kiriman. Hapus kiriman tersebut di Alat sebelum menghapus formulir secara permanen.
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
 This month|Bulan ini
+This week|Minggu ini
+Timing|Waktu
 To (UTC)|Hingga (UTC)
 To (UTC, inclusive)|Sampai (UTC, inklusif)
 To (inclusive)|Sampai (termasuk)
@@ -794,6 +842,7 @@ Type|Jenis
 Type DELETE to confirm|Ketik DELETE untuk konfirmasi
 Type DELETE to permanently erase selected submissions, files and activity.|Ketik DELETE untuk menghapus permanen jawaban, berkas, dan aktivitas yang dipilih.
 Typing speed|Kecepatan mengetik
+Typography|Tipografi
 URL|URL
 URL keyboard|Keyboard URL
 URL parameter|Parameter URL
@@ -836,11 +885,15 @@ View → start|Tampilan → mulai
 Viewed|Dilihat
 Views (impressions)|Tampilan (impresi)
 Visit website|Kunjungi situs web
+Visitor bubble|Gelembung pengunjung
 Visitor phrase overrides|Frasa khusus pengunjung
+Visitor text|Teks pengunjung
+Wallpaper|Wallpaper
 Webhook URL|URL webhook
 Webhooks|Webhook
 Weight (1–100)|Bobot (1–100)
 Welcome! Add your questions in the builder.|Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir.
+What brings you here today?|Ada yang bisa kami bantu hari ini?
 What could we improve?|Apa yang dapat kami tingkatkan?
 What would you like help with?|Apa yang dapat kami bantu?
 What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, Select, Notice } from './controls';
 import { errorMessage, safeHttpUrl } from './api';
 import type { AdminConfig, FormDTO } from './api';
-import type { PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
+import type { AnswerMap, PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
 
 export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnvelope {
   const session = form.settings.sessions ?? {};
@@ -34,6 +34,7 @@ export interface PreviewHandle {
   destroy?: () => void;
   jumpToStep?: (id: string) => void;
   getState?: () => unknown;
+  setAppearance?: (appearance: PublicSchemaEnvelope['form']['appearance']) => void;
 }
 export async function resolvePreviewMedia(envelope: PublicSchemaEnvelope): Promise<void> {
   const media = (
@@ -72,7 +73,7 @@ export async function resolvePreviewMedia(envelope: PublicSchemaEnvelope): Promi
 interface RuntimeModule {
   mountRuntime: (
     host: HTMLElement,
-    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext },
+    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext; previewAnswers?: AnswerMap },
   ) => PreviewHandle | (() => void) | void;
 }
 export function cleanupPreview(handle: PreviewHandle | (() => void) | void): void {
@@ -97,6 +98,7 @@ export async function mountPublicPreview(
   config: AdminConfig,
   context: ReplayContext = {},
   isCurrent: () => boolean = () => true,
+  extra: { previewAnswers?: AnswerMap } = {},
 ): Promise<PreviewHandle | (() => void) | void> {
   const url = `${config.pluginUrl}build/runtime/runtime.js`;
   const runtime = (await import(/* webpackIgnore: true */ url)) as RuntimeModule;
@@ -108,11 +110,13 @@ export async function mountPublicPreview(
     preview: true,
     locale: config.locale,
     context: { now: new Date().toISOString(), ...context },
+    ...extra,
   });
 }
 /**
  * Stable identity of what the preview renders. Autosave bookkeeping (IDs,
- * revisions) and map layout are excluded so they never restart a preview.
+ * revisions) and map layout are excluded so they never restart a preview, and
+ * appearance is applied live to the running preview instead.
  */
 export function previewKey(form: FormDTO): string {
   const { flowPositions: _layout, ...schema } = form.schema;
@@ -120,7 +124,6 @@ export function previewKey(form: FormDTO): string {
   return JSON.stringify({
     title: form.title,
     schema,
-    appearance: form.settings.appearance ?? null,
     phrases: form.settings.phrases ?? null,
     sessions: form.settings.sessions ?? null,
     defaultEndingId: form.settings.completion?.defaultEndingId ?? null,
@@ -175,6 +178,11 @@ export function Preview({
       handle.current = undefined;
     };
   }, [mountedKey, restarts, config]);
+  const appearance = JSON.stringify(form.settings.appearance ?? config.defaults?.appearance ?? {});
+  useEffect(() => {
+    const current = handle.current;
+    if (current && typeof current === 'object') current.setAppearance?.(JSON.parse(appearance) as PublicSchemaEnvelope['form']['appearance']);
+  }, [appearance]);
   const restart = () => {
     setMountedKey(key);
     setRestarts((value) => value + 1);

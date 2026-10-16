@@ -87,7 +87,8 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
       // Privacy, retention and spam values are inherited from global Settings at
       // runtime, so they are never copied in. The theme has no runtime fallback;
       // the global "default theme" seeds new forms only.
-      ...(defaults.appearance ? { appearance: { ...defaults.appearance } } : {}),
+      // New forms start with the messaging look; existing forms keep their saved style.
+      appearance: { ...defaults.appearance, style: 'messaging' },
     },
   };
 }

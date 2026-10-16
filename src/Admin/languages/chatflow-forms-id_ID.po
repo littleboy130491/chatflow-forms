@@ -46,6 +46,12 @@ msgstr "Ditinggalkan"
 msgid "Abandoned submission"
 msgstr "Kiriman ditinggalkan"
 
+msgid "Accent (buttons, links, ticks)"
+msgstr "Aksen (tombol, tautan, centang)"
+
+msgid "Accessibility and extras"
+msgstr "Aksesibilitas dan tambahan"
+
 msgid "Action"
 msgstr "Tindakan"
 
@@ -157,6 +163,9 @@ msgstr "Admin lain mengubah draf ini. Penyimpanan otomatis dijeda; perubahan lok
 msgid "Answer"
 msgstr "Jawaban"
 
+msgid "Answer buttons"
+msgstr "Tombol jawaban"
+
 msgid "Answer column %d"
 msgstr "Kolom jawaban %d"
 
@@ -219,6 +228,9 @@ msgstr "Permintaan janji temu"
 
 msgid "Arithmetic expression (answer.key, variable.key)"
 msgstr "Ekspresi aritmetika (answer.key, variable.key)"
+
+msgid "Ask a question"
+msgstr "Ajukan pertanyaan"
 
 msgid "Ask before resuming"
 msgstr "Tanya sebelum melanjutkan"
@@ -286,8 +298,11 @@ msgstr "Kosong"
 msgid "Body HTML / merge tags"
 msgstr "Isi HTML / tag penggabungan"
 
-msgid "Bot bubble colour"
-msgstr "Warna gelembung bot"
+msgid "Bot"
+msgstr "Bot"
+
+msgid "Bot bubble"
+msgstr "Gelembung bot"
 
 msgid "Bot message"
 msgstr "Pesan bot"
@@ -303,6 +318,9 @@ msgstr "Peta alur percabangan"
 
 msgid "Brand colour"
 msgstr "Warna merek"
+
+msgid "Bubble tails"
+msgstr "Ekor gelembung"
 
 msgid "Build"
 msgstr "Susun"
@@ -349,8 +367,14 @@ msgstr "Ubah kiriman ini menjadi “%s”?"
 msgid "Changing a value changes exports and integrations. Its ID stays unchanged."
 msgstr "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
 
-msgid "Chat width (240–1600)"
-msgstr "Lebar percakapan (240–1600)"
+msgid "Chat background"
+msgstr "Latar percakapan"
+
+msgid "Chat theme"
+msgstr "Tema percakapan"
+
+msgid "Chat width"
+msgstr "Lebar percakapan"
 
 msgid "ChatFlow"
 msgstr "ChatFlow"
@@ -394,9 +418,6 @@ msgstr "Pilih formulir"
 msgid "Choose a form from the block settings."
 msgstr "Pilih formulir dari pengaturan blok."
 
-msgid "Choose a preset"
-msgstr "Pilih prasetel"
-
 msgid "Choose a published ChatFlow form ID."
 msgstr "Pilih ID formulir ChatFlow yang telah diterbitkan."
 
@@ -421,6 +442,9 @@ msgstr "Pilih templat"
 msgid "City"
 msgstr "Kota"
 
+msgid "Classic"
+msgstr "Klasik"
+
 msgid "Close preview"
 msgstr "Tutup pratinjau"
 
@@ -435,6 +459,9 @@ msgstr "Kumpulkan nama, alamat email, topik, pesan, dan izin untuk membalas."
 
 msgid "Collected metadata"
 msgstr "Metadata yang dikumpulkan"
+
+msgid "Colours"
+msgstr "Warna"
 
 msgid "Column keys (comma-separated; blank = all)"
 msgstr "Kunci kolom (pisahkan dengan koma; kosong = semua)"
@@ -544,8 +571,8 @@ msgstr "Salin IP tersimpan"
 msgid "Copy the ID from ChatFlow Forms. Only published forms render."
 msgstr "Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan."
 
-msgid "Corner radius (0–32)"
-msgstr "Radius sudut (0–32)"
+msgid "Corner radius"
+msgstr "Radius sudut"
 
 msgid "Country"
 msgstr "Negara"
@@ -580,6 +607,9 @@ msgstr "Umpan balik pelanggan"
 msgid "Dark"
 msgstr "Gelap"
 
+msgid "Dark mode uses its own built-in colours."
+msgstr "Mode gelap memakai warna bawaannya sendiri."
+
 msgid "Date"
 msgstr "Tanggal"
 
@@ -594,6 +624,9 @@ msgstr "Menonaktifkan plugin tidak menghapus data. Multisite menggunakan pengatu
 
 msgid "Decimal numbers"
 msgstr "Angka desimal"
+
+msgid "Default"
+msgstr "Bawaan"
 
 msgid "Default country (ISO code)"
 msgstr "Negara bawaan (kode ISO)"
@@ -652,9 +685,6 @@ msgstr "Jelaskan formulir yang Anda butuhkan (target, pertanyaan, bahasa)"
 msgid "Design"
 msgstr "Desain"
 
-msgid "Design basics"
-msgstr "Dasar desain"
-
 msgid "Desktop"
 msgstr "Desktop"
 
@@ -690,6 +720,12 @@ msgstr "Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab 
 
 msgid "Do not store"
 msgstr "Jangan simpan"
+
+msgid "Doodles"
+msgstr "Coretan"
+
+msgid "Dots"
+msgstr "Titik-titik"
 
 msgid "Double opt-in (subscriber confirms by email)"
 msgstr "Konfirmasi ganda (pelanggan mengonfirmasi lewat email)"
@@ -892,6 +928,9 @@ msgstr "Atribusi kunjungan pertama"
 msgid "Floating launcher"
 msgstr "Tombol chat mengambang"
 
+msgid "Follow device"
+msgstr "Ikuti perangkat"
+
 msgid "Font source"
 msgstr "Sumber font"
 
@@ -1006,6 +1045,9 @@ msgstr "Buat draf"
 msgid "Generating draft…"
 msgstr "Membuat draf…"
 
+msgid "Get a quote"
+msgstr "Minta penawaran"
+
 msgid "Global email layout"
 msgstr "Tata letak email global"
 
@@ -1015,14 +1057,26 @@ msgstr "Pengaturan global: %d hari."
 msgid "Global setting: same as completed submissions."
 msgstr "Pengaturan global: sama dengan kiriman selesai."
 
+msgid "Goal"
+msgstr "Tujuan"
+
 msgid "Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback."
 msgstr "Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan."
 
 msgid "Google reCAPTCHA v3"
 msgstr "Google reCAPTCHA v3"
 
+msgid "Gradient"
+msgstr "Gradien"
+
+msgid "Graphite"
+msgstr "Grafit"
+
 msgid "Great"
 msgstr "Sangat baik"
+
+msgid "Great choice. When would you like to start?"
+msgstr "Pilihan bagus. Kapan Anda ingin mulai?"
 
 msgid "Group selected"
 msgstr "Kelompokkan yang dipilih"
@@ -1032,6 +1086,12 @@ msgstr "Judul grup"
 
 msgid "HTTPS media URL"
 msgstr "URL media HTTPS"
+
+msgid "Header background"
+msgstr "Latar header"
+
+msgid "Header text"
+msgstr "Teks header"
 
 msgid "Headers"
 msgstr "Header"
@@ -1044,6 +1104,9 @@ msgstr "Tinggi (200–2000 px)"
 
 msgid "Help text"
 msgstr "Teks bantuan"
+
+msgid "Hi there! 👋"
+msgstr "Halo! 👋"
 
 msgid "Hidden"
 msgstr "Tersembunyi"
@@ -1156,6 +1219,9 @@ msgstr "Lompat ke kolom"
 msgid "Jump to step (preview only)"
 msgstr "Lompat ke langkah (hanya pratinjau)"
 
+msgid "Just exploring"
+msgstr "Hanya melihat-lihat"
+
 msgid "Keep local edits (explicit override)"
 msgstr "Pertahankan perubahan lokal (timpa secara eksplisit)"
 
@@ -1167,6 +1233,9 @@ msgstr "Kunci"
 
 msgid "Key (lowercase)"
 msgstr "Kunci (huruf kecil)"
+
+msgid "Keyboard grid"
+msgstr "Kisi keyboard"
 
 msgid "Keyboard hint"
 msgstr "Petunjuk keyboard"
@@ -1195,6 +1264,9 @@ msgstr "Tombol pembuka"
 msgid "Launcher position"
 msgstr "Posisi tombol chat"
 
+msgid "Lavender"
+msgstr "Lavender"
+
 msgid "Lead capture"
 msgstr "Pengumpulan prospek"
 
@@ -1210,6 +1282,9 @@ msgstr "Kiri"
 msgid "Light"
 msgstr "Terang"
 
+msgid "Light or dark"
+msgstr "Terang atau gelap"
+
 msgid "Limits"
 msgstr "Batasan"
 
@@ -1221,6 +1296,12 @@ msgstr "Masa berlaku tautan dalam menit (5–1440)"
 
 msgid "Live"
 msgstr "Aktif"
+
+msgid "Live preview"
+msgstr "Pratinjau langsung"
+
+msgid "Live theme preview"
+msgstr "Pratinjau tema langsung"
 
 msgid "Live version %d"
 msgstr "Versi aktif %d"
@@ -1291,6 +1372,9 @@ msgstr "Panjang maksimum"
 msgid "Maximum selections"
 msgstr "Pilihan maksimum"
 
+msgid "Meadow"
+msgstr "Padang"
+
 msgid "Measurement ID (G-…)"
 msgstr "Measurement ID (G-…)"
 
@@ -1315,6 +1399,9 @@ msgstr "Pesan"
 msgid "Message intro (merge tags allowed)"
 msgstr "Pembuka pesan (boleh memakai merge tag)"
 
+msgid "Messaging"
+msgstr "Perpesanan"
+
 msgid "Metadata and consent"
 msgstr "Metadata dan persetujuan"
 
@@ -1338,6 +1425,9 @@ msgstr "Pilihan minimum"
 
 msgid "Mobile"
 msgstr "Ponsel"
+
+msgid "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons."
+msgstr "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
 
 msgid "More forms"
 msgstr "Formulir berikutnya"
@@ -1372,12 +1462,6 @@ msgstr "Perlu ditingkatkan"
 msgid "Nested condition"
 msgstr "Kondisi bertingkat"
 
-msgid "Neutral dark"
-msgstr "Netral gelap"
-
-msgid "Neutral light"
-msgstr "Netral terang"
-
 msgid "New blank form"
 msgstr "Formulir kosong baru"
 
@@ -1401,6 +1485,9 @@ msgstr "Berikutnya"
 
 msgid "Next forms"
 msgstr "Formulir berikutnya"
+
+msgid "Night"
+msgstr "Malam"
 
 msgid "No"
 msgstr "Tidak"
@@ -1519,6 +1606,9 @@ msgstr "Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penemp
 msgid "Page metadata"
 msgstr "Metadata halaman"
 
+msgid "Palette"
+msgstr "Palet"
+
 msgid "Partial"
 msgstr "Sebagian"
 
@@ -1561,14 +1651,23 @@ msgstr "Pertanyaan telepon (opsional, dikirim dalam bentuk hash)"
 msgid "Phrase key → translated text"
 msgstr "Kunci frasa → teks terjemahan"
 
+msgid "Pills"
+msgstr "Pil"
+
 msgid "Pixel (dataset) ID"
 msgstr "ID Pixel (dataset)"
 
 msgid "Placeholder"
 msgstr "Teks petunjuk"
 
+msgid "Plain"
+msgstr "Polos"
+
 msgid "Plain Q&A"
 msgstr "Tanya jawab biasa"
+
+msgid "Plain, compact bubbles that blend into any page."
+msgstr "Gelembung sederhana dan ringkas yang menyatu dengan halaman apa pun."
 
 msgid "Plain-text version"
 msgstr "Versi teks biasa"
@@ -1614,9 +1713,6 @@ msgstr "Teks sebelumnya dipulihkan."
 
 msgid "Previous forms"
 msgstr "Formulir sebelumnya"
-
-msgid "Primary colour"
-msgstr "Warna utama"
 
 msgid "Print"
 msgstr "Cetak"
@@ -1894,6 +1990,9 @@ msgstr "Contoh jawaban (objek JSON)"
 msgid "Sample answers must be an object."
 msgstr "Contoh jawaban harus berupa objek."
 
+msgid "Sample conversation. Your real questions appear in Preview."
+msgstr "Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau."
+
 msgid "Save draft"
 msgstr "Simpan draf"
 
@@ -1987,6 +2086,9 @@ msgstr "Pengaturan"
 msgid "Settings saved."
 msgstr "Pengaturan disimpan."
 
+msgid "Shape"
+msgstr "Bentuk"
+
 msgid "Share"
 msgstr "Bagikan"
 
@@ -2010,6 +2112,9 @@ msgstr "Pilihan tunggal"
 
 msgid "Skipped"
 msgstr "Dilewati"
+
+msgid "Sky"
+msgstr "Langit"
 
 msgid "Slider"
 msgstr "Penggeser"
@@ -2095,6 +2200,9 @@ msgstr "Nilai tersimpan"
 msgid "Street"
 msgstr "Jalan"
 
+msgid "Style"
+msgstr "Gaya"
+
 msgid "Subject"
 msgstr "Subjek"
 
@@ -2112,6 +2220,9 @@ msgstr "Kurangi"
 
 msgid "Summary"
 msgstr "Ringkasan"
+
+msgid "Sunset"
+msgstr "Senja"
 
 msgid "System / local — no ChatFlow font requests"
 msgstr "Sistem / lokal — tanpa permintaan font ChatFlow"
@@ -2140,9 +2251,6 @@ msgstr "Kode peristiwa uji (opsional, untuk pengujian Events Manager)"
 msgid "Test recipient"
 msgstr "Penerima uji"
 
-msgid "Text colour"
-msgstr "Warna teks"
-
 msgid "Thank you for your submission"
 msgstr "Terima kasih atas kiriman Anda"
 
@@ -2164,6 +2272,9 @@ msgstr "Formulir tidak dapat diubah. Silakan coba lagi."
 msgid "The frozen form snapshot is unavailable."
 msgstr "Snapshot formulir yang dibekukan tidak tersedia."
 
+msgid "The live preview is unavailable. Rebuild the plugin assets."
+msgstr "Pratinjau langsung tidak tersedia. Bangun ulang aset plugin."
+
 msgid "The request failed. Please try again."
 msgstr "Permintaan gagal. Silakan coba lagi."
 
@@ -2172,9 +2283,6 @@ msgstr "Pratinjau runtime tidak tersedia. Bangun ulang aset plugin."
 
 msgid "Theme"
 msgstr "Tema"
-
-msgid "Theme preset"
-msgstr "Prasetel tema"
 
 msgid "This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears."
 msgstr "Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas."
@@ -2187,6 +2295,12 @@ msgstr "Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan men
 
 msgid "This month"
 msgstr "Bulan ini"
+
+msgid "This week"
+msgstr "Minggu ini"
+
+msgid "Timing"
+msgstr "Waktu"
 
 msgid "To (UTC, inclusive)"
 msgstr "Sampai (UTC, inklusif)"
@@ -2244,6 +2358,9 @@ msgstr "Ketik DELETE untuk menghapus permanen jawaban, berkas, dan aktivitas yan
 
 msgid "Typing speed"
 msgstr "Kecepatan mengetik"
+
+msgid "Typography"
+msgstr "Tipografi"
 
 msgid "URL"
 msgstr "URL"
@@ -2323,9 +2440,6 @@ msgstr "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
 msgid "User / event"
 msgstr "Pengguna / peristiwa"
 
-msgid "User bubble colour"
-msgstr "Warna gelembung pengguna"
-
 msgid "User text"
 msgstr "Teks pengguna"
 
@@ -2371,8 +2485,17 @@ msgstr "Tampilan (impresi)"
 msgid "Visit website"
 msgstr "Kunjungi situs web"
 
+msgid "Visitor bubble"
+msgstr "Gelembung pengunjung"
+
 msgid "Visitor phrase overrides"
 msgstr "Frasa khusus pengunjung"
+
+msgid "Visitor text"
+msgstr "Teks pengunjung"
+
+msgid "Wallpaper"
+msgstr "Wallpaper"
 
 msgid "Webhook URL"
 msgstr "URL webhook"
@@ -2385,6 +2508,9 @@ msgstr "Bobot (1–100)"
 
 msgid "Welcome! Add your questions in the builder."
 msgstr "Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir."
+
+msgid "What brings you here today?"
+msgstr "Ada yang bisa kami bantu hari ini?"
 
 msgid "What could we improve?"
 msgstr "Apa yang dapat kami tingkatkan?"

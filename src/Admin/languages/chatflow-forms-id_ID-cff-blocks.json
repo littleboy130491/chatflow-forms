@@ -52,6 +52,12 @@
       "Abandoned submission": [
         "Kiriman ditinggalkan"
       ],
+      "Accent (buttons, links, ticks)": [
+        "Aksen (tombol, tautan, centang)"
+      ],
+      "Accessibility and extras": [
+        "Aksesibilitas dan tambahan"
+      ],
       "Action": [
         "Tindakan"
       ],
@@ -163,6 +169,9 @@
       "Answer": [
         "Jawaban"
       ],
+      "Answer buttons": [
+        "Tombol jawaban"
+      ],
       "Answer column %d": [
         "Kolom jawaban %d"
       ],
@@ -225,6 +234,9 @@
       ],
       "Arithmetic expression (answer.key, variable.key)": [
         "Ekspresi aritmetika (answer.key, variable.key)"
+      ],
+      "Ask a question": [
+        "Ajukan pertanyaan"
       ],
       "Ask before resuming": [
         "Tanya sebelum melanjutkan"
@@ -292,8 +304,11 @@
       "Body HTML / merge tags": [
         "Isi HTML / tag penggabungan"
       ],
-      "Bot bubble colour": [
-        "Warna gelembung bot"
+      "Bot": [
+        "Bot"
+      ],
+      "Bot bubble": [
+        "Gelembung bot"
       ],
       "Bot message": [
         "Pesan bot"
@@ -309,6 +324,9 @@
       ],
       "Brand colour": [
         "Warna merek"
+      ],
+      "Bubble tails": [
+        "Ekor gelembung"
       ],
       "Build": [
         "Susun"
@@ -355,8 +373,14 @@
       "Changing a value changes exports and integrations. Its ID stays unchanged.": [
         "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
       ],
-      "Chat width (240–1600)": [
-        "Lebar percakapan (240–1600)"
+      "Chat background": [
+        "Latar percakapan"
+      ],
+      "Chat theme": [
+        "Tema percakapan"
+      ],
+      "Chat width": [
+        "Lebar percakapan"
       ],
       "ChatFlow": [
         "ChatFlow"
@@ -400,9 +424,6 @@
       "Choose a form from the block settings.": [
         "Pilih formulir dari pengaturan blok."
       ],
-      "Choose a preset": [
-        "Pilih prasetel"
-      ],
       "Choose a published ChatFlow form ID.": [
         "Pilih ID formulir ChatFlow yang telah diterbitkan."
       ],
@@ -427,6 +448,9 @@
       "City": [
         "Kota"
       ],
+      "Classic": [
+        "Klasik"
+      ],
       "Close preview": [
         "Tutup pratinjau"
       ],
@@ -441,6 +465,9 @@
       ],
       "Collected metadata": [
         "Metadata yang dikumpulkan"
+      ],
+      "Colours": [
+        "Warna"
       ],
       "Column keys (comma-separated; blank = all)": [
         "Kunci kolom (pisahkan dengan koma; kosong = semua)"
@@ -550,8 +577,8 @@
       "Copy the ID from ChatFlow Forms. Only published forms render.": [
         "Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan."
       ],
-      "Corner radius (0–32)": [
-        "Radius sudut (0–32)"
+      "Corner radius": [
+        "Radius sudut"
       ],
       "Country": [
         "Negara"
@@ -586,6 +613,9 @@
       "Dark": [
         "Gelap"
       ],
+      "Dark mode uses its own built-in colours.": [
+        "Mode gelap memakai warna bawaannya sendiri."
+      ],
       "Date": [
         "Tanggal"
       ],
@@ -600,6 +630,9 @@
       ],
       "Decimal numbers": [
         "Angka desimal"
+      ],
+      "Default": [
+        "Bawaan"
       ],
       "Default country (ISO code)": [
         "Negara bawaan (kode ISO)"
@@ -658,9 +691,6 @@
       "Design": [
         "Desain"
       ],
-      "Design basics": [
-        "Dasar desain"
-      ],
       "Desktop": [
         "Desktop"
       ],
@@ -696,6 +726,12 @@
       ],
       "Do not store": [
         "Jangan simpan"
+      ],
+      "Doodles": [
+        "Coretan"
+      ],
+      "Dots": [
+        "Titik-titik"
       ],
       "Double opt-in (subscriber confirms by email)": [
         "Konfirmasi ganda (pelanggan mengonfirmasi lewat email)"
@@ -898,6 +934,9 @@
       "Floating launcher": [
         "Tombol chat mengambang"
       ],
+      "Follow device": [
+        "Ikuti perangkat"
+      ],
       "Font source": [
         "Sumber font"
       ],
@@ -1012,6 +1051,9 @@
       "Generating draft…": [
         "Membuat draf…"
       ],
+      "Get a quote": [
+        "Minta penawaran"
+      ],
       "Global email layout": [
         "Tata letak email global"
       ],
@@ -1021,14 +1063,26 @@
       "Global setting: same as completed submissions.": [
         "Pengaturan global: sama dengan kiriman selesai."
       ],
+      "Goal": [
+        "Tujuan"
+      ],
       "Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.": [
         "Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan."
       ],
       "Google reCAPTCHA v3": [
         "Google reCAPTCHA v3"
       ],
+      "Gradient": [
+        "Gradien"
+      ],
+      "Graphite": [
+        "Grafit"
+      ],
       "Great": [
         "Sangat baik"
+      ],
+      "Great choice. When would you like to start?": [
+        "Pilihan bagus. Kapan Anda ingin mulai?"
       ],
       "Group selected": [
         "Kelompokkan yang dipilih"
@@ -1038,6 +1092,12 @@
       ],
       "HTTPS media URL": [
         "URL media HTTPS"
+      ],
+      "Header background": [
+        "Latar header"
+      ],
+      "Header text": [
+        "Teks header"
       ],
       "Headers": [
         "Header"
@@ -1050,6 +1110,9 @@
       ],
       "Help text": [
         "Teks bantuan"
+      ],
+      "Hi there! 👋": [
+        "Halo! 👋"
       ],
       "Hidden": [
         "Tersembunyi"
@@ -1162,6 +1225,9 @@
       "Jump to step (preview only)": [
         "Lompat ke langkah (hanya pratinjau)"
       ],
+      "Just exploring": [
+        "Hanya melihat-lihat"
+      ],
       "Keep local edits (explicit override)": [
         "Pertahankan perubahan lokal (timpa secara eksplisit)"
       ],
@@ -1173,6 +1239,9 @@
       ],
       "Key (lowercase)": [
         "Kunci (huruf kecil)"
+      ],
+      "Keyboard grid": [
+        "Kisi keyboard"
       ],
       "Keyboard hint": [
         "Petunjuk keyboard"
@@ -1201,6 +1270,9 @@
       "Launcher position": [
         "Posisi tombol chat"
       ],
+      "Lavender": [
+        "Lavender"
+      ],
       "Lead capture": [
         "Pengumpulan prospek"
       ],
@@ -1216,6 +1288,9 @@
       "Light": [
         "Terang"
       ],
+      "Light or dark": [
+        "Terang atau gelap"
+      ],
       "Limits": [
         "Batasan"
       ],
@@ -1227,6 +1302,12 @@
       ],
       "Live": [
         "Aktif"
+      ],
+      "Live preview": [
+        "Pratinjau langsung"
+      ],
+      "Live theme preview": [
+        "Pratinjau tema langsung"
       ],
       "Live version %d": [
         "Versi aktif %d"
@@ -1297,6 +1378,9 @@
       "Maximum selections": [
         "Pilihan maksimum"
       ],
+      "Meadow": [
+        "Padang"
+      ],
       "Measurement ID (G-…)": [
         "Measurement ID (G-…)"
       ],
@@ -1321,6 +1405,9 @@
       "Message intro (merge tags allowed)": [
         "Pembuka pesan (boleh memakai merge tag)"
       ],
+      "Messaging": [
+        "Perpesanan"
+      ],
       "Metadata and consent": [
         "Metadata dan persetujuan"
       ],
@@ -1344,6 +1431,9 @@
       ],
       "Mobile": [
         "Ponsel"
+      ],
+      "Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.": [
+        "Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard."
       ],
       "More forms": [
         "Formulir berikutnya"
@@ -1378,12 +1468,6 @@
       "Nested condition": [
         "Kondisi bertingkat"
       ],
-      "Neutral dark": [
-        "Netral gelap"
-      ],
-      "Neutral light": [
-        "Netral terang"
-      ],
       "New blank form": [
         "Formulir kosong baru"
       ],
@@ -1407,6 +1491,9 @@
       ],
       "Next forms": [
         "Formulir berikutnya"
+      ],
+      "Night": [
+        "Malam"
       ],
       "No": [
         "Tidak"
@@ -1525,6 +1612,9 @@
       "Page metadata": [
         "Metadata halaman"
       ],
+      "Palette": [
+        "Palet"
+      ],
       "Partial": [
         "Sebagian"
       ],
@@ -1567,14 +1657,23 @@
       "Phrase key → translated text": [
         "Kunci frasa → teks terjemahan"
       ],
+      "Pills": [
+        "Pil"
+      ],
       "Pixel (dataset) ID": [
         "ID Pixel (dataset)"
       ],
       "Placeholder": [
         "Teks petunjuk"
       ],
+      "Plain": [
+        "Polos"
+      ],
       "Plain Q&A": [
         "Tanya jawab biasa"
+      ],
+      "Plain, compact bubbles that blend into any page.": [
+        "Gelembung sederhana dan ringkas yang menyatu dengan halaman apa pun."
       ],
       "Plain-text version": [
         "Versi teks biasa"
@@ -1620,9 +1719,6 @@
       ],
       "Previous forms": [
         "Formulir sebelumnya"
-      ],
-      "Primary colour": [
-        "Warna utama"
       ],
       "Print": [
         "Cetak"
@@ -1900,6 +1996,9 @@
       "Sample answers must be an object.": [
         "Contoh jawaban harus berupa objek."
       ],
+      "Sample conversation. Your real questions appear in Preview.": [
+        "Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau."
+      ],
       "Save draft": [
         "Simpan draf"
       ],
@@ -1993,6 +2092,9 @@
       "Settings saved.": [
         "Pengaturan disimpan."
       ],
+      "Shape": [
+        "Bentuk"
+      ],
       "Share": [
         "Bagikan"
       ],
@@ -2016,6 +2118,9 @@
       ],
       "Skipped": [
         "Dilewati"
+      ],
+      "Sky": [
+        "Langit"
       ],
       "Slider": [
         "Penggeser"
@@ -2101,6 +2206,9 @@
       "Street": [
         "Jalan"
       ],
+      "Style": [
+        "Gaya"
+      ],
       "Subject": [
         "Subjek"
       ],
@@ -2118,6 +2226,9 @@
       ],
       "Summary": [
         "Ringkasan"
+      ],
+      "Sunset": [
+        "Senja"
       ],
       "System / local — no ChatFlow font requests": [
         "Sistem / lokal — tanpa permintaan font ChatFlow"
@@ -2146,9 +2257,6 @@
       "Test recipient": [
         "Penerima uji"
       ],
-      "Text colour": [
-        "Warna teks"
-      ],
       "Thank you for your submission": [
         "Terima kasih atas kiriman Anda"
       ],
@@ -2170,6 +2278,9 @@
       "The frozen form snapshot is unavailable.": [
         "Snapshot formulir yang dibekukan tidak tersedia."
       ],
+      "The live preview is unavailable. Rebuild the plugin assets.": [
+        "Pratinjau langsung tidak tersedia. Bangun ulang aset plugin."
+      ],
       "The request failed. Please try again.": [
         "Permintaan gagal. Silakan coba lagi."
       ],
@@ -2178,9 +2289,6 @@
       ],
       "Theme": [
         "Tema"
-      ],
-      "Theme preset": [
-        "Prasetel tema"
       ],
       "This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.": [
         "Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas."
@@ -2193,6 +2301,12 @@
       ],
       "This month": [
         "Bulan ini"
+      ],
+      "This week": [
+        "Minggu ini"
+      ],
+      "Timing": [
+        "Waktu"
       ],
       "To (UTC, inclusive)": [
         "Sampai (UTC, inklusif)"
@@ -2250,6 +2364,9 @@
       ],
       "Typing speed": [
         "Kecepatan mengetik"
+      ],
+      "Typography": [
+        "Tipografi"
       ],
       "URL": [
         "URL"
@@ -2329,9 +2446,6 @@
       "User / event": [
         "Pengguna / peristiwa"
       ],
-      "User bubble colour": [
-        "Warna gelembung pengguna"
-      ],
       "User text": [
         "Teks pengguna"
       ],
@@ -2377,8 +2491,17 @@
       "Visit website": [
         "Kunjungi situs web"
       ],
+      "Visitor bubble": [
+        "Gelembung pengunjung"
+      ],
       "Visitor phrase overrides": [
         "Frasa khusus pengunjung"
+      ],
+      "Visitor text": [
+        "Teks pengunjung"
+      ],
+      "Wallpaper": [
+        "Wallpaper"
       ],
       "Webhook URL": [
         "URL webhook"
@@ -2391,6 +2514,9 @@
       ],
       "Welcome! Add your questions in the builder.": [
         "Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir."
+      ],
+      "What brings you here today?": [
+        "Ada yang bisa kami bantu hari ini?"
       ],
       "What could we improve?": [
         "Apa yang dapat kami tingkatkan?"

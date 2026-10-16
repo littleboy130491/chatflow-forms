@@ -9,18 +9,24 @@ import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
 import { phrases } from './i18n';
 import { googleFont, systemFont, type GoogleFont } from '../shared/fonts';
 import { acquireGoogleFont } from './fonts';
-import type { AnswerMap, FieldProps, RuntimeOptions } from './types';
+import type { AnswerMap, FieldProps, PublicForm, RuntimeOptions } from './types';
 import { captchaToken } from './captcha';
 export type { RuntimeOptions, FieldProps, PublicForm } from './types';
 export { registerField } from './registry';
 
 export interface RuntimeHandle {
   unmount(): void;
+  /** Preview only: restyle the running form without restarting its conversation. */
+  setAppearance(appearance: Appearance): void;
   prefill(answers: AnswerMap): void;
   getState(): ReturnType<typeof previewState>;
   jumpToStep(id: string): boolean;
   open(): void;
 }
+type Appearance = NonNullable<PublicForm['form']['appearance']>;
+type ThemeColor = 'primary' | 'botBubbleBackground' | 'userBubbleBackground' | 'textColor' | 'headerBackground' | 'headerText' | 'chatBackground' | 'userTextColor';
+const classicDefaults: Record<ThemeColor, string | undefined> = { primary: undefined, botBubbleBackground: undefined, userBubbleBackground: undefined, textColor: undefined, headerBackground: '#ffffff', headerText: '#171717', chatBackground: '#ffffff', userTextColor: '#171717' };
+const messagingDefaults: Record<ThemeColor, string> = { primary: '#3390ec', botBubbleBackground: '#ffffff', userBubbleBackground: '#e1fec6', textColor: '#000000', headerBackground: '#ffffff', headerText: '#000000', chatBackground: '#dbe6ee', userTextColor: '#000000' };
 const mounted = new Map<HTMLElement, { handle: RuntimeHandle; id: number; controller: RuntimeController }>();
 let overlayCounter = 0;
 function previewState(controller: RuntimeController) {
@@ -52,10 +58,14 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     if (!value) return;
     const font = value.inheritFont ? undefined : googleFont(value.googleFont);
     if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
-    const entries = { '--cff-primary': safeColor(value.primary), '--cff-bubble-bot-bg': safeColor(value.botBubbleBackground), '--cff-user-bg': safeColor(value.userBubbleBackground), '--cff-text': safeColor(value.textColor), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
+    // Messaging style has its own defaults; explicit theme colours always win.
+    const base = value.style === 'messaging' ? messagingDefaults : classicDefaults;
+    const color = (key: keyof typeof base) => safeColor(value[key]) ?? base[key];
+    const entries = { '--cff-primary': color('primary'), '--cff-bubble-bot-bg': color('botBubbleBackground'), '--cff-user-bg': color('userBubbleBackground'), '--cff-text': color('textColor'), '--cff-header-bg': color('headerBackground'), '--cff-header-text': color('headerText'), '--cff-chat-bg': color('chatBackground'), '--cff-user-text': color('userTextColor'), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
     for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     const dark = value.theme === 'dark' || (value.theme === 'auto' && globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches);
     root.querySelector('.chat')?.classList.toggle('dark', Boolean(dark));
+    if (value.style === 'messaging') root.dataset.style = 'messaging'; else delete root.dataset.style;
     customization.textContent = scopedAppearanceCss(value.customCss);
   };
   const unsubscribe = controller.subscribe(appearance);
@@ -169,6 +179,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     prefill: answers => controller.prefillAnswers(answers),
     getState: () => previewState(controller),
     jumpToStep: id => controller.jumpToStep(id),
+    setAppearance: next => { if (options.preview) controller.setAppearance(next); },
     open: () => {
       if (isLauncher) { setOpen(true); return; }
       host.hidden = false;

@@ -71,7 +71,7 @@ export class RuntimeController {
       if (this.disposed) return;
       this.latest = this.state.form;
       allowFieldTypes(this.state.form.features?.fieldTypes ?? []);
-      if (this.options.preview) { this.state.phase = 'ready'; this.compute(); return; }
+      if (this.options.preview) { if (this.options.previewAnswers) this.state.answers = { ...this.options.previewAnswers }; this.state.phase = 'ready'; this.compute(); return; }
       this.prefill = { ...readPrefill(globalThis.location?.search ?? '', this.state.form.form.schema), ...this.prefill };
       await this.loadEngagement();
       const form = this.state.form.form;
@@ -220,6 +220,11 @@ export class RuntimeController {
   prefillAnswers(answers: AnswerMap): void {
     if (this.state.phase === 'done' || this.pending?.method === 'POST') return;
     this.prefill = { ...this.prefill, ...answers };
+    this.notify();
+  }
+  setAppearance(appearance: PublicForm['form']['appearance']): void {
+    if (!this.options.preview || !this.state.form) return;
+    this.state.form = { ...this.state.form, form: { ...this.state.form.form, appearance } };
     this.notify();
   }
   jumpToStep(id: string): boolean {

@@ -30,6 +30,7 @@ import { PowerEditor } from './PowerEditor';
 import { AiGenerate, AiRephrase } from './AiAssist';
 import { Share, shortcode } from './Share';
 import { Contrast } from './Contrast';
+import { ThemeEditor } from './ThemeEditor';
 export { mountFormsList } from './forms-list';
 import './style.css';
 
@@ -694,19 +695,10 @@ function BuilderView({
       )}
       {tab === 'design' && api.config.features.ai && <AiRephrase api={api} schema={schema} onChange={setSchema} />}
       {tab === 'design' && (
-        <section className="cff-card">
-          <h2>{__('Design basics', 'chatflow-forms')}</h2>
-          <Contrast appearance={form.settings.appearance} />
-          <Area label={__('Scoped custom CSS (inside the Shadow DOM)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
-          <Select label={__('Theme preset', 'chatflow-forms')} value="" choices={[
-            {value:'',label:__('Choose a preset', 'chatflow-forms')},
-            {value:'neutral',label:__('Neutral light', 'chatflow-forms')},
-            {value:'dark',label:__('Neutral dark', 'chatflow-forms')},
-          ]} onChange={(preset)=>{if (!preset) return; edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,
-            theme:preset === 'dark' ? 'dark' : 'light', primary:preset === 'dark' ? '#d4d4d4' : '#262626',botBubbleBackground:preset === 'dark' ? '#262626' : '#f5f5f5',userBubbleBackground:preset === 'dark' ? '#404040' : '#e5e5e5',textColor:preset === 'dark' ? '#fafafa' : '#171717',radius:8,
-          }}}));}} />
-          <Check label={__('Confetti on completion (off by default)', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
-            onChange={(confetti)=>edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,confetti}}}))} />
+        <Fragment>
+          <ThemeEditor form={form} config={api.config} onChange={appearance => edit(value => ({ ...value, settings: { ...value.settings, appearance } }))} />
+          <section className="cff-card">
+            <h2>{__('Bot', 'chatflow-forms')}</h2>
           <Field
             label={__('Bot name', 'chatflow-forms')}
             value={schema.bot.name}
@@ -734,50 +726,10 @@ function BuilderView({
               })
             }
           />
-          <Select
-            label={__('Theme', 'chatflow-forms')}
-            value={form.settings.appearance?.theme ?? 'light'}
-            choices={(['light', 'dark', 'auto'] as const).map((value) => ({ value, label: themeLabels[value] }))}
-            onChange={(theme) =>
-              edit((value) => ({
-                ...value,
-                settings: {
-                  ...value.settings,
-                  appearance: { ...value.settings.appearance, theme: theme as 'light' | 'dark' | 'auto' },
-                },
-              }))
-            }
-          />
-          {(
-            [
-              { key: 'primary', label: __('Primary colour', 'chatflow-forms') },
-              { key: 'botBubbleBackground', label: __('Bot bubble colour', 'chatflow-forms') },
-              { key: 'userBubbleBackground', label: __('User bubble colour', 'chatflow-forms') },
-              { key: 'textColor', label: __('Text colour', 'chatflow-forms') },
-              { key: 'font', label: __('Font stack', 'chatflow-forms') },
-              { key: 'radius', label: __('Corner radius (0–32)', 'chatflow-forms') },
-              { key: 'width', label: __('Chat width (240–1600)', 'chatflow-forms') },
-            ] as const
-          ).map((item) => (
-            <Field
-              key={item.key}
-              label={item.label}
-              type={['radius', 'width'].includes(item.key) ? 'number' : 'text'}
-              value={form.settings.appearance?.[item.key] ?? ''}
-              onChange={(next) =>
-                edit((value) => ({
-                  ...value,
-                  settings: {
-                    ...value.settings,
-                    appearance: {
-                      ...value.settings.appearance,
-                      [item.key]: ['radius', 'width'].includes(item.key) ? Number(next) : next,
-                    },
-                  },
-                }))
-              }
-            />
-          ))}
+          </section>
+          <section className="cff-card">
+            <h2>{__('Typography', 'chatflow-forms')}</h2>
+            <Field label={__('Font stack', 'chatflow-forms')} value={form.settings.appearance?.font ?? ''} onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, font } } }))} />
           <Select
             label={__('Font source', 'chatflow-forms')}
             value={form.settings.appearance?.googleFont ?? 'system'}
@@ -795,13 +747,16 @@ function BuilderView({
               }))
             }
           />
-          <p>
-            {__(
-              'Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.',
-              'chatflow-forms',
-            )}
-          </p>
-        </section>
+          </section>
+          <section className="cff-card">
+            <h2>{__('Accessibility and extras', 'chatflow-forms')}</h2>
+            <Contrast appearance={form.settings.appearance} />
+            <Check label={__('Confetti on completion (off by default)', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
+              onChange={(confetti)=>edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,confetti}}}))} />
+            <Area label={__('Scoped custom CSS (inside the Shadow DOM)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
+            <p>{__('Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.', 'chatflow-forms')}</p>
+          </section>
+        </Fragment>
       )}
       {tab === 'settings' && (
         <Fragment>

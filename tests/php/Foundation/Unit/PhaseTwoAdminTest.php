@@ -59,6 +59,23 @@ final class PhaseTwoAdminTest extends TestCase {
 		self::assertSame( array(), $validator->validateSettings( array( 'appearance' => array( 'confetti' => false ) ) ) );
 		self::assertNotEmpty( $validator->validateSettings( array( 'appearance' => array( 'confetti' => 'yes' ) ) ) );
 	}
+	public function testMessagingThemeSettingsAreValidatedServerSide(): void {
+		$validator = new SchemaValidator();
+		$theme     = array(
+			'style'            => 'messaging',
+			'headerBackground' => '#17212b',
+			'headerText'       => '#ffffff',
+			'chatBackground'   => '#0e1621',
+			'userTextColor'    => '#ffffff',
+			'wallpaper'        => 'doodle',
+			'choiceStyle'      => 'keyboard',
+			'bubbleTails'      => false,
+		);
+		self::assertSame( array(), $validator->validateSettings( array( 'appearance' => $theme ) ) );
+		foreach ( array( array( 'style' => 'bubbly' ), array( 'wallpaper' => 'https://evil.test/a.png' ), array( 'choiceStyle' => 'grid' ), array( 'bubbleTails' => 'yes' ), array( 'chatBackground' => str_repeat( 'a', 33 ) ) ) as $invalid ) {
+			self::assertNotEmpty( $validator->validateSettings( array( 'appearance' => $invalid ) ), (string) json_encode( $invalid ) );
+		}
+	}
 	public function testTranslationOnlyChangesPresentationAndPreservesMergeTags(): void {
 		$schema                         = json_decode( file_get_contents( dirname( __DIR__, 3 ) . '/fixtures/schema.json' ), true )[0]['schema'];
 		$schema['steps'][0]['messages'] = array( 'Hello {{name}}' );
