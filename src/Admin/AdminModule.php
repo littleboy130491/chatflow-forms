@@ -151,6 +151,7 @@ final class AdminModule implements Module {
 				'fieldTypes' => $types,
 				'uploads'    => in_array( 'file_upload', $types, true ),
 				'xlsx'       => \ChatFlow\Submissions\Xlsx::available(),
+				'ai'         => \ChatFlow\Rest\AiController::configured(),
 			),
 		);
 		// This is an admin-only locator, not a write or authorization input.

@@ -31,6 +31,9 @@
       "A/B copy and order experiment": [
         "Eksperimen A/B teks dan urutan"
       ],
+      "AI assist (Claude)": [
+        "Asisten AI (Claude)"
+      ],
       "API key (ends with the data centre, e.g. -us21)": [
         "Kunci API (diakhiri kode pusat data, mis. -us21)"
       ],
@@ -168,6 +171,9 @@
       ],
       "Answered": [
         "Dijawab"
+      ],
+      "Anthropic API key (sk-ant-…)": [
+        "Kunci API Anthropic (sk-ant-…)"
       ],
       "Any": [
         "Apa pun"
@@ -415,6 +421,9 @@
       "Completions": [
         "Penyelesaian"
       ],
+      "Concise": [
+        "Ringkas"
+      ],
       "Confetti on completion (off by default)": [
         "Konfeti saat selesai (nonaktif secara bawaan)"
       ],
@@ -564,6 +573,9 @@
       ],
       "Delivery activity": [
         "Aktivitas pengiriman"
+      ],
+      "Describe the form you need (audience, questions, language)": [
+        "Jelaskan formulir yang Anda butuhkan (target, pertanyaan, bahasa)"
       ],
       "Design": [
         "Desain"
@@ -832,6 +844,9 @@
       "Form version": [
         "Versi formulir"
       ],
+      "Formal": [
+        "Formal"
+      ],
       "Format": [
         "Format"
       ],
@@ -840,6 +855,9 @@
       ],
       "Formula-like cells are escaped by the server. Exports contain personal data; store them securely.": [
         "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
+      ],
+      "Friendly": [
+        "Ramah"
       ],
       "From": [
         "Dari"
@@ -873,6 +891,15 @@
       ],
       "Funnel": [
         "Alur konversi"
+      ],
+      "Generate a form with AI": [
+        "Buat formulir dengan AI"
+      ],
+      "Generate draft": [
+        "Buat draf"
+      ],
+      "Generating draft…": [
+        "Membuat draf…"
       ],
       "Global email layout": [
         "Tata letak email global"
@@ -1315,6 +1342,9 @@
       "Optional captcha provider": [
         "Penyedia captcha opsional"
       ],
+      "Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.": [
+        "Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI."
+      ],
       "Other (free-text option)": [
         "Lainnya (pilihan teks bebas)"
       ],
@@ -1381,6 +1411,9 @@
       "Plain-text version": [
         "Versi teks biasa"
       ],
+      "Playful": [
+        "Santai"
+      ],
       "Popup": [
         "Jendela pop-up"
       ],
@@ -1410,6 +1443,9 @@
       ],
       "Previous": [
         "Sebelumnya"
+      ],
+      "Previous copy restored.": [
+        "Teks sebelumnya dipulihkan."
       ],
       "Previous forms": [
         "Formulir sebelumnya"
@@ -1443,6 +1479,9 @@
       ],
       "Product recommender": [
         "Rekomendasi produk"
+      ],
+      "Professional": [
+        "Profesional"
       ],
       "Proxy mode": [
         "Mode proxy"
@@ -1485,6 +1524,9 @@
       ],
       "Purge submissions": [
         "Hapus kiriman"
+      ],
+      "Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.": [
+        "Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan."
       ],
       "Rate window seconds": [
         "Jendela pembatasan (detik)"
@@ -1588,6 +1630,15 @@
       "Removed / unknown options": [
         "Opsi dihapus / tidak dikenal"
       ],
+      "Rephrase": [
+        "Tulis ulang"
+      ],
+      "Rephrase bot copy with AI": [
+        "Tulis ulang teks bot dengan AI"
+      ],
+      "Rephrasing…": [
+        "Menulis ulang…"
+      ],
       "Replace this email subject and body? Routing and recipients stay unchanged.": [
         "Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah."
       ],
@@ -1647,6 +1698,9 @@
       ],
       "Reusable email content": [
         "Konten email yang dapat digunakan kembali"
+      ],
+      "Rewrote %1$d of %2$d texts.": [
+        "Menulis ulang %1$d dari %2$d teks."
       ],
       "Right": [
         "Kanan"
@@ -1933,6 +1987,9 @@
       "To date (UTC)": [
         "Sampai tanggal (UTC)"
       ],
+      "Tone": [
+        "Nada"
+      ],
       "Tools": [
         "Alat"
       ],
@@ -1989,6 +2046,9 @@
       ],
       "Undo": [
         "Urungkan"
+      ],
+      "Undo rephrase": [
+        "Batalkan penulisan ulang"
       ],
       "Ungroup": [
         "Lepas pengelompokan"
@@ -2133,6 +2193,9 @@
       ],
       "You cannot view submissions.": [
         "Anda tidak dapat melihat kiriman."
+      ],
+      "Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.": [
+        "Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau."
       ],
       "Your email": [
         "Email Anda"

@@ -30,6 +30,7 @@ final class RestModule implements Module {
 		( new UploadController() )->register();
 		( new AnalyticsController( $this->forms ) )->register();
 		( new TemplatesController( $this->forms ) )->register();
+		( new AiController( $this->forms ) )->register();
 		$this->route( '/forms/(?P<id>\d+)', 'GET', array( $this, 'publicForm' ) );
 		$this->route( '/forms/(?P<id>\d+)/engagement', 'GET', array( $this, 'engagement' ) );
 		$this->route(

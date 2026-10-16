@@ -25,6 +25,9 @@ msgstr "Pernyataan sambutan yang siap dilengkapi pertanyaan Anda."
 msgid "A/B copy and order experiment"
 msgstr "Eksperimen A/B teks dan urutan"
 
+msgid "AI assist (Claude)"
+msgstr "Asisten AI (Claude)"
+
 msgid "API key (ends with the data centre, e.g. -us21)"
 msgstr "Kunci API (diakhiri kode pusat data, mis. -us21)"
 
@@ -162,6 +165,9 @@ msgstr "Nilai jawaban"
 
 msgid "Answered"
 msgstr "Dijawab"
+
+msgid "Anthropic API key (sk-ant-…)"
+msgstr "Kunci API Anthropic (sk-ant-…)"
 
 msgid "Any"
 msgstr "Apa pun"
@@ -409,6 +415,9 @@ msgstr "Tingkat penyelesaian"
 msgid "Completions"
 msgstr "Penyelesaian"
 
+msgid "Concise"
+msgstr "Ringkas"
+
 msgid "Confetti on completion (off by default)"
 msgstr "Konfeti saat selesai (nonaktif secara bawaan)"
 
@@ -558,6 +567,9 @@ msgstr "Pemisah"
 
 msgid "Delivery activity"
 msgstr "Aktivitas pengiriman"
+
+msgid "Describe the form you need (audience, questions, language)"
+msgstr "Jelaskan formulir yang Anda butuhkan (target, pertanyaan, bahasa)"
 
 msgid "Design"
 msgstr "Desain"
@@ -826,6 +838,9 @@ msgstr "Nama formulir"
 msgid "Form version"
 msgstr "Versi formulir"
 
+msgid "Formal"
+msgstr "Formal"
+
 msgid "Format"
 msgstr "Format"
 
@@ -834,6 +849,9 @@ msgstr "Formulir"
 
 msgid "Formula-like cells are escaped by the server. Exports contain personal data; store them securely."
 msgstr "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
+
+msgid "Friendly"
+msgstr "Ramah"
 
 msgid "From"
 msgstr "Dari"
@@ -867,6 +885,15 @@ msgstr "Slug dasar halaman penuh"
 
 msgid "Funnel"
 msgstr "Alur konversi"
+
+msgid "Generate a form with AI"
+msgstr "Buat formulir dengan AI"
+
+msgid "Generate draft"
+msgstr "Buat draf"
+
+msgid "Generating draft…"
+msgstr "Membuat draf…"
 
 msgid "Global email layout"
 msgstr "Tata letak email global"
@@ -1309,6 +1336,9 @@ msgstr "Kredensial captcha dan Akismet opsional"
 msgid "Optional captcha provider"
 msgstr "Penyedia captcha opsional"
 
+msgid "Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off."
+msgstr "Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI."
+
 msgid "Other (free-text option)"
 msgstr "Lainnya (pilihan teks bebas)"
 
@@ -1375,6 +1405,9 @@ msgstr "Tanya jawab biasa"
 msgid "Plain-text version"
 msgstr "Versi teks biasa"
 
+msgid "Playful"
+msgstr "Santai"
+
 msgid "Popup"
 msgstr "Jendela pop-up"
 
@@ -1404,6 +1437,9 @@ msgstr "Pratinjau menyimpan draf saat ini. Pengiriman uji memakai versi terbit; 
 
 msgid "Previous"
 msgstr "Sebelumnya"
+
+msgid "Previous copy restored."
+msgstr "Teks sebelumnya dipulihkan."
 
 msgid "Previous forms"
 msgstr "Formulir sebelumnya"
@@ -1437,6 +1473,9 @@ msgstr "Penyimpanan privat tidak tersedia."
 
 msgid "Product recommender"
 msgstr "Rekomendasi produk"
+
+msgid "Professional"
+msgstr "Profesional"
 
 msgid "Proxy mode"
 msgstr "Mode proxy"
@@ -1479,6 +1518,9 @@ msgstr "Log penghapusan"
 
 msgid "Purge submissions"
 msgstr "Hapus kiriman"
+
+msgid "Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing."
+msgstr "Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan."
 
 msgid "Rate window seconds"
 msgstr "Jendela pembatasan (detik)"
@@ -1582,6 +1624,15 @@ msgstr "Hapus webhook"
 msgid "Removed / unknown options"
 msgstr "Opsi dihapus / tidak dikenal"
 
+msgid "Rephrase"
+msgstr "Tulis ulang"
+
+msgid "Rephrase bot copy with AI"
+msgstr "Tulis ulang teks bot dengan AI"
+
+msgid "Rephrasing…"
+msgstr "Menulis ulang…"
+
 msgid "Replace this email subject and body? Routing and recipients stay unchanged."
 msgstr "Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah."
 
@@ -1641,6 +1692,9 @@ msgstr "Ulangi pengiriman"
 
 msgid "Reusable email content"
 msgstr "Konten email yang dapat digunakan kembali"
+
+msgid "Rewrote %1$d of %2$d texts."
+msgstr "Menulis ulang %1$d dari %2$d teks."
 
 msgid "Right"
 msgstr "Kanan"
@@ -1927,6 +1981,9 @@ msgstr "Sampai (termasuk)"
 msgid "To date (UTC)"
 msgstr "Sampai tanggal (UTC)"
 
+msgid "Tone"
+msgstr "Nada"
+
 msgid "Tools"
 msgstr "Alat"
 
@@ -1983,6 +2040,9 @@ msgstr "Sumber UTM"
 
 msgid "Undo"
 msgstr "Urungkan"
+
+msgid "Undo rephrase"
+msgstr "Batalkan penulisan ulang"
 
 msgid "Ungroup"
 msgstr "Lepas pengelompokan"
@@ -2127,6 +2187,9 @@ msgstr "Anda tidak diizinkan melihat analitik."
 
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
+
+msgid "Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review."
+msgstr "Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau."
 
 msgid "Your email"
 msgstr "Email Anda"

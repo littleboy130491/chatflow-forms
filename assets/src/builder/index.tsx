@@ -27,6 +27,7 @@ import { importForm } from './formIO';
 import { googleFont, googleFonts } from '../shared/fonts';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
+import { AiGenerate, AiRephrase } from './AiAssist';
 import { Share } from './Share';
 import { Contrast } from './Contrast';
 export { mountFormsList } from './forms-list';
@@ -79,6 +80,7 @@ export function FormStart({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
   return (
     <section className="cff-form-start">
       <h2>{__('Create a form', 'chatflow-forms')}</h2>
+      {api.config.features.ai && <AiGenerate api={api} onOpen={onOpen} />}
       <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
         {__('New blank form', 'chatflow-forms')}
       </Button>
@@ -602,6 +604,7 @@ function BuilderView({
           <PowerEditor schema={schema} onChange={setSchema} />
         </section>
       )}
+      {tab === 'design' && api.config.features.ai && <AiRephrase api={api} schema={schema} onChange={setSchema} />}
       {tab === 'design' && (
         <section className="cff-card">
           <h2>{__('Design basics', 'chatflow-forms')}</h2>

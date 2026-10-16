@@ -64,7 +64,7 @@ final class Starter {
 	 * @param list<array<string,mixed>> $steps
 	 * @return array{title:string,schema:array<string,mixed>,settings:array<string,mixed>}
 	 */
-	private static function form( string $title, array $steps, string $thanks ): array {
+	public static function form( string $title, array $steps, string $thanks ): array {
 		return array(
 			'title'    => $title,
 			'schema'   => array(
@@ -116,7 +116,7 @@ final class Starter {
 	 * @param array<string,mixed> $extra
 	 * @return array<string,mixed>
 	 */
-	private static function step( string $key, string $type, string $label, array $messages, bool $required = false, array $extra = array() ): array {
+	public static function step( string $key, string $type, string $label, array $messages, bool $required = false, array $extra = array() ): array {
 		return array_merge(
 			array(
 				'id'       => 'step_' . $key,
@@ -133,7 +133,7 @@ final class Starter {
 	/** @param list<string> $labels
 	 * @return list<array{id:string,value:string,label:string}>
 	 */
-	private static function options( string $key, array $labels ): array {
+	public static function options( string $key, array $labels ): array {
 		$options = array();
 		foreach ( $labels as $index => $label ) {
 			$options[] = array(

@@ -41,6 +41,7 @@ export interface GlobalSettings {
     ga4: { measurementId: string; apiSecret: string };
     meta_capi: { pixelId: string; accessToken: string; testEventCode: string };
   };
+  ai?: { apiKey: string };
 }
 type ConnectorCredentials = NonNullable<GlobalSettings['connectors']>;
 /** Credential inputs per provider; leave a provider blank to turn it off. */
@@ -276,6 +277,12 @@ export function Settings({ api }: { api: AdminApi }) {
             <Check label={__('Enable optional Akismet','chatflow-forms')} value={settings.spam?.akismetEnabled ?? false}
               onChange={(akismetEnabled) => update({...settings,spam:{...settings.spam!,akismetEnabled}})} />
             <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
+          </section>
+          <section className="cff-card">
+            <h2>{__('AI assist (Claude)', 'chatflow-forms')}</h2>
+            <p>{__('Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.', 'chatflow-forms')}</p>
+            <Field label={__('Anthropic API key (sk-ant-…)', 'chatflow-forms')} type="password" value={settings.ai?.apiKey ?? ''}
+              onChange={(value) => update({ ...settings, ai: { apiKey: value.trim() } })} />
           </section>
           <section className="cff-card">
             <h2>{__('Connector credentials', 'chatflow-forms')}</h2>

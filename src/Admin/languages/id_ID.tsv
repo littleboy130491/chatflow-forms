@@ -6,6 +6,7 @@ A published conversational form.|Formulir percakapan yang telah diterbitkan.
 A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
 A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
+AI assist (Claude)|Asisten AI (Claude)
 API key (ends with the data centre, e.g. -us21)|Kunci API (diakhiri kode pusat data, mis. -us21)
 Abandon|Ditinggalkan
 Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
@@ -54,6 +55,7 @@ Answer operator|Operator jawaban
 Answer value|Nilai jawaban
 Answered|Dijawab
 Answers|Jawaban
+Anthropic API key (sk-ant-…)|Kunci API Anthropic (sk-ant-…)
 Any|Apa pun
 Any (OR)|Salah satu (ATAU)
 Anything else to share?|Ada hal lain yang ingin disampaikan?
@@ -139,6 +141,7 @@ Completed|Selesai
 Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission.|Hanya kiriman yang selesai. Menggunakan label opsi saat ini; opsi yang dihapus dikelompokkan tanpa menampilkan teks Lainnya. Pilihan ganda dapat dihitung lebih dari sekali per kiriman.
 Completion rate|Tingkat penyelesaian
 Completions|Penyelesaian
+Concise|Ringkas
 Confetti on completion (off by default)|Konfeti saat selesai (nonaktif secara bawaan)
 Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.|Atur kredensial penyedia yang sesuai di Pengaturan global. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
 Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.|Atur aturan peluncur dan pemicu popup seluruh situs di Pengaturan → Tampilan dan keterlibatan.
@@ -191,6 +194,7 @@ Delete template|Hapus templat
 Delete this site’s forms and submissions on plugin uninstall|Hapus formulir dan kiriman situs ini saat plugin dihapus
 Delimiter|Pemisah
 Delivery activity|Aktivitas pengiriman
+Describe the form you need (audience, questions, language)|Jelaskan formulir yang Anda butuhkan (target, pertanyaan, bahasa)
 Design|Desain
 Design basics|Dasar desain
 Desktop|Desktop
@@ -286,9 +290,11 @@ Form file exceeds 1 MiB.|Berkas formulir melebihi 1 MiB.
 Form funnel and experiments|Alur konversi formulir dan eksperimen
 Form name|Nama formulir
 Form version|Versi formulir
+Formal|Formal
 Format|Format
 Forms|Formulir
 Formula-like cells are escaped by the server. Exports contain personal data; store them securely.|Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman.
+Friendly|Ramah
 From|Dari
 From (UTC)|Dari (UTC)
 From date (UTC)|Dari tanggal (UTC)
@@ -300,6 +306,9 @@ Full-page URL and QR code|URL halaman penuh dan kode QR
 Fullpage|Halaman penuh
 Fullpage base slug|Slug dasar halaman penuh
 Funnel|Alur konversi
+Generate a form with AI|Buat formulir dengan AI
+Generate draft|Buat draf
+Generating draft…|Membuat draf…
 Global email layout|Tata letak email global
 Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.|Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan.
 Great|Sangat baik
@@ -454,6 +463,7 @@ Operator|Operator
 Option label|Label pilihan
 Optional captcha and Akismet credentials|Kredensial captcha dan Akismet opsional
 Optional captcha provider|Penyedia captcha opsional
+Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.|Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI.
 Other (free-text option)|Lainnya (pilihan teks bebas)
 Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
@@ -476,6 +486,7 @@ Pixel (dataset) ID|ID Pixel (dataset)
 Placeholder|Teks petunjuk
 Plain Q&A|Tanya jawab biasa
 Plain-text version|Versi teks biasa
+Playful|Santai
 Popup|Jendela pop-up
 Preferred appointment date (subject to confirmation)|Tanggal janji temu yang diinginkan (perlu konfirmasi)
 Prefill URL builder|Pembuat URL isian awal
@@ -487,6 +498,7 @@ Preview published form|Pratinjau formulir terbit
 Preview saved draft email|Pratinjau email draf tersimpan
 Preview saves the current draft. Test sends use the published version; publish changed notification settings before testing them.|Pratinjau menyimpan draf saat ini. Pengiriman uji memakai versi terbit; terbitkan perubahan pengaturan notifikasi sebelum mengujinya.
 Previous|Sebelumnya
+Previous copy restored.|Teks sebelumnya dipulihkan.
 Previous forms|Formulir sebelumnya
 Primary colour|Warna utama
 Print|Cetak
@@ -498,6 +510,7 @@ Private app access token (CRM contacts write scope)|Token akses private app (cak
 Private captcha key|Kunci captcha privat
 Private storage unavailable.|Penyimpanan privat tidak tersedia.
 Product recommender|Rekomendasi produk
+Professional|Profesional
 Proxy mode|Mode proxy
 Public site key|Kunci situs publik
 Publish|Terbitkan
@@ -512,6 +525,7 @@ Purge data|Hapus data
 Purge job|Tugas penghapusan
 Purge log|Log penghapusan
 Purge submissions|Hapus kiriman
+Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.|Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan.
 Rate window seconds|Jendela pembatasan (detik)
 Rating|Penilaian
 Rating (1–5)|Penilaian (1–5)
@@ -547,6 +561,9 @@ Remove variable|Hapus variabel
 Remove variant|Hapus varian
 Remove webhook|Hapus webhook
 Removed / unknown options|Opsi dihapus / tidak dikenal
+Rephrase|Tulis ulang
+Rephrase bot copy with AI|Tulis ulang teks bot dengan AI
+Rephrasing…|Menulis ulang…
 Replace this email subject and body? Routing and recipients stay unchanged.|Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah.
 Reply-To|Alamat balasan
 Reply-To (address or email merge tag)|Alamat balasan (alamat atau tag penggabungan email)
@@ -568,6 +585,7 @@ Resume stores answers on this device. Disclose personal-data storage in your pri
 Retention days|Masa retensi (hari)
 Retry delivery|Ulangi pengiriman
 Reusable email content|Konten email yang dapat digunakan kembali
+Rewrote %1$d of %2$d texts.|Menulis ulang %1$d dari %2$d teks.
 Right|Kanan
 Rows per page|Baris per halaman
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
@@ -669,6 +687,7 @@ This month|Bulan ini
 To (UTC)|Hingga (UTC)
 To (inclusive)|Sampai (termasuk)
 To date (UTC)|Sampai tanggal (UTC)
+Tone|Nada
 Tools|Alat
 Total submissions (blank = unlimited)|Total kiriman (kosong = tanpa batas)
 Tracking is off by default. Connect your consent manager before enabling it.|Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya.
@@ -688,6 +707,7 @@ UTM campaign|Kampanye UTM
 UTM source|Sumber UTM
 UTM sources|Sumber UTM
 Undo|Urungkan
+Undo rephrase|Batalkan penulisan ulang
 Ungroup|Lepas pengelompokan
 Uninstall data|Data saat penghapusan plugin
 Uninstall will permanently delete this site’s plugin data. Enable this?|Penghapusan plugin akan menghapus data plugin situs ini secara permanen. Aktifkan?
@@ -736,6 +756,7 @@ You cannot manage forms.|Anda tidak dapat mengelola formulir.
 You cannot manage settings.|Anda tidak dapat mengelola pengaturan.
 You cannot view analytics.|Anda tidak diizinkan melihat analitik.
 You cannot view submissions.|Anda tidak dapat melihat kiriman.
+Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.|Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau.
 Your email|Email Anda
 Your name|Nama Anda
 Your private export is ready. Sign in as its owner to download it within 24 hours:|Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 24 jam:

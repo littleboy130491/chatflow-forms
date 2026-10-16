@@ -52,6 +52,7 @@ final class Settings {
 				'footerText' => '',
 			),
 			'connectors'               => \ChatFlow\Integrations\Connectors\Connectors::defaults(),
+			'ai'                       => array( 'apiKey' => '' ),
 		);
 	}
 	/** @return array<string,mixed> */
@@ -62,7 +63,7 @@ final class Settings {
 	 */
 	public static function save( array $input ): array|\WP_Error {
 		$defaults = self::defaults();
-		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'connectors' ) as $group ) {
+		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'connectors', 'ai' ) as $group ) {
 			if ( isset( $input[ $group ] ) && ! is_array( $input[ $group ] ) ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid settings group.', 422 );
 			}
@@ -70,7 +71,7 @@ final class Settings {
 		if ( array_diff( array_keys( $input ), array_keys( $defaults ) ) ) {
 			return Database::error( 'cff_settings_invalid', 'Unknown global setting.', 422 ); }
 		$result = array_replace_recursive( self::get(), $input );
-		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email' ) as $group ) {
+		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'ai' ) as $group ) {
 			if ( ! is_array( $result[ $group ] ) || array_diff( array_keys( $result[ $group ] ), array_keys( $defaults[ $group ] ) ) ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid settings group.', 422 ); }
 		}
@@ -119,6 +120,9 @@ final class Settings {
 		) as $key => [$min, $max] ) {
 			if ( ! is_int( $result['spam'][ $key ] ) || $result['spam'][ $key ] < $min || $result['spam'][ $key ] > $max ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid spam defaults.', 422 ); }
+		}
+		if ( ! is_string( $result['ai']['apiKey'] ) || ( '' !== $result['ai']['apiKey'] && ! \ChatFlow\Ai\Claude::validKey( $result['ai']['apiKey'] ) ) ) {
+			return Database::error( 'cff_settings_invalid', 'The Claude API key is malformed.', 422 );
 		}
 		if ( ! \ChatFlow\Integrations\Connectors\Connectors::validCredentials( $result['connectors'] ) ) {
 			return Database::error( 'cff_settings_invalid', 'Connector credentials are incomplete or malformed.', 422 );

@@ -47,7 +47,7 @@ export interface SubmitResponse {
 }
 export interface AdminConfig {
   restUrl: string; nonce: string; pluginUrl: string; screen: 'forms' | 'builder' | 'submissions' | 'settings' | 'analytics';
-  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean; xlsx: boolean };
+  formId?: number; locale: string; features: { fieldTypes: string[]; uploads: boolean; xlsx: boolean; ai?: boolean };
 }
 export interface RestError { code: string; message: string; data: { status: number; errors?: ValidationIssue[];
   retryAfter?: number; draftRevision?: number; revision?: number } }
