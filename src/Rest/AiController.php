@@ -48,7 +48,7 @@ final class AiController {
 		if ( ! self::configured() ) {
 			return Claude::error( 'cff_ai_not_configured' );
 		}
-		if ( ! ( new RateLimiter() )->consume( 'ai:' . get_current_user_id(), 30, HOUR_IN_SECONDS ) ) {
+		if ( ! ( new RateLimiter() )->consume( 'ai:' . get_current_user_id(), 30, 3600 ) ) {
 			return Claude::error( 'cff_ai_rate_limited' );
 		}
 		return new Claude( (string) Settings::get()['ai']['apiKey'] );
