@@ -108,9 +108,9 @@ export function Settings({ api }: { api: AdminApi }) {
               onChange={(fullpageBase) => update({ ...settings, fullpageBase })}
             />
             <Select
-              label={__('Default theme', 'chatflow-forms')}
+              label={__('Default theme for new forms', 'chatflow-forms')}
               value={settings.defaultTheme}
-              choices={['light', 'dark', 'auto'].map((value) => ({ value, label: value }))}
+              choices={[{ value: 'light', label: __('Light', 'chatflow-forms') }, { value: 'dark', label: __('Dark', 'chatflow-forms') }, { value: 'auto', label: __('Auto (follow visitor device)', 'chatflow-forms') }]}
               onChange={(defaultTheme) =>
                 update({ ...settings, defaultTheme: defaultTheme as GlobalSettings['defaultTheme'] })
               }
@@ -201,7 +201,7 @@ export function Settings({ api }: { api: AdminApi }) {
           <section className="cff-card">
             <h2>{__('Partial retention and spam defaults', 'chatflow-forms')}</h2>
             <Field
-              label={__('Partial retention days (blank = disabled)', 'chatflow-forms')}
+              label={__('Partial retention days (blank = same as completed submissions)', 'chatflow-forms')}
               type="number"
               value={settings.retention.partialDays ?? ''}
               onChange={(value) =>
@@ -232,7 +232,7 @@ export function Settings({ api }: { api: AdminApi }) {
             {(
               [
                 { key: 'minSeconds', label: __('Minimum completion seconds', 'chatflow-forms') },
-                { key: 'rateLimit', label: __('Starts per rate window', 'chatflow-forms') },
+                { key: 'rateLimit', label: __('Submit attempts per visitor IP per rate window', 'chatflow-forms') },
                 { key: 'rateWindowSeconds', label: __('Rate window seconds', 'chatflow-forms') },
               ] as const
             ).map((item) => (
@@ -268,7 +268,7 @@ export function Settings({ api }: { api: AdminApi }) {
           <section className="cff-card">
             <h2>{__('Optional captcha and Akismet credentials', 'chatflow-forms')}</h2>
             <Select label={__('Captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
-              choices={['none','turnstile','hcaptcha','recaptcha'].map((value) => ({value,label:value}))}
+              choices={[{ value: 'none', label: __('None', 'chatflow-forms') }, { value: 'turnstile', label: __('Cloudflare Turnstile', 'chatflow-forms') }, { value: 'hcaptcha', label: __('hCaptcha', 'chatflow-forms') }, { value: 'recaptcha', label: __('Google reCAPTCHA v3', 'chatflow-forms') }]}
               onChange={(captcha) => update({...settings,spam:{...settings.spam!,captcha:captcha as NonNullable<NonNullable<GlobalSettings['spam']>['captcha']>}})} />
             {([
               {key:'siteKey',label:__('Public site key','chatflow-forms')},

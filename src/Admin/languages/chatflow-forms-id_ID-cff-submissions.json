@@ -607,8 +607,8 @@
       "Default ending": [
         "Penutup bawaan"
       ],
-      "Default theme": [
-        "Tema bawaan"
+      "Default theme for new forms": [
+        "Tema bawaan untuk formulir baru"
       ],
       "Default value": [
         "Nilai bawaan"
@@ -1531,8 +1531,8 @@
       "Partial retention and spam defaults": [
         "Retensi kiriman sebagian dan perlindungan spam bawaan"
       ],
-      "Partial retention days (blank = disabled)": [
-        "Retensi kiriman sebagian (hari; kosong = nonaktif)"
+      "Partial retention days (blank = same as completed submissions)": [
+        "Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)"
       ],
       "Partial submission saved": [
         "Kiriman parsial disimpan"
@@ -2064,9 +2064,6 @@
       ],
       "Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates.": [
         "Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi."
-      ],
-      "Starts per rate window": [
-        "Jumlah mulai per jendela pembatasan"
       ],
       "Statement": [
         "Pernyataan"

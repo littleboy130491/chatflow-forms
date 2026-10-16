@@ -601,8 +601,8 @@ msgstr "Negara bawaan (kode ISO)"
 msgid "Default ending"
 msgstr "Penutup bawaan"
 
-msgid "Default theme"
-msgstr "Tema bawaan"
+msgid "Default theme for new forms"
+msgstr "Tema bawaan untuk formulir baru"
 
 msgid "Default value"
 msgstr "Nilai bawaan"
@@ -1525,8 +1525,8 @@ msgstr "Sebagian"
 msgid "Partial retention and spam defaults"
 msgstr "Retensi kiriman sebagian dan perlindungan spam bawaan"
 
-msgid "Partial retention days (blank = disabled)"
-msgstr "Retensi kiriman sebagian (hari; kosong = nonaktif)"
+msgid "Partial retention days (blank = same as completed submissions)"
+msgstr "Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)"
 
 msgid "Partial submission saved"
 msgstr "Kiriman parsial disimpan"
@@ -2058,9 +2058,6 @@ msgstr "Sesi dimulai dan penyelesaian merupakan total periode yang terpisah, buk
 
 msgid "Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates."
 msgstr "Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi."
-
-msgid "Starts per rate window"
-msgstr "Jumlah mulai per jendela pembatasan"
 
 msgid "Statement"
 msgstr "Pernyataan"

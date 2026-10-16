@@ -209,6 +209,7 @@ Decimal numbers|Angka desimal
 Default country (ISO code)|Negara bawaan (kode ISO)
 Default embed mode|Mode penyematan bawaan
 Default ending|Penutup bawaan
+Default theme for new forms|Tema bawaan untuk formulir baru
 Default theme|Tema bawaan
 Default value|Nilai bawaan
 Delay in seconds (0 = immediate)|Jeda dalam detik (0 = langsung)
@@ -531,6 +532,7 @@ Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondi
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
 Page exclusions take precedence. A published form is required for automatic placement.|Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis.
 Page metadata|Metadata halaman
+Partial retention days (blank = same as completed submissions)|Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)
 Partial|Sebagian
 Partial retention and spam defaults|Retensi kiriman sebagian dan perlindungan spam bawaan
 Partial retention days (blank = disabled)|Retensi kiriman sebagian (hari; kosong = nonaktif)
