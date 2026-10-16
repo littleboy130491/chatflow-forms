@@ -1,5 +1,5 @@
 {
-  "name": "unsupported-slider",
+  "name": "nps-out-of-range",
   "schema": {
     "schemaVersion": 1,
     "bot": {
@@ -9,7 +9,7 @@
       {
         "id": "answer",
         "key": "answer",
-        "type": "slider",
+        "type": "nps",
         "messages": [
           "Silakan isi"
         ],
@@ -26,23 +26,30 @@
       }
     ]
   },
-  "answers": {},
+  "answers": {
+    "answer": -1
+  },
   "context": {},
   "mode": "complete",
   "expected": {
-    "visited": [],
+    "visited": [
+      "answer"
+    ],
     "answers": {},
     "variables": {},
-    "currentStepId": null,
+    "currentStepId": "answer",
     "endingId": null,
     "progress": 0,
     "errors": [
       {
-        "path": "/steps/0/type",
-        "code": "unsupported_type",
-        "message": "This field type is not supported."
+        "path": "/answers/answer",
+        "code": "min",
+        "message": "The answer is below the minimum.",
+        "fieldKey": "answer"
       }
     ],
-    "discardedKeys": []
+    "discardedKeys": [
+      "answer"
+    ]
   }
 }

@@ -71,7 +71,7 @@ final class ParityTest extends TestCase {
 	}
 
 	public function testRegistryRejectsUnknownTypes(): void {
-		$this->assertCount( 13, ( new Registry() )->types() );
+		$this->assertCount( 17, ( new Registry() )->types() );
 		$this->expectException( \InvalidArgumentException::class );
 		( new Registry() )->get( 'invented' );
 	}

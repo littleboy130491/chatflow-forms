@@ -106,8 +106,8 @@ final class LifecycleTest extends \WP_UnitTestCase {
 		$schema = $this->schema();
 		$schema['steps'][0]['key'] = 'another_field';
 		$this->assertSame( 'cff_immutable_id', $r->saveDraft( $draft->id(), $schema, array(), 2 )->get_error_code() );
-		$schema['steps'][0]['id'] = 'stp_rating';
-		$schema['steps'][0]['type'] = 'rating';
+		$schema['steps'][0]['id'] = 'stp_file_upload';
+		$schema['steps'][0]['type'] = 'file_upload';
 		$this->assertNotWPError( $r->saveDraft( $draft->id(), $schema, array(), 2 ) );
 		$this->assertSame( 'cff_invalid_schema', $r->publish( $draft->id(), 3 )->get_error_code() );
 	}

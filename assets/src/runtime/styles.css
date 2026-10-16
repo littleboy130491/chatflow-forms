@@ -23,3 +23,10 @@
 .popup-root .launcher-toggle{position:fixed;bottom:16px;right:16px;z-index:2;pointer-events:auto}
 .popup-root.is-left .launcher-toggle{right:auto;left:16px}
 .popup-root .conversation{max-height:min(65dvh,650px)}
+
+.score-input { display: flex; flex-wrap: wrap; gap: .45rem; }
+.score-chip { min-width: 2.75rem; text-align: center; }
+.score-chip[aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
+.slider-reading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.slider-reading output { font-weight: 700; }
+.active input[type="range"] { width: 100%; max-width: 100%; min-height: 44px; }

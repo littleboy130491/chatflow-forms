@@ -20,6 +20,10 @@ test('WordPress administrator can create a draft from a template and publish it'
   await page.goto('/wp-login.php');
   await page.locator('#user_login').fill('admin');
   await page.locator('#user_pass').fill('password');
+  // Browser autofill can overwrite the username after focusing the password field.
+  await page.locator('#user_login').fill('admin');
+  await expect(page.locator('#user_login')).toHaveValue('admin');
+  await expect(page.locator('#user_pass')).toHaveValue('password');
   await page.locator('#wp-submit').click();
   await expect(page).toHaveURL(/wp-admin/);
 

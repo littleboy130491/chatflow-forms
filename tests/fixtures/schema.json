@@ -95,7 +95,7 @@
         {
           "id": "stp_name",
           "key": "nama",
-          "type": "rating",
+          "type": "file_upload",
           "label": "Nama",
           "messages": [
             "Nama Anda?"
@@ -167,5 +167,173 @@
     },
     "valid": false,
     "publishable": false
+  },
+  {
+    "name": "enabled rating score field",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "rating",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": true
+  },
+  {
+    "name": "enabled scale score field",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "scale",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": true
+  },
+  {
+    "name": "enabled nps score field",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "nps",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": true
+  },
+  {
+    "name": "enabled slider score field",
+    "schema": {
+      "schemaVersion": 1,
+      "bot": {
+        "name": "Ima",
+        "typingSpeed": "normal"
+      },
+      "steps": [
+        {
+          "id": "stp_name",
+          "key": "nama",
+          "type": "slider",
+          "label": "Nama",
+          "messages": [
+            "Nama Anda?"
+          ],
+          "required": true
+        },
+        {
+          "id": "stp_summary",
+          "key": "summary",
+          "type": "summary",
+          "label": "Ringkasan",
+          "messages": [
+            "Sudah benar?"
+          ]
+        }
+      ],
+      "endings": [
+        {
+          "id": "end_default",
+          "type": "message",
+          "messages": [
+            "Terima kasih, {{nama}}!"
+          ]
+        }
+      ]
+    },
+    "valid": true,
+    "publishable": true
   }
 ]

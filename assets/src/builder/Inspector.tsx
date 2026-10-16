@@ -294,6 +294,11 @@ export function Inspector({
               </Button>
             </Fragment>
           )}
+          {['rating', 'scale', 'nps'].includes(step.type) && (
+            <p className="description">
+              {__('Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.', 'chatflow-forms')}
+            </p>
+          )}
           {step.type === 'phone' && (
             <Field
               label={__('Default country (ISO code)', 'chatflow-forms')}
@@ -414,7 +419,7 @@ export function Inspector({
               />
             </Fragment>
           )}
-          {['number', 'date'].includes(step.type) && (
+          {['number', 'date', 'slider'].includes(step.type) && (
             <Fragment>
               {(['min', 'max'] as const).map((key) => (
                 <Field
@@ -448,7 +453,7 @@ export function Inspector({
               />
             </Fragment>
           )}
-          {step.type === 'number' && (
+          {['number', 'slider'].includes(step.type) && (
             <Field
               label={__('Unit suffix', 'chatflow-forms')}
               value={settings.unit}

@@ -8,6 +8,10 @@ export const v1Types = [
   'email',
   'phone',
   'number',
+  'rating',
+  'scale',
+  'nps',
+  'slider',
   'date',
   'single_choice',
   'multi_choice',
@@ -45,6 +49,7 @@ export function makeStep(type: Step['type'], steps: Step[], reserved: string[] =
   };
   if (['single_choice', 'multi_choice'].includes(type)) step.options = [makeOption('option_1')];
   if (type === 'phone') step.settings = { country: 'ID' };
+  if (type === 'slider') step.validation = { min: 0, max: 100, step: 1 };
   if (type === 'consent') {
     step.required = true;
     step.settings = { consentText: __('I agree to the privacy policy.', 'chatflow-forms') };

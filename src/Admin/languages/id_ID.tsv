@@ -250,6 +250,7 @@ Mobile|Ponsel
 Move down|Pindah ke bawah
 Move up|Pindah ke atas
 Multiple choice|Pilihan jamak
+NPS (0–10)|NPS (0–10)
 Name|Nama
 Nested condition|Kondisi bertingkat
 New Imajiner survey|Survei Imajiner baru
@@ -313,6 +314,8 @@ Purge job|Tugas penghapusan
 Purge log|Log penghapusan
 Purge submissions|Hapus kiriman
 Rate window seconds|Jendela pembatasan (detik)
+Rating (1–5)|Penilaian (1–5)
+Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.|Penilaian: 1–5, skala: 1–10, NPS: 0–10. Nilai disimpan sebagai angka.
 Reaction text|Teks reaksi
 Read / starred|Dibaca / berbintang
 Read state|Status baca
@@ -359,6 +362,7 @@ Save partial submissions|Simpan kiriman sebagian
 Save settings|Simpan pengaturan
 Save this draft first to get its form ID.|Simpan draf terlebih dahulu untuk memperoleh ID formulir.
 Saving…|Menyimpan…
+Scale (1–10)|Skala (1–10)
 Scoring and visual node graphs are not enabled in MVP.|Penilaian dan grafik simpul visual belum diaktifkan dalam MVP.
 Search answers / email / phone|Cari jawaban / email / telepon
 Search fields|Cari kolom
@@ -381,6 +385,7 @@ Show automatically on matching pages|Tampilkan otomatis pada halaman yang sesuai
 Signing secret|Rahasia penandatanganan
 Single choice|Pilihan tunggal
 Skipped|Dilewati
+Slider|Penggeser
 Source / device|Sumber / perangkat
 Source key|Kunci sumber
 Spam protection|Perlindungan spam

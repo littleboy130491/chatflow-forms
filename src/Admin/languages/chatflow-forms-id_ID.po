@@ -754,6 +754,9 @@ msgstr "Pindah ke atas"
 msgid "Multiple choice"
 msgstr "Pilihan jamak"
 
+msgid "NPS (0–10)"
+msgstr "NPS (0–10)"
+
 msgid "Name"
 msgstr "Nama"
 
@@ -940,6 +943,12 @@ msgstr "Hapus kiriman"
 msgid "Rate window seconds"
 msgstr "Jendela pembatasan (detik)"
 
+msgid "Rating (1–5)"
+msgstr "Penilaian (1–5)"
+
+msgid "Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers."
+msgstr "Penilaian: 1–5, skala: 1–10, NPS: 0–10. Nilai disimpan sebagai angka."
+
 msgid "Reaction text"
 msgstr "Teks reaksi"
 
@@ -1078,6 +1087,9 @@ msgstr "Simpan draf terlebih dahulu untuk memperoleh ID formulir."
 msgid "Saving…"
 msgstr "Menyimpan…"
 
+msgid "Scale (1–10)"
+msgstr "Skala (1–10)"
+
 msgid "Scoring and visual node graphs are not enabled in MVP."
 msgstr "Penilaian dan grafik simpul visual belum diaktifkan dalam MVP."
 
@@ -1143,6 +1155,9 @@ msgstr "Pilihan tunggal"
 
 msgid "Skipped"
 msgstr "Dilewati"
+
+msgid "Slider"
+msgstr "Penggeser"
 
 msgid "Source / device"
 msgstr "Sumber / perangkat"

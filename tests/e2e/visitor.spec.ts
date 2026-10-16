@@ -59,6 +59,31 @@ test('a visitor can branch, resume on the same device, complete and receive a co
   await expect(page.locator('cff-chat')).toHaveCount(1);
 });
 
+test('visitors submit rating, scale, NPS and a configured slider through real WordPress', async ({ page }) => {
+  const response = await page.goto('/chatflow-e2e-scores/');
+  expect(response?.status()).toBe(200);
+  const chat = page.locator('cff-chat');
+  const rating = chat.getByRole('group', { name: 'Rating' });
+  await rating.getByRole('button', { name: '5 / 5' }).click();
+  const scale = chat.getByRole('group', { name: 'Scale' });
+  await scale.getByRole('button', { name: '8 / 10' }).click();
+  const nps = chat.getByRole('group', { name: 'NPS' });
+  await nps.getByRole('button', { name: '0 / 10', exact: true }).click();
+  const slider = active(chat).getByRole('slider', { name: 'Slider' });
+  await expect(slider).toHaveAttribute('min', '10');
+  await expect(slider).toHaveAttribute('max', '30');
+  await expect(slider).toHaveAttribute('step', '5');
+  await slider.focus();
+  await slider.press('Home');
+  await slider.press('ArrowRight');
+  await slider.press('ArrowRight');
+  await expect(slider).toHaveValue('20');
+  await advance(chat, /^(Continue|Lanjut)$/);
+  // The final review action sits outside .active once all questions are answered.
+  await chat.getByRole('button', { name: /^(Submit|Kirim)$/, exact: true }).click();
+  await expect(chat.getByText('Feedback saved. Thank you!')).toBeVisible();
+});
+
 test('launcher defers the session handshake until opened and restores focus when closed', async ({ page }) => {
   const handshake: string[] = [];
   page.on('request', request => {
