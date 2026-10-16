@@ -3,7 +3,7 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
@@ -510,6 +510,36 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
     </section>
   );
 }
+type Privacy = NonNullable<FormSettings['privacy']>;
+type Spam = NonNullable<FormSettings['spam']>;
+/** Copy of an optional settings group without one key; undefined when nothing is left. */
+function withoutKey<T extends object>(group: T | undefined, key: keyof T): T | undefined {
+  if (!group) return undefined;
+  const next = { ...group };
+  delete next[key];
+  return Object.keys(next).length ? next : undefined;
+}
+export function captchaLabel(provider: string): string {
+  switch (provider) {
+    case 'turnstile':
+      return __('Cloudflare Turnstile', 'chatflow-forms');
+    case 'hcaptcha':
+      return __('hCaptcha', 'chatflow-forms');
+    case 'recaptcha':
+      return __('Google reCAPTCHA v3', 'chatflow-forms');
+    default:
+      return __('Off', 'chatflow-forms');
+  }
+}
+function InheritedValue({ overridden, onReset }: { overridden: boolean; onReset: () => void }) {
+  return overridden ? (
+    <Button variant="link" className="cff-inherit-reset" onClick={onReset}>
+      {__('Use global default', 'chatflow-forms')}
+    </Button>
+  ) : (
+    <p className="cff-inherited">{__('Using global default', 'chatflow-forms')}</p>
+  );
+}
 export function SettingsEditor({
   form,
   onChange,
@@ -523,18 +553,32 @@ export function SettingsEditor({
 }) {
   const [includePages, setIncludePages] = useState(() => (form.settings.display?.launcher?.includePageIds ?? []).join(','));
   const [excludePages, setExcludePages] = useState(() => (form.settings.display?.launcher?.excludePageIds ?? []).join(','));
+  // Only keys the admin changes are written; global values are shown as inherited.
+  const stored = form.settings,
+    inherited = api.config.defaults ?? {};
   const settings: FormSettings = {
-      ...api.config.defaults,
-      ...form.settings,
-      privacy: { ...api.config.defaults?.privacy, ...form.settings.privacy },
-      spam: { ...api.config.defaults?.spam, ...form.settings.spam },
+      ...stored,
+      privacy: { ...inherited.privacy, ...stored.privacy },
+      spam: { ...inherited.spam, ...stored.spam },
     },
     notifications = settings.notifications ?? {},
     integrations = settings.integrations ?? {},
     display = settings.display ?? {},
     launcher = display.launcher ?? {};
   const set = <K extends keyof FormSettings>(key: K, value: FormSettings[K]) =>
-    onChange({ ...settings, [key]: value });
+    onChange({ ...stored, [key]: value });
+  const setPrivacy = <K extends keyof Privacy>(key: K, value: Privacy[K]) =>
+    set('privacy', { ...stored.privacy, [key]: value });
+  const setSpam = <K extends keyof Spam>(key: K, value: Spam[K]) => set('spam', { ...stored.spam, [key]: value });
+  const resetPrivacy = (key: keyof Privacy) => set('privacy', withoutKey(stored.privacy, key));
+  const resetSpam = (key: keyof Spam) => set('spam', withoutKey(stored.spam, key));
+  const privacyReset = (key: keyof Privacy) => (
+    <InheritedValue overridden={stored.privacy?.[key] !== undefined} onReset={() => resetPrivacy(key)} />
+  );
+  const spamReset = (key: keyof Spam) => (
+    <InheritedValue overridden={stored.spam?.[key] !== undefined} onReset={() => resetSpam(key)} />
+  );
+  const globalCaptcha = inherited.spam?.captcha;
   const setLauncher = (changes: Partial<typeof launcher>) =>
     set('display', { ...display, launcher: { ...launcher, ...changes } });
   const test = async (notificationId: string, to: string) => {
@@ -695,11 +739,13 @@ export function SettingsEditor({
       </section>
       <section className="cff-card">
         <h2>{__('Privacy and retention override', 'chatflow-forms')}</h2>
+        <p>{__('Fields without an override follow the global Settings screen.', 'chatflow-forms')}</p>
         <Check
           label={__('Store tracking metadata', 'chatflow-forms')}
           value={settings.privacy?.storeMeta ?? true}
-          onChange={(storeMeta) => set('privacy', { ...settings.privacy, storeMeta })}
+          onChange={(storeMeta) => setPrivacy('storeMeta', storeMeta)}
         />
+        {privacyReset('storeMeta')}
         <Select
           label={__('IP storage', 'chatflow-forms')}
           value={settings.privacy?.ipMode ?? 'anonymized'}
@@ -708,37 +754,53 @@ export function SettingsEditor({
             { value: 'anonymized', label: __('Anonymized', 'chatflow-forms') },
             { value: 'full', label: __('Full IP', 'chatflow-forms') },
           ]}
-          onChange={(ipMode) =>
-            set('privacy', { ...settings.privacy, ipMode: ipMode as 'none' | 'anonymized' | 'full' })
-          }
+          onChange={(ipMode) => setPrivacy('ipMode', ipMode as Privacy['ipMode'])}
         />
+        {privacyReset('ipMode')}
         <Check
           label={__('Store user agent', 'chatflow-forms')}
           value={settings.privacy?.storeUserAgent}
-          onChange={(storeUserAgent) => set('privacy', { ...settings.privacy, storeUserAgent })}
+          onChange={(storeUserAgent) => setPrivacy('storeUserAgent', storeUserAgent)}
         />
+        {privacyReset('storeUserAgent')}
         <Check
           label={__('Respect Do Not Track', 'chatflow-forms')}
           value={settings.privacy?.respectDnt ?? true}
-          onChange={(respectDnt) => set('privacy', { ...settings.privacy, respectDnt })}
+          onChange={(respectDnt) => setPrivacy('respectDnt', respectDnt)}
         />
+        {privacyReset('respectDnt')}
         <Check
           label={__('Enable per-form automatic retention', 'chatflow-forms')}
           value={settings.privacy?.retentionEnabled}
-          onChange={(retentionEnabled) => set('privacy', { ...settings.privacy, retentionEnabled })}
+          onChange={(retentionEnabled) => setPrivacy('retentionEnabled', retentionEnabled)}
         />
+        {privacyReset('retentionEnabled')}
         <Field
           label={__('Retention days', 'chatflow-forms')}
           type="number"
           value={settings.privacy?.retentionDays ?? 360}
-          onChange={(value) => set('privacy', { ...settings.privacy, retentionDays: Number(value) })}
-        />
-        <Field
-          label={__('Partial/abandoned retention days (blank = same)', 'chatflow-forms')}
-          type="number"
-          value={settings.privacy?.partialRetentionDays ?? ''}
           onChange={(value) =>
-            set('privacy', { ...settings.privacy, partialRetentionDays: value === '' ? null : Number(value) })
+            value === '' ? resetPrivacy('retentionDays') : setPrivacy('retentionDays', Number(value))
+          }
+        />
+        {privacyReset('retentionDays')}
+        <Field
+          label={__('Partial/abandoned retention days (blank = use global setting)', 'chatflow-forms')}
+          type="number"
+          value={stored.privacy?.partialRetentionDays ?? ''}
+          help={
+            inherited.privacy?.partialRetentionDays
+              ? sprintf(
+                  /* translators: %d: number of days configured in global Settings */
+                  __('Global setting: %d days.', 'chatflow-forms'),
+                  inherited.privacy.partialRetentionDays,
+                )
+              : __('Global setting: same as completed submissions.', 'chatflow-forms')
+          }
+          onChange={(value) =>
+            value === ''
+              ? resetPrivacy('partialRetentionDays')
+              : setPrivacy('partialRetentionDays', Number(value))
           }
         />
       </section>
@@ -747,28 +809,56 @@ export function SettingsEditor({
         <Check
           label={__('Honeypot', 'chatflow-forms')}
           value={settings.spam?.honeypotEnabled ?? true}
-          onChange={(honeypotEnabled) => set('spam', { ...settings.spam, honeypotEnabled })}
+          onChange={(honeypotEnabled) => setSpam('honeypotEnabled', honeypotEnabled)}
         />
+        {spamReset('honeypotEnabled')}
         {(
           [
-            { key: 'minSeconds', label: __('Minimum completion seconds', 'chatflow-forms'), fallback: 3 },
-            { key: 'rateLimit', label: __('Submissions per rate window', 'chatflow-forms'), fallback: 10 },
+            { key: 'minSeconds', label: __('Minimum completion seconds', 'chatflow-forms'), fallback: 2 },
+            {
+              key: 'rateLimit',
+              label: __('Submit attempts per visitor IP per rate window', 'chatflow-forms'),
+              fallback: 10,
+            },
             { key: 'rateWindowSeconds', label: __('Rate window seconds', 'chatflow-forms'), fallback: 600 },
           ] as const
         ).map((item) => (
-          <Field
-            key={item.key}
-            label={item.label}
-            type="number"
-            value={settings.spam?.[item.key] ?? item.fallback}
-            onChange={(value) => set('spam', { ...settings.spam, [item.key]: Number(value) })}
-          />
+          <Fragment key={item.key}>
+            <Field
+              label={item.label}
+              type="number"
+              value={settings.spam?.[item.key] ?? item.fallback}
+              onChange={(value) => (value === '' ? resetSpam(item.key) : setSpam(item.key, Number(value)))}
+            />
+            {spamReset(item.key)}
+          </Fragment>
         ))}
-        <Select label={__('Optional captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
-          choices={['none','turnstile','hcaptcha','recaptcha'].map((value)=>({value,label:value}))}
-          onChange={(captcha)=>set('spam',{...settings.spam,captcha:captcha as NonNullable<NonNullable<FormSettings['spam']>['captcha']>})} />
-        <Check label={__('Use optional Akismet check', 'chatflow-forms')} value={settings.spam?.akismetEnabled ?? false} onChange={(akismetEnabled)=>set('spam',{...settings.spam,akismetEnabled})} />
-        <p>{__('Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
+        <Select
+          label={__('Captcha', 'chatflow-forms')}
+          value={stored.spam?.captcha === 'none' ? 'none' : ''}
+          choices={[
+            {
+              value: '',
+              label:
+                globalCaptcha === undefined
+                  ? __('Use global setting', 'chatflow-forms')
+                  : sprintf(
+                      /* translators: %s: captcha provider configured in global Settings */
+                      __('Use global setting (%s)', 'chatflow-forms'),
+                      captchaLabel(globalCaptcha),
+                    ),
+            },
+            { value: 'none', label: __('Off for this form', 'chatflow-forms') },
+          ]}
+          onChange={(captcha) => (captcha === 'none' ? setSpam('captcha', 'none') : resetSpam('captcha'))}
+        />
+        <Check
+          label={__('Use optional Akismet check', 'chatflow-forms')}
+          value={settings.spam?.akismetEnabled ?? false}
+          onChange={(akismetEnabled) => setSpam('akismetEnabled', akismetEnabled)}
+        />
+        {spamReset('akismetEnabled')}
+        <p>{__('The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
       </section>
       <section className="cff-card">
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>

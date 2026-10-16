@@ -103,6 +103,7 @@ Button text|Teks tombol
 CC|CC
 Calculated number|Angka terhitung
 Cancel|Batal
+Captcha|Captcha
 Captcha and Akismet are optional later features, not enabled here.|Captcha dan Akismet merupakan fitur opsional mendatang, belum diaktifkan di sini.
 Captcha provider|Penyedia captcha
 Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
@@ -132,6 +133,7 @@ Choose form|Pilih formulir
 Choose template|Pilih templat
 Close preview|Tutup pratinjau
 Closing date (UTC ISO 8601, blank = never)|Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)
+Cloudflare Turnstile|Cloudflare Turnstile
 Collected metadata|Metadata yang dikumpulkan
 Column keys (comma-separated; blank = all)|Kunci kolom (pisahkan dengan koma; kosong = semua)
 Column preferences cannot be saved in this browser.|Preferensi kolom tidak dapat disimpan di peramban ini.
@@ -269,6 +271,7 @@ Field key|Kunci kolom
 Field labels|Label kolom
 Field mapping: provider field → answer key|Pemetaan kolom: kolom penyedia → kunci jawaban
 Field palette|Palet kolom
+Fields without an override follow the global Settings screen.|Kolom tanpa penggantian mengikuti layar Pengaturan global.
 File download denied or unavailable.|Unduhan berkas ditolak atau tidak tersedia.
 File upload|Unggah berkas
 Find a form|Cari formulir
@@ -310,7 +313,10 @@ Generate a form with AI|Buat formulir dengan AI
 Generate draft|Buat draf
 Generating draft…|Membuat draf…
 Global email layout|Tata letak email global
+Global setting: %d days.|Pengaturan global: %d hari.
+Global setting: same as completed submissions.|Pengaturan global: sama dengan kiriman selesai.
 Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.|Font Google diaktifkan hanya jika dipilih. Pengunjung dan administrator pratinjau menghubungi Google (fonts.googleapis.com dan fonts.gstatic.com), sehingga alamat IP serta informasi peramban/jaringan mereka terekspos. Tinjau kebijakan privasi dan persyaratan persetujuan Anda. Font sistem/lokal tetap menjadi bawaan; font yang diblokir menggunakan font lokal cadangan.
+Google reCAPTCHA v3|Google reCAPTCHA v3
 Great|Sangat baik
 Group selected|Kelompokkan yang dipilih
 Group title|Judul grup
@@ -451,7 +457,9 @@ Notes|Catatan
 Notify on abandoned contact leads|Kirim notifikasi untuk prospek kontak yang ditinggalkan
 Number|Angka
 Number increment|Kelipatan angka
+Off|Nonaktif
 Off by default. Per-form retention settings can override this default.|Nonaktif secara bawaan. Pengaturan retensi per formulir dapat mengganti nilai bawaan ini.
+Off for this form|Nonaktif untuk formulir ini
 Okay|Cukup baik
 Older than days (default 360 unless dates set)|Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)
 Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.|Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi.
@@ -472,6 +480,7 @@ Partial|Sebagian
 Partial retention and spam defaults|Retensi kiriman sebagian dan perlindungan spam bawaan
 Partial retention days (blank = disabled)|Retensi kiriman sebagian (hari; kosong = nonaktif)
 Partial/abandoned retention days (blank = same)|Retensi sebagian/ditinggalkan (hari; kosong = sama)
+Partial/abandoned retention days (blank = use global setting)|Hari retensi parsial/ditinggalkan (kosong = gunakan pengaturan global)
 Pass|Lulus
 Past submission ID (optional; requires submission access)|ID kiriman sebelumnya (opsional; memerlukan akses kiriman)
 Per user (blank = unlimited)|Per pengguna (kosong = tanpa batas)
@@ -662,6 +671,7 @@ Submission|Kiriman
 Submissions|Kiriman
 Submissions / completion rate|Jawaban / rasio penyelesaian
 Submissions per rate window|Kiriman per jendela pembatasan
+Submit attempts per visitor IP per rate window|Percobaan kirim per IP pengunjung per jendela batas
 Summary|Ringkasan
 System / local — no ChatFlow font requests|Sistem / lokal — tanpa permintaan font ChatFlow
 System status|Status sistem
@@ -676,6 +686,7 @@ Text colour|Warna teks
 Thank you for your submission|Terima kasih atas kiriman Anda
 Thank you!|Terima kasih!
 Thank you. Your request has been received.|Terima kasih. Permintaan Anda telah diterima.
+The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.|Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
 The export form must match the active form filter. Change the filter or select its form before exporting.|Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor.
 The frozen form snapshot is unavailable.|Snapshot formulir yang dibekukan tidak tersedia.
 The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
@@ -718,6 +729,9 @@ Unsaved draft|Draf belum disimpan
 Unstar|Hapus bintang
 Untitled form|Formulir tanpa judul
 Usage-based recommendations with two conditional endings.|Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat.
+Use global default|Gunakan bawaan global
+Use global setting|Gunakan pengaturan global
+Use global setting (%s)|Gunakan pengaturan global (%s)
 Use hex colors for calculated feedback|Gunakan warna heksadesimal untuk perhitungan kontras
 Use optional Akismet check|Gunakan pemeriksaan Akismet opsional
 Use template|Gunakan templat
@@ -725,6 +739,7 @@ Use the ChatFlow Form block or an Elementor Shortcode widget.|Gunakan blok Formu
 User / event|Pengguna / peristiwa
 User bubble colour|Warna gelembung pengguna
 User text|Teks pengguna
+Using global default|Memakai bawaan global
 Validation|Validasi
 Value|Nilai
 Values (JSON array)|Nilai (larik JSON)
@@ -760,4 +775,5 @@ Your description is sent to Anthropic’s Claude API. The result is an unpublish
 Your email|Email Anda
 Your name|Nama Anda
 Your private export is ready. Sign in as its owner to download it within 24 hours:|Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 24 jam:
+hCaptcha|hCaptcha
 reCAPTCHA v3 minimum score (0–1)|Skor minimum reCAPTCHA v3 (0–1)

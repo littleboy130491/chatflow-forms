@@ -60,7 +60,8 @@ final class FormRepository {
 	 *  @param array<string,mixed> $settings
 	 */
 	public function saveDraft( int $id, array $schema, array $settings, int $expected_revision, ?string $title = null ): Form|\WP_Error {
-		$errors = array_merge( $this->validator->validate( $schema ), $this->validator->validateSettings( $settings, $schema ) );
+		$settings = self::normalizeSettings( $settings );
+		$errors   = array_merge( $this->validator->validate( $schema ), $this->validator->validateSettings( $settings, $schema ) );
 		if ( $errors ) {
 			return $this->invalid( $errors );
 		}
@@ -124,7 +125,7 @@ final class FormRepository {
 				/** @var list<string> $types */
 				$types  = apply_filters( 'cff_publishable_field_types', ( new \ChatFlow\Fields\Registry() )->types() );
 				$errors = array_merge( $this->validator->validatePublishable( $draft->schema(), $types ), $this->validator->validateSettings( $draft->settings(), $draft->schema() ) );
-				$errors = array_merge( $errors, $this->integrationSettingsIssues( $draft->settings() ), \ChatFlow\Integrations\Connectors\Connectors::issues( $draft->settings(), $draft->schema() ) );
+				$errors = array_merge( $errors, $this->integrationSettingsIssues( $draft->settings() ), $this->captchaIssues( $draft->settings() ), \ChatFlow\Integrations\Connectors\Connectors::issues( $draft->settings(), $draft->schema() ) );
 				if ( $errors ) {
 					return $this->invalid( $errors );
 				}
@@ -183,6 +184,38 @@ final class FormRepository {
 		}
 		return $result;
 	}
+	/**
+	 * A form may only turn the site-wide captcha off. Any other per-form provider
+	 * is dropped so the form inherits the global provider, because verification
+	 * only accepts the provider whose credentials are configured globally.
+	 *
+	 * @param array<string,mixed> $settings
+	 * @return array<string,mixed>
+	 */
+	public static function normalizeSettings( array $settings ): array {
+		if ( isset( $settings['spam'] ) && is_array( $settings['spam'] ) && array_key_exists( 'captcha', $settings['spam'] ) && 'none' !== $settings['spam']['captcha'] ) {
+			unset( $settings['spam']['captcha'] );
+		}
+		return $settings;
+	}
+
+	/** @param array<string,mixed> $settings
+	 * @return list<array{path:string,code:string,message:string}>
+	 */
+	private function captchaIssues( array $settings ): array {
+		$provider = $settings['spam']['captcha'] ?? null;
+		if ( null === $provider || 'none' === $provider || ( \ChatFlow\Rest\Settings::get()['spam']['captcha'] ?? 'none' ) === $provider ) {
+			return array();
+		}
+		return array(
+			array(
+				'path'    => '/spam/captcha',
+				'code'    => 'captcha_provider_mismatch',
+				'message' => 'The form captcha provider must match the global captcha setting. Choose "Use global setting" or turn captcha off for this form.',
+			),
+		);
+	}
+
 	/** @param array<string,mixed> $settings
 	 * @return list<array{path:string,code:string,message:string}>
 	 */

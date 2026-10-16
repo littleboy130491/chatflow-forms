@@ -8,6 +8,7 @@ import { blankForm, v1Types } from '../../../assets/src/builder/model';
 import { FormStart } from '../../../assets/src/builder/index';
 import { JsonEditor } from '../../../assets/src/builder/controls';
 import { ConnectorSettings } from '../../../assets/src/builder/ConnectorSettings';
+import { SettingsEditor } from '../../../assets/src/builder/FormSettings';
 import { AiGenerate, applyRewrites, copyItems } from '../../../assets/src/builder/AiAssist';
 import type { FormSettings } from '../../../assets/src/builder/api';
 import { cleanupPreview, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
@@ -405,5 +406,59 @@ describe('AI assist', () => {
     fail = false;
     await click('Generate draft');
     expect(open).toHaveBeenCalledWith(draft);
+  });
+});
+
+describe('per-form settings inherit global defaults', () => {
+  it('shows inherited values without writing them and offers only inherit/off for captcha', async () => {
+    const api = new AdminApi({
+      ...config,
+      defaults: {
+        appearance: { theme: 'dark' },
+        privacy: { ipMode: 'none', storeMeta: false, retentionDays: 90 },
+        spam: { honeypotEnabled: true, minSeconds: 5, captcha: 'turnstile' },
+      },
+    });
+    const form = blankForm(api.config.defaults);
+    expect(form.settings.appearance).toEqual({ theme: 'dark' });
+    expect(form.settings).not.toHaveProperty('privacy');
+    expect(form.settings).not.toHaveProperty('spam');
+    let latest: FormSettings = form.settings;
+    const render = async () =>
+      act(async () =>
+        root.render(
+          createElement(SettingsEditor, {
+            form: { ...form, settings: latest },
+            api,
+            save: async () => form,
+            onChange: (next: FormSettings) => {
+              latest = next;
+              void render();
+            },
+          }),
+        ),
+      );
+    await render();
+    expect(input('Minimum completion seconds').value).toBe('5');
+    expect(input('Retention days').value).toBe('90');
+    const captcha = () =>
+      [...container.querySelectorAll('label')]
+        .find((item) => item.textContent?.startsWith('Captcha'))!
+        .querySelector('select')!;
+    expect([...captcha().options].map((option) => [option.value, option.textContent])).toEqual([
+      ['', 'Use global setting (Cloudflare Turnstile)'],
+      ['none', 'Off for this form'],
+    ]);
+    await change('Minimum completion seconds', '7');
+    expect(latest.spam).toEqual({ minSeconds: 7 });
+    expect(latest).not.toHaveProperty('privacy');
+    await act(async () => {
+      const select = captcha();
+      select.value = 'none';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    expect(latest.spam).toEqual({ minSeconds: 7, captcha: 'none' });
+    await click('Use global default');
+    expect(latest.spam).toEqual({ captcha: 'none' });
   });
 });

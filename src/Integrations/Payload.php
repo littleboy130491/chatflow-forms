@@ -85,7 +85,15 @@ final class Payload {
 	 * @return array<string,mixed>
 	 */
 	public static function meta( array $meta, Form $form ): array {
-		$privacy = $form->settings()['privacy'] ?? array();
+		// Forms without an override inherit the global privacy settings.
+		$global  = \ChatFlow\Rest\Settings::get()['privacy'] ?? array();
+		$privacy = array_merge(
+			array(
+				'storeMeta' => $global['storeMeta'] ?? true,
+				'ipMode'    => $global['ip'] ?? 'anonymized',
+			),
+			$form->settings()['privacy'] ?? array()
+		);
 		if ( false === ( $privacy['storeMeta'] ?? true ) ) {
 			return array();
 		}

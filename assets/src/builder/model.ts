@@ -84,7 +84,10 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
         resumeDays: 30,
         abandonDays: 30,
       },
-      ...defaults,
+      // Privacy, retention and spam values are inherited from global Settings at
+      // runtime, so they are never copied in. The theme has no runtime fallback;
+      // the global "default theme" seeds new forms only.
+      ...(defaults.appearance ? { appearance: { ...defaults.appearance } } : {}),
     },
   };
 }

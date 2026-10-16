@@ -4,6 +4,7 @@ namespace ChatFlow\Tests\Foundation\Unit;
 use ChatFlow\Admin\Translations;
 use ChatFlow\Analytics\DateRange;
 use ChatFlow\Analytics\Report;
+use ChatFlow\Forms\FormRepository;
 use ChatFlow\Forms\SchemaValidator;
 use ChatFlow\Rest\TemplatesController;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,13 @@ final class PhaseTwoAdminTest extends TestCase {
 	}
 	public function invalidDates(): array {
 		return array( array( '2026-02-30', '2026-03-01' ), array( '2026-03-01', '2026-02-28' ), array( '2025-01-01', '2026-12-31' ), array( '2026-1-1', '2026-01-02' ), array( "2026-01-01' OR 1=1", '2026-01-02' ) );
+	}
+	public function testPerFormCaptchaCanOnlyInheritOrTurnOff(): void {
+		self::assertSame( array( 'spam' => array( 'captcha' => 'none' ) ), FormRepository::normalizeSettings( array( 'spam' => array( 'captcha' => 'none' ) ) ) );
+		foreach ( array( 'turnstile', 'hcaptcha', 'recaptcha', 'bogus' ) as $provider ) {
+			self::assertSame( array( 'spam' => array( 'minSeconds' => 2 ) ), FormRepository::normalizeSettings( array( 'spam' => array( 'captcha' => $provider, 'minSeconds' => 2 ) ) ) );
+		}
+		self::assertSame( array( 'privacy' => array() ), FormRepository::normalizeSettings( array( 'privacy' => array() ) ) );
 	}
 	public function testChoiceDistributionsExcludeOtherFreeTextAndDeduplicate(): void {
 		self::assertSame(

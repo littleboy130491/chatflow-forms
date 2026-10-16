@@ -113,27 +113,25 @@ final class AdminModule implements Module {
 			$types = ( new \ChatFlow\Fields\Registry() )->types();
 		}
 		$settings = get_option( 'cff_settings', array() );
-		$defaults = array();
-		if ( is_array( $settings ) ) {
-			$defaults['appearance'] = array( 'theme' => $settings['defaultTheme'] ?? 'light' );
-			foreach ( array(
-				'ip'             => 'ipMode',
-				'storeMeta'      => 'storeMeta',
-				'storeUserAgent' => 'storeUserAgent',
-				'respectDnt'     => 'respectDnt',
-			) as $global => $local ) {
-				if ( isset( $settings['privacy'][ $global ] ) ) {
-					$defaults['privacy'][ $local ] = $settings['privacy'][ $global ]; }
-			}
-			foreach ( array( 'honeypotEnabled', 'minSeconds', 'rateLimit', 'rateWindowSeconds' ) as $key ) {
-				if ( isset( $settings['spam'][ $key ] ) ) {
-					$defaults['spam'][ $key ] = $settings['spam'][ $key ]; }
-			}
-			if ( isset( $settings['retention']['enabled'] ) ) {
-				$defaults['privacy']['retentionEnabled'] = $settings['retention']['enabled']; }
-			if ( isset( $settings['retention']['days'] ) ) {
-				$defaults['privacy']['retentionDays'] = $settings['retention']['days']; }
-			$defaults['privacy']['partialRetentionDays'] = $settings['retention']['partialDays'] ?? null;
+		// Global values a form inherits while it has no per-form override. The builder
+		// shows them as inherited values and never writes them into the form.
+		$global   = \ChatFlow\Rest\Settings::get();
+		$defaults = array(
+			'appearance' => array( 'theme' => $global['defaultTheme'] ?? 'light' ),
+			'privacy'    => array(
+				'ipMode'               => $global['privacy']['ip'] ?? 'anonymized',
+				'storeMeta'            => (bool) ( $global['privacy']['storeMeta'] ?? true ),
+				'storeUserAgent'       => (bool) ( $global['privacy']['storeUserAgent'] ?? false ),
+				'respectDnt'           => (bool) ( $global['privacy']['respectDnt'] ?? true ),
+				'retentionEnabled'     => (bool) ( $global['retention']['enabled'] ?? false ),
+				'retentionDays'        => (int) ( $global['retention']['days'] ?? 360 ),
+				'partialRetentionDays' => $global['retention']['partialDays'] ?? null,
+			),
+			'spam'       => array(),
+		);
+		foreach ( array( 'honeypotEnabled', 'minSeconds', 'rateLimit', 'rateWindowSeconds', 'captcha', 'akismetEnabled' ) as $key ) {
+			if ( isset( $global['spam'][ $key ] ) ) {
+				$defaults['spam'][ $key ] = $global['spam'][ $key ]; }
 		}
 		$config = array(
 			'defaults'     => $defaults,
