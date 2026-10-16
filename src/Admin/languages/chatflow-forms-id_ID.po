@@ -331,6 +331,9 @@ msgstr "Ekor gelembung"
 msgid "Build"
 msgstr "Susun"
 
+msgid "Build a WhatsApp link"
+msgstr "Buat tautan WhatsApp"
+
 msgid "Builder sections"
 msgstr "Bagian pembuat formulir"
 
@@ -345,6 +348,9 @@ msgstr "Tindakan tombol"
 
 msgid "Button label"
 msgstr "Label tombol"
+
+msgid "Button label (blank = “WhatsApp” or “Contact us”)"
+msgstr "Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)"
 
 msgid "Button text"
 msgstr "Teks tombol"
@@ -709,6 +715,9 @@ msgstr "Perbandingan membandingkan draf ini dengan versi terbit saat ini."
 msgid "Direct / unknown"
 msgstr "Langsung / tidak diketahui"
 
+msgid "Direct contact link"
+msgstr "Tautan kontak langsung"
+
 msgid "Discard local edits and reload?"
 msgstr "Buang perubahan lokal dan muat ulang?"
 
@@ -840,6 +849,9 @@ msgstr "Akhir: %s"
 
 msgid "Endings and completion"
 msgstr "Penutup dan penyelesaian"
+
+msgid "Enter the full number including the country code, for example 6281234567890."
+msgstr "Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890."
 
 msgid "Event name"
 msgstr "Nama peristiwa"
@@ -1294,6 +1306,9 @@ msgstr "Terang atau gelap"
 msgid "Limits"
 msgstr "Batasan"
 
+msgid "Link (WhatsApp, https, tel: or mailto:; merge tags allowed)"
+msgstr "Tautan (WhatsApp, https, tel: atau mailto:; tag gabungan boleh)"
+
 msgid "Link (including WhatsApp)"
 msgstr "Tautan (termasuk WhatsApp)"
 
@@ -1701,6 +1716,9 @@ msgstr "Jendela pop-up"
 
 msgid "Postcode"
 msgstr "Kode pos"
+
+msgid "Pre-filled message (merge tags allowed, e.g. {{name}})"
+msgstr "Pesan otomatis (tag gabungan boleh, mis. {{name}})"
 
 msgid "Preferred appointment date (subject to confirmation)"
 msgstr "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
@@ -2122,11 +2140,17 @@ msgstr "Teks pendek"
 msgid "Shortcode"
 msgstr "Shortcode"
 
+msgid "Show a contact button in the chat header"
+msgstr "Tampilkan tombol kontak di header percakapan"
+
 msgid "Show automatically on matching pages"
 msgstr "Tampilkan otomatis pada halaman yang sesuai"
 
 msgid "Show field"
 msgstr "Tampilkan kolom"
+
+msgid "Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form."
+msgstr "Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
 
 msgid "Signing secret"
 msgstr "Rahasia penandatanganan"
@@ -2464,6 +2488,9 @@ msgstr "Gunakan templat"
 msgid "Use the ChatFlow Form block or an Elementor Shortcode widget."
 msgstr "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
 
+msgid "Use this WhatsApp link"
+msgstr "Gunakan tautan WhatsApp ini"
+
 msgid "User / event"
 msgstr "Pengguna / peristiwa"
 
@@ -2550,6 +2577,9 @@ msgstr "Apa yang dapat kami bantu?"
 
 msgid "What would you like to discuss at your appointment?"
 msgstr "Apa yang ingin Anda diskusikan saat konsultasi?"
+
+msgid "WhatsApp number with country code"
+msgstr "Nomor WhatsApp dengan kode negara"
 
 msgid "Where will you use the product?"
 msgstr "Di mana Anda akan menggunakan produk ini?"

@@ -70,6 +70,9 @@ final class SchemaValidator {
 				}
 			}
 		}
+		if ( isset( $schema['bot']['contact']['url'] ) && ! self::contactUrl( (string) $schema['bot']['contact']['url'] ) ) {
+			$errors[] = $this->error( '/bot/contact/url', 'invalid_url', 'The contact link must be an https, http, WhatsApp (wa.me), tel: or mailto: link.' );
+		}
 		foreach ( $schema['groups'] ?? array() as $index => $group ) {
 			$this->unique( $group['id'], $ids, '/groups/' . $index . '/id', $errors );
 			foreach ( $group['stepIds'] as $sid ) {
@@ -209,5 +212,11 @@ final class SchemaValidator {
 			'code'    => $code,
 			'message' => $message,
 		);
+	}
+
+	/** An absolute link visitors may open directly (merge tags are allowed in the path and query). */
+	public static function contactUrl( string $url ): bool {
+		// No credentials in the authority part; plain PHP so it also runs outside WordPress.
+		return (bool) preg_match( '#^(?:https?://[^/?\#\s@:]+(?::\d{1,5})?(?:[/?\#]\S*)?|mailto:\S+|tel:[+0-9().\s-]{3,40})$#iD', $url );
 	}
 }

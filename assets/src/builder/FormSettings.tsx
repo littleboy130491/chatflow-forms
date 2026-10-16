@@ -3,6 +3,7 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
+import { WhatsAppLinkBuilder } from './Contact';
 import { __, sprintf } from '@wordpress/i18n';
 import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
@@ -431,18 +432,34 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
                 }
               />
               {button.action === 'link' && (
-                <Field
-                  label={__('Button URL (merge tags allowed)', 'chatflow-forms')}
-                  value={button.url}
-                  onChange={(url) =>
-                    change({
-                      ...ending,
-                      buttons: ending.buttons?.map((item) =>
-                        item.id === button.id ? { ...item, url } : item,
-                      ) as NonNullable<Ending['buttons']>,
-                    })
-                  }
-                />
+                <Fragment>
+                  <Field
+                    label={__('Button URL (merge tags allowed)', 'chatflow-forms')}
+                    value={button.url}
+                    onChange={(url) =>
+                      change({
+                        ...ending,
+                        buttons: ending.buttons?.map((item) =>
+                          item.id === button.id ? { ...item, url } : item,
+                        ) as NonNullable<Ending['buttons']>,
+                      })
+                    }
+                  />
+                  <details className="cff-whatsapp-details">
+                    <summary>{__('Build a WhatsApp link', 'chatflow-forms')}</summary>
+                    <WhatsAppLinkBuilder
+                      url={button.url}
+                      onChange={(url) =>
+                        change({
+                          ...ending,
+                          buttons: ending.buttons?.map((item) =>
+                            item.id === button.id ? { ...item, url } : item,
+                          ) as NonNullable<Ending['buttons']>,
+                        })
+                      }
+                    />
+                  </details>
+                </Fragment>
               )}
               <Button
                 isDestructive

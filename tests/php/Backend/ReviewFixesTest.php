@@ -125,4 +125,21 @@ final class ReviewFixesTest extends TestCase {
 			)
 		);
 	}
+
+	public function testWhatsAppCompletionLinksNeedNoAllowedHostSetting(): void {
+		wp_set_current_user( 1 );
+		$forms    = new FormRepository();
+		$template = TemplatesController::definition( 'contact' );
+		unset( $template['settings']['completion']['allowedRedirectHosts'] );
+		$form = $forms->create( 'WhatsApp ending fixture', $template['schema'], $template['settings'] );
+		self::assertInstanceOf( Form::class, $form );
+		try {
+			self::assertSame( 'https://wa.me/6281234567890?text=Hi%20Ada', Ending::validateUrl( 'https://wa.me/6281234567890?text=Hi%20Ada', $form ) );
+			self::assertNotNull( Ending::validateUrl( 'https://api.whatsapp.com/send?phone=62812', $form ) );
+			self::assertNull( Ending::validateUrl( 'http://wa.me/62812', $form ) );
+			self::assertNull( Ending::validateUrl( 'https://evil.test/', $form ) );
+		} finally {
+			wp_delete_post( $form->id(), true );
+		}
+	}
 }

@@ -59,6 +59,14 @@ final class PhaseTwoAdminTest extends TestCase {
 		self::assertSame( array(), $validator->validateSettings( array( 'appearance' => array( 'confetti' => false ) ) ) );
 		self::assertNotEmpty( $validator->validateSettings( array( 'appearance' => array( 'confetti' => 'yes' ) ) ) );
 	}
+	public function testContactLinkMustBeASafeAbsoluteLink(): void {
+		foreach ( array( 'https://wa.me/6281234?text=Halo%20{{name}}', 'https://example.test/contact', 'tel:+62 812-3456', 'mailto:hello@example.test' ) as $url ) {
+			self::assertTrue( SchemaValidator::contactUrl( $url ), $url );
+		}
+		foreach ( array( 'javascript:alert(1)', '//evil.test', 'wa.me/62812', 'https://user:pw@evil.test', 'data:text/html,hi' ) as $url ) {
+			self::assertFalse( SchemaValidator::contactUrl( $url ), $url );
+		}
+	}
 	public function testMessagingThemeSettingsAreValidatedServerSide(): void {
 		$validator = new SchemaValidator();
 		$theme     = array(
