@@ -1,7 +1,11 @@
 <?php
 namespace ChatFlow\Tests\Backend;
 
+use ChatFlow\Fields\Registry;
 use ChatFlow\Forms\FormRepository;
+use ChatFlow\Install\Installer;
+use ChatFlow\Logic\Engine;
+use ChatFlow\Rest\RestModule;
 use ChatFlow\Rest\Settings;
 use ChatFlow\Submissions\Database;
 
@@ -14,8 +18,14 @@ final class AiAssistRestTest extends \WP_UnitTestCase {
 
 	public function set_up(): void {
 		parent::set_up();
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		remove_filter( 'query', array( $this, '_drop_temporary_tables' ) );
+		Installer::activate();
 		delete_option( 'cff_settings' );
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$fields = new Registry();
+		( new RestModule( new FormRepository(), new Engine( $fields ), $fields ) )->register();
+		do_action( 'rest_api_init', rest_get_server() );
 		add_filter( 'pre_http_request', array( $this, 'mock' ), 10, 3 );
 	}
 
