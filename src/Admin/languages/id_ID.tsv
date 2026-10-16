@@ -1,3 +1,4 @@
+%1$s: rule %2$d|%1$s: aturan %2$d
 %d submissions and %d files match.|%d kiriman dan %d berkas cocok.
 A 0–10 recommendation score and optional feedback.|Skor rekomendasi 0–10 dan umpan balik opsional.
 A form is required so columns remain consistent. Active filters and selected rows are intersected with that form; no cross-form export is implied.|Formulir wajib dipilih agar kolom konsisten. Filter aktif dan baris pilihan dibatasi pada formulir tersebut; ekspor tidak melintasi formulir.
@@ -148,6 +149,7 @@ Confetti on completion (off by default)|Konfeti saat selesai (nonaktif secara ba
 Configure matching provider credentials in global Settings. Optional checks contact third parties and require a suitable privacy notice.|Atur kredensial penyedia yang sesuai di Pengaturan global. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
 Configure site-wide launcher rules and popup triggers in Settings → Display and engagement.|Atur aturan peluncur dan pemicu popup seluruh situs di Pengaturan → Tampilan dan keterlibatan.
 Confirm publish|Konfirmasi penerbitan
+Connect a step to a later step or ending to create a branch. Click a branch and press Delete or Backspace to remove it. Click a step to edit its rule conditions. Drag nodes to arrange the map.|Hubungkan langkah ke langkah berikutnya atau akhir untuk membuat cabang. Klik cabang lalu tekan Delete atau Backspace untuk menghapusnya. Klik langkah untuk mengedit kondisi aturannya. Seret node untuk menata peta.
 Connect a step to a later step or ending to create a branch; select the node to edit the rule condition. Drag nodes to arrange the map.|Hubungkan langkah ke langkah berikutnya atau penutup untuk membuat cabang; pilih simpul untuk mengubah kondisi aturan. Seret simpul untuk mengatur peta.
 Connector|Konektor
 Connector credentials|Kredensial konektor
@@ -244,6 +246,7 @@ Enabled|Diaktifkan
 Ending|Penutup
 Ending messages (one per line)|Pesan penutup (satu per baris)
 Ending type|Jenis penutup
+Ending: %s|Akhir: %s
 Endings and completion|Penutup dan penyelesaian
 Event name|Nama peristiwa
 Exclude page IDs (comma-separated)|ID halaman yang dikecualikan (pisahkan dengan koma)
@@ -597,6 +600,7 @@ Reusable email content|Konten email yang dapat digunakan kembali
 Rewrote %1$d of %2$d texts.|Menulis ulang %1$d dari %2$d teks.
 Right|Kanan
 Rows per page|Baris per halaman
+Rule %d|Aturan %d
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
