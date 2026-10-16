@@ -104,8 +104,9 @@
 header nav{margin-inline-start:auto}
 .status-notice{margin:0}
 .chat[data-style="messaging"] .online-dot{background:#34c759}
-.contact-link{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;margin-inline-start:6px;padding:6px 12px;min-height:34px;border-radius:999px;border:1px solid currentColor;color:inherit;font-size:13px;font-weight:600;text-decoration:none;opacity:.9}.contact-link:hover{opacity:1}
-.contact-link.is-whatsapp{background:#25d366;border-color:#25d366;color:#fff;opacity:1}.contact-link.is-whatsapp:hover{background:#1ebe5b}
-@media(max-width:480px){.contact-link{padding:6px 8px}.contact-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}}
+/* Direct contact: a full-width button under the conversation. */
+.contact-bar{padding:10px 12px;border-top:1px solid #0000000f;background:var(--cff-header-bg,#fff)}.chat:not([data-style]) .contact-bar{background:transparent}
+.contact-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 16px;min-height:44px;border-radius:var(--cff-radius);border:1px solid var(--cff-primary);background:transparent;color:var(--cff-primary);font-size:15px;font-weight:600;text-decoration:none}.contact-link:hover{background:color-mix(in srgb,var(--cff-primary) 8%,transparent)}
+.contact-link.is-whatsapp{background:#25d366;border-color:#25d366;color:#fff}.contact-link.is-whatsapp:hover{background:#1ebe5b}
 .chat{container-type:inline-size}header{flex-wrap:nowrap}.identity{min-width:0}.identity strong,.identity small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}nav button{white-space:nowrap}
-@container (max-width:520px){.contact-link{padding:6px 8px}.contact-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}nav button{padding-inline:6px}}
+@container (max-width:520px){nav button{padding-inline:6px}}

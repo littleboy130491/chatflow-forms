@@ -355,8 +355,8 @@
       "Button label": [
         "Label tombol"
       ],
-      "Button label (blank = “WhatsApp” or “Contact us”)": [
-        "Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)"
+      "Button label (blank = “Chat on WhatsApp” or “Contact us”)": [
+        "Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
       ],
       "Button text": [
         "Teks tombol"
@@ -2146,8 +2146,8 @@
       "Shortcode": [
         "Shortcode"
       ],
-      "Show a contact button in the chat header": [
-        "Tampilkan tombol kontak di header percakapan"
+      "Show a contact button below the conversation": [
+        "Tampilkan tombol kontak di bawah percakapan"
       ],
       "Show automatically on matching pages": [
         "Tampilkan otomatis pada halaman yang sesuai"
@@ -2155,8 +2155,8 @@
       "Show field": [
         "Tampilkan kolom"
       ],
-      "Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.": [
-        "Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
+      "Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.": [
+        "Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
       ],
       "Signing secret": [
         "Rahasia penandatanganan"

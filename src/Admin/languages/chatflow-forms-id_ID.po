@@ -349,8 +349,8 @@ msgstr "Tindakan tombol"
 msgid "Button label"
 msgstr "Label tombol"
 
-msgid "Button label (blank = “WhatsApp” or “Contact us”)"
-msgstr "Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)"
+msgid "Button label (blank = “Chat on WhatsApp” or “Contact us”)"
+msgstr "Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)"
 
 msgid "Button text"
 msgstr "Teks tombol"
@@ -2140,8 +2140,8 @@ msgstr "Teks pendek"
 msgid "Shortcode"
 msgstr "Shortcode"
 
-msgid "Show a contact button in the chat header"
-msgstr "Tampilkan tombol kontak di header percakapan"
+msgid "Show a contact button below the conversation"
+msgstr "Tampilkan tombol kontak di bawah percakapan"
 
 msgid "Show automatically on matching pages"
 msgstr "Tampilkan otomatis pada halaman yang sesuai"
@@ -2149,8 +2149,8 @@ msgstr "Tampilkan otomatis pada halaman yang sesuai"
 msgid "Show field"
 msgstr "Tampilkan kolom"
 
-msgid "Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form."
-msgstr "Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
+msgid "Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form."
+msgstr "Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
 
 msgid "Signing secret"
 msgstr "Rahasia penandatanganan"

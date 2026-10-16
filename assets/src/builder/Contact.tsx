@@ -26,7 +26,7 @@ export function WhatsAppLinkBuilder({ url, onChange }: { url: string | undefined
   </div>;
 }
 
-/** Optional link in the chat header so visitors can talk to you directly instead of finishing the form. */
+/** Optional button under the conversation so visitors can talk to you directly instead of finishing the form. */
 export function ContactLinkEditor({ schema, onChange }: { schema: FormSchema; onChange: (schema: FormSchema) => void }) {
   const contact = schema.bot.contact;
   const [open, setOpen] = useState(Boolean(contact?.url));
@@ -38,12 +38,12 @@ export function ContactLinkEditor({ schema, onChange }: { schema: FormSchema; on
   };
   return <section className="cff-contact-link">
     <h3>{__('Direct contact link', 'chatflow-forms')}</h3>
-    <p className="description">{__('Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.', 'chatflow-forms')}</p>
-    <label className="cff-inline-check"><input type="checkbox" checked={open} onChange={event => { setOpen(event.currentTarget.checked); if (!event.currentTarget.checked) set(null); }} />{__('Show a contact button in the chat header', 'chatflow-forms')}</label>
+    <p className="description">{__('Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.', 'chatflow-forms')}</p>
+    <label className="cff-inline-check"><input type="checkbox" checked={open} onChange={event => { setOpen(event.currentTarget.checked); if (!event.currentTarget.checked) set(null); }} />{__('Show a contact button below the conversation', 'chatflow-forms')}</label>
     {open && <>
       <WhatsAppLinkBuilder url={contact?.url} onChange={url => set({ ...contact, url })} />
       <Field label={__('Link (WhatsApp, https, tel: or mailto:; merge tags allowed)', 'chatflow-forms')} value={contact?.url ?? ''} placeholder="https://wa.me/6281234567890" onChange={url => set({ ...contact, url: url.trim() })} />
-      <Field label={__('Button label (blank = “WhatsApp” or “Contact us”)', 'chatflow-forms')} value={contact?.label ?? ''} onChange={label => set({ url: contact?.url ?? '', label })} />
+      <Field label={__('Button label (blank = “Chat on WhatsApp” or “Contact us”)', 'chatflow-forms')} value={contact?.label ?? ''} onChange={label => set({ url: contact?.url ?? '', label })} />
     </>}
   </section>;
 }

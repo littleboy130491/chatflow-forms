@@ -338,21 +338,22 @@ describe('statement steps', () => {
   });
 });
 describe('direct contact link', () => {
-  it('shows a WhatsApp button in the header with answers merged into the message', async () => {
+  it('shows a WhatsApp button below the conversation with answers merged into the message', async () => {
     const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] }, { id: 'more', key: 'more', type: 'short_text', label: 'More', messages: ['More?'] }]);
     envelope.form.schema.bot.contact = { url: 'https://wa.me/6281234567890?text=Hi%20{{name}}' };
     let handle: ReturnType<typeof mountRuntime>;
     await act(() => { handle = mountRuntime(host, { form: envelope, preview: true, previewAnswers: { name: 'Ada & Co' } }); });
-    const link = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('header a.contact-link'); expect(found).not.toBeNull(); return found!; });
+    const link = await vi.waitFor(() => { const found = host.shadowRoot!.querySelector<HTMLAnchorElement>('.contact-bar a.contact-link'); expect(found).not.toBeNull(); return found!; });
     expect(link.classList.contains('is-whatsapp')).toBe(true);
-    expect(link.textContent).toBe('WhatsApp');
+    expect(link.textContent).toBe('Chat on WhatsApp');
+    expect(host.shadowRoot!.querySelector('header .contact-link')).toBeNull();
     expect(link.href).toBe('https://wa.me/6281234567890?text=Hi%20Ada%20%26%20Co');
     expect(link.target).toBe('_blank');
     expect(link.rel).toContain('noopener');
     await act(() => handle!.unmount());
     envelope.form.schema.bot.contact = { url: 'javascript:alert(1)', label: 'Bad' };
     await act(() => { handle = mountRuntime(host, { form: envelope, preview: true }); });
-    expect(host.shadowRoot!.querySelector('header a.contact-link')).toBeNull();
+    expect(host.shadowRoot!.querySelector('a.contact-link')).toBeNull();
     await act(() => handle!.unmount());
   });
 });

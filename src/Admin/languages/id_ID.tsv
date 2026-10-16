@@ -117,7 +117,7 @@ Build a WhatsApp link|Buat tautan WhatsApp
 Build|Susun
 Builder sections|Bagian pembuat formulir
 Bulk options (one label per line)|Pilihan massal (satu label per baris)
-Button label (blank = “WhatsApp” or “Contact us”)|Label tombol (kosong = “WhatsApp” atau “Hubungi kami”)
+Button label (blank = “Chat on WhatsApp” or “Contact us”)|Label tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)
 Button URL (merge tags allowed)|URL tombol (tag penggabungan diizinkan)
 Button action|Tindakan tombol
 Button label|Label tombol
@@ -724,8 +724,8 @@ Rules apply to published settings; review and publish before they affect visitor
 Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
 Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
 Shape|Bentuk
-Show a contact button in the chat header|Tampilkan tombol kontak di header percakapan
-Shows a button in the chat header, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di header percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
+Show a contact button below the conversation|Tampilkan tombol kontak di bawah percakapan
+Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
 Sky|Langit
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
