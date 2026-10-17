@@ -257,6 +257,9 @@ day through the recovery worker.
 
 See [hooks](docs/hooks.md), [canonical payload](docs/payload.md),
 [runtime API](assets/src/runtime/README.md) and [architecture](docs/architecture.md).
+To replace or restyle the visitor chat from a (child) theme, see
+[custom frontend](docs/custom-frontend.md) and the working example in
+`examples/child-theme`.
 Phase 2 adds private uploads, rating/scale/NPS/slider/address/media fields,
 accessible popup/drawer/launcher modes, optional CAPTCHA/Akismet, stored analytics,
 safe JSON template tools and private XLSX exports. Configure an outside-web-root

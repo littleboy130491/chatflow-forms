@@ -73,7 +73,7 @@ export async function resolvePreviewMedia(envelope: PublicSchemaEnvelope): Promi
 interface RuntimeModule {
   mountRuntime: (
     host: HTMLElement,
-    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext; previewAnswers?: AnswerMap },
+    options: { form: PublicSchemaEnvelope; preview: true; locale: string; context: ReplayContext; previewAnswers?: AnswerMap; frontend?: 'theme'; themeStyle?: string },
   ) => PreviewHandle | (() => void) | void;
 }
 export function cleanupPreview(handle: PreviewHandle | (() => void) | void): void {
@@ -102,6 +102,11 @@ export async function mountPublicPreview(
 ): Promise<PreviewHandle | (() => void) | void> {
   const url = `${config.pluginUrl}build/runtime/runtime.js`;
   const runtime = (await import(/* webpackIgnore: true */ url)) as RuntimeModule;
+  // Load the theme's frontend (it registers itself with window.ChatFlow) so the preview matches the site.
+  const theme = config.themeFrontend ?? {};
+  if (theme.script) {
+    try { await import(/* webpackIgnore: true */ theme.script); } catch { /* A broken theme script falls back to the built-in chat. */ }
+  }
   if (!isCurrent()) return;
   if (typeof runtime.mountRuntime !== 'function')
     throw new Error(__('The runtime preview is unavailable. Rebuild the plugin assets.', 'chatflow-forms'));
@@ -110,6 +115,8 @@ export async function mountPublicPreview(
     preview: true,
     locale: config.locale,
     context: { now: new Date().toISOString(), ...context },
+    ...(theme.script ? { frontend: 'theme' as const } : {}),
+    ...(theme.style ? { themeStyle: theme.style } : {}),
     ...extra,
   });
 }

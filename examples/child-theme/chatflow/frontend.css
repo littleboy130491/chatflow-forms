@@ -1,0 +1,19 @@
+/* Loaded inside the chat's shadow root, after the plugin's own styles. */
+.cf-card { font: 16px/1.5 system-ui, sans-serif; color: #1c1917; background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 20px; padding: 28px; max-width: 560px; margin: 0 auto; }
+.cf-progress { height: 4px; background: #e7e5e4; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+.cf-progress span { display: block; height: 100%; background: #ea580c; transition: width .3s; }
+.cf-message { font-size: 20px; margin: 0 0 12px; }
+.cf-choices, .cf-scale { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.cf-choice { padding: 12px 18px; border: 1.5px solid #d6d3d1; border-radius: 12px; background: #fff; color: inherit; font: inherit; cursor: pointer; }
+.cf-choice:hover { border-color: #ea580c; }
+.cf-field { display: flex; gap: 8px; margin: 16px 0; align-items: flex-end; }
+.cf-field input, .cf-field textarea { flex: 1; padding: 12px; border: 1.5px solid #d6d3d1; border-radius: 12px; font: inherit; }
+.cf-primary { display: inline-block; padding: 12px 22px; border: 0; border-radius: 12px; background: #ea580c; color: #fff; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.cf-primary:disabled { opacity: .5; }
+.cf-link { background: none; border: 0; padding: 4px; color: #57534e; text-decoration: underline; font: inherit; cursor: pointer; }
+.cf-check { display: flex; gap: 8px; align-items: center; margin: 6px 0; font-weight: 400; }
+.cf-nav { display: flex; justify-content: space-between; margin-top: 16px; }
+.cf-error { color: #b91c1c; }
+.cf-note { color: #78716c; font-size: 14px; }
+.cf-review dl { margin: 12px 0 20px; } .cf-review dt { font-weight: 600; } .cf-review dd { margin: 0 0 8px; }
+.cf-contact { display: block; margin-top: 20px; padding: 12px; border-radius: 12px; background: #25d366; color: #fff; text-align: center; font-weight: 600; text-decoration: none; }

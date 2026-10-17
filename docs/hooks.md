@@ -183,6 +183,14 @@ production respondents/admin recipients are never accidentally contacted. Draft
 preview reflects saved settings; unsaved edits must be saved before previewing.
 Activity includes no payload, credentials, URLs, action args or raw errors.
 
+## Theme frontend
+
+- `cff_theme_frontend_directories` (`array<string path, string url>`): where to look
+  for `chatflow/frontend.{js,css}`; child theme first, then parent theme.
+- `cff_theme_frontend_asset` (`?string $url, string $type, ?Form $form`): the
+  script (`js`) or stylesheet (`css`) URL for a form; return `null` to use the
+  built-in chat. See [custom frontend](custom-frontend.md).
+
 ## Verification and current integration limits
 
 The focused suite lives in `tests/php/Integrations/DeliveryTest.php`. It is a real

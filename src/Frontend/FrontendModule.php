@@ -78,7 +78,7 @@ final class FrontendModule implements Module {
 		return CFF_PATH . 'templates/fullpage.php';
 	}
 	public function moduleTag( string $tag, string $handle, string $src ): string {
-		if ( ! in_array( $handle, array( 'cff-runtime', 'cff-tracking' ), true ) ) {
+		if ( ! in_array( $handle, array( 'cff-runtime', 'cff-tracking' ), true ) && ! str_starts_with( $handle, 'cff-theme-frontend-' ) ) {
 			return $tag; }
 		return '<script type="module" data-no-optimize="1" data-cfasync="false" src="' . esc_url( $src ) . '" id="' . esc_attr( $handle ) . '-js"></script>';
 	}

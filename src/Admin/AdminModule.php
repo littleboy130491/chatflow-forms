@@ -254,19 +254,26 @@ final class AdminModule implements Module {
 				$defaults['spam'][ $key ] = $global['spam'][ $key ]; }
 		}
 		$config = array(
-			'defaults'     => $defaults,
-			'restUrl'      => trailingslashit( rest_url( 'cff/v1' ) ),
-			'nonce'        => wp_create_nonce( 'wp_rest' ),
-			'pluginUrl'    => plugin_dir_url( CFF_FILE ),
-			'screen'       => $screen,
-			'locale'       => determine_locale(),
-			'capabilities' => $caps,
-			'adminUrl'     => admin_url( 'admin.php' ),
-			'siteUrl'      => home_url( '/' ),
-			'timezone'     => wp_timezone_string(),
-			'fullpageBase' => is_array( $settings ) ? ( $settings['fullpageBase'] ?? 'chat' ) : 'chat',
-			'tools'        => 'cff-tools' === $this->pageSlug(),
-			'features'     => array(
+			'defaults'      => $defaults,
+			'restUrl'       => trailingslashit( rest_url( 'cff/v1' ) ),
+			'nonce'         => wp_create_nonce( 'wp_rest' ),
+			'pluginUrl'     => plugin_dir_url( CFF_FILE ),
+			'screen'        => $screen,
+			'locale'        => determine_locale(),
+			'capabilities'  => $caps,
+			'adminUrl'      => admin_url( 'admin.php' ),
+			'siteUrl'       => home_url( '/' ),
+			'timezone'      => wp_timezone_string(),
+			// The theme's chatflow/frontend.{js,css}, so the builder preview shows the theme's chat.
+			'themeFrontend' => array_filter(
+				array(
+					'script' => \ChatFlow\Frontend\ThemeFrontend::asset( 'js' ),
+					'style'  => \ChatFlow\Frontend\ThemeFrontend::asset( 'css' ),
+				)
+			),
+			'fullpageBase'  => is_array( $settings ) ? ( $settings['fullpageBase'] ?? 'chat' ) : 'chat',
+			'tools'         => 'cff-tools' === $this->pageSlug(),
+			'features'      => array(
 				'fieldTypes' => $types,
 				'uploads'    => in_array( 'file_upload', $types, true ),
 				'xlsx'       => \ChatFlow\Submissions\Xlsx::available(),
