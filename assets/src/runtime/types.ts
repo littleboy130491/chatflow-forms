@@ -10,6 +10,10 @@ export interface RuntimeOptions {
   mode?: 'inline' | 'fullpage' | 'launcher' | 'popup'; prefill?: AnswerMap; context?: ReplayContext;
   tracking?: TrackingOptions;
   analyticsOptOut?: boolean;
+  /** 'theme' renders with the frontend a theme registered via ChatFlow.registerFrontend (the default chat if none did). */
+  frontend?: 'default' | 'theme';
+  /** Extra stylesheet loaded inside the shadow root, e.g. a theme's chatflow/frontend.css. */
+  themeStyle?: string;
   /** Preview only: answers shown as already given, e.g. for a theme sample conversation. */
   previewAnswers?: AnswerMap;
   captcha?: (config: import('./engagement').EngagementConfig['captcha']) => Promise<string>;

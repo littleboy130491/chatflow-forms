@@ -26,6 +26,11 @@ defaults, not authoritative answers. `ChatFlow.registerField(type, Component)`
 registers a renderer and returns a disposer; matching PHP validation and explicit
 schema/publish support remain required.
 
+`ChatFlow.registerFrontend(fn)` lets a theme replace the chat UI with a headless
+API (state, actions, safe Markdown/link helpers); forms rendered with
+`data-frontend="theme"` wait up to 4 s for it, then fall back to the built-in chat.
+See [custom frontend](../../../docs/custom-frontend.md).
+
 English/Indonesian UI and per-form phrases are supported. Rendering escapes all
 interpolation and uses restricted Markdown. `form.media` maps attachment IDs to
 safe public `{url,alt?}`. No Google Fonts request is made: fonts must be available

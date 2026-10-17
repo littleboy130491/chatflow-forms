@@ -19,6 +19,8 @@ export interface AdminConfig extends SharedAdminConfig {
   siteUrl?: string;
   /** Site time zone (IANA name or "+HH:MM" offset) used by site-timezone reports. */
   timezone?: string;
+  /** The active theme's chatflow/frontend.js / .css, used by the preview. */
+  themeFrontend?: { script?: string; style?: string };
   fullpageBase?: string;
   tools?: boolean;
   preview?: boolean;
