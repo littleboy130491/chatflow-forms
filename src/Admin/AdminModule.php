@@ -271,6 +271,12 @@ final class AdminModule implements Module {
 					'style'  => \ChatFlow\Frontend\ThemeFrontend::asset( 'css' ),
 				)
 			),
+			'mcp'           => array(
+				'url'          => \ChatFlow\Mcp\McpModule::url(),
+				'profileUrl'   => admin_url( 'profile.php#application-passwords-section' ),
+				'appPasswords' => wp_is_application_passwords_available_for_user( wp_get_current_user() ),
+				'user'         => wp_get_current_user()->user_login,
+			),
 			'fullpageBase'  => is_array( $settings ) ? ( $settings['fullpageBase'] ?? 'chat' ) : 'chat',
 			'tools'         => 'cff-tools' === $this->pageSlug(),
 			'features'      => array(

@@ -21,6 +21,8 @@ export interface AdminConfig extends SharedAdminConfig {
   timezone?: string;
   /** The active theme's chatflow/frontend.js / .css, used by the preview. */
   themeFrontend?: { script?: string; style?: string };
+  /** The MCP endpoint, where application passwords live, and whether they are available. */
+  mcp?: { url: string; profileUrl: string; appPasswords: boolean; user: string };
   fullpageBase?: string;
   tools?: boolean;
   preview?: boolean;

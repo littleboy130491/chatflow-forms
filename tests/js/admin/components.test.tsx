@@ -17,6 +17,7 @@ import { Purge } from '../../../assets/src/submissions/Purge';
 import { Filters } from '../../../assets/src/submissions/Filters';
 import { downloadExport } from '../../../assets/src/submissions/Export';
 import { useJobProgress } from '../../../assets/src/submissions/useJobProgress';
+import { McpSettings } from '../../../assets/src/submissions/Settings';
 vi.mock('@wordpress/components', async () => {
   const { createElement: h } = await import('@wordpress/element');
   interface Props {
@@ -491,5 +492,23 @@ describe('chat theme editor', () => {
     expect(envelope.form.schema.steps.map(step => step.type)).toEqual(['single_choice', 'single_choice', 'summary']);
     expect(envelope.form.schema.bot.typingSpeed).toBe('off');
     expect(applyPalette({ wallpaper: 'dots', bubbleTails: false }, palettes()[1]!)).toMatchObject({ style: 'messaging', wallpaper: 'doodle', bubbleTails: false, primary: '#008069' });
+  });
+});
+
+describe('MCP server settings', () => {
+  it('shows the endpoint and a connect command only once enabled', async () => {
+    const api = new AdminApi({ ...config, screen: 'settings', mcp: { url: 'https://example.org/wp-json/cff/v1/mcp', profileUrl: 'https://example.org/wp-admin/profile.php#application-passwords-section', appPasswords: false, user: 'editor' } });
+    const changed = vi.fn();
+    const render = async (enabled: boolean) => act(async () => root.render(createElement(McpSettings, { api, enabled, onChange: changed })));
+    await render(false);
+    expect(container.textContent).not.toContain('/cff/v1/mcp');
+    act(() => container.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click());
+    expect(changed).toHaveBeenCalledWith(true);
+    await render(true);
+    expect(container.querySelector('code')?.textContent).toBe('https://example.org/wp-json/cff/v1/mcp');
+    expect(container.querySelector('pre')?.textContent).toContain("claude mcp add --transport http chatflow https://example.org/wp-json/cff/v1/mcp");
+    expect(container.querySelector('pre')?.textContent).toContain("'editor:APPLICATION PASSWORD'");
+    expect(container.querySelector('a')?.getAttribute('href')).toContain('#application-passwords-section');
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('Application passwords are not available');
   });
 });
