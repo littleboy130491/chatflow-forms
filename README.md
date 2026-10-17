@@ -47,30 +47,179 @@ or webhook endpoints. Review messaging, consent copy, privacy policy requirement
 and notification recipients before publishing. Templates are not submissions
 and do not include existing respondent data.
 
-## Install and use
+## Getting started
 
-1. Build the release ZIP below, or use a packaged release when available.
-   Install `build/chatflow-forms.zip` in WordPress and activate it. A GitHub
-   source archive is **not** installable: it lacks scoped PHP dependencies.
-2. Use HTTPS. For private CSV files, create a writable directory **outside every
-   public/document root** and set `CFF_PRIVATE_DIR` in server configuration:
-   `define( 'CFF_PRIVATE_DIR', '/srv/chatflow-private' );`
-   The plugin does not create or expose an insecure uploads fallback.
-3. In **ChatFlow → Forms**, create a blank form, import a ChatFlow form JSON export as a new unpublished draft, or use the Imajiner survey
-   template. Edit steps, options, rules, endings, appearance and notification
-   settings. Draft autosaves use revision conflict checks; **Publish** makes a
-   new immutable visitor version. Draft preview does not save visitor answers.
-4. Embed the published form using the **ChatFlow Form** Gutenberg block,
-   `[chatflow id="123" mode="inline" theme="auto" height="600"]`, or trusted PHP
-   `cff_render_form(123)`. The shortcode also fits Elementor's Shortcode widget.
-   Full-page URLs default to `/chat/{form-slug}/`; the base is configurable in Settings.
-   Phase 2 also supports a floating button with
-   `[chatflow id="123" mode="launcher" position="right"]`.
-5. **Submissions** provides status/filter/search, details, notes, read/star, bulk
-   actions, protected CSV exports, activity and delivery retries. **Tools** has
-   preview-token-bound purge: preview the exact criteria, then type `DELETE`.
-   Automatic retention is **off by default**. Configure privacy/IP/DNT and
-   retention intentionally before collecting production data.
+This section is for site owners who want to put a ChatFlow form on their
+WordPress site. Developers building the plugin should see [Development](#development).
+
+### 1. Check the requirements
+
+- WordPress 6.4 or newer, PHP 8.1 or newer with the OpenSSL extension.
+- HTTPS on the site.
+- A working WP-Cron or a real cron/queue runner. Emails, webhooks, connectors,
+  abandonment follow-ups, exports and cleanup all run in the background and
+  never send without it.
+- Mail delivery (an SMTP plugin or your host's mailer) if you want email
+  notifications. The plugin doesn't configure SMTP for you.
+
+### 2. Get the plugin ZIP
+
+You need the **packaged** `chatflow-forms.zip`, not GitHub's "Download ZIP" or
+source archive. The source archive lacks the scoped PHP dependencies, and
+WordPress shows *"ChatFlow Forms dependencies are missing"* if you install it.
+
+- **From a release:** download the `chatflow-forms.zip` asset from this
+  repository's GitHub Releases page.
+- **Build it yourself:** follow [Development](#development) and run
+  `npm run package`. The file appears at `build/chatflow-forms.zip`.
+
+### 3. Install and activate
+
+In WordPress go to **Plugins → Add New → Upload Plugin**, choose
+`chatflow-forms.zip`, then **Install Now** and **Activate**. Or use WP-CLI:
+
+```sh
+wp plugin install chatflow-forms.zip --activate
+```
+
+A **ChatFlow** menu appears in the admin sidebar with **Forms**,
+**Submissions**, **Analytics**, **Settings**, **Tools** and **New form**.
+
+### 4. Add the optional `wp-config.php` constants
+
+Add these to `wp-config.php` (above *"That's all, stop editing!"*) when you
+need the features they enable:
+
+```php
+// Required for file-upload fields and CSV/XLSX exports.
+// The directory must be writable by PHP and OUTSIDE the public web root.
+define( 'CFF_PRIVATE_DIR', '/srv/chatflow-private' );
+
+// Optional: enables automatic plugin updates from the private GitHub releases.
+// Use a read-only token for this repository. Never commit it.
+define( 'CFF_GITHUB_TOKEN', 'github_pat_...' );
+```
+
+Without `CFF_PRIVATE_DIR`, forms still work, but uploads and exports stay
+unavailable. The plugin never falls back to the public uploads folder.
+
+### 5. Review the global settings
+
+Open **ChatFlow → Settings** before you collect real data:
+
+- **Privacy:** whether IP addresses are stored in full, anonymized or not at
+  all, whether the user agent and metadata are stored, and whether Do Not
+  Track is respected.
+- **Retention:** automatic deletion of old submissions. It's **off by
+  default**.
+- **Full-page URL base:** forms get their own page at `/chat/{form-slug}/`.
+  You can change `chat` here.
+- **Optional extras:** CAPTCHA/Akismet spam protection, proxy/Cloudflare IP
+  detection, connector credentials (Slack, Mailchimp, HubSpot, GA4, Meta) and
+  AI assist (Claude, OpenRouter or an OpenAI-compatible provider). Each stays
+  off until you enter its credentials.
+
+### 6. Create a form
+
+Go to **ChatFlow → Forms** and pick one of these:
+
+- a **blank form** (**New form**),
+- a starter **template** (Contact request, Customer feedback or the Imajiner
+  survey),
+- **Import** a ChatFlow form JSON export, or
+- **Generate draft** from a written description (only shown when AI assist is
+  configured).
+
+Each of these creates an unpublished draft. The builder has these tabs:
+
+| Tab | What you do there |
+| --- | --- |
+| **Build** | Add and order the questions: text, email, phone, number, date, choices, yes/no, rating, scale, NPS, slider, address, file upload, consent, statements, summary, calculated values and hidden fields. |
+| **Logic** | Branching rules, variables and scoring, outcome endings, and the branching flow map. |
+| **Design** | Theme and colours with a live preview, and AI rephrasing of the bot copy when AI assist is set up. |
+| **Settings** | Notifications (admin email and autoresponder), webhooks, native connectors, display mode (inline, full page, floating launcher or popup), consent and resume options. |
+| **Share** | The form ID and ready-to-copy embed codes. |
+
+The draft autosaves. Use **Preview** to try the conversation. Preview answers
+are never saved.
+
+### 7. Publish
+
+Click **Publish**. Visitors only ever see a published version, and each
+publish creates a new version. Visitors who are halfway through keep the
+version they started on. Edits you make afterwards stay in the draft until you
+publish again.
+
+### 8. Put the form on your site
+
+Use any one of these:
+
+| Where | How |
+| --- | --- |
+| Block editor | Add the **ChatFlow Form** block and pick the form. |
+| Elementor | Use the **ChatFlow Form** widget, or a Shortcode widget with the shortcode below. |
+| Shortcode (anywhere) | `[chatflow id="123"]` |
+| Its own page | Visit `https://your-site/chat/{form-slug}/`. |
+| Theme/PHP code | `<?php echo cff_render_form( 123 ); ?>` |
+| Every page, automatically | In the form's **Settings → Display and engagement**, choose **Floating launcher** or **Popup** and tick **Show automatically on matching pages**. You can limit it to some page IDs or exclude some. |
+
+Shortcode options (all optional except `id`):
+
+```text
+[chatflow id="123" mode="inline" theme="auto" height="600"]
+[chatflow id="123" mode="launcher" position="right" auto_open="10"]
+[chatflow id="123" mode="popup" scroll_percent="50"]
+```
+
+| Attribute | Values | Default |
+| --- | --- | --- |
+| `id` | The form ID (shown on the **Share** tab). | (required) |
+| `mode` | `inline`, `fullpage`, `launcher`, `popup` | `inline` |
+| `theme` | `auto`, `light`, `dark` | `auto` |
+| `height` | Pixels, 200–2000 (inline only) | `600` |
+| `position` | `left`, `right` (launcher/popup) | `right` |
+| `auto_open` | Seconds before a launcher/popup opens by itself | off |
+| `scroll_percent` | Opens a launcher/popup when the visitor scrolls this far | off |
+
+To open a popup or launcher from your own button, give the button
+`data-cff-open="123"`, or call `window.ChatFlow.open(123)` in JavaScript.
+
+If you use a caching or optimisation plugin, clear its cache after publishing.
+The plugin already excludes its script from WP Rocket, LiteSpeed and
+Autoptimize JavaScript delay/defer.
+
+### 9. Manage the responses
+
+- **ChatFlow → Submissions:** filter and search responses, read the details,
+  add notes, star entries, run bulk actions, export to CSV/XLSX (needs
+  `CFF_PRIVATE_DIR`) and retry failed email/webhook deliveries.
+- **ChatFlow → Analytics:** views, starts, completion rate and drop-off per step,
+  plus experiment variants.
+- **ChatFlow → Tools:** delete data in bulk. You preview exactly what will be
+  removed, then type `DELETE` to confirm.
+
+Use the **Send test** button on the form's notification settings to check that
+your mail and webhooks really deliver before you go live.
+
+### Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| *"dependencies are missing"* notice after activation | You installed a source archive. Install the packaged `chatflow-forms.zip` instead. |
+| *"requires PHP 8.1 with OpenSSL and WordPress 6.4"* notice | Upgrade PHP/WordPress or enable the OpenSSL extension. |
+| Shortcode or block shows nothing | The form hasn't been published, or the ID is wrong. |
+| `/chat/{slug}/` returns 404 | Go to **Settings → Permalinks** and click **Save** to refresh rewrite rules. |
+| No emails or webhooks arrive | Check that WP-Cron/Action Scheduler runs (**Tools → Scheduled Actions**) and that SMTP is configured. |
+| Uploads or exports are unavailable | Set `CFF_PRIVATE_DIR` to a writable folder outside the web root. |
+
+### Uninstalling
+
+Deactivating stops the plugin's background jobs but keeps all data. Deleting
+the plugin also keeps forms and submissions, unless the site has opted in with
+`cff_settings.delete_data_on_uninstall=true`. In that case the plugin's tables,
+forms and capabilities are removed.
+
+## Imajiner survey template from WP-CLI
 
 The template can also be created from the shell:
 
