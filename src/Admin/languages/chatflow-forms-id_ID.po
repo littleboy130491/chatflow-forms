@@ -118,6 +118,9 @@ msgstr "Tambah aturan"
 msgid "Add score"
 msgstr "Tambah nilai"
 
+msgid "Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:"
+msgstr "Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:"
+
 msgid "Add variant"
 msgstr "Tambah varian"
 
@@ -222,6 +225,9 @@ msgstr "Tambahkan UUID kiriman"
 
 msgid "Append whitelisted answers"
 msgstr "Tambahkan jawaban yang diizinkan"
+
+msgid "Application passwords are not available for your account. WordPress requires HTTPS (or a local development site) and a plugin or setting may have turned them off."
+msgstr "Kata sandi aplikasi tidak tersedia untuk akun Anda. WordPress mensyaratkan HTTPS (atau situs pengembangan lokal), dan sebuah plugin atau pengaturan mungkin telah menonaktifkannya."
 
 msgid "Apply JSON"
 msgstr "Terapkan JSON"
@@ -616,6 +622,9 @@ msgstr "Negara"
 msgid "Create a form"
 msgstr "Buat formulir"
 
+msgid "Create an application password on your profile page."
+msgstr "Buat kata sandi aplikasi di halaman profil Anda."
+
 msgid "Create experiment"
 msgstr "Buat eksperimen"
 
@@ -853,6 +862,9 @@ msgstr "Aktifkan retensi otomatis per formulir"
 msgid "Enable resume"
 msgstr "Aktifkan lanjutkan sesi"
 
+msgid "Enable the MCP server"
+msgstr "Aktifkan server MCP"
+
 msgid "Enabled"
 msgstr "Diaktifkan"
 
@@ -873,6 +885,9 @@ msgstr "Akhir: %s"
 
 msgid "Endings and completion"
 msgstr "Penutup dan penyelesaian"
+
+msgid "Endpoint"
+msgstr "Endpoint"
 
 msgid "Enter the full number including the country code, for example 6281234567890."
 msgstr "Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890."
@@ -1330,6 +1345,9 @@ msgstr "Keluar dengan perubahan yang belum disimpan?"
 msgid "Left"
 msgstr "Kiri"
 
+msgid "Lets AI agents such as Claude, ChatGPT or Cursor list, create, edit and publish forms, and read submissions and analytics, through the Model Context Protocol. An agent acts as the WordPress user whose application password it uses, with that user’s ChatFlow permissions. Submissions can contain personal data: connect only agents you trust."
+msgstr "Memungkinkan agen AI seperti Claude, ChatGPT, atau Cursor menampilkan, membuat, mengedit, dan menerbitkan formulir, serta membaca kiriman dan analitik, melalui Model Context Protocol. Agen bertindak sebagai pengguna WordPress pemilik kata sandi aplikasi yang dipakainya, dengan izin ChatFlow pengguna tersebut. Kiriman dapat berisi data pribadi: hubungkan hanya agen yang Anda percayai."
+
 msgid "Light"
 msgstr "Terang"
 
@@ -1389,6 +1407,9 @@ msgstr "URL logo"
 
 msgid "Long text"
 msgstr "Teks panjang"
+
+msgid "MCP server (AI agents)"
+msgstr "Server MCP (agen AI)"
 
 msgid "Machine keys"
 msgstr "Kunci mesin"
@@ -1645,6 +1666,9 @@ msgstr "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
 msgid "Open imported form"
 msgstr "Buka formulir hasil impor"
 
+msgid "Open your profile"
+msgstr "Buka profil Anda"
+
 msgid "OpenAI-compatible endpoint"
 msgstr "Endpoint kompatibel OpenAI"
 
@@ -1674,6 +1698,9 @@ msgstr "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan
 
 msgid "Other (free-text option)"
 msgstr "Lainnya (pilihan teks bebas)"
+
+msgid "Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting."
+msgstr "Klien lain memakai URL dan header Authorization yang sama di pengaturan MCP-nya. Simpan pengaturan sebelum menghubungkan."
 
 msgid "Outcome endings (first matching condition wins)"
 msgstr "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"

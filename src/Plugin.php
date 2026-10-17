@@ -35,6 +35,7 @@ final class Plugin implements Module {
 				new \ChatFlow\Notifications\NotificationsModule( $forms ),
 				new \ChatFlow\Admin\Translations(),
 				new \ChatFlow\Integrations\Elementor\ElementorModule(),
+				new \ChatFlow\Mcp\McpModule( $forms ),
 			)
 		);
 		foreach ( $modules as $module ) {

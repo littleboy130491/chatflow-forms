@@ -10,6 +10,7 @@ A welcome statement ready for your questions.|Pernyataan sambutan yang siap dile
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
 Accent (buttons, links, ticks)|Aksen (tombol, tautan, centang)
 Accessibility and extras|Aksesibilitas dan tambahan
+Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:|Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:
 AI assist (Claude)|Asisten AI (Claude)
 AI assist|Bantuan AI
 Answer buttons|Tombol jawaban
@@ -75,6 +76,7 @@ API key (optional for keyless gateways)|Kunci API (opsional untuk gateway tanpa 
 Append options|Tambahkan pilihan
 Append submission UUID|Tambahkan UUID kiriman
 Append whitelisted answers|Tambahkan jawaban yang diizinkan
+Application passwords are not available for your account. WordPress requires HTTPS (or a local development site) and a plugin or setting may have turned them off.|Kata sandi aplikasi tidak tersedia untuk akun Anda. WordPress mensyaratkan HTTPS (atau situs pengembangan lokal), dan sebuah plugin atau pengaturan mungkin telah menonaktifkannya.
 Apply JSON|Terapkan JSON
 Apply filters|Terapkan filter
 Applying your latest changes…|Menerapkan perubahan terbaru Anda…
@@ -219,6 +221,7 @@ Corner radius (0–32)|Radius sudut (0–32)
 Corner radius|Radius sudut
 Country|Negara
 Create a form|Buat formulir
+Create an application password on your profile page.|Buat kata sandi aplikasi di halaman profil Anda.
 Create draft|Buat draf
 Create experiment|Buat eksperimen
 Create private export|Buat ekspor pribadi
@@ -305,6 +308,7 @@ Enable optional Akismet|Aktifkan Akismet opsional
 Enable per-form automatic retention|Aktifkan retensi otomatis per formulir
 Enable resume|Aktifkan lanjutkan sesi
 Enable site-wide launcher|Aktifkan tombol pembuka di seluruh situs
+Enable the MCP server|Aktifkan server MCP
 Enabled|Diaktifkan
 End with|Akhiri dengan
 Ending|Penutup
@@ -312,6 +316,7 @@ Ending messages (one per line)|Pesan penutup (satu per baris)
 Ending type|Jenis penutup
 Ending: %s|Akhir: %s
 Endings and completion|Penutup dan penyelesaian
+Endpoint|Endpoint
 Enter the full number including the country code, for example 6281234567890.|Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890.
 Event name|Nama peristiwa
 Exclude page IDs (comma-separated)|ID halaman yang dikecualikan (pisahkan dengan koma)
@@ -471,6 +476,7 @@ Lead capture|Pengumpulan prospek
 Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers.|Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan.
 Leave with unsaved changes?|Keluar dengan perubahan yang belum disimpan?
 Left|Kiri
+Lets AI agents such as Claude, ChatGPT or Cursor list, create, edit and publish forms, and read submissions and analytics, through the Model Context Protocol. An agent acts as the WordPress user whose application password it uses, with that user’s ChatFlow permissions. Submissions can contain personal data: connect only agents you trust.|Memungkinkan agen AI seperti Claude, ChatGPT, atau Cursor menampilkan, membuat, mengedit, dan menerbitkan formulir, serta membaca kiriman dan analitik, melalui Model Context Protocol. Agen bertindak sebagai pengguna WordPress pemilik kata sandi aplikasi yang dipakainya, dengan izin ChatFlow pengguna tersebut. Kiriman dapat berisi data pribadi: hubungkan hanya agen yang Anda percayai.
 Light or dark|Terang atau gelap
 Light|Terang
 Limits|Batasan
@@ -504,6 +510,7 @@ Maximum|Maksimum
 Maximum bytes per file|Batas byte per berkas
 Maximum length|Panjang maksimum
 Maximum selections|Pilihan maksimum
+MCP server (AI agents)|Server MCP (agen AI)
 Meadow|Padang
 Measurement ID (G-…)|Measurement ID (G-…)
 Measurement Protocol API secret|Rahasia API Measurement Protocol
@@ -583,6 +590,7 @@ Only show the button during working hours|Tampilkan tombol hanya pada jam kerja
 Only trashed forms can be restored or deleted permanently.|Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen.
 Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
 Open imported form|Buka formulir hasil impor
+Open your profile|Buka profil Anda
 OpenAI-compatible endpoint|Endpoint kompatibel OpenAI
 OpenRouter API key (sk-or-…)|Kunci API OpenRouter (sk-or-…)
 OpenRouter|OpenRouter
@@ -596,6 +604,7 @@ Optional captcha provider|Penyedia captcha opsional
 Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.|Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI.
 Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.|Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI.
 Other (free-text option)|Lainnya (pilihan teks bebas)
+Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting.|Klien lain memakai URL dan header Authorization yang sama di pengaturan MCP-nya. Simpan pengaturan sebelum menghubungkan.
 Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
 Outside working hours|Di luar jam kerja
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)

@@ -191,6 +191,13 @@ Activity includes no payload, credentials, URLs, action args or raw errors.
   script (`js`) or stylesheet (`css`) URL for a form; return `null` to use the
   built-in chat. See [custom frontend](custom-frontend.md).
 
+## MCP server
+
+- `cff_mcp_enabled` (`bool $enabled`): override the *Enable the MCP server* setting.
+- `cff_mcp_tools` (`array $tools, FormRepository $forms`): add, change or remove the
+  tools served at `/wp-json/cff/v1/mcp` (and registered as abilities on WordPress
+  6.9+). See [MCP server](mcp.md).
+
 ## Verification and current integration limits
 
 The focused suite lives in `tests/php/Integrations/DeliveryTest.php`. It is a real

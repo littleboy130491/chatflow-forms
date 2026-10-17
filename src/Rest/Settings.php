@@ -123,6 +123,7 @@ final class Settings {
 				'compatKey'       => '',
 				'compatModel'     => '',
 			),
+			'mcp'                      => array( 'enabled' => false ),
 		);
 	}
 	/** @return array<string,mixed> */
@@ -134,7 +135,7 @@ final class Settings {
 	public static function save( array $input ): array|\WP_Error {
 		$input    = self::unmask( $input, self::get() );
 		$defaults = self::defaults();
-		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'connectors', 'ai' ) as $group ) {
+		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'connectors', 'ai', 'mcp' ) as $group ) {
 			if ( isset( $input[ $group ] ) && ! is_array( $input[ $group ] ) ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid settings group.', 422 );
 			}
@@ -142,11 +143,11 @@ final class Settings {
 		if ( array_diff( array_keys( $input ), array_keys( $defaults ) ) ) {
 			return Database::error( 'cff_settings_invalid', 'Unknown global setting.', 422 ); }
 		$result = array_replace_recursive( self::get(), $input );
-		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'ai' ) as $group ) {
+		foreach ( array( 'tracking', 'privacy', 'retention', 'spam', 'proxy', 'email', 'ai', 'mcp' ) as $group ) {
 			if ( ! is_array( $result[ $group ] ) || array_diff( array_keys( $result[ $group ] ), array_keys( $defaults[ $group ] ) ) ) {
 				return Database::error( 'cff_settings_invalid', 'Invalid settings group.', 422 ); }
 		}
-		foreach ( array( array( 'tracking', 'enabled' ), array( 'tracking', 'consentRequired' ), array( 'privacy', 'storeUserAgent' ), array( 'privacy', 'storeMeta' ), array( 'privacy', 'respectDnt' ), array( 'retention', 'enabled' ) ) as [$group, $key] ) {
+		foreach ( array( array( 'tracking', 'enabled' ), array( 'tracking', 'consentRequired' ), array( 'privacy', 'storeUserAgent' ), array( 'privacy', 'storeMeta' ), array( 'privacy', 'respectDnt' ), array( 'retention', 'enabled' ), array( 'mcp', 'enabled' ) ) as [$group, $key] ) {
 			if ( ! is_bool( $result[ $group ][ $key ] ) ) {
 				return Database::error( 'cff_settings_invalid', 'Boolean setting required.', 422 ); }
 		}

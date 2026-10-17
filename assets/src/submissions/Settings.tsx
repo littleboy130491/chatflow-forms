@@ -43,6 +43,7 @@ export interface GlobalSettings {
     meta_capi: { pixelId: string; accessToken: string; testEventCode: string };
   };
   ai?: { provider?: AiProvider; apiKey?: string; openrouterKey?: string; openrouterModel?: string; baseUrl?: string; compatKey?: string; compatModel?: string };
+  mcp?: { enabled: boolean };
 }
 type ConnectorCredentials = NonNullable<GlobalSettings['connectors']>;
 /** Credential inputs per provider; leave a provider blank to turn it off. */
@@ -315,6 +316,7 @@ export function Settings({ api }: { api: AdminApi }) {
               <p className="description">{__('Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.', 'chatflow-forms')}</p>
             </>}
           </section>
+          <McpSettings api={api} enabled={settings.mcp?.enabled ?? false} onChange={(enabled) => update({ ...settings, mcp: { enabled } })} />
           <section className="cff-card">
             <h2>{__('Connector credentials', 'chatflow-forms')}</h2>
             <p>{__('Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses.', 'chatflow-forms')}</p>
@@ -451,5 +453,31 @@ export function Settings({ api }: { api: AdminApi }) {
         </Button>
       </fieldset>
     </main>
+  );
+}
+
+/** The MCP server switch, plus what an agent needs to connect. */
+export function McpSettings({ api, enabled, onChange }: { api: AdminApi; enabled: boolean; onChange: (enabled: boolean) => void }) {
+  const mcp = api.config.mcp;
+  const url = mcp?.url ?? `${api.config.restUrl}mcp`;
+  const user = mcp?.user || 'USERNAME';
+  return (
+    <section className="cff-card">
+      <h2>{__('MCP server (AI agents)', 'chatflow-forms')}</h2>
+      <p>{__('Lets AI agents such as Claude, ChatGPT or Cursor list, create, edit and publish forms, and read submissions and analytics, through the Model Context Protocol. An agent acts as the WordPress user whose application password it uses, with that user’s ChatFlow permissions. Submissions can contain personal data: connect only agents you trust.', 'chatflow-forms')}</p>
+      <Check label={__('Enable the MCP server', 'chatflow-forms')} value={enabled} onChange={onChange} />
+      {enabled && <>
+        <p><strong>{__('Endpoint', 'chatflow-forms')}</strong><br /><code>{url}</code></p>
+        {mcp && !mcp.appPasswords && <Notice status="warning" isDismissible={false}>
+          {__('Application passwords are not available for your account. WordPress requires HTTPS (or a local development site) and a plugin or setting may have turned them off.', 'chatflow-forms')}
+        </Notice>}
+        <ol>
+          <li>{__('Create an application password on your profile page.', 'chatflow-forms')} {mcp?.profileUrl && <a href={mcp.profileUrl}>{__('Open your profile', 'chatflow-forms')}</a>}</li>
+          <li>{__('Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:', 'chatflow-forms')}</li>
+        </ol>
+        <pre><code>{`claude mcp add --transport http chatflow ${url} \\\n  --header "Authorization: Basic $(printf '%s' '${user}:APPLICATION PASSWORD' | base64)"`}</code></pre>
+        <p className="description">{__('Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting.', 'chatflow-forms')}</p>
+      </>}
+    </section>
   );
 }
