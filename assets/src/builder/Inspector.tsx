@@ -228,16 +228,17 @@ export function Inspector({
           <Button onClick={() => onChange(withStepMessages(step, [...step.messages, '']))}>
             {__('Add message', 'chatflow-forms')}
           </Button>
+          {/* The runtime shows help text for every step type, so it stays editable for all of them. */}
+          <Area
+            label={__('Help text', 'chatflow-forms')}
+            value={step.helpText ?? ''}
+            onChange={(helpText) => onChange({ ...step, helpText })}
+          />
           {acceptsInput && <Fragment>
           <Field
             label={__('Placeholder', 'chatflow-forms')}
             value={step.placeholder}
             onChange={(placeholder) => onChange({ ...step, placeholder })}
-          />
-          <Area
-            label={__('Help text', 'chatflow-forms')}
-            value={step.helpText ?? ''}
-            onChange={(helpText) => onChange({ ...step, helpText })}
           />
           <Check
             label={__('Required', 'chatflow-forms')}
