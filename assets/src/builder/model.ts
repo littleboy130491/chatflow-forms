@@ -88,7 +88,8 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
       // runtime, so they are never copied in. The theme has no runtime fallback;
       // the global "default theme" seeds new forms only.
       // New forms start with the messaging look; existing forms keep their saved style.
-      appearance: { ...defaults.appearance, style: 'messaging' },
+      // Dark messaging uses fixed runtime colours; seed the accessible accent for light/auto.
+      appearance: { ...(defaults.appearance?.theme === 'dark' ? {} : { primary: '#2271b1' }), ...defaults.appearance, style: 'messaging' },
     },
   };
 }

@@ -197,8 +197,9 @@ export function Preview({
   const previewHandle = typeof handle.current === 'object' ? handle.current : undefined;
   return (
     <aside className="cff-preview" role="dialog" aria-label={__('Draft preview', 'chatflow-forms')}>
-      <h2>{__('Draft preview — no sessions or jobs', 'chatflow-forms')}</h2>
-      <Button onClick={onClose}>{__('Close preview', 'chatflow-forms')}</Button>
+      <h2>{__('Preview your form', 'chatflow-forms')}</h2>
+      <p>{__('Test your draft as a visitor. Responses here are not saved, and notifications are not sent.', 'chatflow-forms')}</p>
+      <Button onClick={onClose}>{__('Back to editor', 'chatflow-forms')}</Button>
       <Button variant="secondary" onClick={restart}>
         {__('Restart preview', 'chatflow-forms')}
       </Button>

@@ -562,12 +562,15 @@ export function SettingsEditor({
   onChange,
   api,
   save,
+  completion,
 }: {
   form: FormDTO;
   onChange: (settings: FormSettings) => void;
   api: AdminApi;
   save: () => Promise<FormDTO>;
+  completion?: import('react').ReactNode;
 }) {
+  const [section, setSection] = useState('general');
   const [includePages, setIncludePages] = useState(() => (form.settings.display?.launcher?.includePageIds ?? []).join(','));
   const [excludePages, setExcludePages] = useState(() => (form.settings.display?.launcher?.excludePageIds ?? []).join(','));
   // Only keys the admin changes are written; global values are shown as inherited.
@@ -612,8 +615,20 @@ export function SettingsEditor({
     );
   };
   return (
-    <div className="cff-settings-grid">
-      <section className="cff-card">
+    <div className="cff-settings-layout">
+      <nav className="cff-tabs cff-settings-nav" aria-label={__('Form settings sections', 'chatflow-forms')}>
+        {[
+          { value: 'general', label: __('General / Completion', 'chatflow-forms') },
+          { value: 'display', label: __('Display', 'chatflow-forms') },
+          { value: 'notifications', label: __('Notifications', 'chatflow-forms') },
+          { value: 'integrations', label: __('Integrations', 'chatflow-forms') },
+          { value: 'privacy', label: __('Privacy', 'chatflow-forms') },
+          { value: 'advanced', label: __('Advanced', 'chatflow-forms') },
+        ].map(item => <Button key={item.value} variant={section === item.value ? 'primary' : 'secondary'} aria-pressed={section === item.value} onClick={() => setSection(item.value)}>{item.label}</Button>)}
+      </nav>
+      <div className="cff-settings-grid">
+      <div hidden={section !== 'general'}>{completion}</div>
+      <section className="cff-card" data-settings-group="general" hidden={section !== 'general'}>
         <h2>{__('Sessions and resume', 'chatflow-forms')}</h2>
         {(
           [
@@ -665,7 +680,7 @@ export function SettingsEditor({
         />
       </section>
 
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="display" hidden={section !== 'display'}>
         <h2>{__('Display and engagement', 'chatflow-forms')}</h2>
         <Select
           label={__('Display mode', 'chatflow-forms')}
@@ -726,7 +741,7 @@ export function SettingsEditor({
           <p>{__('Page exclusions take precedence. A published form is required for automatic placement.', 'chatflow-forms')}</p>
         </>)}
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="general" hidden={section !== 'general'}>
         <h2>{__('Limits', 'chatflow-forms')}</h2>
         <Check
           label={__('Require login', 'chatflow-forms')}
@@ -754,7 +769,7 @@ export function SettingsEditor({
           onChange={(closesAt) => set('limits', { ...settings.limits, closesAt: closesAt || null })}
         />
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="privacy" hidden={section !== 'privacy'}>
         <h2>{__('Privacy and retention override', 'chatflow-forms')}</h2>
         <p>{__('Fields without an override follow the global Settings screen.', 'chatflow-forms')}</p>
         <Check
@@ -821,7 +836,7 @@ export function SettingsEditor({
           }
         />
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="privacy" hidden={section !== 'privacy'}>
         <h2>{__('Spam protection', 'chatflow-forms')}</h2>
         <Check
           label={__('Honeypot', 'chatflow-forms')}
@@ -877,7 +892,7 @@ export function SettingsEditor({
         {spamReset('akismetEnabled')}
         <p>{__('The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="notifications" hidden={section !== 'notifications'}>
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>
         {(notifications.admin ?? []).map((notification) => (
           <EmailCard
@@ -927,7 +942,7 @@ export function SettingsEditor({
           {__('Add admin email', 'chatflow-forms')}
         </Button>
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="notifications" hidden={section !== 'notifications'}>
         <h2>{__('Autoresponders', 'chatflow-forms')}</h2>
         <Check
           label={__('Send only first matching autoresponder', 'chatflow-forms')}
@@ -986,7 +1001,7 @@ export function SettingsEditor({
           {__('Add autoresponder', 'chatflow-forms')}
         </Button>
       </section>
-      <section className="cff-card">
+      <section className="cff-card" data-settings-group="integrations" hidden={section !== 'integrations'}>
         <h2>{__('Webhooks', 'chatflow-forms')}</h2>
         <Notice status="warning" isDismissible={false}>
           {__(
@@ -1072,8 +1087,8 @@ export function SettingsEditor({
           {__('Add webhook', 'chatflow-forms')}
         </Button>
       </section>
-      <ConnectorSettings schema={form.schema} integrations={integrations} onChange={(next) => set('integrations', next)} />
-      <section className="cff-card">
+      <div hidden={section !== 'integrations'}><ConnectorSettings schema={form.schema} integrations={integrations} onChange={(next) => set('integrations', next)} /></div>
+      <section className="cff-card" data-settings-group="advanced" hidden={section !== 'advanced'}>
         <h2>{__('Visitor phrase overrides', 'chatflow-forms')}</h2>
         <JsonEditor
           label={__('Phrase key → translated text', 'chatflow-forms')}
@@ -1081,6 +1096,7 @@ export function SettingsEditor({
           onChange={(phrases) => set('phrases', phrases)}
         />
       </section>
+      </div>
     </div>
   );
 }

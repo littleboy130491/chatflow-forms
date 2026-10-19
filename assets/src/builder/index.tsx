@@ -28,7 +28,7 @@ import { googleFont, googleFonts } from '../shared/fonts';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
 import { AiGenerate, AiRephrase } from './AiAssist';
-import { Share, shortcode } from './Share';
+import { Share, PublicLinkActions, publicFormUrl } from './Share';
 import { Contrast } from './Contrast';
 import { ThemeEditor } from './ThemeEditor';
 import { ContactLinkEditor } from './Contact';
@@ -221,7 +221,38 @@ function BuilderView({
     [marked, setMarked] = useState<string[]>([]),
     [preview, setPreview] = useState(api.config.preview === true),
     [search, setSearch] = useState(''),
+    [inspectorOpen, setInspectorOpen] = useState(false),
+    [paletteOpen, setPaletteOpen] = useState(false),
     [publishConfirm, setPublishConfirm] = useState(false);
+  const inspectorPanel = useRef<HTMLElement>(null);
+  const [narrow, setNarrow] = useState(() => window.matchMedia?.('(max-width: 1100px)').matches ?? false);
+  useEffect(() => {
+    const media = window.matchMedia?.('(max-width: 1100px)');
+    if (!media) return;
+    const changed = () => setNarrow(media.matches);
+    media.addEventListener('change', changed);
+    return () => media.removeEventListener('change', changed);
+  }, []);
+  const focusField = () => {
+    const buttons = inspectorPanel.current?.closest('main')?.querySelectorAll<HTMLButtonElement>('[data-step-id]');
+    [...(buttons ?? [])].find(button => button.dataset.stepId === selected)?.focus();
+  };
+  const closeInspector = () => { setInspectorOpen(false); focusField(); };
+  useEffect(() => {
+    if (!narrow || !inspectorOpen || tab !== 'build') return;
+    inspectorPanel.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    const background = inspectorPanel.current?.closest('main')?.querySelectorAll<HTMLElement>('.cff-toolbar, main > .cff-tabs, .cff-palette, .cff-flow, .cff-build-actions');
+    const blocked = [...(background ?? [])].filter(element => !element.hasAttribute('inert'));
+    blocked.forEach(element => element.setAttribute('inert', ''));
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      blocked.forEach(element => element.removeAttribute('inert'));
+      document.body.style.overflow = overflow;
+      focusField();
+    };
+  }, [narrow, inspectorOpen, selected, tab]);
+  const [publishedForm, setPublishedForm] = useState<FormDTO | null>(null);
   const [baseline, setBaseline] = useState<FormSchema | null>(null);
   const [baselineError, setBaselineError] = useState('');
   useEffect(() => {
@@ -244,6 +275,8 @@ function BuilderView({
     const next = makeStep(type as Step['type'], schema.steps, controller.reservedKeys());
     setSchema({ ...schema, steps: [...schema.steps, next] });
     setSelected(next.id);
+    setInspectorOpen(true);
+    setPaletteOpen(false);
   };
   const deleteStep = (id: string) => {
     if (schema.steps.length <= 1) return;
@@ -414,32 +447,20 @@ function BuilderView({
         <section
           className="cff-card"
           role="dialog"
-          aria-label={__('Confirm publish', 'chatflow-forms')}
+          aria-label={__('Publish form?', 'chatflow-forms')}
           ref={publishDialog}
           tabIndex={-1}
           onKeyDown={(event) => {
             if (event.key === 'Escape') closePublish();
           }}
         >
-          <p>
-            {sprintf(
-              __(
-                'Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings.',
-                'chatflow-forms',
-              ),
-              diff.added,
-              diff.changed,
-              diff.removed,
-            )}
-          </p>
-          {form.version > 0 && (
-            <p>
-              {__(
-                'Diff compares this draft to the current published snapshot.',
-                'chatflow-forms',
-              )}
-            </p>
-          )}
+          <h2>{__('Publish form?', 'chatflow-forms')}</h2>
+          <p>{sprintf(__('“%s” will be available to visitors. Later edits stay in your draft until you publish again.', 'chatflow-forms'), form.title)}</p>
+          <details><summary>{__('Review changes and version details', 'chatflow-forms')}</summary>
+            <p>{sprintf(__('Questions: %d added, %d changed, %d removed.', 'chatflow-forms'), diff.added, diff.changed, diff.removed)}</p>
+            <p>{__('Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.', 'chatflow-forms')}</p>
+            {form.version > 0 && <p>{__('Changes are compared with the current live version.', 'chatflow-forms')}</p>}
+          </details>
           <Button onClick={closePublish}>{__('Cancel', 'chatflow-forms')}</Button>
           <Button
             variant="primary"
@@ -448,6 +469,7 @@ function BuilderView({
               try {
                 const published = await controller.publish();
                 setBaseline(published.schema);
+                setPublishedForm(published);
                 closePublish();
               } catch {
                 /* The controller displays server validation and conflict errors. */
@@ -458,6 +480,13 @@ function BuilderView({
           </Button>
         </section>
       )}
+      {publishedForm && <section className="cff-card cff-publish-success" aria-label={__('Publication result', 'chatflow-forms')}>
+        <h2 role="status">{__('Form published', 'chatflow-forms')}</h2>
+        <p>{__('Your form is live. Share it with your visitors.', 'chatflow-forms')}</p>
+        {publicFormUrl(publishedForm, api.config) && <PublicLinkActions url={publicFormUrl(publishedForm, api.config)!} />}
+        <Button variant="secondary" onClick={() => { setTab('share'); setPublishedForm(null); }}>{__('Share and embed', 'chatflow-forms')}</Button>
+        <Button onClick={() => setPublishedForm(null)}>{__('Dismiss', 'chatflow-forms')}</Button>
+      </section>}
       <nav className="cff-tabs" aria-label={__('Builder sections', 'chatflow-forms')}>
         {[
           { value: 'build', label: __('Build', 'chatflow-forms') },
@@ -487,20 +516,24 @@ function BuilderView({
               });
           }}
         >
+          <div className="cff-build-actions"><Button variant="secondary" aria-expanded={paletteOpen} onClick={() => { setPaletteOpen(!paletteOpen); setInspectorOpen(false); }}>{__('Add field', 'chatflow-forms')}</Button></div>
           <div className="cff-builder-grid">
-            <aside className="cff-palette">
+            <aside className={`cff-palette ${paletteOpen ? 'is-open' : ''}`}>
               <h2>{__('Field palette', 'chatflow-forms')}</h2>
               <Field label={__('Search fields', 'chatflow-forms')} value={search} onChange={setSearch} />
-              {api.config.features.fieldTypes
-                .filter(
-                  (type) =>
-                    (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase()),
-                )
-                .map((type) => (
-                  <Button key={type} disabled={schema.steps.length >= 500} onClick={() => add(type)}>
-                    {fieldLabels[type] ?? type}
-                  </Button>
-                ))}
+              {[
+                { label: __('Basic', 'chatflow-forms'), types: ['statement', 'short_text', 'long_text', 'email', 'phone', 'number', 'date'] },
+                { label: __('Choices', 'chatflow-forms'), types: ['single_choice', 'multi_choice', 'yes_no', 'consent'] },
+                { label: __('Ratings', 'chatflow-forms'), types: ['rating', 'scale', 'nps', 'slider'] },
+                { label: __('Advanced', 'chatflow-forms'), types: ['address', 'media', 'file_upload', 'calculated', 'hidden', 'summary'] },
+              ].map(group => {
+                const types = api.config.features.fieldTypes.filter(type => group.types.includes(type) && (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase()));
+                return types.length > 0 && <section className="cff-palette-group" key={group.label}>
+                  <h3>{group.label}</h3>
+                  {types.map(type => <Button key={type} variant="secondary" disabled={schema.steps.length >= 500} onClick={() => add(type)}>{fieldLabels[type] ?? type}</Button>)}
+                </section>;
+              })}
+              {!api.config.features.fieldTypes.some(type => (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase())) && <p role="status">{__('No matching fields. Try another search.', 'chatflow-forms')}</p>}
             </aside>
             <section className="cff-flow">
               <h2>{__('Conversation flow', 'chatflow-forms')}</h2>
@@ -584,40 +617,22 @@ function BuilderView({
                 {schema.steps.map((item) => (
                   <SortableItem key={item.id} id={item.id}>
                     <article className={`cff-card ${selected === item.id ? 'is-selected' : ''}`}>
-                      <Check
-                        label={__('Select field', 'chatflow-forms')}
-                        value={marked.includes(item.id)}
-                        onChange={(checked) =>
-                          setMarked(checked ? [...marked, item.id] : marked.filter((id) => id !== item.id))
-                        }
-                      />
-                      <Button onClick={() => setSelected(item.id)}>
+                      <label className="cff-field-select"><input type="checkbox" checked={marked.includes(item.id)} onChange={event => setMarked(event.currentTarget.checked ? [...marked, item.id] : marked.filter(id => id !== item.id))} />{__('Select field', 'chatflow-forms')}</label>
+                      <Button data-step-id={item.id} onClick={() => { setSelected(item.id); setInspectorOpen(true); }}>
                         {item.label} · {fieldLabels[item.type] ?? item.type}
                       </Button>
                       <small>
-                        {item.key} {item.required && __('Required', 'chatflow-forms')}{' '}
+                        {item.required && __('Required', 'chatflow-forms')}{' '}
                         {item.hiddenByDefault && __('Hidden', 'chatflow-forms')}
                       </small>
-                      <Field
-                        label={__('First bot message', 'chatflow-forms')}
-                        value={item.messages[0] ?? ''}
-                        onChange={(message) =>
-                          setSchema({
-                            ...schema,
-                            steps: schema.steps.map((field) =>
-                              field.id === item.id
-                                ? { ...field, messages: [message, ...field.messages.slice(1)] }
-                                : field,
-                            ) as FormSchema['steps'],
-                          })
-                        }
-                      />
+                      <p className="cff-field-summary">{item.messages[0] || __('No message yet. Select this field to edit.', 'chatflow-forms')}</p>
                       <Button
                         disabled={schema.steps.length >= 500}
                         onClick={() => {
                           const copy = duplicateStep(item, schema.steps, controller.reservedKeys());
                           setSchema({ ...schema, steps: [...schema.steps, copy] });
                           setSelected(copy.id);
+                          setInspectorOpen(true);
                         }}
                       >
                         {__('Duplicate field', 'chatflow-forms')}
@@ -635,6 +650,15 @@ function BuilderView({
               </SortableContext>
             </section>
             {step && (
+              <section ref={inspectorPanel} role={narrow && inspectorOpen ? 'dialog' : undefined} aria-modal={narrow && inspectorOpen ? true : undefined} className={`cff-inspector-panel ${inspectorOpen ? 'is-open' : ''}`} aria-label={__('Field editor', 'chatflow-forms')} onKeyDown={event => {
+                if (event.key === 'Escape') closeInspector();
+                if (!narrow || event.key !== 'Tab') return;
+                const focusable = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), summary, a[href]')].filter(element => !element.closest('details:not([open])') || element.tagName === 'SUMMARY');
+                const first = focusable[0], last = focusable.at(-1);
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+              }}>
+              <div className="cff-inspector-back"><Button onClick={closeInspector}>{__('Back to flow', 'chatflow-forms')}</Button><Button onClick={() => { setInspectorOpen(false); setPaletteOpen(true); }}>{__('Add another field', 'chatflow-forms')}</Button></div>
               <Inspector
                 key={step.id}
                 step={step}
@@ -649,6 +673,7 @@ function BuilderView({
                   })
                 }
               />
+              </section>
             )}
           </div>
         </DndContext>
@@ -677,6 +702,7 @@ function BuilderView({
                       <Button
                         onClick={() => {
                           setSelected(item.id);
+                          setInspectorOpen(true);
                           setTab('build');
                         }}
                       >
@@ -690,7 +716,7 @@ function BuilderView({
                 ))}
             </tbody>
           </table>
-          <FlowMap schema={schema} onChange={setSchema} onSelect={id => { setSelected(id); setTab('build'); }} />
+          <FlowMap schema={schema} onChange={setSchema} onSelect={id => { setSelected(id); setInspectorOpen(true); setTab('build'); }} />
           <PowerEditor schema={schema} onChange={setSchema} />
         </section>
       )}
@@ -762,8 +788,8 @@ function BuilderView({
       )}
       {tab === 'settings' && (
         <Fragment>
-          <EndingsEditor form={form} onChange={(next) => edit(() => next)} />
           <SettingsEditor
+            completion={<EndingsEditor form={form} onChange={(next) => edit(() => next)} />}
             form={form}
             api={api}
             save={() => controller.save()}
@@ -774,23 +800,7 @@ function BuilderView({
       {tab === 'share' && (
         <section className="cff-card">
           <h2>{__('Share', 'chatflow-forms')}</h2>
-          {form.id ? (
-            <Fragment>
-              <code>{shortcode(form)}</code>
-              <p>{__('Use the ChatFlow Form block or an Elementor Shortcode widget.', 'chatflow-forms')}</p>
-              <p>{`${api.config.siteUrl ?? ''}${api.config.fullpageBase ?? 'chat'}/${form.slug}/`}</p>
-              <code>{`<cff-chat data-form-id="${form.id}" data-rest-url="${api.config.restUrl}"></cff-chat>`}</code>
-              <p>
-                {__(
-                  'Published forms only. Custom elements require the plugin runtime asset; no tokens or private settings belong in HTML.',
-                  'chatflow-forms',
-                )}
-              </p>
-            </Fragment>
-          ) : (
-            <p>{__('Save this draft first to get its form ID.', 'chatflow-forms')}</p>
-          )}
-          {form.id > 0 && <Share form={form} config={api.config} />}
+          <Share form={form} config={api.config} />
         </section>
       )}
       {preview && <Preview form={form} config={api.config} onClose={() => setPreview(false)} />}

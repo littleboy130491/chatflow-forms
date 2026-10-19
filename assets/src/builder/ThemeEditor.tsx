@@ -28,7 +28,7 @@ const classicDefaults: Record<ColorKey, string> = {
 
 interface Palette { id: string; label: string; theme: 'light' | 'dark'; wallpaper: NonNullable<Appearance['wallpaper']>; colors: Record<ColorKey, string> }
 export const palettes = (): Palette[] => [
-  { id: 'sky', label: __('Sky', 'chatflow-forms'), theme: 'light', wallpaper: 'doodle', colors: messagingDefaults },
+  { id: 'sky', label: __('Sky', 'chatflow-forms'), theme: 'light', wallpaper: 'doodle', colors: { ...messagingDefaults, primary: '#2271b1' } },
   { id: 'meadow', label: __('Meadow', 'chatflow-forms'), theme: 'light', wallpaper: 'doodle', colors: { primary: '#008069', headerBackground: '#008069', headerText: '#ffffff', chatBackground: '#efe7de', botBubbleBackground: '#ffffff', textColor: '#111b21', userBubbleBackground: '#d9fdd3', userTextColor: '#111b21' } },
   { id: 'lavender', label: __('Lavender', 'chatflow-forms'), theme: 'light', wallpaper: 'gradient', colors: { primary: '#7b5cff', headerBackground: '#ffffff', headerText: '#1e1b3a', chatBackground: '#ece8ff', botBubbleBackground: '#ffffff', textColor: '#1e1b3a', userBubbleBackground: '#7b5cff', userTextColor: '#ffffff' } },
   { id: 'sunset', label: __('Sunset', 'chatflow-forms'), theme: 'light', wallpaper: 'dots', colors: { primary: '#f0602b', headerBackground: '#fff4ec', headerText: '#3a1d0e', chatBackground: '#fde6d5', botBubbleBackground: '#ffffff', textColor: '#3a1d0e', userBubbleBackground: '#f0602b', userTextColor: '#ffffff' } },

@@ -18,6 +18,12 @@ import type { FormSchema } from './api';
 import '@xyflow/react/dist/style.css';
 
 type MapNode = Node<{ label: string }>;
+const shortLabel = (label: string) => [...label].length > 88 ? [...label].slice(0, 87).join('') + '…' : label;
+// Wrap the bounded text without clipping the connection handles outside the node.
+const nodeStyle = { width: 210, overflowWrap: 'anywhere' as const };
+const endingLabel = (ending: FormSchema['endings'][number]) =>
+  ending.messages?.find(message => message.trim())?.replace(/\s+/g, ' ').trim() ||
+  (ending.type === 'redirect' ? __('Redirect to website', 'chatflow-forms') : __('Thank-you message', 'chatflow-forms'));
 
 /** Schema-derived graph. Nodes are not deletable here: steps are removed in the builder. */
 function graph(schema: FormSchema): { nodes: MapNode[]; edges: Edge[] } {
@@ -29,15 +35,18 @@ function graph(schema: FormSchema): { nodes: MapNode[]; edges: Edge[] } {
     ...schema.steps.map((s, i) => ({
       id: s.id,
       position: position(s.id, i),
-      data: { label: `${i + 1}. ${s.label} (${s.key})` },
+      data: { label: shortLabel(`${i + 1}. ${s.label}`) },
+      ariaLabel: `${i + 1}. ${s.label}`,
+      style: nodeStyle,
       type: 'default',
       deletable: false,
     })),
     ...schema.endings.map((e, i) => ({
       id: e.id,
       position: position(e.id, schema.steps.length + i),
-      /* translators: %s: ending ID */
-      data: { label: sprintf(__('Ending: %s', 'chatflow-forms'), e.id) },
+      data: { label: shortLabel(endingLabel(e)) },
+      ariaLabel: endingLabel(e),
+      style: nodeStyle,
       type: 'output',
       deletable: false,
     })),
