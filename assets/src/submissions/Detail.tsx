@@ -41,11 +41,13 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
     [busy, setBusy] = useState(false),
     [page, setPage] = useState(1);
   // Only the latest request may update the list, so a slow earlier page cannot overwrite it.
-  const latest = useRef(0);
+  // Reloads after an awaited action (e.g. retry) read the page shown now, not the one captured earlier.
+  const latest = useRef(0), currentPage = useRef(page);
+  currentPage.current = page;
   const load = () => {
     const request = ++latest.current;
     return api
-      .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
+      .request<Activity>(`admin/submissions/${id}/activity?page=${currentPage.current}&perPage=100`)
       .then((result) => { if (request === latest.current) setActivity(result); })
       .catch((err) => { if (request === latest.current) setError(errorMessage(err)); });
   };
@@ -122,8 +124,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
           </li>
         ))}
       </ul>
-      <Button disabled={page <= 1} onClick={() => setPage(page - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
-      <Button disabled={!hasMore} onClick={() => setPage(page + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || page <= 1} onClick={() => setPage(page - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || !hasMore} onClick={() => setPage(page + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }

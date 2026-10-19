@@ -211,3 +211,27 @@ it('ignores a slower earlier activity response after paging',async()=>{
   expect(host.textContent).not.toContain('code_200');
   await act(async()=>root.unmount());
 });
+it('keeps the current activity page while a delivery retry reloads it',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  const delivery={id:7,channel:'webhook',destination_id:'hook',status:'failed',attempts:1,last_error:null,created_at:row.createdAt};
+  let releaseRetry:()=>void=()=>{};
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(url.includes('/retry'))return new Promise(resolve=>{releaseRetry=()=>resolve(response({queued:true}));});
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    return Promise.resolve(response({deliveries:page===1?[delivery]:[{...delivery,id:8}],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100}));
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  await act(async()=>button('Retry delivery').click());
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>releaseRetry());
+  expect(host.textContent).toContain('code_1');
+  expect(host.textContent).not.toContain('code_200');
+  await act(async()=>root.unmount());
+});
