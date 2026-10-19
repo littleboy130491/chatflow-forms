@@ -235,3 +235,26 @@ it('keeps the current activity page while a delivery retry reloads it',async()=>
   expect(host.textContent).not.toContain('code_200');
   await act(async()=>root.unmount());
 });
+it('disables activity paging until the requested page has loaded',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  let releasePage:()=>void=()=>{};
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    const body=response({deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100});
+    return page===1?Promise.resolve(body):new Promise(resolve=>{releasePage=()=>resolve(body);});
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(button('Older activity').disabled).toBe(true);
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>releasePage());
+  expect(host.textContent).toContain('code_1');
+  expect(button('Newer activity').disabled).toBe(false);
+  expect(transport.mock.calls.filter(call=>String(call[0]).includes('page=3'))).toHaveLength(0);
+  await act(async()=>root.unmount());
+});

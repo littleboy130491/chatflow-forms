@@ -56,6 +56,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   }, [api, id, page]);
   // The endpoint pages notes and deliveries together; a full page may have more behind it.
   const hasMore = Boolean(activity && (activity.items.length >= activity.perPage || activity.deliveries.length >= activity.perPage));
+  // Page from what is displayed; while another page loads, both controls wait for it.
+  const shown = activity?.page ?? 1, loadingPage = !activity || shown !== page;
   return (
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
@@ -124,8 +126,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
           </li>
         ))}
       </ul>
-      <Button disabled={busy || page <= 1} onClick={() => setPage(page - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
-      <Button disabled={busy || !hasMore} onClick={() => setPage(page + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loadingPage || shown <= 1} onClick={() => setPage(shown - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loadingPage || !hasMore} onClick={() => setPage(shown + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }
