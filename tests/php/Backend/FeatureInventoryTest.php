@@ -107,6 +107,7 @@ final class FeatureInventoryTest extends \PHPUnit\Framework\TestCase {
 			// The inbox list carries each row's frozen form title and labels, so it needs no per-row detail requests.
 			$list_request = new \WP_REST_Request( 'GET', '/cff/v1/admin/submissions' );
 			$list_request->set_query_params( array( 'formId' => $form->id() ) );
+			$list_request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
 			$list = rest_do_request( $list_request );
 			self::assertSame( 200, $list->get_status() );
 			$frozen = json_decode( wp_json_encode( $list->get_data()['forms'] ), true );
