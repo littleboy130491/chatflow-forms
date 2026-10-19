@@ -24,6 +24,18 @@ describe('native Forms table REST-backed actions', () => {
     await formsListAction(new AdminApi(config, transport), 'export', 12); expect(downloadForm).toHaveBeenCalledWith({ id: 12 });
     await formsListAction(new AdminApi(config, transport), 'copy', 12); expect(copy).toHaveBeenCalledWith('[chatflow id="12"]');
   });
+  it('confirms a copied shortcode with action-specific feedback', async () => {
+    const copy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: copy } });
+    const root = document.createElement('div');
+    root.innerHTML = '<div data-cff-status role="status"></div><button data-cff-action="copy" data-form-id="12">Copy</button>';
+    document.body.append(root);
+    mountFormsList(root, config);
+    root.querySelector('button')!.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(root.querySelector('[data-cff-status]')?.textContent).toBe('Shortcode copied.');
+    expect(copy).toHaveBeenCalledWith('[chatflow id="12"]');
+  });
   it('asks before following a permanent-delete link from the Trash view', () => {
     const root = document.createElement('div');
     root.innerHTML = '<a href="#delete" data-cff-confirm="Delete this form permanently?"><span>Delete permanently</span></a>';

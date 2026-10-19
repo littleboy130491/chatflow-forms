@@ -15,6 +15,9 @@ export default defineConfig({
     baseURL: process.env.CFF_E2E_BASE_URL ?? 'http://localhost:8888',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    launchOptions: process.env.CFF_E2E_CHROMIUM_EXECUTABLE
+      ? { executablePath: process.env.CFF_E2E_CHROMIUM_EXECUTABLE }
+      : undefined,
   },
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },

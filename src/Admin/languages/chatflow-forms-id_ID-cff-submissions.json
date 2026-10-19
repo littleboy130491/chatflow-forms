@@ -88,6 +88,9 @@
       "Add admin email": [
         "Tambah email admin"
       ],
+      "Add another field": [
+        "Tambah pertanyaan lain"
+      ],
       "Add autoresponder": [
         "Tambah balasan otomatis"
       ],
@@ -102,6 +105,9 @@
       ],
       "Add ending": [
         "Tambah penutup"
+      ],
+      "Add field": [
+        "Tambah pertanyaan"
       ],
       "Add message": [
         "Tambah pesan"
@@ -127,6 +133,9 @@
       "Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:": [
         "Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:"
       ],
+      "Add to a WordPress page": [
+        "Pasang di halaman WordPress"
+      ],
       "Add variant": [
         "Tambah varian"
       ],
@@ -139,6 +148,24 @@
       "Admin notifications": [
         "Notifikasi admin"
       ],
+      "Advanced": [
+        "Lanjutan"
+      ],
+      "Advanced custom element": [
+        "Elemen kustom lanjutan"
+      ],
+      "Advanced filters": [
+        "Filter lanjutan"
+      ],
+      "Advanced message options": [
+        "Opsi pesan lanjutan"
+      ],
+      "Advanced: prefill answers": [
+        "Lanjutan: isi jawaban awal"
+      ],
+      "Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.": [
+        "Laporan gabungan menggunakan tanggal UTC. Funnel form di bawah menggunakan zona waktu situs, sehingga batas hari dan totalnya dapat berbeda."
+      ],
       "All": [
         "Semua"
       ],
@@ -147,6 +174,9 @@
       ],
       "All forms": [
         "Semua formulir"
+      ],
+      "All settings saved.": [
+        "Semua pengaturan tersimpan."
       ],
       "All statuses": [
         "Semua status"
@@ -283,8 +313,8 @@
       "Automatic (from the link)": [
         "Otomatis (dari tautan)"
       ],
-      "Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”.": [
-        "Penempatan peluncur otomatis dan pemicu popup diatur per formulir: buka tab Pengaturan formulir ini dan gunakan “Tampilan dan interaksi”."
+      "Automatic launcher placement and popup triggers are set per form in Settings → Display.": [
+        "Penempatan tombol chat otomatis dan pemicu popup diatur per form melalui Pengaturan → Tampilan."
       ],
       "Automatic retention": [
         "Retensi otomatis"
@@ -307,11 +337,20 @@
       "Back": [
         "Kembali"
       ],
+      "Back to editor": [
+        "Kembali ke editor"
+      ],
+      "Back to flow": [
+        "Kembali ke alur"
+      ],
       "Back to submissions": [
         "Kembali ke kiriman"
       ],
       "Base URL (https, e.g. https://api.openai.com/v1)": [
         "URL dasar (https, mis. https://api.openai.com/v1)"
+      ],
+      "Basic": [
+        "Dasar"
       ],
       "Below 4.5:1": [
         "Di bawah 4,5:1"
@@ -400,6 +439,9 @@
       "Change this submission to “%s”?": [
         "Ubah kiriman ini menjadi “%s”?"
       ],
+      "Changes are compared with the current live version.": [
+        "Perubahan dibandingkan dengan versi yang sedang tayang."
+      ],
       "Changing a value changes exports and integrations. Its ID stays unchanged.": [
         "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
       ],
@@ -447,6 +489,9 @@
       ],
       "Choice layout": [
         "Tata letak pilihan"
+      ],
+      "Choices": [
+        "Pilihan"
       ],
       "Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.": [
         "Pilihan berasal dari kunci jawaban pada halaman yang dimuat. Hanya nama kunci, bukan nilai jawaban, yang disimpan di peramban ini."
@@ -514,6 +559,9 @@
       "Column preferences cannot be saved in this browser.": [
         "Preferensi kolom tidak dapat disimpan di peramban ini."
       ],
+      "Columns": [
+        "Kolom"
+      ],
       "Comma": [
         "Koma"
       ],
@@ -543,9 +591,6 @@
       ],
       "Confetti on completion (off by default)": [
         "Konfeti saat selesai (nonaktif secara bawaan)"
-      ],
-      "Confirm publish": [
-        "Konfirmasi penerbitan"
       ],
       "Connect a step to a later step or ending to create a branch. Click a branch and press Delete or Backspace to remove it. Click a step to edit its rule conditions. Drag nodes to arrange the map.": [
         "Hubungkan langkah ke langkah berikutnya atau akhir untuk membuat cabang. Klik cabang lalu tekan Delete atau Backspace untuk menghapusnya. Klik langkah untuk mengedit kondisi aturannya. Seret node untuk menata peta."
@@ -586,6 +631,9 @@
       "Contact us": [
         "Hubungi kami"
       ],
+      "Contains": [
+        "Mengandung"
+      ],
       "Content": [
         "Konten"
       ],
@@ -610,14 +658,32 @@
       "Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.": [
         "Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia."
       ],
+      "Copied": [
+        "Tersalin"
+      ],
       "Copy": [
         "Salin"
+      ],
+      "Copy custom element": [
+        "Salin elemen kustom"
+      ],
+      "Copy link": [
+        "Salin tautan"
+      ],
+      "Copy response ID": [
+        "Salin ID respons"
+      ],
+      "Copy shortcode": [
+        "Salin shortcode"
       ],
       "Copy stored IP": [
         "Salin IP tersimpan"
       ],
       "Copy the ID from ChatFlow Forms. Only published forms render.": [
         "Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan."
+      ],
+      "Copy unavailable. Select and copy the text instead.": [
+        "Tidak dapat menyalin otomatis. Pilih teks lalu salin secara manual."
       ],
       "Corner radius": [
         "Radius sudut"
@@ -634,6 +700,9 @@
       "Create experiment": [
         "Buat eksperimen"
       ],
+      "Create form": [
+        "Buat form"
+      ],
       "Create private export": [
         "Buat ekspor pribadi"
       ],
@@ -648,6 +717,9 @@
       ],
       "Custom CSS, focus indicators and real device behavior require separate visual checks.": [
         "CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah."
+      ],
+      "Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML.": [
+        "Elemen kustom memerlukan aset runtime plugin. Jangan menyertakan token atau pengaturan privat dalam HTML."
       ],
       "Custom headers (private)": [
         "Header khusus (pribadi)"
@@ -748,9 +820,6 @@
       "Devices": [
         "Perangkat"
       ],
-      "Diff compares this draft to the current published snapshot.": [
-        "Perbandingan membandingkan draf ini dengan versi terbit saat ini."
-      ],
       "Direct / unknown": [
         "Langsung / tidak diketahui"
       ],
@@ -759,6 +828,12 @@
       ],
       "Discard local edits and reload?": [
         "Buang perubahan lokal dan muat ulang?"
+      ],
+      "Dismiss": [
+        "Tutup"
+      ],
+      "Display": [
+        "Tampilan"
       ],
       "Display and engagement": [
         "Tampilan dan interaksi"
@@ -774,6 +849,9 @@
       ],
       "Do not store": [
         "Jangan simpan"
+      ],
+      "Does not equal": [
+        "Tidak sama dengan"
       ],
       "Doodles": [
         "Coretan"
@@ -798,9 +876,6 @@
       ],
       "Draft preview": [
         "Pratinjau draf"
-      ],
-      "Draft preview — no sessions or jobs": [
-        "Pratinjau draf — tanpa sesi atau tugas"
       ],
       "Draft saved": [
         "Draf disimpan"
@@ -847,6 +922,9 @@
       "Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.": [
         "Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia."
       ],
+      "Embed": [
+        "Sematkan"
+      ],
       "Emoji": [
         "Emoji"
       ],
@@ -886,9 +964,6 @@
       "Ending type": [
         "Jenis penutup"
       ],
-      "Ending: %s": [
-        "Akhir: %s"
-      ],
       "Endings and completion": [
         "Penutup dan penyelesaian"
       ],
@@ -897,6 +972,9 @@
       ],
       "Enter the full number including the country code, for example 6281234567890.": [
         "Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890."
+      ],
+      "Equals": [
+        "Sama dengan"
       ],
       "Event name": [
         "Nama peristiwa"
@@ -958,8 +1036,14 @@
       "Field": [
         "Kolom"
       ],
+      "Field editor": [
+        "Editor pertanyaan"
+      ],
       "Field key": [
         "Kunci kolom"
+      ],
+      "Field keys": [
+        "Kunci field"
       ],
       "Field labels": [
         "Label kolom"
@@ -982,8 +1066,8 @@
       "Find a form": [
         "Cari formulir"
       ],
-      "First bot message": [
-        "Pesan bot pertama"
+      "Find more forms": [
+        "Cari form lain"
       ],
       "First-touch attribution": [
         "Atribusi kunjungan pertama"
@@ -1012,9 +1096,6 @@
       "Form ID": [
         "ID formulir"
       ],
-      "Form ID (0 = all)": [
-        "ID formulir (0 = semua)"
-      ],
       "Form ID (blank = all)": [
         "ID formulir (kosong = semua)"
       ],
@@ -1039,8 +1120,14 @@
       "Form name": [
         "Nama formulir"
       ],
+      "Form published": [
+        "Form telah tayang"
+      ],
       "Form restored.": [
         "Formulir dipulihkan."
+      ],
+      "Form settings sections": [
+        "Bagian pengaturan form"
       ],
       "Form version": [
         "Versi formulir"
@@ -1084,9 +1171,6 @@
       "Full page": [
         "Halaman penuh"
       ],
-      "Full-page URL and QR code": [
-        "URL halaman penuh dan kode QR"
-      ],
       "Fullpage": [
         "Halaman penuh"
       ],
@@ -1101,6 +1185,12 @@
       ],
       "Gather experience ratings, suggestions, and recommendation intent without contact details.": [
         "Kumpulkan penilaian pengalaman, saran, dan niat merekomendasikan tanpa detail kontak."
+      ],
+      "General": [
+        "Umum"
+      ],
+      "General / Completion": [
+        "Umum / Penyelesaian"
       ],
       "Generate a form with AI": [
         "Buat formulir dengan AI"
@@ -1143,6 +1233,12 @@
       ],
       "Great choice. When would you like to start?": [
         "Pilihan bagus. Kapan Anda ingin mulai?"
+      ],
+      "Greater than": [
+        "Lebih besar dari"
+      ],
+      "Greater than or equal to": [
+        "Lebih besar atau sama dengan"
       ],
       "Group selected": [
         "Kelompokkan yang dipilih"
@@ -1270,6 +1366,12 @@
       "Intake request and explicit consent; not medical advice or emergency care.": [
         "Permintaan konsultasi dan persetujuan eksplisit; bukan nasihat medis atau layanan darurat."
       ],
+      "Integrations": [
+        "Integrasi"
+      ],
+      "Integrations and AI": [
+        "Integrasi dan AI"
+      ],
       "Invalid ChatFlow form file.": [
         "Berkas formulir ChatFlow tidak valid."
       ],
@@ -1284,6 +1386,12 @@
       ],
       "Invalid form action.": [
         "Tindakan formulir tidak valid."
+      ],
+      "Is empty": [
+        "Kosong"
+      ],
+      "Is not empty": [
+        "Tidak kosong"
       ],
       "Jump to field": [
         "Lompat ke kolom"
@@ -1351,6 +1459,12 @@
       "Left": [
         "Kiri"
       ],
+      "Less than": [
+        "Lebih kecil dari"
+      ],
+      "Less than or equal to": [
+        "Lebih kecil atau sama dengan"
+      ],
       "Lets AI agents such as Claude, ChatGPT or Cursor list, create, edit and publish forms, and read submissions and analytics, through the Model Context Protocol. An agent acts as the WordPress user whose application password it uses, with that user’s ChatFlow permissions. Submissions can contain personal data: connect only agents you trust.": [
         "Memungkinkan agen AI seperti Claude, ChatGPT, atau Cursor menampilkan, membuat, mengedit, dan menerbitkan formulir, serta membaca kiriman dan analitik, melalui Model Context Protocol. Agen bertindak sebagai pengguna WordPress pemilik kata sandi aplikasi yang dipakainya, dengan izin ChatFlow pengguna tersebut. Kiriman dapat berisi data pribadi: hubungkan hanya agen yang Anda percayai."
       ],
@@ -1362,6 +1476,9 @@
       ],
       "Limits": [
         "Batasan"
+      ],
+      "Link": [
+        "Tautan"
       ],
       "Link (WhatsApp, https, tel: or mailto:; merge tags allowed)": [
         "Tautan (WhatsApp, https, tel: atau mailto:; tag gabungan boleh)"
@@ -1603,8 +1720,14 @@
       "No logic warnings detected.": [
         "Tidak ditemukan peringatan logika."
       ],
+      "No matching fields. Try another search.": [
+        "Tidak ada pertanyaan yang cocok. Coba kata pencarian lain."
+      ],
       "No matching submissions.": [
         "Tidak ada kiriman yang cocok."
+      ],
+      "No message yet. Select this field to edit.": [
+        "Belum ada pesan. Pilih pertanyaan ini untuk mengeditnya."
       ],
       "No on-screen keyboard": [
         "Tanpa keyboard layar"
@@ -1629,6 +1752,9 @@
       ],
       "Notes": [
         "Catatan"
+      ],
+      "Notifications": [
+        "Notifikasi"
       ],
       "Notify on abandoned contact leads": [
         "Kirim notifikasi untuk prospek kontak yang ditinggalkan"
@@ -1668,6 +1794,9 @@
       ],
       "Only trashed forms can be restored or deleted permanently.": [
         "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
+      ],
+      "Open form": [
+        "Buka form"
       ],
       "Open imported form": [
         "Buka formulir hasil impor"
@@ -1716,6 +1845,9 @@
       ],
       "Override step order (safe independent steps only)": [
         "Ubah urutan langkah (hanya langkah mandiri yang aman)"
+      ],
+      "Overview · UTC": [
+        "Ringkasan · UTC"
       ],
       "Page exclusions take precedence. A published form is required for automatic placement.": [
         "Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis."
@@ -1804,11 +1936,11 @@
       "Preferred appointment date (subject to confirmation)": [
         "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
       ],
-      "Prefill URL builder": [
-        "Pembuat URL isian awal"
-      ],
       "Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.": [
         "Isian awal menyarankan jawaban yang dapat diubah; tidak melewati validasi atau memberikan persetujuan. URL dapat masuk ke riwayat dan log server: jangan sertakan data pribadi atau rahasia."
+      ],
+      "Preparing QR code…": [
+        "Menyiapkan kode QR…"
       ],
       "Preview": [
         "Pratinjau"
@@ -1825,6 +1957,9 @@
       "Preview saves the current draft. Test sends use the published version; publish changed notification settings before testing them.": [
         "Pratinjau menyimpan draf saat ini. Pengiriman uji memakai versi terbit; terbitkan perubahan pengaturan notifikasi sebelum mengujinya."
       ],
+      "Preview your form": [
+        "Pratinjau form Anda"
+      ],
       "Previous": [
         "Sebelumnya"
       ],
@@ -1836,6 +1971,12 @@
       ],
       "Print": [
         "Cetak"
+      ],
+      "Privacy": [
+        "Privasi"
+      ],
+      "Privacy and retention": [
+        "Privasi dan retensi"
       ],
       "Privacy and retention override": [
         "Pengaturan khusus privasi dan retensi"
@@ -1873,11 +2014,17 @@
       "Public site key": [
         "Kunci situs publik"
       ],
+      "Publication result": [
+        "Hasil publikasi"
+      ],
       "Publish": [
         "Terbitkan"
       ],
       "Publish failed.": [
         "Penerbitan gagal."
+      ],
+      "Publish form?": [
+        "Tayangkan form?"
       ],
       "Publish new version": [
         "Terbitkan versi baru"
@@ -1888,11 +2035,14 @@
       "Publish this form before embedding it.": [
         "Terbitkan formulir sebelum menyematkannya."
       ],
+      "Publish your form to get a shareable link": [
+        "Tayangkan form untuk mendapatkan tautan yang dapat dibagikan"
+      ],
       "Published form ID": [
         "ID formulir yang telah diterbitkan"
       ],
-      "Published forms only. Custom elements require the plugin runtime asset; no tokens or private settings belong in HTML.": [
-        "Hanya formulir terbit. Elemen khusus memerlukan aset runtime plugin; jangan sertakan token atau pengaturan pribadi di HTML."
+      "Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.": [
+        "Publikasi menyimpan draf ini dan membuat versi tayang tetap dari form beserta pengaturan privatnya. Respons yang sudah ada tetap disimpan."
       ],
       "Purge audit log": [
         "Log audit penghapusan"
@@ -1909,11 +2059,17 @@
       "Purge submissions": [
         "Hapus kiriman"
       ],
+      "QR code": [
+        "Kode QR"
+      ],
       "Qualify website project inquiries, with conditional questions.": [
         "Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat."
       ],
       "Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing.": [
         "Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan."
+      ],
+      "Questions: %d added, %d changed, %d removed.": [
+        "Pertanyaan: %d ditambahkan, %d diubah, %d dihapus."
       ],
       "Rate window seconds": [
         "Jendela pembatasan (detik)"
@@ -1923,6 +2079,9 @@
       ],
       "Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.": [
         "Penilaian: 1–5, skala: 1–10, NPS: 0–10. Nilai disimpan sebagai angka."
+      ],
+      "Ratings": [
+        "Penilaian"
       ],
       "Reaction text": [
         "Teks reaksi"
@@ -1953,6 +2112,9 @@
       ],
       "Redirect delay (milliseconds)": [
         "Jeda pengalihan (milidetik)"
+      ],
+      "Redirect to website": [
+        "Alihkan ke situs web"
       ],
       "Redo": [
         "Ulangi"
@@ -2065,6 +2227,12 @@
       "Respondent email field": [
         "Kolom email responden"
       ],
+      "Response": [
+        "Respons"
+      ],
+      "Response ID": [
+        "ID respons"
+      ],
       "Restart preview": [
         "Mulai ulang pratinjau"
       ],
@@ -2091,6 +2259,9 @@
       ],
       "Reusable email content": [
         "Konten email yang dapat digunakan kembali"
+      ],
+      "Review changes and version details": [
+        "Tinjau perubahan dan detail versi"
       ],
       "Rewrote %1$d of %2$d texts.": [
         "Menulis ulang %1$d dari %2$d teks."
@@ -2119,6 +2290,9 @@
       "Saturday": [
         "Sabtu"
       ],
+      "Save applies to all sections.": [
+        "Penyimpanan berlaku untuk semua bagian."
+      ],
       "Save draft": [
         "Simpan draf"
       ],
@@ -2134,8 +2308,8 @@
       "Save settings": [
         "Simpan pengaturan"
       ],
-      "Save this draft first to get its form ID.": [
-        "Simpan draf terlebih dahulu untuk memperoleh ID formulir."
+      "Save your draft, then choose Publish. Your link, embeds and QR code will appear here when the form is live.": [
+        "Simpan draf, lalu pilih Tayangkan. Tautan, sematan, dan kode QR akan muncul di sini setelah form tayang."
       ],
       "Saved template": [
         "Templat tersimpan"
@@ -2212,17 +2386,35 @@
       "Settings saved.": [
         "Pengaturan disimpan."
       ],
+      "Settings sections": [
+        "Bagian pengaturan"
+      ],
       "Shape": [
         "Bentuk"
       ],
       "Share": [
         "Bagikan"
       ],
+      "Share a QR code": [
+        "Bagikan kode QR"
+      ],
+      "Share a link": [
+        "Bagikan tautan"
+      ],
+      "Share and embed": [
+        "Bagikan dan sematkan"
+      ],
+      "Sharing options": [
+        "Pilihan berbagi"
+      ],
       "Short text": [
         "Teks pendek"
       ],
       "Shortcode": [
         "Shortcode"
+      ],
+      "Shortcode copied.": [
+        "Shortcode tersalin."
       ],
       "Show a contact button below the conversation": [
         "Tampilkan tombol kontak di bawah percakapan"
@@ -2244,6 +2436,12 @@
       ],
       "Single choice": [
         "Pilihan tunggal"
+      ],
+      "Site timezone: %s": [
+        "Zona waktu situs: %s"
+      ],
+      "Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.": [
+        "Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri."
       ],
       "Skipped": [
         "Dilewati"
@@ -2317,9 +2515,6 @@
       "Step engagement and drop-off": [
         "Interaksi langkah dan penurunan jumlah responden"
       ],
-      "Steps: %d added, %d changed, %d removed. A new version freezes schema and private settings.": [
-        "Langkah: %d ditambahkan, %d diubah, %d dihapus. Versi baru membekukan skema dan pengaturan pribadi."
-      ],
       "Store permitted metadata": [
         "Simpan metadata yang diizinkan"
       ],
@@ -2377,6 +2572,12 @@
       "Target": [
         "Target"
       ],
+      "Technical activity": [
+        "Aktivitas teknis"
+      ],
+      "Technical details": [
+        "Detail teknis"
+      ],
       "Telephone keypad": [
         "Papan tombol telepon"
       ],
@@ -2389,6 +2590,9 @@
       "Test recipient": [
         "Penerima uji"
       ],
+      "Test your draft as a visitor. Responses here are not saved, and notifications are not sent.": [
+        "Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim."
+      ],
       "Thank you for your submission": [
         "Terima kasih atas kiriman Anda"
       ],
@@ -2397,6 +2601,9 @@
       ],
       "Thank you. Your request has been received.": [
         "Terima kasih. Permintaan Anda telah diterima."
+      ],
+      "Thank-you message": [
+        "Pesan terima kasih"
       ],
       "The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.": [
         "Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
@@ -2584,8 +2791,8 @@
       "Use template": [
         "Gunakan templat"
       ],
-      "Use the ChatFlow Form block or an Elementor Shortcode widget.": [
-        "Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor."
+      "Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.": [
+        "Gunakan blok ChatFlow Form, tempel shortcode ini ke blok Shortcode, atau gunakan widget Shortcode di Elementor."
       ],
       "Use this WhatsApp link": [
         "Gunakan tautan WhatsApp ini"
@@ -2734,6 +2941,9 @@
       "Your email": [
         "Email Anda"
       ],
+      "Your form is live. Share it with your visitors.": [
+        "Form Anda sudah tayang. Bagikan kepada pengunjung."
+      ],
       "Your name": [
         "Nama Anda"
       ],
@@ -2805,6 +3015,9 @@
       ],
       "starts with": [
         "diawali dengan"
+      ],
+      "“%s” will be available to visitors. Later edits stay in your draft until you publish again.": [
+        "“%s” akan tersedia bagi pengunjung. Perubahan berikutnya tetap tersimpan sebagai draf sampai Anda menayangkannya lagi."
       ]
     }
   }

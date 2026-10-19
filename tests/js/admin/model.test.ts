@@ -262,6 +262,22 @@ describe('draft mutation serialization and conflict recovery', () => {
     controller.redo();
     expect(controller.state.form.title).toBe('New');
   });
+  it('retains the assigned public identity without replacing edits made during first publish', async () => {
+    const form = { ...blankForm(), id: 42, draftRevision: 1 };
+    const response = deferred<FormDTO>();
+    const started = deferred<void>();
+    const { client } = api(async () => { started.resolve(); return response.promise; });
+    const controller = new DraftController(client, form);
+    const pending = controller.publish();
+    await started.promise;
+    controller.edit(f => ({ ...f, title: 'Local title', settings: { ...f.settings, display: { mode: 'launcher' } } }));
+    const live: FormDTO = { ...form, slug: 'contact', version: 1, draftRevision: 2, status: 'publish' };
+    response.resolve(live);
+    expect(await pending).toEqual(live);
+    expect(controller.state.form).toMatchObject({ slug: 'contact', title: 'Local title', version: 1, settings: { display: { mode: 'launcher' } } });
+    expect(controller.state.saved).toBe(editable(live));
+    expect(controller.dirty()).toBe(true);
+  });
   it('reserves deleted keys and choice values for the editor lifetime', () => {
     const form = stored(),
       choice = makeStep('single_choice', form.schema.steps);

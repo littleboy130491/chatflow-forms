@@ -233,13 +233,20 @@ function BuilderView({
     media.addEventListener('change', changed);
     return () => media.removeEventListener('change', changed);
   }, []);
+  const step = schema.steps.find((item) => item.id === selected);
+  const hasStep = Boolean(step);
+  useEffect(() => {
+    if (step) return;
+    setSelected(schema.steps[0]?.id ?? '');
+    setInspectorOpen(false);
+  }, [step, schema.steps]);
   const focusField = () => {
     const buttons = inspectorPanel.current?.closest('main')?.querySelectorAll<HTMLButtonElement>('[data-step-id]');
     [...(buttons ?? [])].find(button => button.dataset.stepId === selected)?.focus();
   };
   const closeInspector = () => { setInspectorOpen(false); focusField(); };
   useEffect(() => {
-    if (!narrow || !inspectorOpen || tab !== 'build') return;
+    if (!narrow || !inspectorOpen || tab !== 'build' || !hasStep || !inspectorPanel.current) return;
     inspectorPanel.current?.querySelector<HTMLButtonElement>('button')?.focus();
     const background = inspectorPanel.current?.closest('main')?.querySelectorAll<HTMLElement>('.cff-toolbar, main > .cff-tabs, .cff-palette, .cff-flow, .cff-build-actions');
     const blocked = [...(background ?? [])].filter(element => !element.hasAttribute('inert'));
@@ -251,16 +258,17 @@ function BuilderView({
       document.body.style.overflow = overflow;
       focusField();
     };
-  }, [narrow, inspectorOpen, selected, tab]);
+  }, [narrow, inspectorOpen, selected, tab, hasStep]);
   const [publishedForm, setPublishedForm] = useState<FormDTO | null>(null);
-  const [baseline, setBaseline] = useState<FormSchema | null>(null);
+  const [liveForm, setLiveForm] = useState<FormDTO | null>(null);
+  const baseline = liveForm?.schema ?? null;
   const [baselineError, setBaselineError] = useState('');
   useEffect(() => {
     if (!form.version || !form.id) return;
     let active = true;
     void api.request<FormDTO>(`admin/forms/${form.id}/published`).then(live => {
-      if (active) { setBaseline(live.schema); setBaselineError(''); }
-    }).catch(err => { if (active) { setBaseline(null); setBaselineError(errorMessage(err)); } });
+      if (active) { setLiveForm(live); setBaselineError(''); }
+    }).catch(err => { if (active) { setBaselineError(errorMessage(err)); } });
     return () => { active = false; };
   }, [api, form.id, form.version]);
   const sensors = useSensors(
@@ -270,7 +278,6 @@ function BuilderView({
   const issues = useMemo(() => diagnoseSchema(schema), [schema]);
   const edit = (transform: (form: FormDTO) => FormDTO) => controller.edit(transform);
   const setSchema = (next: FormSchema) => edit((value) => ({ ...value, schema: next }));
-  const step = schema.steps.find((item) => item.id === selected);
   const add = (type: string) => {
     const next = makeStep(type as Step['type'], schema.steps, controller.reservedKeys());
     setSchema({ ...schema, steps: [...schema.steps, next] });
@@ -468,7 +475,7 @@ function BuilderView({
             onClick={async () => {
               try {
                 const published = await controller.publish();
-                setBaseline(published.schema);
+                setLiveForm(published);
                 setPublishedForm(published);
                 closePublish();
               } catch {
@@ -800,7 +807,7 @@ function BuilderView({
       {tab === 'share' && (
         <section className="cff-card">
           <h2>{__('Share', 'chatflow-forms')}</h2>
-          <Share form={form} config={api.config} />
+          {liveForm || !form.version ? <Share form={liveForm ?? form} config={api.config} /> : !baselineError && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
         </section>
       )}
       {preview && <Preview form={form} config={api.config} onClose={() => setPreview(false)} />}

@@ -16,6 +16,7 @@ vi.mock('@wordpress/components', () => {
   type Props = { children?: ReactNode; onClick?: () => void; disabled?: boolean; label?: string; value?: unknown; onChange?: (value: string) => void; options?: {value:string;label:string}[] };
   return { Button: (p: Props) => h('button', {onClick:p.onClick, disabled:p.disabled},p.children), Notice: (p: Props) => h('div',{role:'alert'},p.children), TextControl: (p: Props) => h('label',{},p.label,h('input',{value:p.value as string,onChange:(e:ChangeEvent<HTMLInputElement>)=>p.onChange?.(e.target.value)})), TextareaControl: (p: Props) => h('textarea',{'aria-label':p.label}), SelectControl: (p: Props) => h('label',{},p.label,h('select',{value:p.value as string,onChange:(e:ChangeEvent<HTMLSelectElement>)=>p.onChange?.(e.target.value)},p.options?.map(o=>h('option',{key:o.value,value:o.value},o.label)))), ToggleControl: (p: Props) => h('button',{role:'switch'},p.label) };
 });
+(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const config: AdminConfig = {restUrl:location.origin+'/wp-json/cff/v1/',nonce:'fixture',pluginUrl:'/',screen:'submissions',locale:'en',features:{fieldTypes:[]},capabilities:{view_submissions:true,edit_submissions:true,delete_submissions:true,export_submissions:true}};
 const row = {id:42,uuid:'12345678-1234-4234-8234-123456789abc',formId:5,formVersion:1,answers:{name:'Ada'},meta:{},createdAt:'2026-10-19T10:00:00+00:00',status:'completed',progress:100};
 const response = (value: unknown) => new Response(JSON.stringify(value));
@@ -125,6 +126,31 @@ it('keeps advanced filter values when collapsed and submits human-labeled operat
   expect(changed).toHaveBeenCalledWith({status:'completed',isRead:false,operator:'gte',fieldKey:'name'});
   await act(async()=>root.unmount());
 });
+it('filters retained responses by a historical form ID absent from the named picker', async () => {
+  const transport = vi.fn().mockImplementation((url: string) => Promise.resolve(response(url.includes('analytics/forms') ? { items: [{ id: 5, title: 'Current form' }], pages: 1 } : { items: [], total: 0 })));
+  vi.stubGlobal('fetch', transport);
+  const host = document.createElement('div'); document.body.append(host);
+  await act(async () => mountSubmissions(host, { ...config, capabilities: { view_submissions: true } }));
+  const advanced = host.querySelector('.cff-advanced-filters')!;
+  const input = [...advanced.querySelectorAll('label')].find(label => label.textContent === 'Form ID (blank = all)')?.querySelector('input');
+  expect(input).toBeTruthy();
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '999');
+    input!.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  expect([...host.querySelectorAll('select option')].some(option => option.textContent === 'Current form')).toBe(true);
+  await act(async () => [...host.querySelectorAll('button')].find(button => button.textContent === 'Apply filters')!.click());
+  expect(transport.mock.calls.some(call => String(call[0]).includes('admin/submissions?') && new URL(String(call[0])).searchParams.get('formId') === '999')).toBe(true);
+  expect(transport.mock.calls.every(call => !String(call[0]).includes('admin/forms'))).toBe(true);
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '');
+    input!.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await act(async () => [...host.querySelectorAll('button')].find(button => button.textContent === 'Apply filters')!.click());
+  const last = transport.mock.calls.filter(call => String(call[0]).includes('admin/submissions?')).at(-1)!;
+  expect(new URL(String(last[0])).searchParams.has('formId')).toBe(false);
+});
+
 it('groups global settings by task while saving values and secret masks from hidden sections',async()=>{
   const settings={fullpageBase:'chat',defaultTheme:'auto',tracking:{enabled:false,consentRequired:true,days:30},privacy:{ip:'none',storeUserAgent:false,storeMeta:true,respectDnt:true},retention:{enabled:false,days:365,partialDays:17},spam:{honeypotEnabled:true,minSeconds:2,rateLimit:10,rateWindowSeconds:600,secretKey:'********'},proxy:{mode:'direct',trustedRanges:['192.0.2.0/24'],header:'HTTP_X_REAL_IP'},email:{fromName:'Saved sender',fromEmail:'sender@example.test',replyTo:'',logoUrl:'',brandColor:'#333333',footerText:'Keep this footer'},ai:{apiKey:'********'},delete_data_on_uninstall:false};
   const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('system-status')?{smtpDetected:true}:{settings})));

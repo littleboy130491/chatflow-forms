@@ -37,7 +37,9 @@ export function mountFormsList(root: HTMLElement, config: AdminConfig = window.c
     void formsListAction(api, button.dataset.cffAction ?? '', Number(button.dataset.formId)).then(result => {
       if (result === 'reload') window.location.reload();
       else if (result) window.location.assign(result);
-      else if (status) status.textContent = __('Action complete.', 'chatflow-forms');
+      else if (status) status.textContent = button.dataset.cffAction === 'copy'
+        ? __('Shortcode copied.', 'chatflow-forms')
+        : __('Action complete.', 'chatflow-forms');
     }).catch(error => { if (status) status.textContent = errorMessage(error); }).finally(() => { busy = false; button.disabled = false; });
   });
 }

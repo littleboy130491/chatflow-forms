@@ -48,6 +48,7 @@ export function Filters({
       )}
       {!purge && (
         <details className="cff-disclosure cff-advanced-filters"><summary>{__('Advanced filters', 'chatflow-forms')}</summary><div className="cff-settings-grid">
+          {api && <Field label={__('Form ID (blank = all)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
           <Select
             label={__('Read state', 'chatflow-forms')}
             value={value.isRead === undefined ? '' : String(value.isRead)}

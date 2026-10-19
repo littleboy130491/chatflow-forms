@@ -307,6 +307,7 @@ export class DraftController {
             ? published
             : {
                 ...this.state.form,
+                slug: published.slug,
                 version: published.version,
                 status: published.status,
                 draftRevision: published.draftRevision,

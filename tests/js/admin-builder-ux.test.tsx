@@ -152,6 +152,45 @@ it('explains publishing in visitor language and hands off the live form without 
  vi.unstubAllGlobals();
 });
 
+it('shares the frozen published snapshot after editing the draft during first publication', async () => {
+ const saved = { ...blankForm(), id: 31, draftRevision: 1 };
+ const published = { ...saved, version: 1, draftRevision: 2, slug: 'contact', status: 'publish', settings: { ...saved.settings, display: { mode: 'popup' as const } } };
+ let complete!: (response: Response) => void;
+ const pending = new Promise<Response>(resolve => { complete = resolve; });
+ vi.stubGlobal('fetch', vi.fn((url: string) => url.endsWith('/publish') ? pending : url.endsWith('/published') ? new Promise<Response>(() => {}) : Promise.resolve(new Response(JSON.stringify(saved)))));
+ host = document.createElement('div'); document.body.append(host);
+ await act(async () => mountBuilder(host, { ...config, formId: 31 }));
+ await act(async () => button('Publish').click());
+ await act(async () => button('Publish new version').click());
+ const title = [...host.querySelectorAll('label')].find(label => label.textContent === 'Form name')!.querySelector('input')!;
+ await act(async () => {
+   Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(title, 'New local title');
+   title.dispatchEvent(new Event('input', { bubbles: true }));
+ });
+ expect(title.value).toBe('New local title');
+ await act(async () => complete(new Response(JSON.stringify(published))));
+ await act(async () => button('Share and embed').click());
+ expect(host.querySelector('.cff-share-empty')).toBeNull();
+ expect(host.querySelector('.cff-share a')?.getAttribute('href')).toContain('/chat/contact/');
+ expect(title.value).toBe('New local title');
+ expect(host.textContent).toContain('Unsaved draft');
+ await act(async () => button('Embed').click());
+ expect(host.querySelector('.cff-share pre')?.textContent).toBe('[chatflow id="31" mode="popup"]');
+ vi.unstubAllGlobals();
+});
+
+it('loads the complete live snapshot for sharing instead of unpublished draft settings', async () => {
+ const draft = { ...blankForm(), id: 32, version: 1, slug: 'contact', draftRevision: 3 };
+ const live = { ...draft, settings: { ...draft.settings, display: { mode: 'launcher' as const, launcher: { position: 'left' as const } } } };
+ vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(JSON.stringify(url.endsWith('/published') ? live : draft))));
+ host = document.createElement('div'); document.body.append(host);
+ await act(async () => mountBuilder(host, { ...config, formId: 32 }));
+ await act(async () => button('Share').click());
+ await act(async () => button('Embed').click());
+ expect(host.querySelector('.cff-share pre')?.textContent).toBe('[chatflow id="32" mode="launcher" position="left"]');
+ vi.unstubAllGlobals();
+});
+
 import { SettingsEditor } from '../../assets/src/builder/FormSettings';
 import { AdminApi } from '../../assets/src/builder/api';
 it('groups settings by task without materializing inherited privacy values', async () => {
@@ -170,6 +209,26 @@ it('groups settings by task without materializing inherited privacy values', asy
  await act(async () => meta.click());
  expect(onChange.mock.lastCall?.[0].privacy).toEqual({ storeMeta: true });
  expect(form.settings.privacy).toBeUndefined();
+});
+
+it('reconciles an undone selected field before activating a narrow drawer', async () => {
+ let resize = () => {};
+ const media = { matches: false, addEventListener: (_: string, callback: () => void) => { resize = callback; }, removeEventListener: vi.fn() };
+ Object.defineProperty(window, 'matchMedia', { configurable: true, value: () => media });
+ document.body.style.overflow = 'auto';
+ await builder();
+ await act(async () => button('Short text').click());
+ await act(async () => button('Undo').click());
+ await act(async () => { media.matches = true; resize(); });
+ expect(document.body.style.overflow).toBe('auto');
+ expect(host.querySelectorAll('[inert]')).toHaveLength(0);
+ expect(host.querySelector('article.is-selected')).not.toBeNull();
+ await act(async () => button('Short text').click());
+ expect(document.body.style.overflow).toBe('hidden');
+ expect(document.activeElement).toBe(button('Back to flow'));
+ await act(async () => button('Back to flow').click());
+ expect(document.body.style.overflow).toBe('auto');
+ document.body.style.overflow = '';
 });
 
 it('moves keyboard focus into the narrow-screen inspector and returns to the selected field', async () => {
