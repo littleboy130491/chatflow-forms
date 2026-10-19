@@ -161,11 +161,11 @@ function ImportForm({ api }: { api: AdminApi }) {
 }
 export function Tools({ api }: { api: AdminApi }) {
   const tabs = [
-    { id: 'purge', cap: 'purge_submissions', label: __('Purge data', 'chatflow-forms') },
-    { id: 'log', cap: 'purge_submissions', label: __('Purge log', 'chatflow-forms') },
     { id: 'export', cap: 'export_submissions', label: __('Export CSV', 'chatflow-forms') },
     { id: 'import', cap: 'manage_forms', label: __('Import form', 'chatflow-forms') },
     { id: 'system', cap: 'manage_settings', label: __('System status', 'chatflow-forms') },
+    { id: 'log', cap: 'purge_submissions', label: __('Purge log', 'chatflow-forms') },
+    { id: 'purge', cap: 'purge_submissions', label: __('Purge data', 'chatflow-forms') },
   ] as const;
   const available = tabs.filter((tab) => can(api.config, tab.cap));
   const [tab, setTab] = useState<string>(api.config.exportId && can(api.config, 'export_submissions') ? 'export' : available[0]?.id ?? ''),
@@ -188,7 +188,7 @@ export function Tools({ api }: { api: AdminApi }) {
       {tab === 'log' && can(api.config, 'purge_submissions') && <PurgeLog api={api} />}
       {tab === 'export' && can(api.config, 'export_submissions') && (
         <React.Fragment>
-          <Filters value={filters} onChange={setFilters} />
+          <Filters api={api} value={filters} onChange={setFilters} />
           <Export api={api} filters={filters} ids={[]} exportId={api.config.exportId} />
         </React.Fragment>
       )}

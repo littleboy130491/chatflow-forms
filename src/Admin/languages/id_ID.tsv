@@ -995,3 +995,93 @@ is one of|salah satu dari
 matches pattern|cocok dengan pola
 reCAPTCHA v3 minimum score (0–1)|Skor minimum reCAPTCHA v3 (0–1)
 starts with|diawali dengan
+Add another field|Tambah pertanyaan lain
+Add field|Tambah pertanyaan
+Add to a WordPress page|Pasang di halaman WordPress
+Advanced|Lanjutan
+Advanced custom element|Elemen kustom lanjutan
+Advanced filters|Filter lanjutan
+Advanced message options|Opsi pesan lanjutan
+Advanced: prefill answers|Lanjutan: isi jawaban awal
+Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.|Laporan gabungan menggunakan tanggal UTC. Funnel form di bawah menggunakan zona waktu situs, sehingga batas hari dan totalnya dapat berbeda.
+All settings saved.|Semua pengaturan tersimpan.
+Automatic launcher placement and popup triggers are set per form in Settings → Display.|Penempatan tombol chat otomatis dan pemicu popup diatur per form melalui Pengaturan → Tampilan.
+Back to editor|Kembali ke editor
+Back to flow|Kembali ke alur
+Basic|Dasar
+Changes are compared with the current live version.|Perubahan dibandingkan dengan versi yang sedang tayang.
+Choices|Pilihan
+Columns|Kolom
+Contains|Mengandung
+Copied|Tersalin
+Copy custom element|Salin elemen kustom
+Copy link|Salin tautan
+Copy response ID|Salin ID respons
+Copy shortcode|Salin shortcode
+Copy unavailable. Select and copy the text instead.|Tidak dapat menyalin otomatis. Pilih teks lalu salin secara manual.
+Create form|Buat form
+Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML.|Elemen kustom memerlukan aset runtime plugin. Jangan menyertakan token atau pengaturan privat dalam HTML.
+Dismiss|Tutup
+Display|Tampilan
+Does not equal|Tidak sama dengan
+Embed|Sematkan
+Equals|Sama dengan
+Field editor|Editor pertanyaan
+Field keys|Kunci field
+Find more forms|Cari form lain
+Form published|Form telah tayang
+Form settings sections|Bagian pengaturan form
+General|Umum
+General / Completion|Umum / Penyelesaian
+Greater than|Lebih besar dari
+Greater than or equal to|Lebih besar atau sama dengan
+Integrations|Integrasi
+Integrations and AI|Integrasi dan AI
+Is empty|Kosong
+Is not empty|Tidak kosong
+Less than|Lebih kecil dari
+Less than or equal to|Lebih kecil atau sama dengan
+Link|Tautan
+No matching fields. Try another search.|Tidak ada pertanyaan yang cocok. Coba kata pencarian lain.
+No message yet. Select this field to edit.|Belum ada pesan. Pilih pertanyaan ini untuk mengeditnya.
+Notifications|Notifikasi
+Open form|Buka form
+Overview · UTC|Ringkasan · UTC
+Preparing QR code…|Menyiapkan kode QR…
+Preview your form|Pratinjau form Anda
+Privacy|Privasi
+Privacy and retention|Privasi dan retensi
+Publication result|Hasil publikasi
+Publish form?|Tayangkan form?
+Publish your form to get a shareable link|Tayangkan form untuk mendapatkan tautan yang dapat dibagikan
+Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.|Publikasi menyimpan draf ini dan membuat versi tayang tetap dari form beserta pengaturan privatnya. Respons yang sudah ada tetap disimpan.
+QR code|Kode QR
+Questions: %d added, %d changed, %d removed.|Pertanyaan: %d ditambahkan, %d diubah, %d dihapus.
+Ratings|Penilaian
+Redirect to website|Alihkan ke situs web
+Response|Respons
+Response ID|ID respons
+Review changes and version details|Tinjau perubahan dan detail versi
+Save applies to all sections.|Penyimpanan berlaku untuk semua bagian.
+Save your draft, then choose Publish. Your link, embeds and QR code will appear here when the form is live.|Simpan draf, lalu pilih Tayangkan. Tautan, sematan, dan kode QR akan muncul di sini setelah form tayang.
+Settings sections|Bagian pengaturan
+Share a QR code|Bagikan kode QR
+Share a link|Bagikan tautan
+Share and embed|Bagikan dan sematkan
+Sharing options|Pilihan berbagi
+Shortcode copied.|Shortcode tersalin.
+Site timezone: %s|Zona waktu situs: %s
+Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.|Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri.
+Technical activity|Aktivitas teknis
+Technical details|Detail teknis
+Ending %d|Penutup %d
+Advanced redirect settings|Pengaturan pengalihan lanjutan
+Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.|Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap.
+Test your draft as a visitor. Responses here are not saved, and notifications are not sent.|Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim.
+Thank-you message|Pesan terima kasih
+Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.|Gunakan blok ChatFlow Form, tempel shortcode ini ke blok Shortcode, atau gunakan widget Shortcode di Elementor.
+Your form is live. Share it with your visitors.|Form Anda sudah tayang. Bagikan kepada pengunjung.
+“%s” will be available to visitors. Later edits stay in your draft until you publish again.|“%s” akan tersedia bagi pengunjung. Perubahan berikutnya tetap tersimpan sebagai draf sampai Anda menayangkannya lagi.
+Other|Lainnya
+Newer activity|Aktivitas lebih baru
+Older activity|Aktivitas lebih lama

@@ -3,13 +3,17 @@
 import * as React from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Field, Select } from '../builder/controls';
-import { answerOperators } from './model';
+import { FormPicker } from './FormPicker';
+import type { AdminApi } from '../builder/api';
+import { answerOperators, operatorLabel } from './model';
 import type { Filters as FilterValues } from './model';
 export function Filters({
+  api,
   value,
   onChange,
   purge = false,
 }: {
+  api?: AdminApi;
   value: FilterValues;
   onChange: (value: FilterValues) => void;
   purge?: boolean;
@@ -21,13 +25,8 @@ export function Filters({
     onChange(values);
   };
   return (
-    <div className="cff-settings-grid">
-      <Field
-        label={__('Form ID (blank = all)', 'chatflow-forms')}
-        type="number"
-        value={value.formId ?? ''}
-        onChange={(next) => update('formId', Number(next) || undefined)}
-      />
+    <div className="cff-settings-grid cff-inbox-filters">
+      {api ? <FormPicker api={api} value={String(value.formId ?? '')} onChange={next => update('formId', Number(next) || undefined)} /> : <Field label={__('Form ID (blank = all)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
       <Field
         label={__('From date (UTC)', 'chatflow-forms')}
         type="date"
@@ -48,7 +47,8 @@ export function Filters({
         />
       )}
       {!purge && (
-        <React.Fragment>
+        <details className="cff-disclosure cff-advanced-filters"><summary>{__('Advanced filters', 'chatflow-forms')}</summary><div className="cff-settings-grid">
+          {api && <Field label={__('Form ID (blank = all)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
           <Select
             label={__('Read state', 'chatflow-forms')}
             value={value.isRead === undefined ? '' : String(value.isRead)}
@@ -98,7 +98,7 @@ export function Filters({
           <Select
             label={__('Answer operator', 'chatflow-forms')}
             value={value.operator ?? 'eq'}
-            choices={answerOperators.map((operator) => ({ value: operator, label: operator }))}
+            choices={answerOperators.map((operator) => ({ value: operator, label: operatorLabel(operator) }))}
             onChange={(next) => update('operator', next)}
           />
           <Field
@@ -106,7 +106,7 @@ export function Filters({
             value={value.value ?? ''}
             onChange={(next) => update('value', next)}
           />
-        </React.Fragment>
+        </div></details>
       )}
     </div>
   );

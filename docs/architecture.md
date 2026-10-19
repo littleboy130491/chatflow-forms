@@ -267,7 +267,9 @@ the exact cff capability (no public admin token). Listing uses page/perPage (<=1
 - DELETE `/admin/forms/{id}` manage_forms → `{deleted:true}` (trash by default).
 - GET `/admin/submissions` view_submissions query formId,status,from,to,search,
   isRead,isStarred,utmSource,utmCampaign,device,fieldKey,operator,value,page,perPage
-  → `{items:SubmissionDTO[],total,page,perPage}`. Whitelist sort/filter operators.
+  → `{items:SubmissionDTO[],total,page,perPage,forms}`, where `forms` maps each
+  `formId:version` on the page to its frozen `{title,labels:{key:label}}`.
+  Whitelist sort/filter operators.
 - GET `/admin/submissions/{id}` view_submissions → SubmissionDTO + form snapshot.
 - PATCH `/admin/submissions/{id}` edit_submissions `{isRead?,isStarred?,status?,
   note?}` → SubmissionDTO; notes escaped plain text.

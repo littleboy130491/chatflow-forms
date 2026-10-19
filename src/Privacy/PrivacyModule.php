@@ -19,6 +19,7 @@ final class PrivacyModule implements Module {
 		add_action( 'cff_purge_batch', array( new Purge( $this->submissions ), 'run' ) );
 		add_action( 'cff_export_batch', array( new Export( $this->forms, $this->submissions ), 'run' ) );
 		add_action( 'admin_post_cff_download', array( new Export( $this->forms, $this->submissions ), 'download' ) );
+		add_action( 'admin_post_nopriv_cff_download', array( new Export( $this->forms, $this->submissions ), 'download' ) );
 		add_action( 'cff_retention', array( $this, 'retention' ) );
 		add_action( 'cff_abandon_sessions', array( $this, 'abandon' ) );
 		add_action( 'cff_cleanup_private_files', array( new PrivateFiles(), 'cleanupSite' ) );

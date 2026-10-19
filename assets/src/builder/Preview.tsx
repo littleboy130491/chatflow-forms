@@ -8,6 +8,10 @@ import { errorMessage, safeHttpUrl } from './api';
 import type { AdminConfig, FormDTO } from './api';
 import type { AnswerMap, PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
 
+export function previewRuntimeUrl(config: Pick<AdminConfig, 'pluginUrl' | 'runtimeUrl'>): string {
+  return config.runtimeUrl || `${config.pluginUrl}build/runtime/runtime.js`;
+}
+
 export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnvelope {
   const session = form.settings.sessions ?? {};
   return {
@@ -100,7 +104,7 @@ export async function mountPublicPreview(
   isCurrent: () => boolean = () => true,
   extra: { previewAnswers?: AnswerMap } = {},
 ): Promise<PreviewHandle | (() => void) | void> {
-  const url = `${config.pluginUrl}build/runtime/runtime.js`;
+  const url = previewRuntimeUrl(config);
   const runtime = (await import(/* webpackIgnore: true */ url)) as RuntimeModule;
   // Load the theme's frontend (it registers itself with window.ChatFlow) so the preview matches the site.
   const theme = config.themeFrontend ?? {};
@@ -197,8 +201,9 @@ export function Preview({
   const previewHandle = typeof handle.current === 'object' ? handle.current : undefined;
   return (
     <aside className="cff-preview" role="dialog" aria-label={__('Draft preview', 'chatflow-forms')}>
-      <h2>{__('Draft preview — no sessions or jobs', 'chatflow-forms')}</h2>
-      <Button onClick={onClose}>{__('Close preview', 'chatflow-forms')}</Button>
+      <h2>{__('Preview your form', 'chatflow-forms')}</h2>
+      <p>{__('Test your draft as a visitor. Responses here are not saved, and notifications are not sent.', 'chatflow-forms')}</p>
+      <Button onClick={onClose}>{__('Back to editor', 'chatflow-forms')}</Button>
       <Button variant="secondary" onClick={restart}>
         {__('Restart preview', 'chatflow-forms')}
       </Button>

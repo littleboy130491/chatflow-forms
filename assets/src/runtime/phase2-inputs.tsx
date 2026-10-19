@@ -21,7 +21,7 @@ export function UploadInput({ step, upload, onAnswer, disabled, phrase, value, e
     // Clear the picker so choosing the same file again retries the upload.
     catch { setFailed(true); input.value = ''; }
     finally { setBusy(false); }
-  }} /><small>{phrase('uploadLimit')} {Math.round(max / 1048576 * 10) / 10} MB</small>{busy && <p role="status">{phrase('uploading')}</p>}{failed && <p role="alert">{phrase('uploadFailed')}</p>}{error && <p role="alert">{error}</p>}{!upload && <p role="alert">{phrase('unsupported')}</p>}{(name || typeof value === 'string') && <p>{name || phrase('uploadSaved')}</p>}{(!step.required || typeof value === 'string') && <button disabled={disabled || busy || !upload} onClick={() => onAnswer(value ?? null)}>{phrase('continue')}</button>}</div>;
+  }} /><small>{phrase('uploadLimit')} {max < 1024 ? `${max} B` : max < 1048576 ? `${Math.round(max / 1024 * 10) / 10} KB` : `${Math.round(max / 1048576 * 10) / 10} MB`}</small>{busy && <p role="status">{phrase('uploading')}</p>}{failed && <p role="alert">{phrase('uploadFailed')}</p>}{error && <p role="alert">{error}</p>}{!upload && <p role="alert">{phrase('unsupported')}</p>}{(name || typeof value === 'string') && <p>{name || phrase('uploadSaved')}</p>}{(!step.required || typeof value === 'string') && <button disabled={disabled || busy || !upload} onClick={() => onAnswer(value ?? null)}>{phrase('continue')}</button>}</div>;
 }
 export function MediaInput({ step, media, disabled, onAnswer, phrase }: FieldProps & { media?: PublicForm['form']['media'] }) {
   const config = step.settings?.media;

@@ -23,4 +23,64 @@
   .cff-detail { color: #000; background: #fff; }
   .cff-replay li, .cff-detail dl > div { break-inside: avoid; }
 }
+/* Keep filters and action/status controls on a shared control baseline.
+   Grid gaps already supply the vertical rhythm between filter groups. */
+.cff-admin .cff-analytics-filters { align-items: flex-start; }
+.cff-admin .cff-analytics-filters > .components-button { margin-block-start: 24px; min-height: 40px; }
+.cff-admin :is(.cff-inbox-filters, .cff-analytics-filters) > .components-base-control { margin-bottom: 0; }
+.cff-admin .cff-advanced-filters .cff-settings-grid > .components-base-control { margin-bottom: 0; }
+.cff-admin .cff-disclosure { padding: 16px 20px; margin-block: 16px; }
+.cff-admin .cff-disclosure fieldset > legend { margin-bottom: 12px; }
+.cff-admin.cff-detail .cff-toolbar { position: static; align-items: flex-end; padding: 16px; gap: 12px; }
+.cff-admin.cff-detail .cff-toolbar .components-base-control { margin: 0; }
+.cff-admin.cff-detail > .components-button { margin-block: 8px; }
+.cff-admin.cff-detail dl { margin-block: 24px; }
+.cff-admin.cff-detail dt { margin-top: 24px; }
+.cff-admin.cff-detail dd { padding-block: 8px; margin-bottom: 16px; }
+.cff-admin .cff-analytics-kpis .cff-card { margin: 0; }
+.cff-admin .cff-analytics-kpis strong { margin-bottom: 8px; }
+.cff-admin .cff-global-settings { gap: 24px; }
+@media (max-width: 700px) {
+  .cff-admin .cff-analytics-filters > .components-button { margin-block-start: 0; }
+  .cff-admin .cff-disclosure { padding: 16px; }
+  .cff-admin.cff-detail > .components-button { min-height: 44px; white-space: normal; }
+  .cff-admin.cff-detail .cff-toolbar { gap: 12px; }
+}
+
 .cff-form-analytics{margin-top:32px}
+
+/* Inbox controls are secondary to the responses, not a setup wizard. */
+.cff-disclosure { margin: 12px 0; padding: 10px 14px; border: 1px solid #c3c4c7; border-radius: 4px; background: #fff; }
+.cff-disclosure > summary, .cff-form-search > summary { cursor: pointer; font-weight: 600; width: fit-content; padding: 4px 0; }
+.cff-disclosure > summary:focus-visible, .cff-form-search > summary:focus-visible { outline: 2px solid #2271b1; outline-offset: 4px; }
+.cff-disclosure[open] > summary { margin-bottom: 16px; }
+.cff-disclosure fieldset { border: 0; padding: 0; margin: 0; }
+.cff-inbox-filters { display: grid; grid-template-columns: minmax(180px, 1.3fr) repeat(2, minmax(145px, .8fr)) minmax(200px, 1.5fr); align-items: start; gap: 16px; margin: 16px 0; }
+.cff-inbox-filters > *, .cff-global-settings > * { min-width: 0; }
+.cff-advanced-filters { grid-column: 1 / -1; margin: 0; }
+.cff-advanced-filters .cff-settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.cff-form-search { font-size: 12px; margin-top: 6px; }
+.cff-form-search[open] { margin-bottom: 12px; }
+.cff-admin .cff-tabs .components-button.is-secondary, .cff-settings-nav .components-button.is-secondary { border-color: #8c8f94; box-shadow: inset 0 0 0 1px #8c8f94; color: #2c3338; }
+.cff-table-scroll input[type="checkbox"] { appearance: auto; width: 18px; height: 18px; margin: 4px; border-radius: 2px; cursor: pointer; }
+.cff-table-scroll th:first-child, .cff-table-scroll td:first-child { width: 40px; }
+.cff-table-scroll table { min-width: 740px; }
+.cff-detail h1 { overflow-wrap: anywhere; }
+.cff-detail pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+.cff-detail dt { margin-top: 16px; }
+.cff-detail dd { margin-inline-start: 0; padding: 8px 0; }
+.cff-settings-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.cff-global-settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; max-width: 1100px; }
+.cff-global-settings [hidden] { display: none !important; }
+.cff-global-settings .cff-card { margin: 0; }
+.cff-settings-save { position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 16px 0; margin-top: 20px; background: #f0f0f1; border-top: 1px solid #c3c4c7; }
+@media (max-width: 1000px) {
+  .cff-inbox-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .cff-inbox-filters, .cff-advanced-filters .cff-settings-grid, .cff-global-settings { grid-template-columns: minmax(0, 1fr); }
+  .cff-settings-nav { gap: 6px; }
+  .cff-settings-nav .components-button { min-height: 40px; }
+  .cff-detail .cff-toolbar { position: static; }
+  .cff-analytics-filters > * { min-width: 0; width: 100%; }
+}

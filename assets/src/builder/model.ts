@@ -71,7 +71,7 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
     draftRevision: 0,
     schema: {
       schemaVersion: 1,
-      bot: { name: 'Ima', typingSpeed: 'normal' },
+      bot: { name: 'ChatFlow', typingSpeed: 'normal' },
       steps: [makeStep('statement', [])],
       endings: [{ id: ending, type: 'message', messages: [__('Thank you!', 'chatflow-forms')] }],
     },
@@ -88,7 +88,8 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
       // runtime, so they are never copied in. The theme has no runtime fallback;
       // the global "default theme" seeds new forms only.
       // New forms start with the messaging look; existing forms keep their saved style.
-      appearance: { ...defaults.appearance, style: 'messaging' },
+      // Dark messaging uses fixed runtime colours; seed the accessible accent for light/auto.
+      appearance: { ...(defaults.appearance?.theme === 'dark' ? {} : { primary: '#2271b1' }), ...defaults.appearance, style: 'messaging' },
     },
   };
 }
@@ -306,6 +307,7 @@ export class DraftController {
             ? published
             : {
                 ...this.state.form,
+                slug: published.slug,
                 version: published.version,
                 status: published.status,
                 draftRevision: published.draftRevision,

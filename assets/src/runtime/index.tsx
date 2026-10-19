@@ -5,7 +5,7 @@ import { ApiClient } from './api';
 import { Chat } from './chat';
 import { RuntimeController } from './controller';
 import { registerField } from './registry';
-import { safeColor, safeFont, scopedAppearanceCss } from './appearance';
+import { buttonTextColor, safeColor, safeFont, scopedAppearanceCss } from './appearance';
 import { phrases } from './i18n';
 import { googleFont, systemFont, type GoogleFont } from '../shared/fonts';
 import { acquireGoogleFont } from './fonts';
@@ -30,6 +30,7 @@ type Appearance = NonNullable<PublicForm['form']['appearance']>;
 type ThemeColor = 'primary' | 'botBubbleBackground' | 'userBubbleBackground' | 'textColor' | 'headerBackground' | 'headerText' | 'chatBackground' | 'userTextColor';
 const classicDefaults: Record<ThemeColor, string | undefined> = { primary: undefined, botBubbleBackground: undefined, userBubbleBackground: undefined, textColor: undefined, headerBackground: '#ffffff', headerText: '#171717', chatBackground: '#ffffff', userTextColor: '#171717' };
 const messagingDefaults: Record<ThemeColor, string> = { primary: '#3390ec', botBubbleBackground: '#ffffff', userBubbleBackground: '#e1fec6', textColor: '#000000', headerBackground: '#ffffff', headerText: '#000000', chatBackground: '#dbe6ee', userTextColor: '#000000' };
+const darkMessagingDefaults: Record<ThemeColor, string> = { primary: '#5eb5f7', botBubbleBackground: '#182533', userBubbleBackground: '#2b5278', textColor: '#f5f5f5', headerBackground: '#17212b', headerText: '#f5f5f5', chatBackground: '#0e1621', userTextColor: '#ffffff' };
 let themeFrontend: Frontend | null = null;
 /** Hosts rendered by PHP for a theme frontend that has not registered yet. */
 const waiting = new Map<HTMLElement, ReturnType<typeof setTimeout>>();
@@ -83,11 +84,11 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     const font = value.inheritFont || beforeOpen ? undefined : googleFont(value.googleFont);
     if (font !== selectedFont) { releaseFont(); selectedFont = font; releaseFont = font ? acquireGoogleFont(host.ownerDocument, font) : () => {}; }
     // Messaging style has its own defaults; explicit theme colours always win.
-    const base = value.style === 'messaging' ? messagingDefaults : classicDefaults;
-    const color = (key: keyof typeof base) => safeColor(value[key]) ?? base[key];
-    const entries = { '--cff-primary': color('primary'), '--cff-bubble-bot-bg': color('botBubbleBackground'), '--cff-user-bg': color('userBubbleBackground'), '--cff-text': color('textColor'), '--cff-header-bg': color('headerBackground'), '--cff-header-text': color('headerText'), '--cff-chat-bg': color('chatBackground'), '--cff-user-text': color('userTextColor'), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
-    for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     const dark = value.theme === 'dark' || (value.theme === 'auto' && globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches);
+    const base = value.style === 'messaging' ? (dark ? darkMessagingDefaults : messagingDefaults) : classicDefaults;
+    const color = (key: keyof typeof base) => safeColor(value[key]) ?? base[key];
+    const entries = { '--cff-button-text': value.style === 'messaging' ? buttonTextColor(color('primary')!) : undefined, '--cff-primary': color('primary'), '--cff-bubble-bot-bg': color('botBubbleBackground'), '--cff-user-bg': color('userBubbleBackground'), '--cff-text': color('textColor'), '--cff-header-bg': color('headerBackground'), '--cff-header-text': color('headerText'), '--cff-chat-bg': color('chatBackground'), '--cff-user-text': color('userTextColor'), '--cff-font': value.inheritFont ? 'inherit' : (font ? `"${font}", ${safeFont(value.font) ?? systemFont}` : safeFont(value.font)), '--cff-radius': Number.isFinite(value.radius) ? `${Math.max(0, Math.min(128, value.radius!))}px` : undefined, '--cff-width': Number.isFinite(value.width) ? `${Math.max(280, Math.min(2000, value.width!))}px` : undefined };
+    for (const [key, val] of Object.entries(entries)) { if (val) root.style.setProperty(key, val); else root.style.removeProperty(key); }
     root.querySelector('.chat')?.classList.toggle('dark', Boolean(dark));
     if (value.style === 'messaging') root.dataset.style = 'messaging'; else delete root.dataset.style;
     customization.textContent = scopedAppearanceCss(value.customCss);
@@ -127,8 +128,13 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     void api.view(id, version).catch(() => undefined);
   };
   const label = phrases(config.locale);
+  let returnFocus: HTMLElement | null = null;
   const setOpen = (value: boolean) => {
-    if (!toggle || !panel) return;
+    if (!toggle || !panel || value === !panel.hidden) return;
+    if (value) {
+      const focused = document.activeElement;
+      returnFocus = focused instanceof HTMLElement && focused !== document.body && focused !== host ? focused : null;
+    }
     if (!value && !panel.hidden) controller.close();
     host.hidden = false;
     panel.hidden = !value;
@@ -144,7 +150,7 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
       initialize();
       panel.focus({ preventScroll: true });
     } else {
-      toggle.focus({ preventScroll: true });
+      (returnFocus?.isConnected ? returnFocus : toggle).focus({ preventScroll: true });
     }
   };
   if (isLauncher) {

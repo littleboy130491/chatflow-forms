@@ -42,7 +42,7 @@ final class NativeFormsTest extends TestCase {
 		wp_set_current_user( 1 );
 		$admin = new \ChatFlow\Admin\AdminModule( new FormRepository() ); $admin->menus();
 		set_current_screen( 'toplevel_page_cff-forms' ); ob_start(); $admin->render(); $html = ob_get_clean();
-		self::assertStringContainsString( 'wp-list-table', $html ); self::assertStringContainsString( 'page=cff-builder', $html ); self::assertStringContainsString( 'New form', $html ); self::assertStringNotContainsString( 'cff-admin-root', $html );
+		self::assertStringContainsString( 'wp-list-table', $html ); self::assertStringContainsString( 'page=cff-builder', $html ); self::assertStringContainsString( 'Create form', $html ); self::assertStringNotContainsString( 'cff-admin-root', $html );
 		set_current_screen( 'chatflow_page_cff-builder' );
 		$builder_hook = get_plugin_page_hookname( 'cff-builder', 'cff-forms' ); set_current_screen( $builder_hook );
 		ob_start(); $admin->render(); $builder = ob_get_clean(); self::assertStringContainsString( 'cff-admin-root', $builder );

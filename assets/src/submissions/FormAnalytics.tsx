@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, errorMessage } from '../builder/api';
 import { Button, Field, Notice, Select } from '../builder/controls';
 import { defaultRange } from './analytics-dates';
+import { decodeTitle } from './FormPicker';
 
 export interface FormAnalyticsReport {
   from: string; to: string; timezone: string; views: number; starts: number; completions: number;
@@ -36,10 +37,11 @@ export function FormAnalytics({ api }: {api: AdminApi}) {
   }, [api, page, search]);
   return <section className="cff-form-analytics">
     <h2>{__('Form funnel and experiments', 'chatflow-forms')}</h2>
+    <p>{sprintf(__('Site timezone: %s', 'chatflow-forms'), timezone)}</p>
     {error && <Notice status="error" isDismissible={false}>{error}</Notice>}
     <section className="cff-card">
       <Field label={__('Find a form', 'chatflow-forms')} value={search} onChange={(next) => {setSearch(next); setPage(1);}} />
-      <Select label={__('Form', 'chatflow-forms')} value={formId} choices={[{value:'', label:__('Choose a form', 'chatflow-forms')}, ...forms.map((form) => ({value:String(form.id), label:form.title}))]} onChange={(id) => {setFormId(id); setReport(null);}} />
+      <Select label={__('Form', 'chatflow-forms')} value={formId} choices={[{value:'', label:__('Choose a form', 'chatflow-forms')}, ...forms.map((form) => ({value:String(form.id), label:decodeTitle(form.title)}))]} onChange={(id) => {setFormId(id); setReport(null);}} />
       <Button disabled={page <= 1} onClick={() => setPage(page - 1)}>{__('Previous forms', 'chatflow-forms')}</Button>
       <Button disabled={page >= pages} onClick={() => setPage(page + 1)}>{__('Next forms', 'chatflow-forms')}</Button>
       <Field type="date" label={__('From (site timezone)', 'chatflow-forms')} value={from} onChange={setFrom} />

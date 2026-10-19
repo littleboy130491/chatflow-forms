@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: '.',
-  testMatch: '**/*.spec.ts',
+  // The native field fixture wraps visitor.spec; collect only one entry point per mode.
+  testMatch: process.env.CFF_FIELDS_QA === '1' ? '**/fields-*.spec.ts' : '**/*.spec.ts',
+  testIgnore: ['**/artifacts/**', '**/report/**', ...(process.env.CFF_FIELDS_QA === '1' ? [] : ['**/fields-*.spec.ts'])],
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
@@ -15,6 +17,9 @@ export default defineConfig({
     baseURL: process.env.CFF_E2E_BASE_URL ?? 'http://localhost:8888',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    launchOptions: process.env.CFF_E2E_CHROMIUM_EXECUTABLE
+      ? { executablePath: process.env.CFF_E2E_CHROMIUM_EXECUTABLE }
+      : undefined,
   },
   projects: [
     { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'] } },

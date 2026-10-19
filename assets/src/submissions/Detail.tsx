@@ -2,14 +2,15 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { interpolate } from '../shared/logic/index';
 import type { AnswerMap } from '../shared/contracts';
 import { Area, Button, Notice, Select } from '../builder/controls';
 import { can, errorMessage } from '../builder/api';
 import type { AdminApi } from '../builder/api';
-import { displayValue, statuses, statusLabel } from './model';
+import { displayValue, statuses, statusLabel, responseLabel, readableDate } from './model';
+import { decodeTitle } from './FormPicker';
 import type { Status, SubmissionDetail, SubmissionDTO } from './model';
 import { downloadUpload, storedIp, uploadIds } from './downloads';
 export interface Activity {
@@ -26,22 +27,44 @@ export interface Activity {
   page: number;
   perPage: number;
 }
+/** Delivery notes store `{code, deliveryId, attempt}` JSON; show the outcome code inline. */
+export function deliveryOutcome(body: string): string {
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (parsed && typeof parsed === 'object' && typeof (parsed as { code?: unknown }).code === 'string') return (parsed as { code: string }).code;
+  } catch { /* Older notes may be plain text. */ }
+  return body;
+}
 function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   const [activity, setActivity] = useState<Activity | null>(null),
     [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
-  const load = () =>
-    api
-      .request<Activity>(`admin/submissions/${id}/activity`)
-      .then(setActivity)
-      .catch((err) => setError(errorMessage(err)));
+    [busy, setBusy] = useState(false),
+    [loading, setLoading] = useState(true);
+  // Only the latest request may update the view, so a slow earlier response cannot overwrite it.
+  // Reloads read the displayed page when they run, never a page captured by an older render.
+  const latest = useRef(0), displayed = useRef(1);
+  const fetchPage = (page: number) => {
+    const request = ++latest.current;
+    setLoading(true);
+    return api
+      .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
+      .then((result) => { if (request === latest.current) { displayed.current = result.page; setActivity(result); setError(''); } })
+      .catch((err) => { if (request === latest.current) setError(errorMessage(err)); })
+      .finally(() => { if (request === latest.current) setLoading(false); });
+  };
+  // Paging steps from the page displayed; a failed page leaves it in place and can be retried.
+  const shown = activity?.page ?? 1;
+  const load = () => fetchPage(displayed.current);
   useEffect(() => {
-    void load();
+    void fetchPage(1);
   }, [api, id]);
+  // The endpoint pages notes and deliveries together; a full page may have more behind it.
+  const hasMore = Boolean(activity && (activity.items.length >= activity.perPage || activity.deliveries.length >= activity.perPage));
   return (
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
       <Button
+        disabled={busy || loading}
         onClick={() => {
           void load();
         }}
@@ -74,7 +97,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
               <td>
                 {can(api.config, 'edit_submissions') && (
                   <Button
-                    disabled={busy || !['failed', 'sent'].includes(delivery.status)}
+                    disabled={busy || loading || !['failed', 'sent'].includes(delivery.status)}
                     onClick={async () => {
                       setBusy(true);
                       setError('');
@@ -101,10 +124,13 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
       <ul>
         {activity?.items.map((note) => (
           <li key={note.id}>
-            {note.created_at}: {note.body}
+            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {deliveryOutcome(note.body)}
+            <details><summary>{__('Technical details', 'chatflow-forms')}</summary><pre>{note.body}</pre></details>
           </li>
         ))}
       </ul>
+      <Button disabled={busy || loading || shown <= 1} onClick={() => { void fetchPage(shown - 1); }}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loading || !hasMore} onClick={() => { void fetchPage(shown + 1); }}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }
@@ -152,7 +178,7 @@ export function Detail({
     }
   };
   return (
-    <section className="cff-detail">
+    <section className="cff-admin cff-detail">
       <Button onClick={onClose}>{__('Back to submissions', 'chatflow-forms')}</Button>
       <Button disabled={!previous} onClick={() => { if (previous) onNavigate(previous); }}>{__('Previous', 'chatflow-forms')}</Button>
       <Button disabled={!next} onClick={() => { if (next) onNavigate(next); }}>{__('Next', 'chatflow-forms')}</Button>
@@ -171,10 +197,10 @@ export function Detail({
       {detail && (
         <Fragment>
           <h1>
-            {detail.form?.title ?? __('Submission', 'chatflow-forms')} · {detail.uuid}
+            {decodeTitle(detail.form?.title ?? __('Submission', 'chatflow-forms'))} · {responseLabel(detail.id)}
           </h1>
           <p>
-            {detail.createdAt} · {detail.status} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
+            <time dateTime={detail.createdAt}>{readableDate(detail.createdAt)}</time> · {statusLabel(detail.status)} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
             · {Math.round(detail.durationMs / 1000)}s · {detail.progress}%
           </p>
           {can(api.config, 'edit_submissions') && (
@@ -237,7 +263,7 @@ export function Detail({
                 .map((step) => (
                   <Fragment key={step.id}>
                     <dt>
-                      {step.label} <code>{step.key}</code>
+                      {step.label || step.key}
                     </dt>
                     <dd>{displayValue(detail.answers[step.key]) || '—'}
                       {step.type === 'file_upload' && can(api.config, 'view_submissions') && uploadIds(detail.answers[step.key]).map(uuid => <Button key={uuid} disabled={busy} onClick={async () => { setBusy(true); try { await downloadUpload(api, uuid); } catch (error) { setError(errorMessage(error)); } finally { setBusy(false); } }}>{__('Download attached file', 'chatflow-forms')}</Button>)}
@@ -246,6 +272,7 @@ export function Detail({
                 ))}
             </dl>
           )}
+          {view === 'qa' && !detail.form && <dl>{Object.entries(detail.answers).map(([key, answer]) => <Fragment key={key}><dt>{key}</dt><dd>{displayValue(answer) || '—'}</dd></Fragment>)}</dl>}
           {view === 'replay' && (
             <ol className="cff-replay">
               {detail.visited.map((stepId) => {
@@ -271,6 +298,9 @@ export function Detail({
           )}
           {view === 'meta' && (
             <Fragment>
+              <h2>{__('Response ID', 'chatflow-forms')}</h2>
+              <p><code>{detail.uuid}</code> <Button onClick={async () => { try { await navigator.clipboard.writeText(detail.uuid); } catch (err) { setError(errorMessage(err)); } }}>{__('Copy response ID', 'chatflow-forms')}</Button></p>
+              <details><summary>{__('Field keys', 'chatflow-forms')}</summary><dl>{detail.form?.schema.steps.map(step => <Fragment key={step.id}><dt>{step.label || step.key}</dt><dd><code>{step.key}</code></dd></Fragment>)}</dl></details>
               <h2>{__('Collected metadata', 'chatflow-forms')}</h2>
               {storedIp(detail.meta) && <p><code>{storedIp(detail.meta)}</code> <Button onClick={async () => { try { await navigator.clipboard.writeText(storedIp(detail.meta)!); } catch (error) { setError(errorMessage(error)); } }}>{__('Copy stored IP', 'chatflow-forms')}</Button></p>}
               <pre>{JSON.stringify(detail.meta, null, 2)}</pre>
@@ -282,9 +312,9 @@ export function Detail({
           <section className="cff-card">
             <h2>{__('Notes', 'chatflow-forms')}</h2>
             <ul>
-              {detail.notes.map((item) => (
+              {detail.notes.filter(item => item.kind === 'note').map((item) => (
                 <li key={item.id}>
-                  {item.createdAt} · {item.kind}: {item.message}
+                  <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time> · {item.message}
                 </li>
               ))}
             </ul>

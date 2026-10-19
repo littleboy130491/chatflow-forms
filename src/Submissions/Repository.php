@@ -74,6 +74,10 @@ final class Repository {
 				$value = $filters[ $key ];
 				if ( ! is_string( $value ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?)?$/D', $value ) || false === strtotime( $value . ( 10 === strlen( $value ) ? ' UTC' : '' ) ) ) {
 					throw new \InvalidArgumentException( 'Invalid date.' ); }
+				// strtotime normalizes impossible dates and 24:00 into a different day.
+				$parsed = date_parse( $value );
+				if ( $parsed['warning_count'] || $parsed['error_count'] ) {
+					throw new \InvalidArgumentException( 'Invalid date.' ); }
 				$date = gmdate( 'Y-m-d H:i:s', strtotime( $value . ( 10 === strlen( $value ) ? ( 'to' === $key ? ' 23:59:59 UTC' : ' 00:00:00 UTC' ) : '' ) ) );
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.created_at{$op}%s", $date );

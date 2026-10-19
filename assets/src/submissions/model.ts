@@ -124,3 +124,23 @@ export function exportOptions(
     format,
   };
 }
+
+/** Short response identity; UUID remains available in detail metadata. */
+export function responseLabel(id: number): string {
+  return `${__('Response', 'chatflow-forms')} #${id}`;
+}
+export function readableDate(value: string): string {
+  // Database timestamps without an offset are UTC, not the viewer's local time.
+  const date = new Date(/^\d{4}-\d{2}-\d{2} \d{2}:/.test(value) ? value.replace(' ', 'T') + 'Z' : value);
+  return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(date) + ' UTC';
+}
+export function operatorLabel(operator: string): string {
+  const labels: Record<string, string> = {
+    eq: __('Equals', 'chatflow-forms'), neq: __('Does not equal', 'chatflow-forms'),
+    contains: __('Contains', 'chatflow-forms'), gt: __('Greater than', 'chatflow-forms'),
+    gte: __('Greater than or equal to', 'chatflow-forms'), lt: __('Less than', 'chatflow-forms'),
+    lte: __('Less than or equal to', 'chatflow-forms'), is_empty: __('Is empty', 'chatflow-forms'),
+    is_not_empty: __('Is not empty', 'chatflow-forms'),
+  };
+  return labels[operator] ?? operator;
+}

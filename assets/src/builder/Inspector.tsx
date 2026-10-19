@@ -14,6 +14,7 @@ import {
 import { Area, Button, Check, Field, Select } from './controls';
 import { RuleEditor } from './RuleEditor';
 import { makeOption, reorder } from './model';
+import { withStepMessages } from './labels';
 import type { ReactNode } from 'react';
 import type { FormSchema, Step, Option } from './api';
 
@@ -165,6 +166,7 @@ export function Inspector({
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
+  const acceptsInput = !['statement', 'summary', 'media', 'hidden', 'calculated'].includes(step.type);
   const validation = step.validation ?? {},
     settings = step.settings ?? {};
   const patchSettings = (patch: Partial<NonNullable<Step['settings']>>) =>
@@ -178,7 +180,7 @@ export function Inspector({
           { value: 'content', label: __('Content', 'chatflow-forms') },
           { value: 'validation', label: __('Validation', 'chatflow-forms') },
           { value: 'logic', label: __('Logic', 'chatflow-forms') },
-        ].map((item) => (
+        ].filter(item => acceptsInput || item.value !== 'validation').map((item) => (
           <Button
             key={item.value}
             variant={tab === item.value ? 'primary' : 'secondary'}
@@ -190,32 +192,16 @@ export function Inspector({
       </nav>
       {tab === 'content' && (
         <Fragment>
-          <Field
-            label={__('Label', 'chatflow-forms')}
-            value={step.label}
-            onChange={(label) => onChange({ ...step, label })}
-          />
-          <Field
-            label={__('Field key', 'chatflow-forms')}
-            value={step.key}
-            onChange={(key) => onChange({ ...step, key })}
-            help={__(
-              'Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules.',
-              'chatflow-forms',
-            )}
-          />
           {step.messages.map((message, index) => (
             <div key={index}>
               <Area
                 label={__('Bot message', 'chatflow-forms')}
                 value={message}
                 onChange={(value) =>
-                  onChange({
-                    ...step,
-                    messages: step.messages.map((item, at) => (at === index ? value : item)),
-                  })
+                  onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? value : item))))
                 }
               />
+              <details><summary>{__('Advanced message options', 'chatflow-forms')}</summary>
               <Select
                 label={__('Insert merge tag', 'chatflow-forms')}
                 value=""
@@ -227,43 +213,39 @@ export function Inspector({
                 ]}
                 onChange={(tag) => {
                   if (tag)
-                    onChange({
-                      ...step,
-                      messages: step.messages.map((item, at) => (at === index ? item + tag : item)),
-                    });
+                    onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? item + tag : item))));
                 }}
               />
+              </details>
               <Button
                 isDestructive
-                onClick={() => onChange({ ...step, messages: step.messages.filter((_, at) => at !== index) })}
+                onClick={() => onChange(withStepMessages(step, step.messages.filter((_, at) => at !== index)))}
               >
                 {__('Remove message', 'chatflow-forms')}
               </Button>
             </div>
           ))}
-          <Button onClick={() => onChange({ ...step, messages: [...step.messages, ''] })}>
+          <Button onClick={() => onChange(withStepMessages(step, [...step.messages, '']))}>
             {__('Add message', 'chatflow-forms')}
           </Button>
-          <Field
-            label={__('Placeholder', 'chatflow-forms')}
-            value={step.placeholder}
-            onChange={(placeholder) => onChange({ ...step, placeholder })}
-          />
+          {/* The runtime shows help text for every step type, so it stays editable for all of them. */}
           <Area
             label={__('Help text', 'chatflow-forms')}
             value={step.helpText ?? ''}
             onChange={(helpText) => onChange({ ...step, helpText })}
+          />
+          {acceptsInput && <Fragment>
+          <Field
+            label={__('Placeholder', 'chatflow-forms')}
+            value={step.placeholder}
+            onChange={(placeholder) => onChange({ ...step, placeholder })}
           />
           <Check
             label={__('Required', 'chatflow-forms')}
             value={step.required}
             onChange={(required) => onChange({ ...step, required: step.type === 'consent' || required })}
           />
-          <Check
-            label={__('Hidden until shown by a rule', 'chatflow-forms')}
-            value={step.hiddenByDefault}
-            onChange={(hiddenByDefault) => onChange({ ...step, hiddenByDefault })}
-          />
+          </Fragment>}
           {['single_choice', 'multi_choice'].includes(step.type) && (
             <Fragment>
               <Select
@@ -356,24 +338,6 @@ export function Inspector({
             <Field label={__('HTTPS media URL','chatflow-forms')} value={settings.media?.url ?? ''} onChange={(url)=>patchSettings({media:{type:'image',...settings.media,url}})} />
             <Field label={__('Alternative text','chatflow-forms')} value={settings.media?.alt ?? ''} onChange={(alt)=>patchSettings({media:{type:'image',url:'',...settings.media,alt}})} />
           </Fragment>}
-          <Field
-            label={__('Autocomplete', 'chatflow-forms')}
-            value={settings.autocomplete}
-            onChange={(autocomplete) => patchSettings({ autocomplete })}
-          />
-          <Select
-            label={__('Keyboard hint', 'chatflow-forms')}
-            value={settings.inputMode ?? 'text'}
-            choices={['text', 'numeric', 'tel', 'decimal', 'email', 'url', 'search', 'none'].map((value) => ({
-              label: inputModeLabels()[value] ?? value,
-              value,
-            }))}
-            onChange={(inputMode) =>
-              patchSettings({
-                inputMode: inputMode as NonNullable<NonNullable<Step['settings']>['inputMode']>,
-              })
-            }
-          />
           {['statement', 'summary'].includes(step.type) && (
             <Fragment>
               <Field
@@ -402,6 +366,47 @@ export function Inspector({
               />
             </Fragment>
           )}
+          <details><summary>{__('Advanced', 'chatflow-forms')}</summary>
+          <Field
+            label={__('Label', 'chatflow-forms')}
+            value={step.label}
+            onChange={(label) => onChange({ ...step, label })}
+          />
+          <Field
+            label={__('Field key', 'chatflow-forms')}
+            value={step.key}
+            onChange={(key) => onChange({ ...step, key })}
+            help={__(
+              'Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules.',
+              'chatflow-forms',
+            )}
+          />
+          <Check
+            label={__('Hidden until shown by a rule', 'chatflow-forms')}
+            value={step.hiddenByDefault}
+            onChange={(hiddenByDefault) => onChange({ ...step, hiddenByDefault })}
+          />
+          {acceptsInput && <Fragment>
+          <Field
+            label={__('Autocomplete', 'chatflow-forms')}
+            value={settings.autocomplete}
+            onChange={(autocomplete) => patchSettings({ autocomplete })}
+          />
+          <Select
+            label={__('Keyboard hint', 'chatflow-forms')}
+            value={settings.inputMode ?? 'text'}
+            choices={['text', 'numeric', 'tel', 'decimal', 'email', 'url', 'search', 'none'].map((value) => ({
+              label: inputModeLabels()[value] ?? value,
+              value,
+            }))}
+            onChange={(inputMode) =>
+              patchSettings({
+                inputMode: inputMode as NonNullable<NonNullable<Step['settings']>['inputMode']>,
+              })
+            }
+          />
+          </Fragment>}
+          </details>
           {step.type === 'hidden' && (
             <Fragment>
               <Select

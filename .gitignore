@@ -12,3 +12,5 @@
 /.wp-env.override.json
 *.log
 /.env*
+/tests/e2e/artifacts/
+/playwright-report/

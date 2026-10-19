@@ -6,19 +6,25 @@ import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/e
 import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, queryString } from '../builder/api';
 import type { AdminConfig, Page } from '../builder/api';
-import { Button, Check, Notice, Select } from '../builder/controls';
+import { Button, Notice, Select } from '../builder/controls';
 import { Filters } from './Filters';
 import { Detail } from './Detail';
 import { Settings } from './Settings';
 import { Tools } from './Tools';
 import { Analytics } from './Analytics';
 import { Export } from './Export';
-import { displayValue, freezeFilters, statusLabel } from './model';
+import { displayValue, freezeFilters, statusLabel, responseLabel, readableDate } from './model';
 import type { Filters as FilterValues, Status, SubmissionDTO } from './model';
+import { decodeTitle } from './FormPicker';
 import { answerColumns, answerKeys, readAnswerColumns } from './answer-columns';
 import '../builder/style.css';
 import './style.css';
 
+/** Frozen title and field labels per `formId:version` on the current page. */
+type SubmissionPage = Page<SubmissionDTO> & { forms?: Record<string, { title: string; labels: Record<string, string> }> };
+function RowCheckbox({ label, value, onChange }: { label: string; value: boolean; onChange: (checked: boolean) => void }) {
+  return <input type="checkbox" aria-label={label} checked={value} onChange={event => onChange(event.target.checked)} />;
+}
 function SubmissionList({ api }: { api: AdminApi }) {
   const columnStorageKey = `cff:answer-columns:${api.config.restUrl}`;
   const [preferredColumns, setPreferredColumns] = useState<string[] | null>(() => { try { return readAnswerColumns(localStorage, columnStorageKey); } catch { return null; } });
@@ -27,7 +33,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [applied, setApplied] = useState<FilterValues>({ status: 'completed' }),
     [page, setPage] = useState(1),
     [perPage, setPerPage] = useState(20),
-    [list, setList] = useState<Page<SubmissionDTO> | null>(null),
+    [list, setList] = useState<SubmissionPage | null>(null),
     [selected, setSelected] = useState<number[]>([]),
     [detailId, setDetailId] = useState<number | null>(null),
     [error, setError] = useState(''),
@@ -37,6 +43,12 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [exporting, setExporting] = useState(false),
     [exportSelected, setExportSelected] = useState(false);
   const allowedKeys = answerKeys(list?.items ?? []);
+  // The list response carries each row's frozen form title and field labels (same capability as the rows).
+  const formMetadata = list?.forms ?? {};
+  const columnLabel = (key: string) => {
+    const labels = [...new Set(Object.values(formMetadata).map(form => form.labels[key]).filter(Boolean))];
+    return labels.length ? labels.join(' / ') : key;
+  };
   const columns = preferredColumns === null ? allowedKeys.slice(0, 3) : answerColumns(preferredColumns, allowedKeys);
   const selectColumn = (index: number, key: string) => {
     const next = [...columns]; next[index] = key; const safe = answerColumns(next, allowedKeys); setPreferredColumns(safe); setColumnWarning('');
@@ -54,7 +66,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
     setBusy(true);
     setError('');
     api
-      .request<Page<SubmissionDTO>>(
+      .request<SubmissionPage>(
         `admin/submissions?${queryString({ ...applied, page, perPage })}`,
         'GET',
         undefined,
@@ -106,11 +118,11 @@ function SubmissionList({ api }: { api: AdminApi }) {
   return (
     <main className="cff-admin">
       <h1>{__('Submissions', 'chatflow-forms')}</h1>
-      <fieldset><legend>{__('Answer columns (up to three)', 'chatflow-forms')}</legend>
-        {[0, 1, 2].map(index => <Select key={index} label={sprintf(__('Answer column %d', 'chatflow-forms'), index + 1)} value={columns[index] ?? ''} choices={[{value:'',label:__('No column', 'chatflow-forms')}, ...allowedKeys.map(key => ({value:key,label:key}))]} onChange={key => selectColumn(index, key)} />)}
+      <details className="cff-disclosure"><summary>{__('Columns', 'chatflow-forms')}</summary><fieldset><legend>{__('Answer columns (up to three)', 'chatflow-forms')}</legend>
+        {[0, 1, 2].map(index => <Select key={index} label={sprintf(__('Answer column %d', 'chatflow-forms'), index + 1)} value={columns[index] ?? ''} choices={[{value:'',label:__('No column', 'chatflow-forms')}, ...allowedKeys.map(key => ({value:key,label:columnLabel(key)}))]} onChange={key => selectColumn(index, key)} />)}
         <p>{__('Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.', 'chatflow-forms')}</p>
         {columnWarning && <Notice status="warning" isDismissible={false}>{columnWarning}</Notice>}
-      </fieldset>
+      </fieldset></details>
       {actionError && (
         <Notice status="error" isDismissible={false}>
           {actionError}
@@ -138,7 +150,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
           </Button>
         ))}
       </nav>
-      <Filters value={filters} onChange={setFilters} />
+      <Filters api={api} value={filters} onChange={setFilters} />
       <Button
         variant="secondary"
         disabled={busy}
@@ -165,6 +177,10 @@ function SubmissionList({ api }: { api: AdminApi }) {
           {error}
         </Notice>
       )}
+        {can(api.config, 'export_submissions') && (
+          <Button onClick={() => { setExportSelected(false); setExporting(!exporting); }}>{__('Export filtered results', 'chatflow-forms')}</Button>
+        )}
+      {selected.length > 0 && (
       <div className="cff-toolbar">
         {can(api.config, 'edit_submissions') && applied.status === 'completed' && <Button disabled={busy || !selected.length} onClick={() => { void resend(); }}>{__('Resend notifications', 'chatflow-forms')}</Button>}
         {can(api.config, 'edit_submissions') && (
@@ -222,13 +238,10 @@ function SubmissionList({ api }: { api: AdminApi }) {
             {__('Trash selected', 'chatflow-forms')}
           </Button>
         )}
-        {can(api.config, 'export_submissions') && (
-          <Button onClick={() => { setExportSelected(false); setExporting(!exporting); }}>{__('Export filtered results', 'chatflow-forms')}</Button>
-        )}
         {can(api.config, 'export_submissions') && <Button disabled={!selected.length} onClick={() => { setExportSelected(true); setExporting(true); }}>{__('Export selected', 'chatflow-forms')}</Button>}
         {can(api.config, 'delete_submissions') && can(api.config, 'edit_submissions') && applied.status === 'trash' && <Button isDestructive disabled={!selected.length || busy} onClick={() => { void bulk('permanent'); }}>{__('Permanently delete selected', 'chatflow-forms')}</Button>}
         {can(api.config, 'edit_submissions') && ['trash', 'spam'].includes(applied.status ?? '') && <Button disabled={!selected.length || busy} onClick={() => { void bulk({ status: 'restore' }); }}>{__('Restore selected', 'chatflow-forms')}</Button>}
-      </div>
+      </div>)}
       {exporting && can(api.config, 'export_submissions') && (
         <Export api={api} filters={applied} ids={exportSelected ? selected : []} />
       )}
@@ -237,7 +250,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
           <thead>
             <tr>
               <th>
-                <Check
+                <RowCheckbox
                   label={__('Select this page', 'chatflow-forms')}
                   value={Boolean(list?.items.length) && selected.length === list?.items.length}
                   onChange={(checked) =>
@@ -247,7 +260,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
               </th>
               <th>{__('Submission', 'chatflow-forms')}</th>
               <th>{__('Date', 'chatflow-forms')}</th>
-              {columns.map(key => <th key={key}>{key}</th>)}
+              {columns.map(key => <th key={key}>{columnLabel(key)}</th>)}
               <th>{__('Source / device', 'chatflow-forms')}</th>
               <th>{__('Read / starred', 'chatflow-forms')}</th>
             </tr>
@@ -256,7 +269,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
             {list?.items.map((item) => (
               <tr key={item.id}>
                 <td>
-                  <Check
+                  <RowCheckbox
                     label={`${__('Select submission', 'chatflow-forms')} ${item.id}`}
                     value={selected.includes(item.id)}
                     onChange={(checked) =>
@@ -266,14 +279,14 @@ function SubmissionList({ api }: { api: AdminApi }) {
                 </td>
                 <td>
                   <Button variant="link" onClick={() => setDetailId(item.id)}>
-                    {item.uuid}
+                    {responseLabel(item.id)}
                   </Button>
                   <small>
-                    {__('Form', 'chatflow-forms')} {item.formId} · v{item.formVersion}
+                    {decodeTitle(formMetadata[`${item.formId}:${item.formVersion}`]?.title ?? '') || `${__('Form', 'chatflow-forms')} #${item.formId}`} · v{item.formVersion}
                   </small>
                 </td>
                 <td>
-                  {item.createdAt}
+                  <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time>
                   <small>
                     {statusLabel(item.status)} · {item.progress}%
                   </small>
