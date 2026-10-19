@@ -8,6 +8,7 @@ import { AdminApi, errorMessage, queryString } from '../builder/api';
 import { Button, Field, Notice } from '../builder/controls';
 import { FormAnalytics } from './FormAnalytics';
 import { defaultRange } from './analytics-dates';
+import { FormPicker, decodeTitle } from './FormPicker';
 
 interface Breakdown { label: string; count: number }
 interface Dropoff extends Breakdown { formId: number; stepId: string }
@@ -25,7 +26,7 @@ function BreakdownTable({ title, rows }: { title: string; rows: Breakdown[] }) {
     <h2>{title}</h2>
     {rows.length === 0 && <p>{__('No data for this period.', 'chatflow-forms')}</p>}
     {rows.map((row, i) => <div key={i} className="cff-analytics-row">
-      <div><span>{row.label}</span><strong>{row.count}</strong></div>
+      <div><span>{decodeTitle(row.label)}</span><strong>{row.count}</strong></div>
       <div className="cff-analytics-track"><span style={{ width: `${100 * row.count / max}%` }} /></div>
     </div>)}
   </section>;
@@ -61,8 +62,10 @@ export function Analytics({ api }: { api: AdminApi }) {
   ] : [];
   return <main className="cff-admin">
     <h1>{__('Analytics', 'chatflow-forms')}</h1>
+    <h2>{__('Overview · UTC', 'chatflow-forms')}</h2>
+    <p>{__('Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.', 'chatflow-forms')}</p>
     <div className="cff-analytics-filters">
-      <Field label={__('Form ID (0 = all)', 'chatflow-forms')} type="number" value={formId} onChange={setFormId} />
+      <FormPicker api={api} value={formId === '0' ? '' : formId} onChange={next => setFormId(next || '0')} />
       <Field label={__('From (UTC)', 'chatflow-forms')} type="date" value={from} onChange={setFrom} />
       <Field label={__('To (UTC, inclusive)', 'chatflow-forms')} type="date" value={to} onChange={setTo} />
       <Button disabled={loading} onClick={() => setFilters({ formId: formId || '0', from, to })}>{__('Apply filters', 'chatflow-forms')}</Button>

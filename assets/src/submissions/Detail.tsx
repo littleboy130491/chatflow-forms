@@ -9,7 +9,8 @@ import type { AnswerMap } from '../shared/contracts';
 import { Area, Button, Notice, Select } from '../builder/controls';
 import { can, errorMessage } from '../builder/api';
 import type { AdminApi } from '../builder/api';
-import { displayValue, statuses, statusLabel } from './model';
+import { displayValue, statuses, statusLabel, responseLabel, readableDate } from './model';
+import { decodeTitle } from './FormPicker';
 import type { Status, SubmissionDetail, SubmissionDTO } from './model';
 import { downloadUpload, storedIp, uploadIds } from './downloads';
 export interface Activity {
@@ -101,7 +102,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
       <ul>
         {activity?.items.map((note) => (
           <li key={note.id}>
-            {note.created_at}: {note.body}
+            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {note.type}
+            <details><summary>{__('Technical details', 'chatflow-forms')}</summary><pre>{note.body}</pre></details>
           </li>
         ))}
       </ul>
@@ -171,10 +173,10 @@ export function Detail({
       {detail && (
         <Fragment>
           <h1>
-            {detail.form?.title ?? __('Submission', 'chatflow-forms')} · {detail.uuid}
+            {decodeTitle(detail.form?.title ?? __('Submission', 'chatflow-forms'))} · {responseLabel(detail.id)}
           </h1>
           <p>
-            {detail.createdAt} · {detail.status} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
+            <time dateTime={detail.createdAt}>{readableDate(detail.createdAt)}</time> · {statusLabel(detail.status)} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
             · {Math.round(detail.durationMs / 1000)}s · {detail.progress}%
           </p>
           {can(api.config, 'edit_submissions') && (
@@ -237,7 +239,7 @@ export function Detail({
                 .map((step) => (
                   <Fragment key={step.id}>
                     <dt>
-                      {step.label} <code>{step.key}</code>
+                      {step.label || step.key}
                     </dt>
                     <dd>{displayValue(detail.answers[step.key]) || '—'}
                       {step.type === 'file_upload' && can(api.config, 'view_submissions') && uploadIds(detail.answers[step.key]).map(uuid => <Button key={uuid} disabled={busy} onClick={async () => { setBusy(true); try { await downloadUpload(api, uuid); } catch (error) { setError(errorMessage(error)); } finally { setBusy(false); } }}>{__('Download attached file', 'chatflow-forms')}</Button>)}
@@ -246,6 +248,7 @@ export function Detail({
                 ))}
             </dl>
           )}
+          {view === 'qa' && !detail.form && <dl>{Object.entries(detail.answers).map(([key, answer]) => <Fragment key={key}><dt>{key}</dt><dd>{displayValue(answer) || '—'}</dd></Fragment>)}</dl>}
           {view === 'replay' && (
             <ol className="cff-replay">
               {detail.visited.map((stepId) => {
@@ -271,6 +274,9 @@ export function Detail({
           )}
           {view === 'meta' && (
             <Fragment>
+              <h2>{__('Response ID', 'chatflow-forms')}</h2>
+              <p><code>{detail.uuid}</code> <Button onClick={async () => { try { await navigator.clipboard.writeText(detail.uuid); } catch (err) { setError(errorMessage(err)); } }}>{__('Copy response ID', 'chatflow-forms')}</Button></p>
+              <details><summary>{__('Field keys', 'chatflow-forms')}</summary><dl>{detail.form?.schema.steps.map(step => <Fragment key={step.id}><dt>{step.label || step.key}</dt><dd><code>{step.key}</code></dd></Fragment>)}</dl></details>
               <h2>{__('Collected metadata', 'chatflow-forms')}</h2>
               {storedIp(detail.meta) && <p><code>{storedIp(detail.meta)}</code> <Button onClick={async () => { try { await navigator.clipboard.writeText(storedIp(detail.meta)!); } catch (error) { setError(errorMessage(error)); } }}>{__('Copy stored IP', 'chatflow-forms')}</Button></p>}
               <pre>{JSON.stringify(detail.meta, null, 2)}</pre>
@@ -278,13 +284,13 @@ export function Detail({
               <pre>{JSON.stringify(detail.consent, null, 2)}</pre>
             </Fragment>
           )}
-          {view === 'activity' && <DeliveryActivity api={api} id={id} />}
+          {view === 'activity' && <Fragment><DeliveryActivity api={api} id={id} /><section className="cff-card"><h2>{__('Technical activity', 'chatflow-forms')}</h2>{detail.notes.filter(item => item.kind !== 'note').map(item => <details key={item.id}><summary>{readableDate(item.createdAt)} · {item.kind}</summary><pre>{item.message}</pre></details>)}</section></Fragment>}
           <section className="cff-card">
             <h2>{__('Notes', 'chatflow-forms')}</h2>
             <ul>
-              {detail.notes.map((item) => (
+              {detail.notes.filter(item => item.kind === 'note').map((item) => (
                 <li key={item.id}>
-                  {item.createdAt} · {item.kind}: {item.message}
+                  <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time> · {item.message}
                 </li>
               ))}
             </ul>

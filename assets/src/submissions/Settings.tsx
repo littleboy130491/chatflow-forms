@@ -67,6 +67,15 @@ type AiProvider = 'anthropic' | 'openrouter' | 'openai';
 const secretHelp = (value: string | undefined): { help?: string } =>
   value === SECRET_MASK ? { help: __('Saved. Leave unchanged to keep it, or clear the field to remove it.', 'chatflow-forms') } : {};
 export function Settings({ api }: { api: AdminApi }) {
+  const [section, setSection] = useState('general');
+  const sections = [
+    { id: 'general', label: __('General', 'chatflow-forms') },
+    { id: 'privacy', label: __('Privacy and retention', 'chatflow-forms') },
+    { id: 'protection', label: __('Spam protection', 'chatflow-forms') },
+    { id: 'notifications', label: __('Notifications', 'chatflow-forms') },
+    { id: 'integrations', label: __('Integrations and AI', 'chatflow-forms') },
+    { id: 'advanced', label: __('Advanced', 'chatflow-forms') },
+  ];
   const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
     [error, setError] = useState(''),
@@ -93,6 +102,10 @@ export function Settings({ api }: { api: AdminApi }) {
   return (
     <main className="cff-admin">
       <h1>{__('ChatFlow settings', 'chatflow-forms')}</h1>
+      <p>{__('Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.', 'chatflow-forms')}</p>
+      <nav className="cff-settings-nav" aria-label={__('Settings sections', 'chatflow-forms')}>
+        {sections.map(item => <Button key={item.id} variant={section === item.id ? 'primary' : 'secondary'} aria-current={section === item.id ? 'page' : undefined} onClick={() => setSection(item.id)}>{item.label}</Button>)}
+      </nav>
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}
@@ -104,8 +117,8 @@ export function Settings({ api }: { api: AdminApi }) {
         </Notice>
       )}
       <fieldset disabled={busy}>
-        <div className="cff-settings-grid">
-          <section className="cff-card">
+        <div className="cff-settings-grid cff-global-settings">
+          <section className="cff-card" data-settings-section="general" hidden={section !== 'general'}>
             <h2>{__('Display defaults', 'chatflow-forms')}</h2>
             <Field
               label={__('Fullpage base slug', 'chatflow-forms')}
@@ -121,7 +134,7 @@ export function Settings({ api }: { api: AdminApi }) {
               }
             />
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="privacy" hidden={section !== 'privacy'}>
             <h2>{__('First-touch attribution', 'chatflow-forms')}</h2>
             <Check
               label={__('Enable first-touch tracking', 'chatflow-forms')}
@@ -150,7 +163,7 @@ export function Settings({ api }: { api: AdminApi }) {
               )}
             </p>
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="privacy" hidden={section !== 'privacy'}>
             <h2>{__('Privacy defaults', 'chatflow-forms')}</h2>
             <Select
               label={__('IP storage', 'chatflow-forms')}
@@ -184,7 +197,7 @@ export function Settings({ api }: { api: AdminApi }) {
               />
             ))}
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="privacy" hidden={section !== 'privacy'}>
             <h2>{__('Automatic retention', 'chatflow-forms')}</h2>
             <Check
               label={__('Automatically delete old submissions', 'chatflow-forms')}
@@ -203,7 +216,7 @@ export function Settings({ api }: { api: AdminApi }) {
               {__('Off by default. Per-form retention settings can override this default.', 'chatflow-forms')}
             </p>
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="protection" hidden={section !== 'protection'}>
             <h2>{__('Partial retention and spam defaults', 'chatflow-forms')}</h2>
             <Field
               label={__('Partial retention days (blank = same as completed submissions)', 'chatflow-forms')}
@@ -270,7 +283,7 @@ export function Settings({ api }: { api: AdminApi }) {
               />
             ))}
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="protection" hidden={section !== 'protection'}>
             <h2>{__('Optional captcha and Akismet credentials', 'chatflow-forms')}</h2>
             <Select label={__('Captcha provider', 'chatflow-forms')} value={settings.spam?.captcha ?? 'none'}
               choices={[{ value: 'none', label: __('None', 'chatflow-forms') }, { value: 'turnstile', label: __('Cloudflare Turnstile', 'chatflow-forms') }, { value: 'hcaptcha', label: __('hCaptcha', 'chatflow-forms') }, { value: 'recaptcha', label: __('Google reCAPTCHA v3', 'chatflow-forms') }]}
@@ -287,7 +300,7 @@ export function Settings({ api }: { api: AdminApi }) {
               onChange={(akismetEnabled) => update({...settings,spam:{...settings.spam!,akismetEnabled}})} />
             <p>{__('Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed.','chatflow-forms')}</p>
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="integrations" hidden={section !== 'integrations'}>
             <h2>{__('AI assist', 'chatflow-forms')}</h2>
             <p>{__('Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.', 'chatflow-forms')}</p>
             <Select label={__('Provider', 'chatflow-forms')} value={settings.ai?.provider ?? 'anthropic'}
@@ -316,8 +329,8 @@ export function Settings({ api }: { api: AdminApi }) {
               <p className="description">{__('Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.', 'chatflow-forms')}</p>
             </>}
           </section>
-          <McpSettings api={api} enabled={settings.mcp?.enabled ?? false} onChange={(enabled) => update({ ...settings, mcp: { enabled } })} />
-          <section className="cff-card">
+          <div hidden={section !== 'integrations'}><McpSettings api={api} enabled={settings.mcp?.enabled ?? false} onChange={(enabled) => update({ ...settings, mcp: { enabled } })} /></div>
+          <section className="cff-card" data-settings-section="integrations" hidden={section !== 'integrations'}>
             <h2>{__('Connector credentials', 'chatflow-forms')}</h2>
             <p>{__('Native connectors send submissions to these services in the background. Leave a provider blank to turn it off; a partly filled provider cannot be saved. Each form chooses which connectors it uses.', 'chatflow-forms')}</p>
             {credentialFields.map(({ type, title, fields }) => (
@@ -332,7 +345,7 @@ export function Settings({ api }: { api: AdminApi }) {
               </fieldset>
             ))}
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="advanced" hidden={section !== 'advanced'}>
             <h2>{__('Trusted proxy configuration', 'chatflow-forms')}</h2>
             <Notice status="warning" isDismissible={false}>
               {__(
@@ -382,7 +395,7 @@ export function Settings({ api }: { api: AdminApi }) {
               }
             />
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="notifications" hidden={section !== 'notifications'}>
             <h2>{__('Global email layout', 'chatflow-forms')}</h2>
             {smtpDetected === false && <Notice status="warning" isDismissible={false}>{__('No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.', 'chatflow-forms')}</Notice>}
             {smtpDetected === null && <p>{__('SMTP status is unknown. Verify your mail transport and test inbox delivery.', 'chatflow-forms')}</p>}
@@ -404,7 +417,7 @@ export function Settings({ api }: { api: AdminApi }) {
               />
             ))}
           </section>
-          <section className="cff-card">
+          <section className="cff-card" data-settings-section="advanced" hidden={section !== 'advanced'}>
             <h2>{__('Uninstall data', 'chatflow-forms')}</h2>
             <Check
               label={__('Delete this site’s forms and submissions on plugin uninstall', 'chatflow-forms')}
@@ -430,7 +443,7 @@ export function Settings({ api }: { api: AdminApi }) {
             </p>
           </section>
         </div>
-        <Button
+        <div className="cff-settings-save"><Button
           variant="primary"
           disabled={busy}
           onClick={async () => {
@@ -450,7 +463,7 @@ export function Settings({ api }: { api: AdminApi }) {
           }}
         >
           {__('Save settings', 'chatflow-forms')}
-        </Button>
+        </Button><span role="status">{busy ? __('Saving…', 'chatflow-forms') : saved ? __('All settings saved.', 'chatflow-forms') : __('Save applies to all sections.', 'chatflow-forms')}</span></div>
       </fieldset>
     </main>
   );
