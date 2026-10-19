@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { interpolate } from '../shared/logic/index';
 import type { AnswerMap } from '../shared/contracts';
@@ -40,11 +40,15 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [page, setPage] = useState(1);
-  const load = () =>
-    api
+  // Only the latest request may update the list, so a slow earlier page cannot overwrite it.
+  const latest = useRef(0);
+  const load = () => {
+    const request = ++latest.current;
+    return api
       .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
-      .then(setActivity)
-      .catch((err) => setError(errorMessage(err)));
+      .then((result) => { if (request === latest.current) setActivity(result); })
+      .catch((err) => { if (request === latest.current) setError(errorMessage(err)); });
+  };
   useEffect(() => {
     void load();
   }, [api, id, page]);

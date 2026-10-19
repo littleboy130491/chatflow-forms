@@ -187,3 +187,27 @@ it('pages through delivery activity beyond the first response',async()=>{
   expect(button('Newer activity').disabled).toBe(false);
   await act(async()=>root.unmount());
 });
+it('ignores a slower earlier activity response after paging',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  let releaseRefresh:()=>void=()=>{};
+  let refreshes=0;
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    const body=response({deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100});
+    if(page===1&&++refreshes===2)return new Promise(resolve=>{releaseRefresh=()=>resolve(body);});
+    return Promise.resolve(body);
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Refresh activity').click());
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  await act(async()=>releaseRefresh());
+  expect(host.textContent).toContain('code_1');
+  expect(host.textContent).not.toContain('code_200');
+  await act(async()=>root.unmount());
+});
