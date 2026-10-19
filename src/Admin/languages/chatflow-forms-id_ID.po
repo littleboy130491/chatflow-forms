@@ -1831,6 +1831,9 @@ msgstr "Kredensial captcha dan Akismet opsional"
 msgid "Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off."
 msgstr "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI."
 
+msgid "Other"
+msgstr "Lainnya"
+
 msgid "Other (free-text option)"
 msgstr "Lainnya (pilihan teks bebas)"
 

@@ -74,7 +74,7 @@ it('defaults Tools to a non-destructive available task',async()=>{
 });
 it('separates private notes from technical activity and retains copyable UUID metadata',async()=>{
   const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:['name'],consent:{},notes:[{id:1,kind:'note',message:'Call tomorrow',createdAt:row.createdAt},{id:2,kind:'delivery',message:'{"code":"async_sent","deliveryId":1}',createdAt:row.createdAt}],form:{title:'Contact &#8211; sales',schema:{steps:[{id:'name',key:'name',type:'short_text',label:'Your name',messages:[]}]}}} as unknown as SubmissionDetail;
-  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.endsWith('/activity')?{deliveries:[],items:[]}:detail)));
+  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.endsWith('/activity')?{deliveries:[],items:[{id:2,type:'delivery',body:'{"code":"async_sent","deliveryId":1}',created_at:row.createdAt}]}:detail)));
   const host=document.createElement('div');const root=createRoot(host);const copy=vi.fn().mockResolvedValue(undefined);Object.defineProperty(navigator,'clipboard',{value:{writeText:copy},configurable:true});
   await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
   expect(host.querySelector('h1')?.textContent).toBe('Contact – sales · Response #42');
@@ -83,7 +83,7 @@ it('separates private notes from technical activity and retains copyable UUID me
   expect(notes.textContent).not.toContain('async_sent');
   expect(host.querySelector('dt')?.textContent).toBe('Your name');
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
-  expect(host.textContent).toContain('async_sent');
+  expect([...host.querySelectorAll('li')].filter(li=>li.textContent?.includes('async_sent')).map(li=>li.textContent?.includes(': async_sent'))).toEqual([true]);
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Metadata and consent')!.click());
   expect(host.textContent).toContain(row.uuid);
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Copy response ID')!.click());

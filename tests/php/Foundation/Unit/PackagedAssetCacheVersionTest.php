@@ -10,16 +10,21 @@ final class PackagedAssetCacheVersionTest extends TestCase {
 		$file = tempnam( sys_get_temp_dir(), 'cff-asset-' );
 		self::assertNotFalse( $file );
 		try {
+			Assets::reset();
 			file_put_contents( $file, 'first' );
 			$first = Assets::version( $file );
 			self::assertSame( substr( hash( 'sha256', 'first' ), 0, 16 ), $first );
 			self::assertSame( $first, Assets::version( $file ) );
 			touch( $file, 1000000000 );
+			Assets::reset();
 			self::assertSame( $first, Assets::version( $file ), 'Timestamps must not affect content versions.' );
 			file_put_contents( $file, 'other' );
 			touch( $file, 1000000000 );
+			self::assertSame( $first, Assets::version( $file ), 'Versions are memoised within one request.' );
+			Assets::reset();
 			self::assertNotSame( $first, Assets::version( $file ), 'Same-length content and mtime still invalidate.' );
 		} finally {
+			Assets::reset();
 			unlink( $file );
 		}
 	}

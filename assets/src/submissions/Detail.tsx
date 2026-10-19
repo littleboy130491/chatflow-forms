@@ -27,6 +27,14 @@ export interface Activity {
   page: number;
   perPage: number;
 }
+/** Delivery notes store `{code, deliveryId, attempt}` JSON; show the outcome code inline. */
+export function deliveryOutcome(body: string): string {
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (parsed && typeof parsed === 'object' && typeof (parsed as { code?: unknown }).code === 'string') return (parsed as { code: string }).code;
+  } catch { /* Older notes may be plain text. */ }
+  return body;
+}
 function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   const [activity, setActivity] = useState<Activity | null>(null),
     [error, setError] = useState(''),
@@ -102,7 +110,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
       <ul>
         {activity?.items.map((note) => (
           <li key={note.id}>
-            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {note.type}
+            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {deliveryOutcome(note.body)}
             <details><summary>{__('Technical details', 'chatflow-forms')}</summary><pre>{note.body}</pre></details>
           </li>
         ))}
@@ -284,7 +292,7 @@ export function Detail({
               <pre>{JSON.stringify(detail.consent, null, 2)}</pre>
             </Fragment>
           )}
-          {view === 'activity' && <Fragment><DeliveryActivity api={api} id={id} /><section className="cff-card"><h2>{__('Technical activity', 'chatflow-forms')}</h2>{detail.notes.filter(item => item.kind !== 'note').map(item => <details key={item.id}><summary>{readableDate(item.createdAt)} · {item.kind}</summary><pre>{item.message}</pre></details>)}</section></Fragment>}
+          {view === 'activity' && <DeliveryActivity api={api} id={id} />}
           <section className="cff-card">
             <h2>{__('Notes', 'chatflow-forms')}</h2>
             <ul>

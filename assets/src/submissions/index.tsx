@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/element';
+import { Fragment, createRoot, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, queryString } from '../builder/api';
 import type { AdminConfig, Page } from '../builder/api';
@@ -44,19 +44,22 @@ function SubmissionList({ api }: { api: AdminApi }) {
   const allowedKeys = answerKeys(list?.items ?? []);
   // The detail endpoint supplies permission-checked frozen labels without requiring manage_forms.
   // Fetch one representative per form/version on this page, never an additional row per answer.
+  // Version snapshots are frozen, so each form/version is fetched once per page load.
+  const requestedMetadata = useRef(new Set<string>());
   useEffect(() => {
-    const abort = new AbortController();
-    const representatives = [...new Map((list?.items ?? []).map(row => [`${row.formId}:${row.formVersion}`, row])).entries()];
+    const representatives = [...new Map((list?.items ?? []).map(row => [`${row.formId}:${row.formVersion}`, row])).entries()]
+      .filter(([key]) => !requestedMetadata.current.has(key));
+    representatives.forEach(([key]) => requestedMetadata.current.add(key));
     void Promise.all(representatives.map(async ([key, row]) => {
       try {
-        const detail = await api.request<SubmissionDetail>(`admin/submissions/${row.id}`, 'GET', undefined, abort.signal);
+        const detail = await api.request<SubmissionDetail>(`admin/submissions/${row.id}`);
         return detail.form ? [key, { title: decodeTitle(detail.form.title), labels: Object.fromEntries(detail.form.schema.steps.map(step => [step.key, step.label || step.key])) }] as const : null;
-      } catch { return null; } // Enrichment must not block reading the inbox if a snapshot was removed.
-    })).then(entries => { if (!abort.signal.aborted) setFormMetadata(Object.fromEntries(entries.filter(entry => entry !== null))); });
-    return () => abort.abort();
+      } catch { requestedMetadata.current.delete(key); return null; } // Enrichment must not block reading the inbox if a snapshot was removed.
+    })).then(entries => { const found = entries.filter(entry => entry !== null); if (found.length) setFormMetadata(current => ({ ...current, ...Object.fromEntries(found) })); });
   }, [api, list]);
   const columnLabel = (key: string) => {
-    const labels = [...new Set(Object.values(formMetadata).map(form => form.labels[key]).filter(Boolean))];
+    const pageForms = new Set((list?.items ?? []).map(row => `${row.formId}:${row.formVersion}`));
+    const labels = [...new Set(Object.entries(formMetadata).filter(([form]) => pageForms.has(form)).map(([, form]) => form.labels[key]).filter(Boolean))];
     return labels.length ? labels.join(' / ') : key;
   };
   const columns = preferredColumns === null ? allowedKeys.slice(0, 3) : answerColumns(preferredColumns, allowedKeys);

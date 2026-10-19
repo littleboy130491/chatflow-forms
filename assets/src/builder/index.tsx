@@ -69,6 +69,19 @@ export const themeLabels: Record<'light' | 'dark' | 'auto', string> = {
   dark: __('Dark', 'chatflow-forms'),
   auto: __('Auto (follow visitor device)', 'chatflow-forms'),
 };
+const builtInPaletteGroups = (): Array<{ label: string; types: string[] }> => [
+  { label: __('Basic', 'chatflow-forms'), types: ['statement', 'short_text', 'long_text', 'email', 'phone', 'number', 'date'] },
+  { label: __('Choices', 'chatflow-forms'), types: ['single_choice', 'multi_choice', 'yes_no', 'consent'] },
+  { label: __('Ratings', 'chatflow-forms'), types: ['rating', 'scale', 'nps', 'slider'] },
+  { label: __('Advanced', 'chatflow-forms'), types: ['address', 'media', 'file_upload', 'calculated', 'hidden', 'summary'] },
+];
+
+/** Palette groups; types registered through the `cff_field_types` filter land in "Other". */
+export function paletteGroups(available: readonly string[]): Array<{ label: string; types: string[] }> {
+  const groups = builtInPaletteGroups();
+  const grouped = new Set(groups.flatMap(group => group.types));
+  return [...groups, { label: __('Other', 'chatflow-forms'), types: available.filter(type => !grouped.has(type)) }];
+}
 /** Keeps a reload on the builder from creating another blank draft once the form exists. */
 export function builderUrlFor(href: string, id: number): string | null {
   const url = new URL(href);
@@ -268,7 +281,7 @@ function BuilderView({
     let active = true;
     void api.request<FormDTO>(`admin/forms/${form.id}/published`).then(live => {
       if (active) { setLiveForm(live); setBaselineError(''); }
-    }).catch(err => { if (active) { setBaselineError(errorMessage(err)); } });
+    }).catch(err => { if (active) { setLiveForm(null); setBaselineError(errorMessage(err)); } });
     return () => { active = false; };
   }, [api, form.id, form.version]);
   const sensors = useSensors(
@@ -528,12 +541,7 @@ function BuilderView({
             <aside className={`cff-palette ${paletteOpen ? 'is-open' : ''}`}>
               <h2>{__('Field palette', 'chatflow-forms')}</h2>
               <Field label={__('Search fields', 'chatflow-forms')} value={search} onChange={setSearch} />
-              {[
-                { label: __('Basic', 'chatflow-forms'), types: ['statement', 'short_text', 'long_text', 'email', 'phone', 'number', 'date'] },
-                { label: __('Choices', 'chatflow-forms'), types: ['single_choice', 'multi_choice', 'yes_no', 'consent'] },
-                { label: __('Ratings', 'chatflow-forms'), types: ['rating', 'scale', 'nps', 'slider'] },
-                { label: __('Advanced', 'chatflow-forms'), types: ['address', 'media', 'file_upload', 'calculated', 'hidden', 'summary'] },
-              ].map(group => {
+              {paletteGroups(api.config.features.fieldTypes).map(group => {
                 const types = api.config.features.fieldTypes.filter(type => group.types.includes(type) && (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase()));
                 return types.length > 0 && <section className="cff-palette-group" key={group.label}>
                   <h3>{group.label}</h3>
@@ -807,7 +815,7 @@ function BuilderView({
       {tab === 'share' && (
         <section className="cff-card">
           <h2>{__('Share', 'chatflow-forms')}</h2>
-          {liveForm || !form.version ? <Share form={liveForm ?? form} config={api.config} /> : !baselineError && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
+          {liveForm || !form.version ? <Share form={liveForm ?? form} config={api.config} /> : baselineError ? <Notice status="error" isDismissible={false}>{baselineError}</Notice> : <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
         </section>
       )}
       {preview && <Preview form={form} config={api.config} onClose={() => setPreview(false)} />}
@@ -851,15 +859,4 @@ function AdminBuilder({ config }: { config: AdminConfig }) {
 }
 export function mountBuilder(root: HTMLElement, config: AdminConfig = window.cffAdmin): void {
   createRoot(root).render(<AdminBuilder config={config} />);
-}
-/** Forms list page: the start panel opens the builder screen for the created draft. */
-export function mountFormStart(root: HTMLElement, config: AdminConfig = window.cffAdmin): void {
-  const api = new AdminApi(config);
-  const open = (form: FormDTO) => {
-    const url = new URL(config.adminUrl ?? 'admin.php', window.location.href);
-    url.searchParams.set('page', 'cff-builder');
-    if (form.id) url.searchParams.set('formId', String(form.id)); else url.searchParams.set('blank', '1');
-    window.location.assign(url.href);
-  };
-  createRoot(root).render(can(config, 'manage_forms') ? <FormStart api={api} onOpen={open} /> : null);
 }
