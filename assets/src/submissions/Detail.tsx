@@ -154,7 +154,7 @@ export function Detail({
     }
   };
   return (
-    <section className="cff-detail">
+    <section className="cff-admin cff-detail">
       <Button onClick={onClose}>{__('Back to submissions', 'chatflow-forms')}</Button>
       <Button disabled={!previous} onClick={() => { if (previous) onNavigate(previous); }}>{__('Previous', 'chatflow-forms')}</Button>
       <Button disabled={!next} onClick={() => { if (next) onNavigate(next); }}>{__('Next', 'chatflow-forms')}</Button>

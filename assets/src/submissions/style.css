@@ -23,6 +23,30 @@
   .cff-detail { color: #000; background: #fff; }
   .cff-replay li, .cff-detail dl > div { break-inside: avoid; }
 }
+/* Keep filters and action/status controls on a shared control baseline.
+   Grid gaps already supply the vertical rhythm between filter groups. */
+.cff-admin .cff-analytics-filters { align-items: flex-start; }
+.cff-admin .cff-analytics-filters > .components-button { margin-block-start: 24px; min-height: 40px; }
+.cff-admin :is(.cff-inbox-filters, .cff-analytics-filters) > .components-base-control { margin-bottom: 0; }
+.cff-admin .cff-advanced-filters .cff-settings-grid > .components-base-control { margin-bottom: 0; }
+.cff-admin .cff-disclosure { padding: 16px 20px; margin-block: 16px; }
+.cff-admin .cff-disclosure fieldset > legend { margin-bottom: 12px; }
+.cff-admin.cff-detail .cff-toolbar { position: static; align-items: flex-end; padding: 16px; gap: 12px; }
+.cff-admin.cff-detail .cff-toolbar .components-base-control { margin: 0; }
+.cff-admin.cff-detail > .components-button { margin-block: 8px; }
+.cff-admin.cff-detail dl { margin-block: 24px; }
+.cff-admin.cff-detail dt { margin-top: 24px; }
+.cff-admin.cff-detail dd { padding-block: 8px; margin-bottom: 16px; }
+.cff-admin .cff-analytics-kpis .cff-card { margin: 0; }
+.cff-admin .cff-analytics-kpis strong { margin-bottom: 8px; }
+.cff-admin .cff-global-settings { gap: 24px; }
+@media (max-width: 700px) {
+  .cff-admin .cff-analytics-filters > .components-button { margin-block-start: 0; }
+  .cff-admin .cff-disclosure { padding: 16px; }
+  .cff-admin.cff-detail > .components-button { min-height: 44px; white-space: normal; }
+  .cff-admin.cff-detail .cff-toolbar { gap: 12px; }
+}
+
 .cff-form-analytics{margin-top:32px}
 
 /* Inbox controls are secondary to the responses, not a setup wizard. */

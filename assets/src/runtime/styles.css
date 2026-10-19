@@ -79,7 +79,8 @@
 .chat[data-style="messaging"][data-choices="keyboard"] .chip{border:0;border-radius:10px;text-align:center;justify-content:center;font-weight:600;font-size:14px;color:var(--m-accent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .chat[data-style="messaging"][data-choices="keyboard"] .chip[aria-pressed=true]{background:var(--m-accent);color:var(--cff-button-text,#fff)}
 .chat[data-style="messaging"] .continue{margin-top:6px}
-.chat[data-style="messaging"] button:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle):not(.close-chat),.chat[data-style="messaging"] .button{background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;font-weight:600;padding:9px 20px;min-height:40px}
+/* Keep generic button specificity below composer controls; :not() otherwise wins their zero padding. */
+.chat[data-style="messaging"] button:where(:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle):not(.close-chat)),.chat[data-style="messaging"] .button{background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;font-weight:600;padding:9px 20px;min-height:44px}
 .chat[data-style="messaging"] .link-button{color:color-mix(in srgb,var(--cff-text) 70%,transparent);font-size:14px}
 .chat[data-style="messaging"] .active form:has(.input-row),.chat[data-style="messaging"] .active form:has(> textarea){display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-top:4px}
 .chat[data-style="messaging"] .active:not(.has-prompt) form > label[for]{grid-column:1 / -1;margin:0}
@@ -87,8 +88,8 @@
 .chat[data-style="messaging"] .active form > small{grid-column:1 / -1;order:3;color:color-mix(in srgb,var(--cff-text) 60%,transparent)}
 .chat[data-style="messaging"] .active form .input-row input,.chat[data-style="messaging"] .active form > textarea,.chat[data-style="messaging"] .active select,.chat[data-style="messaging"] .active .address input{border:0;border-radius:22px;background:var(--cff-bubble-bot-bg);color:var(--cff-text);padding:11px 16px;box-shadow:0 1px 1px rgba(0,0,0,.12);min-height:44px}
 .chat[data-style="messaging"] .active form > textarea{border-radius:18px}
-.chat[data-style="messaging"] .active form:has(.input-row) > button[type=submit],.chat[data-style="messaging"] .active form:has(> textarea) > button[type=submit]{width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;font-size:0;margin:0;display:grid;place-items:center}
-.chat[data-style="messaging"] .active form:has(.input-row) > button[type=submit]::before,.chat[data-style="messaging"] .active form:has(> textarea) > button[type=submit]::before{content:'';width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E") center/contain no-repeat;margin-inline-start:3px}
+.chat[data-style="messaging"] .active form:has(.input-row) > button[type=submit],.chat[data-style="messaging"] .active form:has(> textarea) > button[type=submit]{width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;font-size:0;line-height:1;margin:0;display:flex;align-items:center;justify-content:center}
+.chat[data-style="messaging"] .active form:has(.input-row) > button[type=submit]::before,.chat[data-style="messaging"] .active form:has(> textarea) > button[type=submit]::before{content:'';width:22px;height:22px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E") center/contain no-repeat;margin:0;flex:none}
 .chat[data-style="messaging"] .summary,.chat[data-style="messaging"] .notice{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .chat[data-style="messaging"] .notice{margin:10px auto;max-width:92%;text-align:center}
 .chat[data-style="messaging"] .summary dl>div{border-color:color-mix(in srgb,var(--cff-text) 10%,transparent)}
@@ -112,3 +113,39 @@ header nav{margin-inline-start:auto}
 /* Keep identity, navigation and the close control separate in narrow embedded panels. */
 @container (max-width:360px){header{flex-wrap:wrap}header .identity{flex:1 1 0}header nav{order:1;flex-basis:100%;justify-content:flex-end}}
 .contact-closed{margin:0;text-align:center;font-size:13px;line-height:1.4;color:color-mix(in srgb,var(--cff-text) 70%,transparent)}
+
+/* Classic forms are vertical stacks; inline counters must not sit beside Continue. */
+.chat:not([data-style="messaging"]) .active form{display:grid;gap:12px}
+.chat:not([data-style="messaging"]) .active form > :is(label,.help,small,button){margin-block:0}
+.active input[type="range"]{display:block;margin-inline:0;padding-inline:0}
+.slider-reading{flex-wrap:wrap;min-width:0}
+.slider-reading output{overflow-wrap:anywhere;min-width:0}
+.active > .summary{margin-block-end:16px}
+.summary + button,.summary + form{margin-block-start:16px}
+/* Shared 8/12/16/24 rhythm, also for narrow embedded panels. */
+.conversation{padding:24px}
+.bubble{margin-block:8px}
+.active{margin-block:16px}
+.active form > :is(.help,small,[role="alert"]){display:block;margin-block:8px;line-height:1.5}
+.active form > button{margin-block-start:16px}
+.active .input-row,.active :is(input,textarea,select){min-width:0}
+.summary{padding:24px}
+.summary dl>div{padding-block:12px}
+.summary .link-button{min-height:44px}
+.chips,.score-input{gap:8px}
+.chat[data-style="messaging"] header{padding:16px}
+.chat[data-style="messaging"] .conversation{padding:24px}
+.chat[data-style="messaging"] .bubble{padding:12px 16px;margin-block:4px;line-height:1.5}
+.chat[data-style="messaging"] .bot:not(:has(+ .bot)){margin-bottom:12px}
+.chat[data-style="messaging"] .user{margin-block:8px 12px;min-height:44px}
+.chat[data-style="messaging"] .active{margin-block:16px 8px}
+.chat[data-style="messaging"] .help{padding:8px 12px;border-radius:var(--cff-radius)}
+.chat[data-style="messaging"] .chips,.chat[data-style="messaging"][data-choices="keyboard"] .chips:not(.cards){gap:8px;margin-top:8px}
+.chat[data-style="messaging"] :is(.chip,.button),.chat[data-style="messaging"] nav button,.close-chat{min-height:44px}
+.close-chat{width:44px;height:44px}
+.chat[data-style="messaging"] .active form:has(.input-row),.chat[data-style="messaging"] .active form:has(> textarea){grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:0}
+.chat[data-style="messaging"] .active form > small{margin:0}
+.chat[data-style="messaging"] .continue{margin-top:12px;min-height:44px}
+.chat[data-style="messaging"] .summary{padding:24px;border-radius:var(--cff-radius)}
+@container (max-width:520px){.conversation,.chat[data-style="messaging"] .conversation{padding:16px}.summary,.chat[data-style="messaging"] .summary{padding:16px}.chat[data-style="messaging"] header{padding:12px}}
+@container (max-width:380px){.chat[data-style="messaging"][data-choices="keyboard"] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}}
