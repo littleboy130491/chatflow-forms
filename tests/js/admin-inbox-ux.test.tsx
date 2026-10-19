@@ -74,7 +74,7 @@ it('defaults Tools to a non-destructive available task',async()=>{
 });
 it('separates private notes from technical activity and retains copyable UUID metadata',async()=>{
   const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:['name'],consent:{},notes:[{id:1,kind:'note',message:'Call tomorrow',createdAt:row.createdAt},{id:2,kind:'delivery',message:'{"code":"async_sent","deliveryId":1}',createdAt:row.createdAt}],form:{title:'Contact &#8211; sales',schema:{steps:[{id:'name',key:'name',type:'short_text',label:'Your name',messages:[]}]}}} as unknown as SubmissionDetail;
-  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.endsWith('/activity')?{deliveries:[],items:[{id:2,type:'delivery',body:'{"code":"async_sent","deliveryId":1}',created_at:row.createdAt}]}:detail)));
+  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('/activity?')?{deliveries:[],items:[{id:2,type:'delivery',body:'{"code":"async_sent","deliveryId":1}',created_at:row.createdAt}],page:1,perPage:100}:detail)));
   const host=document.createElement('div');const root=createRoot(host);const copy=vi.fn().mockResolvedValue(undefined);Object.defineProperty(navigator,'clipboard',{value:{writeText:copy},configurable:true});
   await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
   expect(host.querySelector('h1')?.textContent).toBe('Contact – sales · Response #42');
@@ -167,5 +167,23 @@ it('groups global settings by task while saving values and secret masks from hid
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Save settings')!.click());
   const write=transport.mock.calls.find(call=>call[1]?.method==='PUT');
   expect(JSON.parse(write?.[1]?.body as string)).toEqual({settings:{...settings,defaultTheme:'dark'}});
+  await act(async()=>root.unmount());
+});
+it('pages through delivery activity beyond the first response',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    return Promise.resolve(response(url.includes('/activity?')?{deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100}:detail));
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  expect(button('Older activity').disabled).toBe(true);
+  expect(button('Newer activity').disabled).toBe(false);
   await act(async()=>root.unmount());
 });

@@ -1696,6 +1696,9 @@
       "New template name": [
         "Nama templat baru"
       ],
+      "Newer activity": [
+        "Aktivitas lebih baru"
+      ],
       "Next": [
         "Berikutnya"
       ],
@@ -1788,6 +1791,9 @@
       ],
       "Okay": [
         "Cukup baik"
+      ],
+      "Older activity": [
+        "Aktivitas lebih lama"
       ],
       "Older than days (default 360 unless dates set)": [
         "Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)"

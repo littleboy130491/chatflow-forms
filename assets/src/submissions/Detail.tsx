@@ -38,15 +38,18 @@ export function deliveryOutcome(body: string): string {
 function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   const [activity, setActivity] = useState<Activity | null>(null),
     [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [page, setPage] = useState(1);
   const load = () =>
     api
-      .request<Activity>(`admin/submissions/${id}/activity`)
+      .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
       .then(setActivity)
       .catch((err) => setError(errorMessage(err)));
   useEffect(() => {
     void load();
-  }, [api, id]);
+  }, [api, id, page]);
+  // The endpoint pages notes and deliveries together; a full page may have more behind it.
+  const hasMore = Boolean(activity && (activity.items.length >= activity.perPage || activity.deliveries.length >= activity.perPage));
   return (
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
@@ -115,6 +118,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
           </li>
         ))}
       </ul>
+      <Button disabled={page <= 1} onClick={() => setPage(page - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={!hasMore} onClick={() => setPage(page + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }
