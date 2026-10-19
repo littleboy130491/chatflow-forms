@@ -94,7 +94,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
       const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 600);
       return () => clearTimeout(timer);
     }
-  }, [state.activeId, enabled, state.phase, step?.settings?.autoContinue, reduced, controller]);
+  }, [state.activeId, enabled, state.phase, state.fieldError, step?.settings?.autoContinue, reduced, controller]);
   useEffect(() => { if (state.phase === 'done') ending.current?.focus({ preventScroll: true }); }, [state.phase]);
   useEffect(() => { if (confirm) confirmBox.current?.querySelector<HTMLElement>('button:not([disabled])')?.focus({ preventScroll: true }); }, [confirm]);
   const cancelRestart = () => { setConfirm(false); requestAnimationFrame(() => focusActive(active.current, step?.type)); };
@@ -149,13 +149,13 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
         {s.id !== state.activeId && reactions(s, state.answers[s.key]).map((message, index) => bot(message, `reaction-${index}`))}
       </section>)}
       <div className="sr-only" aria-live="polite" aria-atomic="false">{state.phase === 'ready' ? messages.slice(0, shown).map((message, index) => <p key={`${state.activeId}-${index}`}>{markdownText(interpolateRich(message))}</p>) : state.phase === 'done' ? <p>{phrase('complete')}</p> : null}</div>
-      {state.phase === 'ready' && step && <div ref={active} className="active" key={step.id}>
+      {state.phase === 'ready' && step && <div ref={active} className={`active${messages.length ? ' has-prompt' : ''}`} key={step.id}>
         {!enabled && <div className="typing bubble bot" role="status" aria-label={phrase('typing')}><i /><i /><i /></div>}
         {enabled && <>
           {step.helpText && <p id={`help-${step.id}`} className="help"><Markdown text={interpolateRich(step.helpText)} /></p>}
-          {state.fieldError && <p id={`error-${step.id}`} className="bubble bot" role="alert">{phrase(state.fieldError)}</p>}
+          {state.fieldError && <p id={`error-${step.id}`} className="field-error" role="alert">{phrase(state.fieldError)}</p>}
           {step.type === 'summary' && summary()}
-          {step.type === 'statement' && !waitsForButton(step) ? null : ['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={value => void controller.answer(value)} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
+          {step.type === 'statement' && !waitsForButton(step) ? null : ['statement', 'summary'].includes(step.type) ? <button disabled={state.busy} onClick={async () => { await controller.answer(null); if (step.type === 'summary' && !controller.state.activeId) await controller.submit(honeypot); }}>{step.settings?.buttonLabel ?? phrase(step.type === 'summary' ? 'submit' : 'continue')}</button> : <FieldInput key={`${step.id}:${JSON.stringify(controller.inputValue(step))}`} step={{ ...step, label: interpolateText(step.label), settings: { ...step.settings, ...(step.settings?.consentText ? { consentText: interpolateRich(step.settings.consentText) } : {}) } }} value={controller.inputValue(step)} disabled={state.busy || state.conflict || !!state.completion} phrase={phrase} onAnswer={async value => { await controller.answer(value); if (controller.state.fieldError) focusActive(active.current, step.type); }} {...(state.form?.features.uploads && !controller.options.preview ? { upload: (file: File) => controller.upload(step, file) } : {})} {...(state.fieldError ? { error: phrase(state.fieldError) } : {})} {...(form?.media ? { media: form.media } : {})} />}
           {controller.canSkip && <button className="link-button" disabled={state.busy || state.conflict} onClick={() => void controller.answer(null)}>{phrase('skip')}</button>}
         </>}
       </div>}

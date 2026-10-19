@@ -199,7 +199,7 @@ export class RuntimeController {
     const candidate = { ...this.state.answers, [step.key]: value } as AnswerMap;
     const test = replay(this.state.form!.form.schema, candidate, this.context, 'partial');
     const issue = test.errors.find(issue => issue.fieldKey === step.key);
-    if (issue || test.currentStepId === step.id) { this.state.fieldError = issue?.code === 'required' || issue?.code === 'cff_required' ? 'required' : 'invalid'; this.notify(); return; }
+    if (issue || test.currentStepId === step.id) { this.state.fieldError = issue?.code === 'required' || issue?.code === 'cff_required' ? (step.type === 'consent' ? 'consentRequired' : 'required') : issue?.code === 'invalid_email' ? 'invalidEmail' : 'invalid'; this.notify(); return; }
     this.timings[step.id] = (this.timings[step.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted);
     this.state.answers = candidate; this.editing = null; this.state.dirty = true;
     this.compute(); this.persist();

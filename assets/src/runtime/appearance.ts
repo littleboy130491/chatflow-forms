@@ -7,6 +7,21 @@ export function safeColor(value: string | undefined): string | undefined {
   return probe.color || undefined;
 }
 
+/** Pick the higher-contrast neutral for opaque accent buttons; theme colours themselves stay untouched. */
+export function buttonTextColor(background: string): '#171717' | '#ffffff' {
+  const probe = document.createElement('span');
+  probe.style.color = safeColor(background) ?? '#171717';
+  probe.style.display = 'none';
+  document.documentElement.append(probe);
+  const channels = getComputedStyle(probe).color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+  probe.remove();
+  if (!channels || channels.length !== 3) return '#ffffff';
+  const linear = channels.map(value => { const v = value / 255; return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; });
+  const luminance = linear[0]! * .2126 + linear[1]! * .7152 + linear[2]! * .0722;
+  const darkLuminance = ((23 / 255 + .055) / 1.055) ** 2.4;
+  return (luminance + .05) / (darkLuminance + .05) >= 1.05 / (luminance + .05) ? '#171717' : '#ffffff';
+}
+
 export function safeFont(value: string | undefined): string | undefined {
   return value && /^[\w\s,"'-]{1,255}$/.test(value) ? value : undefined;
 }

@@ -118,11 +118,11 @@ export function SliderInput({ step, value, disabled, onAnswer, phrase }: FieldPr
   </form>;
 }
 
-function ConsentInput({ step, value, disabled, onAnswer, phrase }: FieldProps) {
+function ConsentInput({ step, value, disabled, onAnswer, phrase, error }: FieldProps) {
   const [checked, setChecked] = useState(value === true);
   const privacy = step.settings?.privacyUrl ? safeLink(step.settings.privacyUrl) : null;
   return <form onSubmit={e => { e.preventDefault(); onAnswer(checked); }}>
-    <label className="consent"><input type="checkbox" disabled={disabled} checked={checked} onChange={e => setChecked(e.currentTarget.checked)} /><span><Markdown text={step.settings?.consentText ?? step.label} /></span></label>
+    <label className="consent"><input type="checkbox" aria-invalid={!!error} aria-describedby={`${step.helpText ? `help-${step.id} ` : ''}${error ? `error-${step.id}` : ''}`.trim() || undefined} disabled={disabled} checked={checked} onChange={e => setChecked(e.currentTarget.checked)} /><span><Markdown text={step.settings?.consentText ?? step.label} /></span></label>
     {privacy && <a href={privacy} target="_blank" rel="noopener noreferrer">{phrase('privacy')}</a>}
     <button disabled={disabled}>{step.settings?.buttonLabel ?? phrase('continue')}</button>
   </form>;
