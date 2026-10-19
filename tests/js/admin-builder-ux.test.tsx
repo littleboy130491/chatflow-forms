@@ -75,6 +75,8 @@ it('keeps technical options in Advanced and hides input controls for statements'
  expect(host.textContent).not.toContain('Placeholder');
  expect(host.textContent).not.toContain('Required');
  expect(host.textContent).not.toContain('Keyboard hint');
+ // The runtime shows help text on every step, so statements keep it editable.
+ expect([...host.querySelectorAll('label')].some(label => label.textContent === 'Help text')).toBe(true);
  expect([...host.querySelectorAll('summary')].some(s => s.textContent === 'Advanced')).toBe(true);
  expect(host.querySelector('label')?.textContent).not.toBe('Field key');
 });

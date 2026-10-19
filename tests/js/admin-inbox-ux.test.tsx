@@ -106,13 +106,15 @@ it('opens an inbox with collapsed configuration and reveals bulk actions only af
   expect(host.querySelector('tbody button')?.textContent).toBe('Response #42');
 });
 it('labels inbox columns from frozen questions and shows form names without requiring manage_forms',async()=>{
-  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('analytics/forms')?{items:[{id:5,title:'Contact'}],pages:1}:url.endsWith('submissions/42')?{...row,form:{title:'Contact &amp; sales',schema:{steps:[{key:'name',label:'Your full name'}]}}}:{items:[row],total:1})));
+  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('analytics/forms')?{items:[{id:5,title:'Contact'}],pages:1}:{items:[row],total:1,forms:{[`${row.formId}:${row.formVersion}`]:{title:'Contact &amp; sales',labels:{name:'Your full name'}}}})));
   vi.stubGlobal('fetch',transport);
   const host=document.createElement('div');document.body.append(host);
   await act(async()=>mountSubmissions(host,config));
   expect([...host.querySelectorAll('thead th')].some(th=>th.textContent==='Your full name')).toBe(true);
   expect(host.querySelector('tbody small')?.textContent).toContain('Contact & sales');
   expect(transport.mock.calls.some(call=>String(call[0]).includes('admin/forms'))).toBe(false);
+  // Metadata arrives with the list; no per-row detail requests.
+  expect(transport.mock.calls.some(call=>/admin\/submissions\/\d+/.test(String(call[0])))).toBe(false);
 });
 it('keeps advanced filter values when collapsed and submits human-labeled operators without changing API values',async()=>{
   const changed=vi.fn();const host=document.createElement('div');const root=createRoot(host);

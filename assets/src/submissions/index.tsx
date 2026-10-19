@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, createRoot, useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { Fragment, createRoot, useEffect, useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, queryString } from '../builder/api';
 import type { AdminConfig, Page } from '../builder/api';
@@ -14,17 +14,18 @@ import { Tools } from './Tools';
 import { Analytics } from './Analytics';
 import { Export } from './Export';
 import { displayValue, freezeFilters, statusLabel, responseLabel, readableDate } from './model';
-import type { Filters as FilterValues, Status, SubmissionDTO, SubmissionDetail } from './model';
+import type { Filters as FilterValues, Status, SubmissionDTO } from './model';
 import { decodeTitle } from './FormPicker';
 import { answerColumns, answerKeys, readAnswerColumns } from './answer-columns';
 import '../builder/style.css';
 import './style.css';
 
+/** Frozen title and field labels per `formId:version` on the current page. */
+type SubmissionPage = Page<SubmissionDTO> & { forms?: Record<string, { title: string; labels: Record<string, string> }> };
 function RowCheckbox({ label, value, onChange }: { label: string; value: boolean; onChange: (checked: boolean) => void }) {
   return <input type="checkbox" aria-label={label} checked={value} onChange={event => onChange(event.target.checked)} />;
 }
 function SubmissionList({ api }: { api: AdminApi }) {
-  const [formMetadata, setFormMetadata] = useState<Record<string, { title: string; labels: Record<string, string> }>>({});
   const columnStorageKey = `cff:answer-columns:${api.config.restUrl}`;
   const [preferredColumns, setPreferredColumns] = useState<string[] | null>(() => { try { return readAnswerColumns(localStorage, columnStorageKey); } catch { return null; } });
   const [columnWarning, setColumnWarning] = useState('');
@@ -32,7 +33,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [applied, setApplied] = useState<FilterValues>({ status: 'completed' }),
     [page, setPage] = useState(1),
     [perPage, setPerPage] = useState(20),
-    [list, setList] = useState<Page<SubmissionDTO> | null>(null),
+    [list, setList] = useState<SubmissionPage | null>(null),
     [selected, setSelected] = useState<number[]>([]),
     [detailId, setDetailId] = useState<number | null>(null),
     [error, setError] = useState(''),
@@ -42,24 +43,10 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [exporting, setExporting] = useState(false),
     [exportSelected, setExportSelected] = useState(false);
   const allowedKeys = answerKeys(list?.items ?? []);
-  // The detail endpoint supplies permission-checked frozen labels without requiring manage_forms.
-  // Fetch one representative per form/version on this page, never an additional row per answer.
-  // Version snapshots are frozen, so each form/version is fetched once per page load.
-  const requestedMetadata = useRef(new Set<string>());
-  useEffect(() => {
-    const representatives = [...new Map((list?.items ?? []).map(row => [`${row.formId}:${row.formVersion}`, row])).entries()]
-      .filter(([key]) => !requestedMetadata.current.has(key));
-    representatives.forEach(([key]) => requestedMetadata.current.add(key));
-    void Promise.all(representatives.map(async ([key, row]) => {
-      try {
-        const detail = await api.request<SubmissionDetail>(`admin/submissions/${row.id}`);
-        return detail.form ? [key, { title: decodeTitle(detail.form.title), labels: Object.fromEntries(detail.form.schema.steps.map(step => [step.key, step.label || step.key])) }] as const : null;
-      } catch { requestedMetadata.current.delete(key); return null; } // Enrichment must not block reading the inbox if a snapshot was removed.
-    })).then(entries => { const found = entries.filter(entry => entry !== null); if (found.length) setFormMetadata(current => ({ ...current, ...Object.fromEntries(found) })); });
-  }, [api, list]);
+  // The list response carries each row's frozen form title and field labels (same capability as the rows).
+  const formMetadata = list?.forms ?? {};
   const columnLabel = (key: string) => {
-    const pageForms = new Set((list?.items ?? []).map(row => `${row.formId}:${row.formVersion}`));
-    const labels = [...new Set(Object.entries(formMetadata).filter(([form]) => pageForms.has(form)).map(([, form]) => form.labels[key]).filter(Boolean))];
+    const labels = [...new Set(Object.values(formMetadata).map(form => form.labels[key]).filter(Boolean))];
     return labels.length ? labels.join(' / ') : key;
   };
   const columns = preferredColumns === null ? allowedKeys.slice(0, 3) : answerColumns(preferredColumns, allowedKeys);
@@ -79,7 +66,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
     setBusy(true);
     setError('');
     api
-      .request<Page<SubmissionDTO>>(
+      .request<SubmissionPage>(
         `admin/submissions?${queryString({ ...applied, page, perPage })}`,
         'GET',
         undefined,
@@ -295,7 +282,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                     {responseLabel(item.id)}
                   </Button>
                   <small>
-                    {formMetadata[`${item.formId}:${item.formVersion}`]?.title || `${__('Form', 'chatflow-forms')} #${item.formId}`} · v{item.formVersion}
+                    {decodeTitle(formMetadata[`${item.formId}:${item.formVersion}`]?.title ?? '') || `${__('Form', 'chatflow-forms')} #${item.formId}`} · v{item.formVersion}
                   </small>
                 </td>
                 <td>

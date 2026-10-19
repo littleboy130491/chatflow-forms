@@ -104,6 +104,15 @@ final class FeatureInventoryTest extends \PHPUnit\Framework\TestCase {
 			self::assertSame( $submission->id(), $found['items'][0]->id() );
 			self::assertSame( 1, $found['items'][0]->formVersion() );
 			self::assertSame( $step['label'], $forms->getVersion( $form->id(), 1 )->schema()['steps'][0]['label'] );
+			// The inbox list carries each row's frozen form title and labels, so it needs no per-row detail requests.
+			$list_request = new \WP_REST_Request( 'GET', '/cff/v1/admin/submissions' );
+			$list_request->set_query_params( array( 'formId' => $form->id() ) );
+			$list = rest_do_request( $list_request );
+			self::assertSame( 200, $list->get_status() );
+			$frozen = json_decode( wp_json_encode( $list->get_data()['forms'] ), true );
+			self::assertSame( array( $form->id() . ':1' ), array_keys( $frozen ) );
+			self::assertSame( 'Historical fixture', $frozen[ $form->id() . ':1' ]['title'] );
+			self::assertSame( $step['label'], $frozen[ $form->id() . ':1' ]['labels'][ $step['key'] ] );
 			self::assertSame( 'Private note', $wpdb->get_var( $wpdb->prepare( "SELECT body FROM {$wpdb->prefix}cff_submission_notes WHERE submission_id=%d AND type='note'", $submission->id() ) ) );
 		} finally {
 			$repository->delete( $submission->id() );

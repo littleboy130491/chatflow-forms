@@ -329,12 +329,36 @@ final class RestModule implements Module {
 		$filters      = $r->get_query_params();
 		unset( $filters['page'], $filters['perPage'] );
 		$data = $this->submissions->find( $filters, $page, $per );
+		// Frozen title and field labels per form version on this page, so the inbox needs no per-row detail requests.
+		$forms = array();
+		foreach ( $data['items'] as $submission ) {
+			$key = $submission->formId() . ':' . $submission->formVersion();
+			if ( array_key_exists( $key, $forms ) ) {
+				continue;
+			}
+			$form          = $this->forms->getVersion( $submission->formId(), $submission->formVersion() );
+			$forms[ $key ] = null;
+			if ( ! $form ) {
+				continue;
+			}
+			$labels = array();
+			foreach ( (array) ( $form->schema()['steps'] ?? array() ) as $step ) {
+				if ( is_array( $step ) && isset( $step['key'] ) && '' !== (string) $step['key'] ) {
+					$labels[ (string) $step['key'] ] = '' !== (string) ( $step['label'] ?? '' ) ? (string) $step['label'] : (string) $step['key'];
+				}
+			}
+			$forms[ $key ] = array(
+				'title'  => $form->title(),
+				'labels' => (object) $labels,
+			);
+		}
 		return $this->respond(
 			array(
 				'items'   => array_map( fn( $s ) => $s->admin(), $data['items'] ),
 				'total'   => $data['total'],
 				'page'    => $page,
 				'perPage' => $per,
+				'forms'   => (object) array_filter( $forms ),
 			)
 		);
 	}
