@@ -191,7 +191,7 @@ it('loads the complete live snapshot for sharing instead of unpublished draft se
  vi.unstubAllGlobals();
 });
 
-import { SettingsEditor } from '../../assets/src/builder/FormSettings';
+import { EndingsEditor, SettingsEditor } from '../../assets/src/builder/FormSettings';
 import { AdminApi } from '../../assets/src/builder/api';
 it('groups settings by task without materializing inherited privacy values', async () => {
  const form = blankForm(); const onChange = vi.fn();
@@ -255,4 +255,38 @@ it('makes the draft preview transition and return action explicit', async () => 
  expect(host.textContent).toContain('Responses here are not saved');
  await act(async () => button('Back to editor').click());
  expect(onClose).toHaveBeenCalledOnce();
+});
+it('keeps new field labels in sync with the question without changing keys or custom labels', async () => {
+ let step = blankForm().schema.steps[0]!;
+ const key = step.key, id = step.id;
+ const onChange = vi.fn(next => { step = next; });
+ const typeMessage = async (text: string) => {
+  const input = host.querySelector('textarea')!;
+  await act(async () => {
+   Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(input, text);
+   input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await act(async () => root.render(<Inspector step={step} schema={{ ...blankForm().schema, steps: [step] }} onChange={onChange} />));
+ };
+ await render(<Inspector step={step} schema={{ ...blankForm().schema, steps: [step] }} onChange={onChange} />);
+ await typeMessage('Siapa nama Anda?');
+ expect(step.label).toBe('Siapa nama Anda?');
+ await typeMessage('Siapa nama lengkap Anda?');
+ expect(step.label).toBe('Siapa nama lengkap Anda?');
+ expect({ key: step.key, id: step.id }).toEqual({ key, id });
+ step = { ...step, label: 'Label internal khusus' };
+ await act(async () => root.render(<Inspector step={step} schema={{ ...blankForm().schema, steps: [step] }} onChange={onChange} />));
+ await typeMessage('Apa panggilan Anda?');
+ expect(step.label).toBe('Label internal khusus');
+});
+it('uses readable ending names while preserving IDs and hiding technical redirect controls', async () => {
+ const form = blankForm(), id = form.schema.endings[0]!.id;
+ await render(<EndingsEditor form={form} onChange={vi.fn()} />);
+ expect(host.querySelector('select option')?.textContent).toBe('Ending 1 · Thank you!');
+ expect(host.querySelector('legend')?.textContent).toBe('Ending 1 · Thank you!');
+ expect(host.querySelector('select option')?.getAttribute('value')).toBe(id);
+ expect([...host.querySelectorAll('label')].some(l => l.textContent?.startsWith('Allowed external redirect hosts'))).toBe(false);
+ const technical = [...host.querySelectorAll('details')].find(d => d.querySelector('code')?.textContent === id)!;
+ expect(technical).toBeTruthy();
+ expect(technical.open).toBe(false);
 });

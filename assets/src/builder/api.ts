@@ -13,6 +13,8 @@ export type Capability =
   | 'purge_submissions'
   | 'manage_settings';
 export interface AdminConfig extends SharedAdminConfig {
+  /** Content-versioned URL provided by WordPress, for cached preview imports. */
+  runtimeUrl?: string;
   defaults?: FormSettings;
   capabilities?: Partial<Record<Capability, boolean>>;
   adminUrl?: string;

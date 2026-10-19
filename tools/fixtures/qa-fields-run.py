@@ -17,6 +17,7 @@ modules = Path(os.environ.get('CFF_FIELDS_NODE_MODULES', '/home/hermes/chatflow-
 env = dict(os.environ)
 env['CFF_E2E_BASE_URL'] = 'http://localhost:8892'
 env['CFF_E2E'] = '1'
+env['CFF_FIELDS_QA'] = '1'
 env.setdefault('CFF_E2E_CHROMIUM_EXECUTABLE', '/home/hermes/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome')
 # Refuse to seed/run against any accidentally supplied shared database or staging host.
 subprocess.run(['wp', '--path='+wp, 'eval', "if (DB_NAME !== 'chatflow_fields_test' || home_url() !== 'http://localhost:8892') throw new RuntimeException('Not isolated fields WordPress.');"], env=env, check=True)

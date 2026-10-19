@@ -8,6 +8,10 @@ import { errorMessage, safeHttpUrl } from './api';
 import type { AdminConfig, FormDTO } from './api';
 import type { AnswerMap, PublicSchemaEnvelope, ReplayContext } from '../shared/contracts';
 
+export function previewRuntimeUrl(config: Pick<AdminConfig, 'pluginUrl' | 'runtimeUrl'>): string {
+  return config.runtimeUrl || `${config.pluginUrl}build/runtime/runtime.js`;
+}
+
 export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnvelope {
   const session = form.settings.sessions ?? {};
   return {
@@ -100,7 +104,7 @@ export async function mountPublicPreview(
   isCurrent: () => boolean = () => true,
   extra: { previewAnswers?: AnswerMap } = {},
 ): Promise<PreviewHandle | (() => void) | void> {
-  const url = `${config.pluginUrl}build/runtime/runtime.js`;
+  const url = previewRuntimeUrl(config);
   const runtime = (await import(/* webpackIgnore: true */ url)) as RuntimeModule;
   // Load the theme's frontend (it registers itself with window.ChatFlow) so the preview matches the site.
   const theme = config.themeFrontend ?? {};

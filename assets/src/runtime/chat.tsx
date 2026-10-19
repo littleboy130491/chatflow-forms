@@ -149,7 +149,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
         {s.id !== state.activeId && reactions(s, state.answers[s.key]).map((message, index) => bot(message, `reaction-${index}`))}
       </section>)}
       <div className="sr-only" aria-live="polite" aria-atomic="false">{state.phase === 'ready' ? messages.slice(0, shown).map((message, index) => <p key={`${state.activeId}-${index}`}>{markdownText(interpolateRich(message))}</p>) : state.phase === 'done' ? <p>{phrase('complete')}</p> : null}</div>
-      {state.phase === 'ready' && step && <div ref={active} className={`active${messages.length ? ' has-prompt' : ''}`} key={step.id}>
+      {state.phase === 'ready' && step && <div ref={active} className={`active${messages.slice(0, shown).some(message => markdownText(interpolateRich(message)).trim()) ? ' has-prompt' : ''}`} key={step.id}>
         {!enabled && <div className="typing bubble bot" role="status" aria-label={phrase('typing')}><i /><i /><i /></div>}
         {enabled && <>
           {step.helpText && <p id={`help-${step.id}`} className="help"><Markdown text={interpolateRich(step.helpText)} /></p>}

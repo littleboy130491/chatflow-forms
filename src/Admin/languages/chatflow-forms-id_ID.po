@@ -154,6 +154,9 @@ msgstr "Filter lanjutan"
 msgid "Advanced message options"
 msgstr "Opsi pesan lanjutan"
 
+msgid "Advanced redirect settings"
+msgstr "Pengaturan pengalihan lanjutan"
+
 msgid "Advanced: prefill answers"
 msgstr "Lanjutan: isi jawaban awal"
 
@@ -951,6 +954,9 @@ msgstr "Akhiri dengan"
 
 msgid "Ending"
 msgstr "Penutup"
+
+msgid "Ending %d"
+msgstr "Penutup %d"
 
 msgid "Ending messages (one per line)"
 msgstr "Pesan penutup (satu per baris)"
@@ -2928,6 +2934,9 @@ msgstr "Anda tidak diizinkan melihat analitik."
 
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
+
+msgid "Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme."
+msgstr "Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap."
 
 msgid "Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review."
 msgstr "Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa."

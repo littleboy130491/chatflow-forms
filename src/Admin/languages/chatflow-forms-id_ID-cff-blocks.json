@@ -160,6 +160,9 @@
       "Advanced message options": [
         "Opsi pesan lanjutan"
       ],
+      "Advanced redirect settings": [
+        "Pengaturan pengalihan lanjutan"
+      ],
       "Advanced: prefill answers": [
         "Lanjutan: isi jawaban awal"
       ],
@@ -957,6 +960,9 @@
       ],
       "Ending": [
         "Penutup"
+      ],
+      "Ending %d": [
+        "Penutup %d"
       ],
       "Ending messages (one per line)": [
         "Pesan penutup (satu per baris)"
@@ -2934,6 +2940,9 @@
       ],
       "You cannot view submissions.": [
         "Anda tidak dapat melihat kiriman."
+      ],
+      "Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.": [
+        "Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap."
       ],
       "Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review.": [
         "Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa."

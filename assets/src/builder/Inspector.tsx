@@ -14,6 +14,7 @@ import {
 import { Area, Button, Check, Field, Select } from './controls';
 import { RuleEditor } from './RuleEditor';
 import { makeOption, reorder } from './model';
+import { withStepMessages } from './labels';
 import type { ReactNode } from 'react';
 import type { FormSchema, Step, Option } from './api';
 
@@ -197,10 +198,7 @@ export function Inspector({
                 label={__('Bot message', 'chatflow-forms')}
                 value={message}
                 onChange={(value) =>
-                  onChange({
-                    ...step,
-                    messages: step.messages.map((item, at) => (at === index ? value : item)),
-                  })
+                  onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? value : item))))
                 }
               />
               <details><summary>{__('Advanced message options', 'chatflow-forms')}</summary>
@@ -215,22 +213,19 @@ export function Inspector({
                 ]}
                 onChange={(tag) => {
                   if (tag)
-                    onChange({
-                      ...step,
-                      messages: step.messages.map((item, at) => (at === index ? item + tag : item)),
-                    });
+                    onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? item + tag : item))));
                 }}
               />
               </details>
               <Button
                 isDestructive
-                onClick={() => onChange({ ...step, messages: step.messages.filter((_, at) => at !== index) })}
+                onClick={() => onChange(withStepMessages(step, step.messages.filter((_, at) => at !== index)))}
               >
                 {__('Remove message', 'chatflow-forms')}
               </Button>
             </div>
           ))}
-          <Button onClick={() => onChange({ ...step, messages: [...step.messages, ''] })}>
+          <Button onClick={() => onChange(withStepMessages(step, [...step.messages, '']))}>
             {__('Add message', 'chatflow-forms')}
           </Button>
           {acceptsInput && <Fragment>

@@ -71,7 +71,7 @@ export function blankForm(defaults: FormSettings = {}): FormDTO {
     draftRevision: 0,
     schema: {
       schemaVersion: 1,
-      bot: { name: 'Ima', typingSpeed: 'normal' },
+      bot: { name: 'ChatFlow', typingSpeed: 'normal' },
       steps: [makeStep('statement', [])],
       endings: [{ id: ending, type: 'message', messages: [__('Thank you!', 'chatflow-forms')] }],
     },

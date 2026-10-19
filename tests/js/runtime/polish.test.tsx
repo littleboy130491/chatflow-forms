@@ -121,6 +121,23 @@ describe('runtime polish regressions', () => {
     expect(getComputedStyle(host.querySelector('.active label')!).position).not.toBe('absolute');
     controller.dispose();
   });
+  it.each(['classic', 'messaging'].flatMap(style => [
+    { style, messages: [''] },
+    { style, messages: ['   ', '\t\n'] },
+    { style, messages: ['{{answer:missing}}'] },
+    { style, messages: ['[ ](https://example.com)'] },
+  ]))('retains the custom visible label for $style with empty rendered prompts $messages', async ({ style, messages }) => {
+    const controller = await chat({ ...email, label: 'Your contact email', messages });
+    if (style === 'messaging') host.querySelector<HTMLElement>('.chat')!.dataset.style = style;
+    await vi.waitFor(() => expect(host.querySelector('.active input')).not.toBeNull());
+    expect([...host.querySelectorAll('.step .bubble')].map(bubble => bubble.textContent).join('').trim()).toBe('');
+    const label = host.querySelector<HTMLLabelElement>('.active label[for]')!;
+    expect(label.textContent).toContain('Your contact email');
+    expect(label.control).toBe(host.querySelector('.active input'));
+    expect(getComputedStyle(label).position).not.toBe('absolute');
+    expect(getComputedStyle(label).width).not.toBe('1px');
+    controller.dispose();
+  });
   it('announces a specific email correction linked to the invalid field', async () => {
     const controller = await chat(email);
     await act(() => controller.answer('not-an-email'));

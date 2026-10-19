@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
+import { endingTitle } from './labels';
 import { EmailTemplates } from './EmailTemplates';
 import { ConnectorSettings, deliveryEventLabels } from './ConnectorSettings';
 import { errorMessage } from './api';
@@ -316,7 +317,7 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
       <Select
         label={__('Default ending', 'chatflow-forms')}
         value={form.settings.completion?.defaultEndingId ?? schema.endings[0]?.id}
-        choices={schema.endings.map((ending) => ({ value: ending.id, label: ending.id }))}
+        choices={schema.endings.map((ending, index) => ({ value: ending.id, label: endingTitle(ending, index) }))}
         onChange={(defaultEndingId) =>
           onChange({
             ...form,
@@ -324,6 +325,8 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
           })
         }
       />
+      {schema.endings.some(ending => ending.type === 'redirect') && <details className="cff-ending-advanced">
+      <summary>{__('Advanced redirect settings', 'chatflow-forms')}</summary>
       <Field
         label={__('Allowed external redirect hosts (comma-separated)', 'chatflow-forms')}
         value={form.settings.completion?.allowedRedirectHosts?.join(', ') ?? ''}
@@ -346,9 +349,11 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
           })
         }
       />
-      {schema.endings.map((ending) => (
+      </details>}
+      {schema.endings.map((ending, index) => (
         <fieldset key={ending.id} className="cff-card">
-          <legend>{ending.id}</legend>
+          <legend>{endingTitle(ending, index)}</legend>
+          <details className="cff-ending-advanced"><summary>{__('Technical details', 'chatflow-forms')}</summary><p><code>{ending.id}</code></p></details>
           <Select
             label={__('Ending type', 'chatflow-forms')}
             value={ending.type}

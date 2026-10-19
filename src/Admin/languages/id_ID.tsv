@@ -1074,6 +1074,9 @@ Site timezone: %s|Zona waktu situs: %s
 Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.|Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri.
 Technical activity|Aktivitas teknis
 Technical details|Detail teknis
+Ending %d|Penutup %d
+Advanced redirect settings|Pengaturan pengalihan lanjutan
+Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.|Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap.
 Test your draft as a visitor. Responses here are not saved, and notifications are not sent.|Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim.
 Thank-you message|Pesan terima kasih
 Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.|Gunakan blok ChatFlow Form, tempel shortcode ini ke blok Shortcode, atau gunakan widget Shortcode di Elementor.

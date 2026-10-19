@@ -3,7 +3,7 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { AdminConfig, FormDTO, FormSettings } from './api';
 import { cleanupPreview, mountPublicPreview, publicDraft, type PreviewHandle } from './Preview';
 import type { PublicSchemaEnvelope } from '../shared/contracts';
@@ -148,7 +148,7 @@ export function ThemeEditor({ form, config, onChange }: { form: FormDTO; config:
       <Segmented label={__('Light or dark', 'chatflow-forms')} value={appearance.theme ?? 'light'} onChange={theme => set({ theme })}
         choices={[{ value: 'light', label: __('Light', 'chatflow-forms') }, { value: 'dark', label: __('Dark', 'chatflow-forms') }, { value: 'auto', label: __('Follow device', 'chatflow-forms') }]} />
       <h3>{__('Colours', 'chatflow-forms')}</h3>
-      {appearance.theme === 'dark' || appearance.theme === 'auto' ? <p className="description">{__('Dark mode uses its own built-in colours.', 'chatflow-forms')}</p> : null}
+      {appearance.theme === 'dark' || appearance.theme === 'auto' ? <p className="description">{messaging ? sprintf(__('Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.', 'chatflow-forms'), __('Night', 'chatflow-forms')) : __('Dark mode uses its own built-in colours.', 'chatflow-forms')}</p> : null}
       <div className="cff-color-grid">
         {colorFields().filter(field => messaging || !['headerBackground', 'headerText', 'chatBackground', 'userTextColor'].includes(field.key)).map(field =>
           <ColorField key={field.key} label={field.label} value={appearance[field.key]} fallback={defaults[field.key]} onChange={value => set({ [field.key]: value })} />)}

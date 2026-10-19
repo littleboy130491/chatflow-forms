@@ -3,6 +3,7 @@ namespace ChatFlow\Admin;
 
 use ChatFlow\Contracts\Module;
 use ChatFlow\Forms\FormRepository;
+use ChatFlow\Support\Assets;
 
 final class AdminModule implements Module {
 	/** @var array<string, string> */
@@ -258,6 +259,7 @@ final class AdminModule implements Module {
 			'restUrl'       => trailingslashit( rest_url( 'cff/v1' ) ),
 			'nonce'         => wp_create_nonce( 'wp_rest' ),
 			'pluginUrl'     => plugin_dir_url( CFF_FILE ),
+			'runtimeUrl'    => add_query_arg( 'ver', Assets::version( CFF_PATH . 'build/runtime/runtime.js' ), plugins_url( 'build/runtime/runtime.js', CFF_FILE ) ),
 			'screen'        => $screen,
 			'locale'        => determine_locale(),
 			'capabilities'  => $caps,
@@ -379,9 +381,10 @@ final class AdminModule implements Module {
 		$css = 'build/admin/style-' . $entry . ( is_rtl() ? '-rtl' : '' ) . '.css';
 		if ( $enqueue && is_file( CFF_PATH . $css ) ) {
 			if ( 'submissions' === $entry ) {
-				wp_enqueue_style( 'cff-admin-base', plugin_dir_url( CFF_FILE ) . 'build/admin/style-builder' . ( is_rtl() ? '-rtl' : '' ) . '.css', array( 'wp-components' ), $asset['version'] );
+				$base_css = 'build/admin/style-builder' . ( is_rtl() ? '-rtl' : '' ) . '.css';
+				wp_enqueue_style( 'cff-admin-base', plugin_dir_url( CFF_FILE ) . $base_css, array( 'wp-components' ), Assets::version( CFF_PATH . $base_css ) );
 			}
-			wp_enqueue_style( 'cff-' . $entry, plugin_dir_url( CFF_FILE ) . $css, array( 'wp-components' ), $asset['version'] );
+			wp_enqueue_style( 'cff-' . $entry, plugin_dir_url( CFF_FILE ) . $css, array( 'wp-components' ), Assets::version( CFF_PATH . $css ) );
 		}
 		return true;
 	}

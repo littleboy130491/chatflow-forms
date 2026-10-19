@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: '.',
-  testMatch: '**/*.spec.ts',
+  // The native field fixture wraps visitor.spec; collect only one entry point per mode.
+  testMatch: process.env.CFF_FIELDS_QA === '1' ? '**/fields-*.spec.ts' : '**/*.spec.ts',
+  testIgnore: ['**/artifacts/**', '**/report/**', ...(process.env.CFF_FIELDS_QA === '1' ? [] : ['**/fields-*.spec.ts'])],
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,

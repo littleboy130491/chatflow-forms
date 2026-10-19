@@ -4,6 +4,7 @@ namespace ChatFlow\Frontend;
 use ChatFlow\Contracts\Module;
 use ChatFlow\Forms\FormRepository;
 use ChatFlow\Rest\Settings;
+use ChatFlow\Support\Assets;
 
 final class FrontendModule implements Module {
 	public function __construct( private FormRepository $forms ) {}
@@ -73,7 +74,7 @@ final class FrontendModule implements Module {
 			$fallback = get_404_template();
 			return $fallback ? $fallback : $template; }
 		$GLOBALS['cff_fullpage_form'] = $form;
-		wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true );
+		wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), Assets::version( CFF_PATH . 'build/runtime/runtime.js' ), true );
 		status_header( 200 );
 		return CFF_PATH . 'templates/fullpage.php';
 	}
@@ -122,7 +123,7 @@ final class FrontendModule implements Module {
 
 	public function enqueueSiteWide(): void {
 		if ( $this->siteWideTarget() ) {
-			wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), CFF_VERSION, true ); }
+			wp_enqueue_script( 'cff-runtime', plugins_url( 'build/runtime/runtime.js', CFF_FILE ), array(), Assets::version( CFF_PATH . 'build/runtime/runtime.js' ), true ); }
 	}
 
 	public function siteWide(): void {
