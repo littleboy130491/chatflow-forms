@@ -39,25 +39,26 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   const [activity, setActivity] = useState<Activity | null>(null),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
-    [page, setPage] = useState(1);
-  // Only the latest request may update the list, so a slow earlier page cannot overwrite it.
-  // Reloads after an awaited action (e.g. retry) read the page shown now, not the one captured earlier.
-  const latest = useRef(0), currentPage = useRef(page);
-  currentPage.current = page;
-  const load = () => {
+    [loading, setLoading] = useState(true);
+  // Only the latest request may update the view, so a slow earlier response cannot overwrite it.
+  const latest = useRef(0);
+  const fetchPage = (page: number) => {
     const request = ++latest.current;
+    setLoading(true);
     return api
-      .request<Activity>(`admin/submissions/${id}/activity?page=${currentPage.current}&perPage=100`)
-      .then((result) => { if (request === latest.current) setActivity(result); })
-      .catch((err) => { if (request === latest.current) setError(errorMessage(err)); });
+      .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
+      .then((result) => { if (request === latest.current) { setActivity(result); setError(''); } })
+      .catch((err) => { if (request === latest.current) setError(errorMessage(err)); })
+      .finally(() => { if (request === latest.current) setLoading(false); });
   };
+  // Paging steps from the page displayed; a failed page leaves it in place and can be retried.
+  const shown = activity?.page ?? 1;
+  const load = () => fetchPage(shown);
   useEffect(() => {
-    void load();
-  }, [api, id, page]);
+    void fetchPage(1);
+  }, [api, id]);
   // The endpoint pages notes and deliveries together; a full page may have more behind it.
   const hasMore = Boolean(activity && (activity.items.length >= activity.perPage || activity.deliveries.length >= activity.perPage));
-  // Page from what is displayed; while another page loads, both controls wait for it.
-  const shown = activity?.page ?? 1, loadingPage = !activity || shown !== page;
   return (
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
@@ -126,8 +127,8 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
           </li>
         ))}
       </ul>
-      <Button disabled={busy || loadingPage || shown <= 1} onClick={() => setPage(shown - 1)}>{__('Newer activity', 'chatflow-forms')}</Button>
-      <Button disabled={busy || loadingPage || !hasMore} onClick={() => setPage(shown + 1)}>{__('Older activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loading || shown <= 1} onClick={() => { void fetchPage(shown - 1); }}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loading || !hasMore} onClick={() => { void fetchPage(shown + 1); }}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }
