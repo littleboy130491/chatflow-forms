@@ -41,19 +41,20 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
     [busy, setBusy] = useState(false),
     [loading, setLoading] = useState(true);
   // Only the latest request may update the view, so a slow earlier response cannot overwrite it.
-  const latest = useRef(0);
+  // Reloads read the displayed page when they run, never a page captured by an older render.
+  const latest = useRef(0), displayed = useRef(1);
   const fetchPage = (page: number) => {
     const request = ++latest.current;
     setLoading(true);
     return api
       .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
-      .then((result) => { if (request === latest.current) { setActivity(result); setError(''); } })
+      .then((result) => { if (request === latest.current) { displayed.current = result.page; setActivity(result); setError(''); } })
       .catch((err) => { if (request === latest.current) setError(errorMessage(err)); })
       .finally(() => { if (request === latest.current) setLoading(false); });
   };
   // Paging steps from the page displayed; a failed page leaves it in place and can be retried.
   const shown = activity?.page ?? 1;
-  const load = () => fetchPage(shown);
+  const load = () => fetchPage(displayed.current);
   useEffect(() => {
     void fetchPage(1);
   }, [api, id]);
@@ -63,6 +64,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
       <Button
+        disabled={busy || loading}
         onClick={() => {
           void load();
         }}
@@ -95,7 +97,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
               <td>
                 {can(api.config, 'edit_submissions') && (
                   <Button
-                    disabled={busy || !['failed', 'sent'].includes(delivery.status)}
+                    disabled={busy || loading || !['failed', 'sent'].includes(delivery.status)}
                     onClick={async () => {
                       setBusy(true);
                       setError('');
