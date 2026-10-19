@@ -1696,6 +1696,9 @@
       "New template name": [
         "Nama templat baru"
       ],
+      "Newer activity": [
+        "Aktivitas lebih baru"
+      ],
       "Next": [
         "Berikutnya"
       ],
@@ -1789,6 +1792,9 @@
       "Okay": [
         "Cukup baik"
       ],
+      "Older activity": [
+        "Aktivitas lebih lama"
+      ],
       "Older than days (default 360 unless dates set)": [
         "Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)"
       ],
@@ -1836,6 +1842,9 @@
       ],
       "Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.": [
         "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI."
+      ],
+      "Other": [
+        "Lainnya"
       ],
       "Other (free-text option)": [
         "Lainnya (pilihan teks bebas)"

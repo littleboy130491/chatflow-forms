@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { interpolate } from '../shared/logic/index';
 import type { AnswerMap } from '../shared/contracts';
@@ -27,22 +27,44 @@ export interface Activity {
   page: number;
   perPage: number;
 }
+/** Delivery notes store `{code, deliveryId, attempt}` JSON; show the outcome code inline. */
+export function deliveryOutcome(body: string): string {
+  try {
+    const parsed: unknown = JSON.parse(body);
+    if (parsed && typeof parsed === 'object' && typeof (parsed as { code?: unknown }).code === 'string') return (parsed as { code: string }).code;
+  } catch { /* Older notes may be plain text. */ }
+  return body;
+}
 function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
   const [activity, setActivity] = useState<Activity | null>(null),
     [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
-  const load = () =>
-    api
-      .request<Activity>(`admin/submissions/${id}/activity`)
-      .then(setActivity)
-      .catch((err) => setError(errorMessage(err)));
+    [busy, setBusy] = useState(false),
+    [loading, setLoading] = useState(true);
+  // Only the latest request may update the view, so a slow earlier response cannot overwrite it.
+  // Reloads read the displayed page when they run, never a page captured by an older render.
+  const latest = useRef(0), displayed = useRef(1);
+  const fetchPage = (page: number) => {
+    const request = ++latest.current;
+    setLoading(true);
+    return api
+      .request<Activity>(`admin/submissions/${id}/activity?page=${page}&perPage=100`)
+      .then((result) => { if (request === latest.current) { displayed.current = result.page; setActivity(result); setError(''); } })
+      .catch((err) => { if (request === latest.current) setError(errorMessage(err)); })
+      .finally(() => { if (request === latest.current) setLoading(false); });
+  };
+  // Paging steps from the page displayed; a failed page leaves it in place and can be retried.
+  const shown = activity?.page ?? 1;
+  const load = () => fetchPage(displayed.current);
   useEffect(() => {
-    void load();
+    void fetchPage(1);
   }, [api, id]);
+  // The endpoint pages notes and deliveries together; a full page may have more behind it.
+  const hasMore = Boolean(activity && (activity.items.length >= activity.perPage || activity.deliveries.length >= activity.perPage));
   return (
     <section className="cff-card">
       <h2>{__('Delivery activity', 'chatflow-forms')}</h2>
       <Button
+        disabled={busy || loading}
         onClick={() => {
           void load();
         }}
@@ -75,7 +97,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
               <td>
                 {can(api.config, 'edit_submissions') && (
                   <Button
-                    disabled={busy || !['failed', 'sent'].includes(delivery.status)}
+                    disabled={busy || loading || !['failed', 'sent'].includes(delivery.status)}
                     onClick={async () => {
                       setBusy(true);
                       setError('');
@@ -102,11 +124,13 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
       <ul>
         {activity?.items.map((note) => (
           <li key={note.id}>
-            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {note.type}
+            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {deliveryOutcome(note.body)}
             <details><summary>{__('Technical details', 'chatflow-forms')}</summary><pre>{note.body}</pre></details>
           </li>
         ))}
       </ul>
+      <Button disabled={busy || loading || shown <= 1} onClick={() => { void fetchPage(shown - 1); }}>{__('Newer activity', 'chatflow-forms')}</Button>
+      <Button disabled={busy || loading || !hasMore} onClick={() => { void fetchPage(shown + 1); }}>{__('Older activity', 'chatflow-forms')}</Button>
     </section>
   );
 }
@@ -284,7 +308,7 @@ export function Detail({
               <pre>{JSON.stringify(detail.consent, null, 2)}</pre>
             </Fragment>
           )}
-          {view === 'activity' && <Fragment><DeliveryActivity api={api} id={id} /><section className="cff-card"><h2>{__('Technical activity', 'chatflow-forms')}</h2>{detail.notes.filter(item => item.kind !== 'note').map(item => <details key={item.id}><summary>{readableDate(item.createdAt)} · {item.kind}</summary><pre>{item.message}</pre></details>)}</section></Fragment>}
+          {view === 'activity' && <DeliveryActivity api={api} id={id} />}
           <section className="cff-card">
             <h2>{__('Notes', 'chatflow-forms')}</h2>
             <ul>

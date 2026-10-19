@@ -17,6 +17,13 @@ export function FormPicker({ api, value, onChange }: { api: AdminApi; value: str
   const [search, setSearch] = useState(''), [page, setPage] = useState(1), [pages, setPages] = useState(1);
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<{ id: number; title: string } | undefined>();
+  const [query, setQuery] = useState('');
+  // Wait for a pause in typing before querying the forms endpoint.
+  useEffect(() => {
+    if (query === search) return;
+    const timer = setTimeout(() => { setSearch(query); setPage(1); }, 300);
+    return () => clearTimeout(timer);
+  }, [query, search]);
   useEffect(() => {
     const abort = new AbortController();
     setError('');
@@ -32,7 +39,7 @@ export function FormPicker({ api, value, onChange }: { api: AdminApi; value: str
   return <div className="cff-form-picker">
     <Select label={__('Form', 'chatflow-forms')} value={value} choices={[{ value: '', label: __('All forms', 'chatflow-forms') }, ...choices.map(form => ({ value: String(form.id), label: decodeTitle(form.title) }))]} onChange={next => { setSelected(choices.find(form => String(form.id) === next)); onChange(next); }} />
     <details className="cff-form-search"><summary>{__('Find more forms', 'chatflow-forms')}</summary>
-      {can(api.config, 'view_submissions') && <Field label={__('Find a form', 'chatflow-forms')} value={search} onChange={next => { setSearch(next); setPage(1); }} />}
+      {can(api.config, 'view_submissions') && <Field label={__('Find a form', 'chatflow-forms')} value={query} onChange={setQuery} />}
       <Button disabled={page <= 1} onClick={() => setPage(page - 1)}>{__('Previous forms', 'chatflow-forms')}</Button>
       <Button disabled={page >= pages} onClick={() => setPage(page + 1)}>{__('Next forms', 'chatflow-forms')}</Button>
     </details>

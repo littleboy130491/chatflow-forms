@@ -74,7 +74,7 @@ it('defaults Tools to a non-destructive available task',async()=>{
 });
 it('separates private notes from technical activity and retains copyable UUID metadata',async()=>{
   const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:['name'],consent:{},notes:[{id:1,kind:'note',message:'Call tomorrow',createdAt:row.createdAt},{id:2,kind:'delivery',message:'{"code":"async_sent","deliveryId":1}',createdAt:row.createdAt}],form:{title:'Contact &#8211; sales',schema:{steps:[{id:'name',key:'name',type:'short_text',label:'Your name',messages:[]}]}}} as unknown as SubmissionDetail;
-  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.endsWith('/activity')?{deliveries:[],items:[]}:detail)));
+  const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('/activity?')?{deliveries:[],items:[{id:2,type:'delivery',body:'{"code":"async_sent","deliveryId":1}',created_at:row.createdAt}],page:1,perPage:100}:detail)));
   const host=document.createElement('div');const root=createRoot(host);const copy=vi.fn().mockResolvedValue(undefined);Object.defineProperty(navigator,'clipboard',{value:{writeText:copy},configurable:true});
   await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
   expect(host.querySelector('h1')?.textContent).toBe('Contact – sales · Response #42');
@@ -83,7 +83,7 @@ it('separates private notes from technical activity and retains copyable UUID me
   expect(notes.textContent).not.toContain('async_sent');
   expect(host.querySelector('dt')?.textContent).toBe('Your name');
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
-  expect(host.textContent).toContain('async_sent');
+  expect([...host.querySelectorAll('li')].filter(li=>li.textContent?.includes('async_sent')).map(li=>li.textContent?.includes(': async_sent'))).toEqual([true]);
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Metadata and consent')!.click());
   expect(host.textContent).toContain(row.uuid);
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Copy response ID')!.click());
@@ -167,5 +167,142 @@ it('groups global settings by task while saving values and secret masks from hid
   await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Save settings')!.click());
   const write=transport.mock.calls.find(call=>call[1]?.method==='PUT');
   expect(JSON.parse(write?.[1]?.body as string)).toEqual({settings:{...settings,defaultTheme:'dark'}});
+  await act(async()=>root.unmount());
+});
+it('pages through delivery activity beyond the first response',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    return Promise.resolve(response(url.includes('/activity?')?{deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100}:detail));
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  expect(button('Older activity').disabled).toBe(true);
+  expect(button('Newer activity').disabled).toBe(false);
+  await act(async()=>root.unmount());
+});
+it('refreshes the displayed activity page and blocks paging until it settles',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  let releaseRefresh:()=>void=()=>{};
+  let refreshes=0;
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    const body=response({deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100});
+    if(page===2&&++refreshes===2)return new Promise(resolve=>{releaseRefresh=()=>resolve(body);});
+    return Promise.resolve(body);
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  await act(async()=>button('Refresh activity').click());
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>releaseRefresh());
+  expect(host.textContent).toContain('code_1');
+  expect(host.textContent).not.toContain('code_200');
+  await act(async()=>root.unmount());
+});
+it('keeps the current activity page while a delivery retry reloads it',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  const delivery={id:7,channel:'webhook',destination_id:'hook',status:'failed',attempts:1,last_error:null,created_at:row.createdAt};
+  let releaseRetry:()=>void=()=>{};
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(url.includes('/retry'))return new Promise(resolve=>{releaseRetry=()=>resolve(response({queued:true}));});
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    return Promise.resolve(response({deliveries:page===1?[delivery]:[{...delivery,id:8}],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100}));
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  await act(async()=>button('Retry delivery').click());
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>releaseRetry());
+  expect(host.textContent).toContain('code_1');
+  expect(host.textContent).not.toContain('code_200');
+  await act(async()=>root.unmount());
+});
+it('disables activity paging until the requested page has loaded',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  let releasePage:()=>void=()=>{};
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    const body=response({deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100});
+    return page===1?Promise.resolve(body):new Promise(resolve=>{releasePage=()=>resolve(body);});
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(button('Older activity').disabled).toBe(true);
+  expect(button('Newer activity').disabled).toBe(true);
+  await act(async()=>releasePage());
+  expect(host.textContent).toContain('code_1');
+  expect(button('Newer activity').disabled).toBe(false);
+  expect(transport.mock.calls.filter(call=>String(call[0]).includes('page=3'))).toHaveLength(0);
+  await act(async()=>root.unmount());
+});
+it('recovers activity paging after a page fails to load',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  let failures=1;
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    if(page===2&&failures-->0)return Promise.resolve(new Response(JSON.stringify({code:'cff_error',message:'Activity unavailable'}),{status:500}));
+    return Promise.resolve(response({deliveries:[],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100}));
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('Activity unavailable');
+  expect(host.textContent).toContain('code_200');
+  expect(button('Older activity').disabled).toBe(false);
+  await act(async()=>button('Older activity').click());
+  expect(host.textContent).toContain('code_1');
+  expect(host.textContent).not.toContain('Activity unavailable');
+  await act(async()=>root.unmount());
+});
+it('blocks delivery retries and refresh while an activity page loads',async()=>{
+  const detail={...row,updatedAt:row.createdAt,durationMs:1000,visited:[],consent:{},notes:[],form:null} as unknown as SubmissionDetail;
+  const note=(id:number)=>({id,type:'delivery',body:`{"code":"code_${id}"}`,created_at:row.createdAt});
+  const delivery={id:7,channel:'webhook',destination_id:'hook',status:'failed',attempts:1,last_error:null,created_at:row.createdAt};
+  let releasePage:()=>void=()=>{};
+  const transport=vi.fn().mockImplementation((url:string)=>{
+    if(!url.includes('/activity?'))return Promise.resolve(response(detail));
+    const page=Number(new URL(url,'https://example.test').searchParams.get('page'));
+    const body=response({deliveries:[{...delivery,id:page}],items:page===1?Array.from({length:100},(_,i)=>note(200-i)):[note(1)],page,perPage:100});
+    return page===1?Promise.resolve(body):new Promise(resolve=>{releasePage=()=>resolve(body);});
+  });
+  const host=document.createElement('div');const root=createRoot(host);
+  await act(async()=>root.render(h(Detail,{api:new AdminApi(config,transport),id:42,onClose:()=>{},onChanged:()=>{},onNavigate:()=>{}})));
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Activity')!.click());
+  const button=(label:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===label)!;
+  await act(async()=>button('Older activity').click());
+  expect(button('Retry delivery').disabled).toBe(true);
+  expect(button('Refresh activity').disabled).toBe(true);
+  await act(async()=>releasePage());
+  expect(host.textContent).toContain('code_1');
+  expect(button('Retry delivery').disabled).toBe(false);
+  expect(button('Refresh activity').disabled).toBe(false);
   await act(async()=>root.unmount());
 });
