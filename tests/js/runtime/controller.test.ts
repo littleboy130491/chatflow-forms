@@ -32,6 +32,32 @@ function server() {
   return { fetcher, api: new ApiClient('/cff/v1/', fetcher, async () => {}), setRemote: (answers: AnswerMap, revision: number) => { remote = session(answers, revision); }, deny: (mode: typeof deny) => { deny = mode; } };
 }
 describe('replay-driven visitor controller', () => {
+  it('accepts later answers during a slow save and serializes them before submission', async () => {
+    const network = server(); const base = network.fetcher.getMockImplementation()!;
+    let release!: () => void;
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    let firstPatch = true;
+    network.fetcher.mockImplementation(async (input, init) => {
+      if (init?.method === 'PATCH' && firstPatch) { firstPatch = false; await gate; }
+      return base(input, init);
+    });
+    const envelope = form([
+      { id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: [] },
+      { id: 'city', key: 'city', type: 'short_text', label: 'City', messages: [] },
+    ]);
+    const controller = new RuntimeController({ form: envelope }, network.api);
+    await controller.initialize();
+    const first = controller.answer('Ada');
+    expect(controller.state.busy).toBe(false);
+    const second = controller.answer('Jakarta');
+    const submission = controller.submit();
+    expect(network.fetcher.mock.calls.some(([url]) => String(url).endsWith('/submit'))).toBe(false);
+    release(); await Promise.all([first, second, submission]);
+    const patches = network.fetcher.mock.calls.filter(([, init]) => init?.method === 'PATCH');
+    expect(patches).toHaveLength(2);
+    expect(JSON.parse(String(patches[1]![1]?.body)).answers).toEqual({ name: 'Ada', city: 'Jakarta' });
+    expect(controller.state.phase).toBe('done');
+  });
   it('keeps the credential from a magic link so a reload resumes the same session', async () => {
     const network = server();
     const storage = new SessionStorage(localStorage);
@@ -70,11 +96,21 @@ describe('replay-driven visitor controller', () => {
     await controller.initialize();
     await controller.answer(true); await controller.answer('Ada');
     controller.edit('route'); await controller.answer(false);
+    expect(controller.state.answers).not.toHaveProperty('name');
+    expect(controller.state.activeId).toBe('other');
     await controller.flush();
     const patches = network.fetcher.mock.calls.filter(([, init]) => init?.method === 'PATCH');
     const last = JSON.parse(String(patches.at(-1)?.[1]?.body)) as { stepTimings: Record<string, number> };
     expect(Object.keys(last.stepTimings)).not.toContain('name');
     expect(Object.keys(last.stepTimings)).toContain('route');
+  });
+  it('previews the resolved redirect and ending without navigating', async () => {
+    const envelope = form([{ id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: [] }]);
+    envelope.form.schema.endings[0] = { id: 'thanks', type: 'redirect', messages: ['Thanks {{name}}'], url: 'https://wa.me/6281234567890?text=Hello%20{{name}}', buttons: [] };
+    const controller = new RuntimeController({ form: envelope, preview: true }, null);
+    await controller.initialize(); await controller.answer('Ada'); await controller.submit();
+    expect(controller.state.completion?.ending.messages).toEqual(['Thanks Ada']);
+    expect(controller.state.completion?.redirectUrl).toContain('Hello%20Ada');
   });
   it('recomputes the shared score/outcome fixture on edit and submits without supplying computed answers', async () => {
     const original = powerFixture.schema as unknown as FormSchema;
@@ -242,6 +278,14 @@ describe('replay-driven visitor controller', () => {
     network.deny('network'); const controller = new RuntimeController({ formId: 42 }, network.api); await controller.initialize();
     expect(controller.state.phase).toBe('resume'); expect(controller.state.offline).toBe(true); await controller.continueSaved(); expect(controller.state.answers).toEqual({ name: 'Offline' });
     network.deny('none'); controller.setOffline(false); await vi.waitFor(() => expect(controller.state.dirty).toBe(false)); expect(controller.state.answers).toEqual({ name: 'Offline' });
+  });
+  it('reconnects when connectivity returns before the visitor continues the saved conversation', async () => {
+    const network = server(); const first = new RuntimeController({ form: form() }, network.api);
+    await first.initialize(); await first.answer(null); first.setOffline(true); await first.answer('Offline'); first.dispose();
+    network.deny('network'); const controller = new RuntimeController({ formId: 42 }, network.api); await controller.initialize();
+    network.deny('none'); controller.setOffline(false); await controller.continueSaved();
+    expect(controller.state.dirty).toBe(false); expect(controller.state.answers).toEqual({ name: 'Offline' });
+    expect(network.fetcher.mock.calls.some(([, init]) => init?.method === 'PATCH')).toBe(true);
   });
   it('uses the same submit key/body after an uncertain result and blocks duplicate start-over', async () => {
     const network = server(); const controller = new RuntimeController({ form: form() }, network.api);

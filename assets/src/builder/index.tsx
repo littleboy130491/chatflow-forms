@@ -25,8 +25,7 @@ import { EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
 import { importForm } from './formIO';
 import { googleFont, googleFonts } from '../shared/fonts';
-import { FlowMap } from './FlowMap';
-import { PowerEditor } from './PowerEditor';
+import { LogicOverview } from './LogicOverview';
 import { AiGenerate, AiRephrase } from './AiAssist';
 import { Share, PublicLinkActions, publicFormUrl } from './Share';
 import { Contrast } from './Contrast';
@@ -112,7 +111,7 @@ export function FormStart({ api, onOpen }: { api: AdminApi; onOpen: (form: FormD
     return () => { active = false; };
   }, [api]);
   return (
-    <section className="cff-form-start">
+    <section className="cff-admin cff-form-start">
       <h2>{__('Create a form', 'chatflow-forms')}</h2>
       {api.config.features.ai && <AiGenerate api={api} onOpen={onOpen} />}
       <Button variant="primary" onClick={() => onOpen(blankForm(api.config.defaults))}>
@@ -236,6 +235,7 @@ function BuilderView({
     [search, setSearch] = useState(''),
     [inspectorOpen, setInspectorOpen] = useState(false),
     [paletteOpen, setPaletteOpen] = useState(false),
+    [showHidden, setShowHidden] = useState(false),
     [publishConfirm, setPublishConfirm] = useState(false);
   const inspectorPanel = useRef<HTMLElement>(null);
   const [narrow, setNarrow] = useState(() => window.matchMedia?.('(max-width: 1100px)').matches ?? false);
@@ -314,6 +314,13 @@ function BuilderView({
     setMarked(marked.filter((stepId) => stepId !== id));
     if (selected === id) setSelected(steps[0]?.id ?? '');
   };
+  const duplicateField = (item: Step) => {
+    if (schema.steps.length >= 500) return;
+    const copy = duplicateStep(item, schema.steps, controller.reservedKeys());
+    setSchema({ ...schema, steps: [...schema.steps, copy] });
+    setSelected(copy.id);
+    setInspectorOpen(true);
+  };
   const dirty = controller.dirty();
   const [lockError, setLockError] = useState('');
   useEffect(() => {
@@ -359,58 +366,65 @@ function BuilderView({
   return (
     <main className="cff-admin">
       <header className="cff-toolbar">
-        <Button
-          onClick={() => {
-            if (!dirty || window.confirm(__('Leave with unsaved changes?', 'chatflow-forms'))) {
-              leaving.current = true;
-              onBack();
-            }
-          }}
-        >
-          {__('All forms', 'chatflow-forms')}
-        </Button>
-        <Field
-          label={__('Form name', 'chatflow-forms')}
-          value={form.title}
-          onChange={(title) => edit((value) => ({ ...value, title }))}
-        />
-        <span role="status">
-          {state.saving
-            ? __('Saving…', 'chatflow-forms')
-            : dirty
-              ? __('Unsaved draft', 'chatflow-forms')
-              : __('Draft saved', 'chatflow-forms')}{' '}
-          ·{' '}
-          {form.version > 0
-            ? /* translators: %d: published version number */
-              sprintf(__('Live version %d', 'chatflow-forms'), form.version)
-            : __('Not published yet', 'chatflow-forms')}
-        </span>
-        <Button disabled={!state.history.length || state.saving} onClick={() => controller.undo()}>
-          {__('Undo', 'chatflow-forms')}
-        </Button>
-        <Button disabled={!state.future.length || state.saving} onClick={() => controller.redo()}>
-          {__('Redo', 'chatflow-forms')}
-        </Button>
-        <Button
-          disabled={state.saving || Boolean(state.conflict) || Boolean(lockError)}
-          onClick={() => {
-            void controller.save().catch(() => undefined);
-          }}
-        >
-          {__('Save draft', 'chatflow-forms')}
-        </Button>
-        <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
-        <span ref={publishButton}>
+        <div className="cff-toolbar-main">
           <Button
-            variant="primary"
-            aria-haspopup="dialog"
-            disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
-            onClick={() => setPublishConfirm(true)}
+            onClick={() => {
+              if (!dirty || window.confirm(__('Leave with unsaved changes?', 'chatflow-forms'))) {
+                leaving.current = true;
+                onBack();
+              }
+            }}
           >
-            {__('Publish', 'chatflow-forms')}
+            {__('All forms', 'chatflow-forms')}
           </Button>
-        </span>
+          <Field
+            label={__('Form name', 'chatflow-forms')}
+            value={form.title}
+            onChange={(title) => edit((value) => ({ ...value, title }))}
+          />
+          <span
+            role="status"
+            className={`cff-save-state${dirty ? ' is-dirty' : ''}${form.version > 0 ? ' is-live' : ''}`}
+          >
+            {state.saving
+              ? __('Saving…', 'chatflow-forms')
+              : dirty
+                ? __('Unsaved draft', 'chatflow-forms')
+                : __('Draft saved', 'chatflow-forms')}{' '}
+            ·{' '}
+            {form.version > 0
+              ? /* translators: %d: published version number */
+                sprintf(__('Live version %d', 'chatflow-forms'), form.version)
+              : __('Not published yet', 'chatflow-forms')}
+          </span>
+        </div>
+        <div className="cff-toolbar-actions">
+          <Button disabled={!state.history.length || state.saving} onClick={() => controller.undo()}>
+            {__('Undo', 'chatflow-forms')}
+          </Button>
+          <Button disabled={!state.future.length || state.saving} onClick={() => controller.redo()}>
+            {__('Redo', 'chatflow-forms')}
+          </Button>
+          <Button
+            disabled={state.saving || Boolean(state.conflict) || Boolean(lockError)}
+            onClick={() => {
+              void controller.save().catch(() => undefined);
+            }}
+          >
+            {__('Save draft', 'chatflow-forms')}
+          </Button>
+          <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
+          <span ref={publishButton}>
+            <Button
+              variant="primary"
+              aria-haspopup="dialog"
+              disabled={state.saving || Boolean(state.conflict) || Boolean(lockError) || (form.version > 0 && !baseline)}
+              onClick={() => setPublishConfirm(true)}
+            >
+              {__('Publish', 'chatflow-forms')}
+            </Button>
+          </span>
+        </div>
       </header>
       {state.error && (
         <Notice status={state.locked ? 'warning' : 'error'} isDismissible={false}>
@@ -551,47 +565,70 @@ function BuilderView({
               {!api.config.features.fieldTypes.some(type => (fieldLabels[type] ?? type).toLowerCase().includes(search.toLowerCase())) && <p role="status">{__('No matching fields. Try another search.', 'chatflow-forms')}</p>}
             </aside>
             <section className="cff-flow">
-              <h2>{__('Conversation flow', 'chatflow-forms')}</h2>
-              <Button
-                disabled={!marked.length || marked.length >= schema.steps.length}
-                isDestructive
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      __(
-                        'Delete selected fields? Review broken references before publishing.',
-                        'chatflow-forms',
-                      ),
-                    )
-                  ) {
-                    setSchema({
-                      ...schema,
-                      steps: schema.steps.filter((item) => !marked.includes(item.id)) as FormSchema['steps'],
-                      groups: (schema.groups ?? []).map((group) => ({
-                        ...group,
-                        stepIds: group.stepIds.filter((id) => !marked.includes(id)),
-                      })),
-                    });
-                    setMarked([]);
-                  }
-                }}
-              >
-                {__('Delete selected', 'chatflow-forms')}
-              </Button>
-              <Button
-                disabled={!marked.length}
-                onClick={() =>
-                  setSchema({
-                    ...schema,
-                    groups: [
-                      ...(schema.groups ?? []),
-                      { id: uid('grp'), title: __('New group', 'chatflow-forms'), stepIds: marked },
-                    ],
-                  })
-                }
-              >
-                {__('Group selected', 'chatflow-forms')}
-              </Button>
+              <h2>
+                {__('Conversation flow', 'chatflow-forms')}
+                <span className="cff-flow-count">
+                  {sprintf(
+                    /* translators: %d: number of questions */
+                    __('%d fields', 'chatflow-forms'),
+                    schema.steps.length,
+                  )}
+                </span>
+                {schema.steps.some(item => item.type === 'hidden') && (
+                  <Button variant="link" className="cff-hidden-toggle" aria-expanded={showHidden} onClick={() => setShowHidden(!showHidden)}>
+                    {showHidden
+                      ? __('Hide hidden fields', 'chatflow-forms')
+                      : sprintf(
+                          /* translators: %d: number of hidden fields */
+                          __('Show hidden fields (%d)', 'chatflow-forms'),
+                          schema.steps.filter(item => item.type === 'hidden').length,
+                        )}
+                  </Button>
+                )}
+              </h2>
+              {marked.length > 0 && (
+                <div className="cff-flow-toolbar">
+                  <Button
+                    disabled={marked.length >= schema.steps.length}
+                    isDestructive
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          __(
+                            'Delete selected fields? Review broken references before publishing.',
+                            'chatflow-forms',
+                          ),
+                        )
+                      ) {
+                        setSchema({
+                          ...schema,
+                          steps: schema.steps.filter((item) => !marked.includes(item.id)) as FormSchema['steps'],
+                          groups: (schema.groups ?? []).map((group) => ({
+                            ...group,
+                            stepIds: group.stepIds.filter((id) => !marked.includes(id)),
+                          })),
+                        });
+                        setMarked([]);
+                      }
+                    }}
+                  >
+                    {__('Delete selected', 'chatflow-forms')}
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      setSchema({
+                        ...schema,
+                        groups: [
+                          ...(schema.groups ?? []),
+                          { id: uid('grp'), title: __('New group', 'chatflow-forms'), stepIds: marked },
+                        ],
+                      })
+                    }
+                  >
+                    {__('Group selected', 'chatflow-forms')}
+                  </Button>
+                </div>
+              )}
               {(schema.groups ?? []).map((group) => (
                 <fieldset key={group.id}>
                   <Field
@@ -629,40 +666,53 @@ function BuilderView({
                 items={schema.steps.map((item) => item.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {schema.steps.map((item) => (
+                {schema.steps.map((item, index) => ({ item, index })).filter(({ item }) => showHidden || item.type !== 'hidden' || selected === item.id).map(({ item, index }) => (
                   <SortableItem key={item.id} id={item.id}>
                     <article className={`cff-card ${selected === item.id ? 'is-selected' : ''}`}>
-                      <label className="cff-field-select"><input type="checkbox" checked={marked.includes(item.id)} onChange={event => setMarked(event.currentTarget.checked ? [...marked, item.id] : marked.filter(id => id !== item.id))} />{__('Select field', 'chatflow-forms')}</label>
-                      <Button data-step-id={item.id} onClick={() => { setSelected(item.id); setInspectorOpen(true); }}>
-                        {item.label} · {fieldLabels[item.type] ?? item.type}
-                      </Button>
-                      <small>
-                        {item.required && __('Required', 'chatflow-forms')}{' '}
-                        {item.hiddenByDefault && __('Hidden', 'chatflow-forms')}
-                      </small>
+                      <button
+                        type="button"
+                        className="cff-card-open"
+                        data-step-id={item.id}
+                        aria-label={sprintf(
+                          /* translators: %s: field label */
+                          __('Edit field: %s', 'chatflow-forms'),
+                          item.label,
+                        )}
+                        onClick={() => { setSelected(item.id); setInspectorOpen(true); }}
+                      />
+                      <label className="cff-field-select">
+                        <input type="checkbox" checked={marked.includes(item.id)} onChange={event => setMarked(event.currentTarget.checked ? [...marked, item.id] : marked.filter(id => id !== item.id))} />
+                        <span className="cff-visually-hidden">{__('Select field', 'chatflow-forms')}</span>
+                      </label>
+                      <div className="cff-step-head">
+                        <span className="cff-step-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                        <span className="cff-step-title">{item.label}</span>
+                        <span className="cff-step-type" aria-hidden="true">{fieldLabels[item.type] ?? item.type}</span>
+                      </div>
                       <p className="cff-field-summary">{item.messages[0] || __('No message yet. Select this field to edit.', 'chatflow-forms')}</p>
-                      <Button
-                        disabled={schema.steps.length >= 500}
-                        onClick={() => {
-                          const copy = duplicateStep(item, schema.steps, controller.reservedKeys());
-                          setSchema({ ...schema, steps: [...schema.steps, copy] });
-                          setSelected(copy.id);
-                          setInspectorOpen(true);
-                        }}
-                      >
-                        {__('Duplicate field', 'chatflow-forms')}
-                      </Button>
-                      <Button
-                        isDestructive
-                        disabled={schema.steps.length <= 1}
-                        onClick={() => deleteStep(item.id)}
-                      >
-                        {__('Delete field', 'chatflow-forms')}
-                      </Button>
+                      <small>
+                        {item.required && <span className="cff-badge cff-badge--required">{__('Required', 'chatflow-forms')}</span>}
+                        {item.hiddenByDefault && <span className="cff-badge cff-badge--hidden">{__('Hidden', 'chatflow-forms')}</span>}
+                        {Boolean(item.logic?.length) && <span className="cff-badge cff-badge--logic">{item.logic?.length === 1
+                          ? __('1 rule', 'chatflow-forms')
+                          : sprintf(
+                              /* translators: %d: number of logic rules */
+                              __('%d rules', 'chatflow-forms'),
+                              item.logic?.length ?? 0,
+                            )}</span>}
+                      </small>
                     </article>
                   </SortableItem>
                 ))}
               </SortableContext>
+              <details className="cff-card">
+                <summary>{__('Human contact during the conversation', 'chatflow-forms')}</summary>
+                <ContactLinkEditor schema={schema} timezone={api.config.timezone} onChange={setSchema} />
+              </details>
+              <details className="cff-card">
+                <summary>{__('Conversation endings', 'chatflow-forms')}</summary>
+                <EndingsEditor form={form} onChange={(next) => edit(() => next)} />
+              </details>
             </section>
             {step && (
               <section ref={inspectorPanel} role={narrow && inspectorOpen ? 'dialog' : undefined} aria-modal={narrow && inspectorOpen ? true : undefined} className={`cff-inspector-panel ${inspectorOpen ? 'is-open' : ''}`} aria-label={__('Field editor', 'chatflow-forms')} onKeyDown={event => {
@@ -679,6 +729,25 @@ function BuilderView({
                 step={step}
                 reservedValues={controller.reservedOptionValues(step.id)}
                 schema={schema}
+                actions={(
+                  <Fragment>
+                    <Button
+                      className="cff-inspector-action"
+                      disabled={schema.steps.length >= 500}
+                      onClick={() => duplicateField(step)}
+                    >
+                      {__('Duplicate field', 'chatflow-forms')}
+                    </Button>
+                    <Button
+                      className="cff-inspector-action"
+                      isDestructive
+                      disabled={schema.steps.length <= 1}
+                      onClick={() => deleteStep(step.id)}
+                    >
+                      {__('Delete field', 'chatflow-forms')}
+                    </Button>
+                  </Fragment>
+                )}
                 onChange={(next) =>
                   setSchema({
                     ...schema,
@@ -694,46 +763,16 @@ function BuilderView({
         </DndContext>
       )}
       {tab === 'logic' && (
-        <section>
-          <h2>{__('Logic diagnostics', 'chatflow-forms')}</h2>
-          {issues.length ? (
-            <ul>
-              {issues.map((issue, index) => (
-                <li key={index}>
-                  {issue.path}: {issue.message}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>{__('No logic warnings detected.', 'chatflow-forms')}</p>
-          )}
-          <table className="widefat">
-            <tbody>
-              {schema.steps
-                .filter((item) => item.logic?.length)
-                .map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      <Button
-                        onClick={() => {
-                          setSelected(item.id);
-                          setInspectorOpen(true);
-                          setTab('build');
-                        }}
-                      >
-                        {item.label}
-                      </Button>
-                    </td>
-                    <td>
-                      <pre>{JSON.stringify(item.logic, null, 2)}</pre>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-          <FlowMap schema={schema} onChange={setSchema} onSelect={id => { setSelected(id); setInspectorOpen(true); setTab('build'); }} />
-          <PowerEditor schema={schema} onChange={setSchema} />
-        </section>
+        <LogicOverview
+          schema={schema}
+          issues={issues}
+          onChange={setSchema}
+          onEditStep={(id) => {
+            setSelected(id);
+            setInspectorOpen(true);
+            setTab('build');
+          }}
+        />
       )}
       {tab === 'design' && api.config.features.ai && <AiRephrase api={api} schema={schema} onChange={setSchema} />}
       {tab === 'design' && (
@@ -813,7 +852,7 @@ function BuilderView({
         </Fragment>
       )}
       {tab === 'share' && (
-        <section className="cff-card">
+        <section className="cff-card cff-share-card">
           <h2>{__('Share', 'chatflow-forms')}</h2>
           {liveForm || !form.version ? <Share form={liveForm ?? form} config={api.config} /> : baselineError ? <Notice status="error" isDismissible={false}>{baselineError}</Notice> : <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
         </section>

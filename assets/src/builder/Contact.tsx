@@ -4,17 +4,17 @@
 import * as React from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Area, Button, Field, Select } from './controls';
+import { AnswerArea, Area, Button, Field, Select } from './controls';
 import { ColorField } from './ThemeEditor';
 import { isWhatsapp, parseWhatsapp, whatsappNumber, whatsappUrl } from '../shared/whatsapp';
 import { WEEKDAYS, type Weekday } from '../shared/hours';
-import type { FormSchema } from './api';
+import type { FormSchema, Step } from './api';
 
 /**
  * Number + message → wa.me link. Merge tags such as {{name}} stay in the message
  * and are replaced with the visitor's answers when the link is opened.
  */
-export function WhatsAppLinkBuilder({ url, onChange }: { url: string | undefined; onChange: (url: string) => void }) {
+export function WhatsAppLinkBuilder({ url, onChange, steps = [] }: { url: string | undefined; onChange: (url: string) => void; steps?: Step[] }) {
   const parsed = parseWhatsapp(url ?? '');
   const [phone, setPhone] = useState(parsed?.phone ?? '');
   const [message, setMessage] = useState(parsed?.message ?? '');
@@ -22,7 +22,7 @@ export function WhatsAppLinkBuilder({ url, onChange }: { url: string | undefined
   const valid = whatsappNumber(phone).length >= 7;
   return <div className="cff-whatsapp-builder">
     <Field label={__('WhatsApp number with country code', 'chatflow-forms')} value={phone} placeholder="6281234567890" onChange={setPhone} />
-    <Area label={__('Pre-filled message (merge tags allowed, e.g. {{name}})', 'chatflow-forms')} value={message} onChange={setMessage} />
+    <AnswerArea label={__('Pre-filled message', 'chatflow-forms')} value={message} onChange={setMessage} steps={steps} />
     <Button variant="secondary" disabled={!valid} onClick={() => onChange(whatsappUrl(phone, message))}>{__('Use this WhatsApp link', 'chatflow-forms')}</Button>
     {!valid && phone !== '' && <p className="description">{__('Enter the full number including the country code, for example 6281234567890.', 'chatflow-forms')}</p>}
   </div>;
@@ -93,7 +93,8 @@ export function ContactLinkEditor({ schema, timezone = 'UTC', onChange }: { sche
     <p className="description">{__('Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.', 'chatflow-forms')}</p>
     <label className="cff-inline-check"><input type="checkbox" checked={open} onChange={event => { setOpen(event.currentTarget.checked); if (!event.currentTarget.checked) set(null); }} />{__('Show a contact button below the conversation', 'chatflow-forms')}</label>
     {open && <>
-      <WhatsAppLinkBuilder url={contact?.url} onChange={url => set({ url })} />
+      <WhatsAppLinkBuilder url={contact?.url} steps={schema.steps} onChange={url => set({ url })} />
+      <p className="description">{__('This opens an external contact link, not a live-agent inbox. Answers are saved only if partial saving is enabled; contacting you does not submit the form.', 'chatflow-forms')}</p>
       <Field label={__('Link (WhatsApp, https, tel: or mailto:; merge tags allowed)', 'chatflow-forms')} value={contact?.url ?? ''} placeholder="https://wa.me/6281234567890" onChange={url => set({ url: url.trim() })} />
       <Field label={__('Button text (blank = “Chat on WhatsApp” or “Contact us”)', 'chatflow-forms')} value={contact?.label ?? ''} onChange={label => set({ label })} />
       <Select label={__('Icon', 'chatflow-forms')} value={contact?.icon ?? 'auto'} choices={iconChoices()} onChange={icon => set({ icon: icon as Contact['icon'] })} />

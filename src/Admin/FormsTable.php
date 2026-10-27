@@ -169,8 +169,11 @@ final class FormsTable extends \WP_List_Table {
 			$labels = array(
 				'publish' => __( 'Live', 'chatflow-forms' ),
 				'trash'   => __( 'Trash', 'chatflow-forms' ),
+				'draft'   => __( 'Draft', 'chatflow-forms' ),
 			);
-			return esc_html( $labels[ $item['status'] ] ?? __( 'Draft', 'chatflow-forms' ) );
+			$status = (string) ( $item['status'] ?? 'draft' );
+			$class  = 'publish' === $status ? 'is-live' : ( 'trash' === $status ? 'is-trash' : 'is-draft' );
+			return '<span class="cff-status-pill ' . esc_attr( $class ) . '">' . esc_html( $labels[ $status ] ?? __( 'Draft', 'chatflow-forms' ) ) . '</span>';
 		}
 		$value = $item[ $column_name ] ?? '—';
 		return esc_html( (string) $value ) . ( 'completionRate' === $column_name ? '%' : '' );

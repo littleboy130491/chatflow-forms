@@ -5,7 +5,7 @@ import * as React from '@wordpress/element';
 import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { WhatsAppLinkBuilder } from './Contact';
 import { __, sprintf } from '@wordpress/i18n';
-import { Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
+import { AnswerArea, Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
 import { uid } from './model';
 import { endingTitle } from './labels';
@@ -351,25 +351,32 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
       />
       </details>}
       {schema.endings.map((ending, index) => (
-        <fieldset key={ending.id} className="cff-card">
-          <legend>{endingTitle(ending, index)}</legend>
+        <section
+          key={ending.id}
+          className="cff-card cff-ending"
+          aria-labelledby={`cff-ending-${ending.id}`}
+        >
+          <h3 id={`cff-ending-${ending.id}`}>{endingTitle(ending, index)}</h3>
           <details className="cff-ending-advanced"><summary>{__('Technical details', 'chatflow-forms')}</summary><p><code>{ending.id}</code></p></details>
           <Select
             label={__('Ending type', 'chatflow-forms')}
             value={ending.type}
             choices={[
-              { label: __('Message', 'chatflow-forms'), value: 'message' },
-              { label: __('Redirect', 'chatflow-forms'), value: 'redirect' },
+              { label: __('Show a thank-you message', 'chatflow-forms'), value: 'message' },
+              { label: __('Go to a page or WhatsApp', 'chatflow-forms'), value: 'redirect' },
             ]}
             onChange={(type) => change({ ...ending, type: type as Ending['type'] })}
           />
-          <Area
+          <AnswerArea
             label={__('Ending messages (one per line)', 'chatflow-forms')}
             value={ending.messages?.join('\n') ?? ''}
+            steps={schema.steps}
             onChange={(value) => change({ ...ending, messages: value.split('\n').slice(0, 50) })}
           />
           {ending.type === 'redirect' && (
             <Fragment>
+              <p className="description">{__('The submission is saved before the visitor is redirected. For WhatsApp, build a link below; the visitor must still send the message.', 'chatflow-forms')}</p>
+              <WhatsAppLinkBuilder url={ending.url} steps={schema.steps} onChange={(url) => change({ ...ending, url })} />
               <Field
                 label={__('Redirect URL', 'chatflow-forms')}
                 value={ending.url}
@@ -406,8 +413,15 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
               />
             </Fragment>
           )}
-          {(ending.buttons ?? []).map((button) => (
+          {(ending.buttons ?? []).map((button, buttonIndex) => (
             <fieldset key={button.id}>
+              <legend>
+                {sprintf(
+                  /* translators: %d: button number */
+                  __('Button %d', 'chatflow-forms'),
+                  buttonIndex + 1,
+                )}
+              </legend>
               <Field
                 label={__('Button label', 'chatflow-forms')}
                 value={button.label}
@@ -511,7 +525,7 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
           >
             {__('Remove ending', 'chatflow-forms')}
           </Button>
-        </fieldset>
+        </section>
       ))}
       <Button
         onClick={() =>

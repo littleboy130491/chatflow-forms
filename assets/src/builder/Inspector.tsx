@@ -3,7 +3,7 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { Fragment, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -11,9 +11,9 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Area, Button, Check, Field, Select } from './controls';
+import { AnswerArea, Area, Button, Check, Field, Select } from './controls';
 import { RuleEditor } from './RuleEditor';
-import { makeOption, reorder } from './model';
+import { makeOption, reorder, uid } from './model';
 import { withStepMessages } from './labels';
 import type { ReactNode } from 'react';
 import type { FormSchema, Step, Option } from './api';
@@ -22,6 +22,7 @@ export function SortableItem({ id, children }: { id: string; children: ReactNode
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   return (
     <div
+      className="cff-sortable-item"
       ref={setNodeRef}
       style={{
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -48,13 +49,18 @@ function OptionEditor({
   onDelete,
   allowOther,
   schema,
+  step,
 }: {
   option: Option;
   onChange: (option: Option) => void;
   onDelete: () => void;
   allowOther: boolean;
   schema: FormSchema;
+  step: Step;
 }) {
+  const simple = option.logic?.length === 1 && 'all' in option.logic[0]!.if && option.logic[0]!.if.all.length === 0 && option.logic[0]!.then.action === 'jump' ? option.logic[0]!.then.to : '';
+  const canSetPath = !option.logic?.length || Boolean(simple);
+  const later = schema.steps.slice(schema.steps.findIndex(item => item.id === step.id) + 1);
   return (
     <fieldset className="cff-option">
       <Field
@@ -104,7 +110,12 @@ function OptionEditor({
           onChange={(isOther) => onChange({ ...option, isOther })}
         />
       )}
-      <details><summary>{__('Logic', 'chatflow-forms')}</summary><RuleEditor schema={schema} rules={option.logic ?? []} onChange={(logic) => onChange({ ...option, logic })} /></details>
+      {canSetPath && <Select label={__('When this choice is selected, continue to', 'chatflow-forms')} value={simple} choices={[
+        { value: '', label: __('Next step', 'chatflow-forms') },
+        ...later.map(item => ({ value: item.id, label: item.label || item.key })),
+      ]} onChange={to => onChange({ ...option, logic: to ? [{ if: { all: [] }, then: { action: 'jump', to } }] : [] })} />}
+      {step.type === 'multi_choice' && <p className="description">{__('If several choices have paths, rules are evaluated in option order.', 'chatflow-forms')}</p>}
+      <details><summary>{__('Advanced choice logic', 'chatflow-forms')}</summary><RuleEditor schema={schema} rules={option.logic ?? []} onChange={(logic) => onChange({ ...option, logic })} /></details>
       <Button isDestructive onClick={onDelete}>
         {__('Remove option', 'chatflow-forms')}
       </Button>
@@ -154,11 +165,13 @@ export function Inspector({
   schema,
   reservedValues = [],
   onChange,
+  actions,
 }: {
   step: Step;
   schema: FormSchema;
   reservedValues?: string[];
   onChange: (step: Step) => void;
+  actions?: ReactNode;
 }) {
   const [tab, setTab] = useState('content'),
     [bulk, setBulk] = useState('');
@@ -174,7 +187,10 @@ export function Inspector({
   const setOptions = (options: Option[]) => onChange({ ...step, options });
   return (
     <aside className="cff-inspector">
-      <h2>{step.label}</h2>
+      <header className="cff-inspector-head">
+        <h2>{step.label}</h2>
+        {actions && <div className="cff-inspector-head-actions">{actions}</div>}
+      </header>
       <nav className="cff-tabs">
         {[
           { value: 'content', label: __('Content', 'chatflow-forms') },
@@ -193,41 +209,39 @@ export function Inspector({
       {tab === 'content' && (
         <Fragment>
           {step.messages.map((message, index) => (
-            <div key={index}>
-              <Area
+            <div className="cff-message" key={index}>
+              <div className="cff-message-head">
+                <span className="cff-message-number">
+                  {sprintf(
+                    /* translators: %d: message number */
+                    __('Message %d', 'chatflow-forms'),
+                    index + 1,
+                  )}
+                </span>
+                <Button
+                  variant="link"
+                  isDestructive
+                  className="cff-message-remove"
+                  onClick={() => onChange(withStepMessages(step, step.messages.filter((_, at) => at !== index)))}
+                >
+                  {__('Remove message', 'chatflow-forms')}
+                </Button>
+              </div>
+              <AnswerArea
                 label={__('Bot message', 'chatflow-forms')}
                 value={message}
+                steps={schema.steps.filter((item) => item.id !== step.id)}
                 onChange={(value) =>
                   onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? value : item))))
                 }
               />
-              <details><summary>{__('Advanced message options', 'chatflow-forms')}</summary>
-              <Select
-                label={__('Insert merge tag', 'chatflow-forms')}
-                value=""
-                choices={[
-                  { label: __('Choose a field', 'chatflow-forms'), value: '' },
-                  ...schema.steps
-                    .filter((item) => item.id !== step.id)
-                    .map((item) => ({ label: item.label, value: `{{${item.key}}}` })),
-                ]}
-                onChange={(tag) => {
-                  if (tag)
-                    onChange(withStepMessages(step, step.messages.map((item, at) => (at === index ? item + tag : item))));
-                }}
-              />
-              </details>
-              <Button
-                isDestructive
-                onClick={() => onChange(withStepMessages(step, step.messages.filter((_, at) => at !== index)))}
-              >
-                {__('Remove message', 'chatflow-forms')}
-              </Button>
             </div>
           ))}
-          <Button onClick={() => onChange(withStepMessages(step, [...step.messages, '']))}>
-            {__('Add message', 'chatflow-forms')}
-          </Button>
+          <div className="cff-message-actions">
+            <Button variant="secondary" onClick={() => onChange(withStepMessages(step, [...step.messages, '']))}>
+              {__('Add message', 'chatflow-forms')}
+            </Button>
+          </div>
           {/* The runtime shows help text for every step type, so it stays editable for all of them. */}
           <Area
             label={__('Help text', 'chatflow-forms')}
@@ -269,6 +283,7 @@ export function Inspector({
                       <OptionEditor
                         allowOther={step.type === 'single_choice'}
                         option={option}
+                        step={step}
                         schema={schema}
                         onChange={(next) =>
                           setOptions((step.options ?? []).map((item) => (item.id === next.id ? next : item)))
@@ -309,7 +324,7 @@ export function Inspector({
                     .map((label) => label.trim())
                     .filter(Boolean)
                     .slice(0, 200 - existing.length)
-                    .map((label) => ({ ...makeOption(`value_${crypto.randomUUID().slice(0, 8)}`), label }));
+                    .map((label) => ({ ...makeOption(uid('value')), label }));
                   setOptions([...existing, ...next]);
                   setBulk('');
                 }}

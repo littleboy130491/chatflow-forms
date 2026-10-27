@@ -191,6 +191,9 @@ export function FlowMap({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
+        fitViewOptions={{ padding: 0.1 }}
+        minZoom={0.25}
+        maxZoom={1.5}
         onConnect={connect}
         onEdgesDelete={remove}
         onNodeClick={(_, node) => {

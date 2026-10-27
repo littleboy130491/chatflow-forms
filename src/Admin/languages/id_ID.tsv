@@ -1,5 +1,12 @@
+ and | dan 
+ or | atau 
+%1$s: %2$s %3$s %4$s|%1$s: %2$s %3$s %4$s
 %1$s: rule %2$d|%1$s: aturan %2$d
+%d fields|%d kolom
+%d rules|%d aturan
+%d selected|%d dipilih
 %d submissions and %d files match.|%d kiriman dan %d berkas cocok.
+1 rule|1 aturan
 A 0–10 recommendation score and optional feedback.|Skor rekomendasi 0–10 dan umpan balik opsional.
 A form is required so columns remain consistent. Active filters and selected rows are intersected with that form; no cross-form export is implied.|Formulir wajib dipilih agar kolom konsisten. Filter aktif dan baris pilihan dibatasi pada formulir tersebut; ekspor tidak melintasi formulir.
 A matching purge-preview CSV snapshot is not available. Export each affected form separately before deleting; ordinary exports are not an exact preview backup when rows change.|Cuplikan CSV yang sama persis dengan pratinjau penghapusan belum tersedia. Ekspor tiap formulir terdampak secara terpisah sebelum menghapus; ekspor biasa bukan cadangan pratinjau yang tepat jika baris berubah.
@@ -8,18 +15,16 @@ A range that ends before it starts (22:00–02:00) runs past midnight; 00:00–0
 A satisfaction choice and optional comment.|Pilihan kepuasan dan komentar opsional.
 A welcome statement ready for your questions.|Pernyataan sambutan yang siap dilengkapi pertanyaan Anda.
 A/B copy and order experiment|Eksperimen A/B teks dan urutan
-Accent (buttons, links, ticks)|Aksen (tombol, tautan, centang)
-Accessibility and extras|Aksesibilitas dan tambahan
-Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:|Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:
-AI assist (Claude)|Asisten AI (Claude)
 AI assist|Bantuan AI
-Answer buttons|Tombol jawaban
-Anthropic (Claude)|Anthropic (Claude)
+AI assist (Claude)|Asisten AI (Claude)
 API key (ends with the data centre, e.g. -us21)|Kunci API (diakhiri kode pusat data, mis. -us21)
+API key (optional for keyless gateways)|Kunci API (opsional untuk gateway tanpa kunci)
 Abandon|Ditinggalkan
 Abandon after days (1–90)|Tandai ditinggalkan setelah hari (1–90)
 Abandoned|Ditinggalkan
 Abandoned submission|Kiriman ditinggalkan
+Accent (buttons, links, ticks)|Aksen (tombol, tautan, centang)
+Accessibility and extras|Aksesibilitas dan tambahan
 Action|Tindakan
 Action complete.|Tindakan selesai.
 Actions|Tindakan
@@ -29,11 +34,14 @@ Add|Tambah
 Add AND / OR|Tambah DAN / ATAU
 Add OR group|Tambah grup ATAU
 Add admin email|Tambah email admin
+Add another condition|Tambah kondisi lain
+Add another field|Tambah pertanyaan lain
 Add autoresponder|Tambah balasan otomatis
 Add button|Tambah tombol
 Add condition|Tambah kondisi
 Add connector|Tambah konektor
 Add ending|Tambah penutup
+Add field|Tambah pertanyaan
 Add message|Tambah pesan
 Add note|Tambah catatan
 Add option|Tambah pilihan
@@ -41,13 +49,23 @@ Add outcome|Tambah hasil
 Add private plain-text note|Tambah catatan pribadi teks biasa
 Add rule|Tambah aturan
 Add score|Tambah nilai
+Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:|Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:
+Add to a WordPress page|Pasang di halaman WordPress
 Add variant|Tambah varian
 Add webhook|Tambah webhook
 Address|Alamat
 Admin notifications|Notifikasi admin
+Advanced|Lanjutan
+Advanced custom element|Elemen kustom lanjutan
+Advanced filters|Filter lanjutan
+Advanced message options|Opsi pesan lanjutan
+Advanced redirect settings|Pengaturan pengalihan lanjutan
+Advanced: prefill answers|Lanjutan: isi jawaban awal
+Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.|Laporan gabungan menggunakan tanggal UTC. Funnel form di bawah menggunakan zona waktu situs, sehingga batas hari dan totalnya dapat berbeda.
 All|Semua
 All (AND)|Semua (DAN)
 All forms|Semua formulir
+All settings saved.|Semua pengaturan tersimpan.
 All statuses|Semua status
 Allow user-initiated WhatsApp sharing|Izinkan berbagi melalui WhatsApp atas tindakan pengguna
 Allowed MIME types (comma separated)|Jenis MIME yang diizinkan (dipisahkan koma)
@@ -55,9 +73,11 @@ Allowed external redirect hosts (comma-separated)|Host pengalihan eksternal yang
 Alternative text|Teks alternatif
 An unexpected error occurred.|Terjadi kesalahan tak terduga.
 Analytics|Analitik
+Analytics date range|Rentang tanggal analitik
 Anonymized|Dianonimkan
 Another admin changed this draft. Autosave is paused; your local edits are preserved.|Admin lain mengubah draf ini. Penyimpanan otomatis dijeda; perubahan lokal Anda tetap tersimpan.
 Answer|Jawaban
+Answer buttons|Tombol jawaban
 Answer column %d|Kolom jawaban %d
 Answer columns (up to three)|Kolom jawaban (maksimal tiga)
 Answer distributions|Distribusi jawaban
@@ -66,13 +86,13 @@ Answer operator|Operator jawaban
 Answer value|Nilai jawaban
 Answered|Dijawab
 Answers|Jawaban
+Anthropic (Claude)|Anthropic (Claude)
 Anthropic API key (sk-ant-…)|Kunci API Anthropic (sk-ant-…)
 Any|Apa pun
 Any (OR)|Salah satu (ATAU)
 Any text|Teks apa pun
 Anything else to share?|Ada hal lain yang ingin disampaikan?
 Anything else we should know?|Adakah hal lain yang perlu kami ketahui?
-API key (optional for keyless gateways)|Kunci API (opsional untuk gateway tanpa kunci)
 Append options|Tambahkan pilihan
 Append submission UUID|Tambahkan UUID kiriman
 Append whitelisted answers|Tambahkan jawaban yang diizinkan
@@ -94,6 +114,7 @@ Auto-open after seconds (blank = off)|Buka otomatis setelah detik (kosong = nona
 Auto-open at scroll percent (blank = off)|Buka otomatis saat gulir mencapai persen (kosong = nonaktif)
 Autocomplete|Pelengkapan otomatis
 Automatic (from the link)|Otomatis (dari tautan)
+Automatic launcher placement and popup triggers are set per form in Settings → Display.|Penempatan tombol chat otomatis dan pemicu popup diatur per form melalui Pengaturan → Tampilan.
 Automatic launcher placement and popup triggers are set per form: open this form’s Settings tab and use “Display and engagement”.|Penempatan peluncur otomatis dan pemicu popup diatur per formulir: buka tab Pengaturan formulir ini dan gunakan “Tampilan dan interaksi”.
 Automatic retention|Retensi otomatis
 Automatically delete old submissions|Hapus kiriman lama secara otomatis
@@ -101,48 +122,55 @@ Autoresponders|Balasan otomatis
 Avatar attachment ID|ID lampiran avatar
 Average completion seconds|Rata-rata detik penyelesaian
 Average completion time|Rata-rata waktu penyelesaian
-Base URL (https, e.g. https://api.openai.com/v1)|URL dasar (https, mis. https://api.openai.com/v1)
 BCC|BCC
 Back|Kembali
+Back to editor|Kembali ke editor
+Back to flow|Kembali ke alur
 Back to submissions|Kembali ke kiriman
+Base URL (https, e.g. https://api.openai.com/v1)|URL dasar (https, mis. https://api.openai.com/v1)
+Basic|Dasar
 Below 4.5:1|Di bawah 4,5:1
 Blank|Kosong
 Body HTML / merge tags|Isi HTML / tag penggabungan
-Bot bubble colour|Warna gelembung bot
+Bot|Bot
 Bot bubble|Gelembung bot
+Bot bubble colour|Warna gelembung bot
 Bot message|Pesan bot
 Bot name|Nama bot
 Bot text|Teks bot
-Bot|Bot
+Branch, score and route answers, then check the whole form for broken references in one place.|Atur percabangan, skor, dan alur jawaban, lalu periksa seluruh formulir untuk referensi yang rusak di satu tempat.
 Branching flow map|Peta alur percabangan
+Branching map|Peta percabangan
 Brand colour|Warna merek
 Bubble tails|Ekor gelembung
-Build a WhatsApp link|Buat tautan WhatsApp
 Build|Susun
+Build a WhatsApp link|Buat tautan WhatsApp
 Builder sections|Bagian pembuat formulir
 Bulk options (one label per line)|Pilihan massal (satu label per baris)
-Button colour|Warna tombol
-Button text (blank = “Chat on WhatsApp” or “Contact us”)|Teks tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)
-Button text colour|Warna teks tombol
+Button %d|Tombol %d
 Button URL (merge tags allowed)|URL tombol (tag penggabungan diizinkan)
 Button action|Tindakan tombol
+Button colour|Warna tombol
 Button label|Label tombol
 Button text|Teks tombol
+Button text (blank = “Chat on WhatsApp” or “Contact us”)|Teks tombol (kosong = “Chat lewat WhatsApp” atau “Hubungi kami”)
+Button text colour|Warna teks tombol
 CC|CC
 Calculated number|Angka terhitung
 Cancel|Batal
 Captcha|Captcha
 Captcha and Akismet are optional later features, not enabled here.|Captcha dan Akismet merupakan fitur opsional mendatang, belum diaktifkan di sini.
 Captcha provider|Penyedia captcha
-Change this submission to “%s”?|Ubah kiriman ini menjadi “%s”?
 Cards|Kartu
+Change this submission to “%s”?|Ubah kiriman ini menjadi “%s”?
+Changes are compared with the current live version.|Perubahan dibandingkan dengan versi yang sedang tayang.
 Changing a value changes exports and integrations. Its ID stays unchanged.|Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama.
 Chat background|Latar percakapan
 Chat bubble|Gelembung chat
 Chat on WhatsApp|Chat lewat WhatsApp
 Chat theme|Tema percakapan
-Chat width (240–1600)|Lebar percakapan (240–1600)
 Chat width|Lebar percakapan
+Chat width (240–1600)|Lebar percakapan (240–1600)
 ChatFlow|ChatFlow
 ChatFlow Form|Formulir ChatFlow
 ChatFlow Forms|Formulir ChatFlow
@@ -155,6 +183,7 @@ Check colour contrast in the real preview. Optional custom effects are not enabl
 Check email MX on server|Periksa MX email di server
 Chips|Chip
 Choice layout|Tata letak pilihan
+Choices|Pilihan
 Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.|Pilihan berasal dari kunci jawaban pada halaman yang dimuat. Hanya nama kunci, bukan nilai jawaban, yang disimpan di peramban ini.
 Choose a field|Pilih kolom
 Choose a form|Pilih formulir
@@ -169,9 +198,9 @@ Choose form|Pilih formulir
 Choose template|Pilih templat
 City|Kota
 Classic|Klasik
+Close export|Tutup ekspor
 Close preview|Tutup pratinjau
 Closed|Tutup
-closes|tutup
 Closing date (UTC ISO 8601, blank = never)|Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)
 Cloudflare Turnstile|Cloudflare Turnstile
 Collect a name, email address, topic, message, and permission to reply.|Kumpulkan nama, alamat email, topik, pesan, dan izin untuk membalas.
@@ -179,6 +208,7 @@ Collected metadata|Metadata yang dikumpulkan
 Colours|Warna
 Column keys (comma-separated; blank = all)|Kunci kolom (pisahkan dengan koma; kosong = semua)
 Column preferences cannot be saved in this browser.|Preferensi kolom tidak dapat disimpan di peramban ini.
+Columns|Kolom
 Comma|Koma
 Company|Perusahaan
 Completed|Selesai
@@ -206,45 +236,56 @@ Contact details and an enquiry.|Detail kontak dan pertanyaan.
 Contact enquiry|Pertanyaan kontak
 Contact request|Permintaan kontak
 Contact us|Hubungi kami
+Contains|Mengandung
 Content|Konten
 Continue / submit button|Tombol lanjut / kirim
 Contrast feedback (WCAG AA normal text)|Umpan balik kontras (WCAG AA teks normal)
 Conversation flow|Alur percakapan
 Conversation replay|Putar ulang percakapan
+Conversational forms that feel like a chat. Draft here, publish when you are ready to share.|Formulir percakapan yang terasa seperti obrolan. Buat draf di sini, terbitkan saat siap dibagikan.
 Conversions API access token|Token akses Conversions API
 Cookie|Cookie
 Cookie sources support only utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale and cff_theme. Authentication, session and token cookies are never available.|Sumber kuki hanya mendukung utm_source, utm_medium, utm_campaign, utm_term, utm_content, campaign, tracking, cff_locale dan cff_theme. Kuki autentikasi, sesi dan token tidak pernah tersedia.
+Copied|Tersalin
 Copy|Salin
+Copy custom element|Salin elemen kustom
+Copy link|Salin tautan
+Copy overrides|Ganti teks
+Copy response ID|Salin ID respons
+Copy shortcode|Salin shortcode
 Copy stored IP|Salin IP tersimpan
 Copy the ID from ChatFlow Forms. Only published forms render.|Salin ID dari ChatFlow Forms. Hanya formulir yang telah diterbitkan yang ditampilkan.
-Corner radius (0–32)|Radius sudut (0–32)
+Copy unavailable. Select and copy the text instead.|Tidak dapat menyalin otomatis. Pilih teks lalu salin secara manual.
 Corner radius|Radius sudut
+Corner radius (0–32)|Radius sudut (0–32)
 Country|Negara
 Create a form|Buat formulir
 Create an application password on your profile page.|Buat kata sandi aplikasi di halaman profil Anda.
 Create draft|Buat draf
 Create experiment|Buat eksperimen
+Create form|Buat form
 Create private export|Buat ekspor pribadi
 Creating draft…|Membuat draf…
 Criteria / count|Kriteria / jumlah
 Cross-device resume links|Tautan lanjutkan di perangkat lain
 Custom CSS, focus indicators and real device behavior require separate visual checks.|CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah.
+Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML.|Elemen kustom memerlukan aset runtime plugin. Jangan menyertakan token atau pengaturan privat dalam HTML.
 Custom headers (private)|Header khusus (pribadi)
 Customer feedback|Umpan balik pelanggan
-Dark mode uses its own built-in colours.|Mode gelap memakai warna bawaannya sendiri.
 Dark|Gelap
+Dark mode uses its own built-in colours.|Mode gelap memakai warna bawaannya sendiri.
 Date|Tanggal
 Dates in UTC|Tanggal dalam UTC
 Dates in site timezone (%s)|Tanggal dalam zona waktu situs (%s)
 Deactivation never deletes data. Multisite uses each site’s own setting.|Menonaktifkan plugin tidak menghapus data. Multisite menggunakan pengaturan masing-masing situs.
 Decimal numbers|Angka desimal
+Default|Bawaan
 Default country (ISO code)|Negara bawaan (kode ISO)
 Default embed mode|Mode penyematan bawaan
 Default ending|Penutup bawaan
-Default theme for new forms|Tema bawaan untuk formulir baru
 Default theme|Tema bawaan
+Default theme for new forms|Tema bawaan untuk formulir baru
 Default value|Nilai bawaan
-Default|Bawaan
 Delay in seconds (0 = immediate)|Jeda dalam detik (0 = langsung)
 Delete field|Hapus kolom
 Delete partial on start over|Hapus kiriman sebagian saat mulai ulang
@@ -267,15 +308,19 @@ Device|Perangkat
 Devices|Perangkat
 Diff compares this draft to the current published snapshot.|Perbandingan membandingkan draf ini dengan versi terbit saat ini.
 Diff uses the draft loaded in this editor, not the historical published snapshot.|Perbandingan menggunakan draf yang dimuat di editor ini, bukan snapshot versi terbit sebelumnya.
+Direct|Langsung
 Direct / unknown|Langsung / tidak diketahui
 Direct contact link|Tautan kontak langsung
 Discard local edits and reload?|Buang perubahan lokal dan muat ulang?
+Dismiss|Tutup
+Display|Tampilan
 Display and engagement|Tampilan dan interaksi
 Display and site-wide launcher rules|Aturan tampilan dan tombol pembuka di seluruh situs
 Display defaults|Tampilan bawaan
 Display mode|Mode tampilan
 Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft.|Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab (minimum nol), bukan bukti sesi ditinggalkan; percabangan, penolakan pelacakan, dan riwayat tersimpan memengaruhi hitungan. Label menggunakan draf saat ini.
 Do not store|Jangan simpan
+Does not equal|Tidak sama dengan
 Doodles|Coretan
 Dots|Titik-titik
 Double opt-in (subscriber confirms by email)|Konfirmasi ganda (pelanggan mengonfirmasi lewat email)
@@ -292,6 +337,8 @@ Dropdown|Menu tarik-turun
 Duplicate|Duplikat
 Duplicate field|Duplikat kolom
 Edit|Ubah
+Edit field: %s|Ubah kolom: %s
+Edit rules for %s|Ubah aturan untuk %s
 Email|Email
 Email HTML preview|Pratinjau HTML email
 Email address|Alamat email
@@ -300,6 +347,7 @@ Email keyboard|Keyboard email
 Email question (optional, sent hashed)|Pertanyaan email (opsional, dikirim dalam bentuk hash)
 Email question (required)|Pertanyaan email (wajib)
 Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.|Email menggunakan layanan pengiriman WordPress. Berbagi melalui WhatsApp membuka menu berbagi perangkat atau menyalin tautan; pesan tidak dikirim melalui penyedia.
+Embed|Sematkan
 Emoji|Emoji
 Enable first-touch tracking|Aktifkan pelacakan kunjungan pertama
 Enable honeypot protection|Aktifkan perlindungan honeypot
@@ -312,12 +360,14 @@ Enable the MCP server|Aktifkan server MCP
 Enabled|Diaktifkan
 End with|Akhiri dengan
 Ending|Penutup
+Ending %d|Penutup %d
 Ending messages (one per line)|Pesan penutup (satu per baris)
 Ending type|Jenis penutup
 Ending: %s|Akhir: %s
 Endings and completion|Penutup dan penyelesaian
 Endpoint|Endpoint
 Enter the full number including the country code, for example 6281234567890.|Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890.
+Equals|Sama dengan
 Event name|Nama peristiwa
 Exclude page IDs (comma-separated)|ID halaman yang dikecualikan (pisahkan dengan koma)
 Exclude page IDs (exclusions win)|Kecualikan ID halaman (pengecualian diprioritaskan)
@@ -333,6 +383,7 @@ Export date range (UTC)|Rentang tanggal ekspor (UTC)
 Export expired or download denied. Request a new export.|Ekspor kedaluwarsa atau unduhan ditolak. Buat ekspor baru.
 Export filtered results|Ekspor hasil terfilter
 Export form JSON|Ekspor JSON formulir
+Export responses, move forms between sites, and run maintenance safely.|Ekspor respons, pindahkan formulir antar situs, dan jalankan pemeliharaan dengan aman.
 Export selected|Ekspor yang dipilih
 Export submissions|Ekspor kiriman
 Export unavailable or expired.|Ekspor tidak tersedia atau kedaluwarsa.
@@ -341,14 +392,19 @@ Exports only selected rows and the active filters.|Mengekspor hanya baris terpil
 Fast|Cepat
 Feedback / NPS|Umpan balik / NPS
 Field|Kolom
+Field %1$d: %2$s|Kolom %1$d: %2$s
+Field editor|Editor pertanyaan
 Field key|Kunci kolom
+Field keys|Kunci field
 Field labels|Label kolom
 Field mapping: provider field → answer key|Pemetaan kolom: kolom penyedia → kunci jawaban
 Field palette|Palet kolom
+Field rules|Aturan kolom
 Fields without an override follow the global Settings screen.|Kolom tanpa penggantian mengikuti layar Pengaturan global.
 File download denied or unavailable.|Unduhan berkas ditolak atau tidak tersedia.
 File upload|Unggah berkas
 Find a form|Cari formulir
+Find more forms|Cari form lain
 First bot message|Pesan bot pertama
 First-touch attribution|Atribusi kunjungan pertama
 Floating launcher|Tombol chat mengambang
@@ -368,7 +424,9 @@ Form deleted permanently.|Formulir dihapus permanen.
 Form file exceeds 1 MiB.|Berkas formulir melebihi 1 MiB.
 Form funnel and experiments|Alur konversi formulir dan eksperimen
 Form name|Nama formulir
+Form published|Form telah tayang
 Form restored.|Formulir dipulihkan.
+Form settings sections|Bagian pengaturan form
 Form version|Versi formulir
 Formal|Formal
 Format|Format
@@ -388,12 +446,14 @@ Full-page URL and QR code|URL halaman penuh dan kode QR
 Fullpage|Halaman penuh
 Fullpage base slug|Slug dasar halaman penuh
 Funnel|Alur konversi
-Get a quote|Minta penawaran
 GIF|GIF
 Gather experience ratings, suggestions, and recommendation intent without contact details.|Kumpulkan penilaian pengalaman, saran, dan niat merekomendasikan tanpa detail kontak.
+General|Umum
+General / Completion|Umum / Penyelesaian
 Generate a form with AI|Buat formulir dengan AI
 Generate draft|Buat draf
 Generating draft…|Membuat draf…
+Get a quote|Minta penawaran
 Global email layout|Tata letak email global
 Global setting: %d days.|Pengaturan global: %d hari.
 Global setting: same as completed submissions.|Pengaturan global: sama dengan kiriman selesai.
@@ -402,24 +462,27 @@ Google fonts are opt-in. Visitors and preview administrators contact Google (fon
 Google reCAPTCHA v3|Google reCAPTCHA v3
 Gradient|Gradien
 Graphite|Grafit
-Great choice. When would you like to start?|Pilihan bagus. Kapan Anda ingin mulai?
 Great|Sangat baik
+Great choice. When would you like to start?|Pilihan bagus. Kapan Anda ingin mulai?
+Greater than|Lebih besar dari
+Greater than or equal to|Lebih besar atau sama dengan
 Group selected|Kelompokkan yang dipilih
 Group title|Judul grup
+HTTPS media URL|URL media HTTPS
 Header background|Latar header
 Header text|Teks header
-Hi there! 👋|Halo! 👋
-Hide the button|Sembunyikan tombol
-HTTPS media URL|URL media HTTPS
 Headers|Header
 Health intake|Permintaan konsultasi kesehatan
 Height (200–2000 px)|Tinggi (200–2000 px)
 Help text|Teks bantuan
+Hi there! 👋|Halo! 👋
 Hidden|Tersembunyi
 Hidden field|Kolom tersembunyi
 Hidden until shown by a rule|Tersembunyi hingga ditampilkan oleh aturan
 Hidden value source|Sumber nilai tersembunyi
 Hide field|Sembunyikan kolom
+Hide hidden fields|Sembunyikan kolom tersembunyi
+Hide the button|Sembunyikan tombol
 Home|Rumah
 Honeypot|Honeypot
 How can we help?|Bagaimana kami dapat membantu?
@@ -427,8 +490,9 @@ How likely are you to recommend us? (0–10)|Seberapa besar kemungkinan Anda mer
 How was your experience?|Bagaimana pengalaman Anda?
 I agree that the information I provide may be used to respond to this intake request.|Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini.
 I agree to the privacy policy.|Saya menyetujui kebijakan privasi.
-Icon|Ikon
 IP storage|Penyimpanan IP
+Icon|Ikon
+If|Jika
 Image|Gambar
 Image attachment ID|ID lampiran gambar
 Imajiner website survey|Survei situs web Imajiner
@@ -448,19 +512,23 @@ Insert answer merge tag|Sisipkan tag penggabungan jawaban
 Insert merge tag|Sisipkan tag penggabungan
 Inspect logic path and variables|Periksa jalur logika dan variabel
 Intake request and explicit consent; not medical advice or emergency care.|Permintaan konsultasi dan persetujuan eksplisit; bukan nasihat medis atau layanan darurat.
+Integrations|Integrasi
+Integrations and AI|Integrasi dan AI
 Invalid ChatFlow form file.|Berkas formulir ChatFlow tidak valid.
 Invalid JSON. Nothing was changed.|JSON tidak valid. Tidak ada perubahan.
 Invalid export download destination.|Tujuan unduhan ekspor tidak valid.
 Invalid file download destination.|Tujuan unduhan berkas tidak valid.
 Invalid form action.|Tindakan formulir tidak valid.
+Is empty|Kosong
+Is not empty|Tidak kosong
 Jump to field|Lompat ke kolom
 Jump to step (preview only)|Lompat ke langkah (hanya pratinjau)
 Just exploring|Hanya melihat-lihat
 Keep local edits (explicit override)|Pertahankan perubahan lokal (timpa secara eksplisit)
 Keep local edits on the latest revision? The next save can replace another admin’s changes.|Pertahankan perubahan lokal pada revisi terbaru? Penyimpanan berikutnya dapat menimpa perubahan admin lain.
-Keyboard grid|Kisi keyboard
 Key|Kunci
 Key (lowercase)|Kunci (huruf kecil)
+Keyboard grid|Kisi keyboard
 Keyboard hint|Petunjuk keyboard
 Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules.|Kunci digunakan dalam ekspor dan integrasi. Mengganti nama tidak mengubah ID tetap; periksa tag penggabungan dan aturan terkait.
 Label|Label
@@ -476,16 +544,19 @@ Lead capture|Pengumpulan prospek
 Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers.|Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan.
 Leave with unsaved changes?|Keluar dengan perubahan yang belum disimpan?
 Left|Kiri
+Less than|Lebih kecil dari
+Less than or equal to|Lebih kecil atau sama dengan
 Lets AI agents such as Claude, ChatGPT or Cursor list, create, edit and publish forms, and read submissions and analytics, through the Model Context Protocol. An agent acts as the WordPress user whose application password it uses, with that user’s ChatFlow permissions. Submissions can contain personal data: connect only agents you trust.|Memungkinkan agen AI seperti Claude, ChatGPT, atau Cursor menampilkan, membuat, mengedit, dan menerbitkan formulir, serta membaca kiriman dan analitik, melalui Model Context Protocol. Agen bertindak sebagai pengguna WordPress pemilik kata sandi aplikasi yang dipakainya, dengan izin ChatFlow pengguna tersebut. Kiriman dapat berisi data pribadi: hubungkan hanya agen yang Anda percayai.
-Light or dark|Terang atau gelap
 Light|Terang
+Light or dark|Terang atau gelap
 Limits|Batasan
-Link (including WhatsApp)|Tautan (termasuk WhatsApp)
+Link|Tautan
 Link (WhatsApp, https, tel: or mailto:; merge tags allowed)|Tautan (WhatsApp, https, tel: atau mailto:; tag gabungan boleh)
+Link (including WhatsApp)|Tautan (termasuk WhatsApp)
 Link lifetime in minutes (5–1440)|Masa berlaku tautan dalam menit (5–1440)
+Live|Aktif
 Live preview|Pratinjau langsung
 Live theme preview|Pratinjau tema langsung
-Live|Aktif
 Live version|Versi aktif
 Live version %d|Versi aktif %d
 Load analytics|Muat analitik
@@ -495,9 +566,12 @@ Loading settings…|Memuat pengaturan…
 Loading…|Memuat…
 Logic|Logika
 Logic diagnostics|Diagnostik logika
+Logic overview|Ringkasan logika
 Logic rules (evaluated in order)|Aturan logika (dievaluasi berurutan)
+Logic warnings|Peringatan logika
 Logo URL|URL logo
 Long text|Teks panjang
+MCP server (AI agents)|Server MCP (agen AI)
 Machine keys|Kunci mesin
 Mailchimp audience ID|ID audiens Mailchimp
 Make field optional|Jadikan kolom opsional
@@ -510,7 +584,6 @@ Maximum|Maksimum
 Maximum bytes per file|Batas byte per berkas
 Maximum length|Panjang maksimum
 Maximum selections|Pilihan maksimum
-MCP server (AI agents)|Server MCP (agen AI)
 Meadow|Padang
 Measurement ID (G-…)|Measurement ID (G-…)
 Measurement Protocol API secret|Rahasia API Measurement Protocol
@@ -518,9 +591,10 @@ Media|Media
 Media type|Jenis media
 Merge tag|Tag gabung
 Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url="https://…"]Label[/cff_button].|Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url="https://…"]Label[/cff_button].
-Message outside working hours (merge tags allowed)|Pesan di luar jam kerja (tag gabungan boleh)
 Message|Pesan
+Message %d|Pesan %d
 Message intro (merge tags allowed)|Pembuka pesan (boleh memakai merge tag)
+Message outside working hours (merge tags allowed)|Pesan di luar jam kerja (tag gabungan boleh)
 Messaging|Perpesanan
 Metadata and consent|Metadata dan persetujuan
 Minimum|Minimum
@@ -530,16 +604,16 @@ Minimum height|Tinggi minimum
 Minimum length|Panjang minimum
 Minimum selections|Pilihan minimum
 Mobile|Ponsel
-Model (blank = openrouter/auto)|Model (kosong = openrouter/auto)
 Model|Model
+Model (blank = openrouter/auto)|Model (kosong = openrouter/auto)
 Modern messenger look: wallpaper, bubbles with tails and keyboard-style answer buttons.|Tampilan aplikasi pesan modern: wallpaper, gelembung berekor, dan tombol jawaban bergaya keyboard.
 Monday|Senin
 More forms|Formulir berikutnya
 Move down|Pindah ke bawah
+Move rule down|Turunkan aturan
+Move rule up|Naikkan aturan
 Move up|Pindah ke atas
 Multiple choice|Pilihan jamak
-Night|Malam
-No icon|Tanpa ikon
 NPS (0–10)|NPS (0–10)
 Name|Nama
 Name, email and a message; no external integrations.|Nama, email, dan pesan; tanpa integrasi eksternal.
@@ -558,23 +632,33 @@ New group|Grup baru
 New question|Pertanyaan baru
 New submission|Kiriman baru
 New template name|Nama templat baru
+Newer activity|Aktivitas lebih baru
 Next|Berikutnya
 Next forms|Formulir berikutnya
+Night|Malam
 No|Tidak
 No column|Tanpa kolom
 No data for this period.|Tidak ada data untuk periode ini.
+No field rules yet.|Belum ada aturan kolom.
 No forms found.|Tidak ada formulir yang ditemukan.
 No forms in the trash.|Tidak ada formulir di sampah.
+No icon|Tanpa ikon
 No logic warnings detected.|Tidak ditemukan peringatan logika.
+No matching fields. Try another search.|Tidak ada pertanyaan yang cocok. Coba kata pencarian lain.
 No matching submissions.|Tidak ada kiriman yang cocok.
+No message yet. Select this field to edit.|Belum ada pesan. Pilih pertanyaan ini untuk mengeditnya.
 No on-screen keyboard|Tanpa keyboard layar
+No outcomes yet. The form ends normally unless an outcome matches.|Belum ada hasil. Formulir berakhir normal kecuali ada hasil yang cocok.
 No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.|Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim.
+No rules yet. Add a rule to show, hide or jump between fields.|Belum ada aturan. Tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat antar kolom.
+No scoring variables yet. Add one to start tallying answers.|Belum ada variabel skor. Tambahkan satu untuk mulai menghitung jawaban.
 Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned.|Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri.
 None|Tidak ada
 Normal|Normal
 Not published yet|Belum diterbitkan
 Not starred|Tidak berbintang
 Notes|Catatan
+Notifications|Notifikasi
 Notify on abandoned contact leads|Kirim notifikasi untuk prospek kontak yang ditinggalkan
 Number|Angka
 Number increment|Kelipatan angka
@@ -584,37 +668,44 @@ Off (instant)|Nonaktif (instan)
 Off by default. Per-form retention settings can override this default.|Nonaktif secara bawaan. Pengaturan retensi per formulir dapat mengganti nilai bawaan ini.
 Off for this form|Nonaktif untuk formulir ini
 Okay|Cukup baik
+Older activity|Aktivitas lebih lama
 Older than days (default 360 unless dates set)|Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)
 Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private.|Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi.
 Only show the button during working hours|Tampilkan tombol hanya pada jam kerja
 Only trashed forms can be restored or deleted permanently.|Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen.
+Open a field on the Build tab, switch to Logic and add a rule to show, hide or jump.|Buka kolom di tab Bangun, pilih Logika, lalu tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat.
 Open after scroll percentage (blank = off)|Buka setelah persentase gulir (kosong = nonaktif)
+Open form|Buka form
 Open imported form|Buka formulir hasil impor
 Open your profile|Buka profil Anda
 OpenAI-compatible endpoint|Endpoint kompatibel OpenAI
-OpenRouter API key (sk-or-…)|Kunci API OpenRouter (sk-or-…)
 OpenRouter|OpenRouter
-opens|buka
+OpenRouter API key (sk-or-…)|Kunci API OpenRouter (sk-or-…)
 Operand source|Sumber operand
 Operation|Operasi
 Operator|Operator
 Option label|Label pilihan
+Option: %s|Opsi: %s
 Optional captcha and Akismet credentials|Kredensial captcha dan Akismet opsional
 Optional captcha provider|Penyedia captcha opsional
 Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off.|Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI.
 Optional. With an Anthropic API key, form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to Anthropic, never submissions. Leave blank to turn AI assist off.|Opsional. Dengan kunci API Anthropic, editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir itu sendiri ke Anthropic, tidak pernah data kiriman. Kosongkan untuk menonaktifkan asisten AI.
+Other|Lainnya
 Other (free-text option)|Lainnya (pilihan teks bebas)
 Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting.|Klien lain memakai URL dan header Authorization yang sama di pengaturan MCP-nya. Simpan pengaturan sebelum menghubungkan.
+Outcome %d|Hasil %d
+Outcome endings|Hasil akhir
 Outcome endings (first matching condition wins)|Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)
 Outside working hours|Di luar jam kerja
 Override step order (safe independent steps only)|Ubah urutan langkah (hanya langkah mandiri yang aman)
+Overview · UTC|Ringkasan · UTC
 Page exclusions take precedence. A published form is required for automatic placement.|Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis.
 Page metadata|Metadata halaman
 Palette|Palet
-Partial retention days (blank = same as completed submissions)|Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)
 Partial|Sebagian
 Partial retention and spam defaults|Retensi kiriman sebagian dan perlindungan spam bawaan
 Partial retention days (blank = disabled)|Retensi kiriman sebagian (hari; kosong = nonaktif)
+Partial retention days (blank = same as completed submissions)|Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)
 Partial submission saved|Kiriman parsial disimpan
 Partial/abandoned retention days (blank = same)|Retensi sebagian/ditinggalkan (hari; kosong = sama)
 Partial/abandoned retention days (blank = use global setting)|Hari retensi parsial/ditinggalkan (kosong = gunakan pengaturan global)
@@ -631,10 +722,10 @@ Phrase key → translated text|Kunci frasa → teks terjemahan
 Pills|Pil
 Pixel (dataset) ID|ID Pixel (dataset)
 Placeholder|Teks petunjuk
+Plain|Polos
 Plain Q&A|Tanya jawab biasa
 Plain, compact bubbles that blend into any page.|Gelembung sederhana dan ringkas yang menyatu dengan halaman apa pun.
 Plain-text version|Versi teks biasa
-Plain|Polos
 Playful|Santai
 Popup|Jendela pop-up
 Postcode|Kode pos
@@ -642,17 +733,21 @@ Pre-filled message (merge tags allowed, e.g. {{name}})|Pesan otomatis (tag gabun
 Preferred appointment date (subject to confirmation)|Tanggal janji temu yang diinginkan (perlu konfirmasi)
 Prefill URL builder|Pembuat URL isian awal
 Prefill suggests editable answers; it never skips validation or gives consent. URLs can enter history and server logs: do not include personal or secret data.|Isian awal menyarankan jawaban yang dapat diubah; tidak melewati validasi atau memberikan persetujuan. URL dapat masuk ke riwayat dan log server: jangan sertakan data pribadi atau rahasia.
+Preparing QR code…|Menyiapkan kode QR…
 Preview|Pratinjau
 Preview / edit draft|Pratinjau / ubah draf
 Preview count|Pratinjau jumlah
 Preview published form|Pratinjau formulir terbit
 Preview saved draft email|Pratinjau email draf tersimpan
 Preview saves the current draft. Test sends use the published version; publish changed notification settings before testing them.|Pratinjau menyimpan draf saat ini. Pengiriman uji memakai versi terbit; terbitkan perubahan pengaturan notifikasi sebelum mengujinya.
+Preview your form|Pratinjau form Anda
 Previous|Sebelumnya
 Previous copy restored.|Teks sebelumnya dipulihkan.
 Previous forms|Formulir sebelumnya
 Primary colour|Warna utama
 Print|Cetak
+Privacy|Privasi
+Privacy and retention|Privasi dan retensi
 Privacy and retention override|Pengaturan khusus privasi dan retensi
 Privacy defaults|Privasi bawaan
 Privacy policy URL|URL kebijakan privasi
@@ -665,28 +760,36 @@ Professional|Profesional
 Provider|Penyedia
 Proxy mode|Mode proxy
 Public site key|Kunci situs publik
+Publication result|Hasil publikasi
 Publish|Terbitkan
 Publish failed.|Penerbitan gagal.
+Publish form?|Tayangkan form?
 Publish new version|Terbitkan versi baru
 Publish the form before sending test mail.|Terbitkan formulir sebelum mengirim email uji.
 Publish this form before embedding it.|Terbitkan formulir sebelum menyematkannya.
+Publish your form to get a shareable link|Tayangkan form untuk mendapatkan tautan yang dapat dibagikan
 Published form ID|ID formulir yang telah diterbitkan
 Published forms only. Custom elements require the plugin runtime asset; no tokens or private settings belong in HTML.|Hanya formulir terbit. Elemen khusus memerlukan aset runtime plugin; jangan sertakan token atau pengaturan pribadi di HTML.
+Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.|Publikasi menyimpan draf ini dan membuat versi tayang tetap dari form beserta pengaturan privatnya. Respons yang sudah ada tetap disimpan.
 Purge audit log|Log audit penghapusan
 Purge data|Hapus data
 Purge job|Tugas penghapusan
 Purge log|Log penghapusan
 Purge submissions|Hapus kiriman
+QR code|Kode QR
 Qualify website project inquiries, with conditional questions.|Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat.
 Question labels, bot messages and endings are sent to Anthropic’s Claude API. Merge tags are kept; review the result before publishing.|Label pertanyaan, pesan bot, dan penutup dikirim ke Claude API milik Anthropic. Merge tag dipertahankan; tinjau hasilnya sebelum menerbitkan.
 Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing.|Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan.
+Questions: %d added, %d changed, %d removed.|Pertanyaan: %d ditambahkan, %d diubah, %d dihapus.
 Rate window seconds|Jendela pembatasan (detik)
 Rating|Penilaian
 Rating (1–5)|Penilaian (1–5)
 Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.|Penilaian: 1–5, skala: 1–10, NPS: 0–10. Nilai disimpan sebagai angka.
+Ratings|Penilaian
 Reaction text|Teks reaksi
 Read|Dibaca
 Read / starred|Dibaca / berbintang
+Read every response, follow up on partial conversations and export what you need.|Baca setiap respons, tindak lanjuti percakapan yang belum selesai, dan ekspor yang Anda perlukan.
 Read state|Status baca
 Recipient email field|Kolom email penerima
 Recipients|Penerima
@@ -695,6 +798,7 @@ Recorded views|Tayangan tercatat
 Redirect|Pengalihan
 Redirect URL|URL pengalihan
 Redirect delay (milliseconds)|Jeda pengalihan (milidetik)
+Redirect to website|Alihkan ke situs web
 Redo|Ulangi
 Refresh activity|Segarkan aktivitas
 Refresh progress|Segarkan progres
@@ -733,39 +837,41 @@ Reserved scoring rule (not enabled in MVP)|Aturan penilaian cadangan (belum diak
 Reset filters|Atur ulang filter
 Respect Do Not Track|Hormati Do Not Track
 Respondent email field|Kolom email responden
+Response|Respons
+Response ID|ID respons
 Restart preview|Mulai ulang pratinjau
 Restore|Pulihkan
-Restore selected to Completed|Pulihkan yang dipilih ke Selesai
 Restore selected|Pulihkan yang dipilih
+Restore selected to Completed|Pulihkan yang dipilih ke Selesai
 Resume days (1–90)|Masa melanjutkan sesi (hari; 1–90)
 Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.|Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie.
 Retention days|Masa retensi (hari)
 Retry delivery|Ulangi pengiriman
 Retry save|Coba simpan lagi
 Reusable email content|Konten email yang dapat digunakan kembali
+Review changes and version details|Tinjau perubahan dan detail versi
 Rewrote %1$d of %2$d texts.|Menulis ulang %1$d dari %2$d teks.
 Right|Kanan
 Rows per page|Baris per halaman
 Rule %d|Aturan %d
 Rules apply to published settings; review and publish before they affect visitors. Inline embeds remain explicit. Automatic opening must respect consent and reduced motion.|Aturan berlaku pada pengaturan yang diterbitkan; tinjau dan terbitkan sebelum memengaruhi pengunjung. Penyematan langsung tetap harus dipasang secara eksplisit. Pembukaan otomatis harus menghormati persetujuan dan pengurangan gerakan.
-Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
-Saturday|Sabtu
-Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
-Shape|Bentuk
-Show a contact button below the conversation|Tampilkan tombol kontak di bawah percakapan
-Show a message instead|Tampilkan pesan sebagai gantinya
-Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
-Sky|Langit
+Rules are checked in order. The first one that matches wins.|Aturan diperiksa berurutan. Aturan pertama yang cocok yang dipakai.
+Rules run from top to bottom. The first matching rule wins.|Aturan dijalankan dari atas ke bawah. Aturan pertama yang cocok yang dipakai.
 SMTP status is unknown. Verify your mail transport and test inbox delivery.|Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk.
 Sample answers (JSON object)|Contoh jawaban (objek JSON)
 Sample answers must be an object.|Contoh jawaban harus berupa objek.
+Sample conversation. Your real questions appear in Preview.|Contoh percakapan. Pertanyaan asli Anda tampil di Pratinjau.
+Saturday|Sabtu
+Save applies to all sections.|Penyimpanan berlaku untuk semua bagian.
 Save draft|Simpan draf
 Save email content as template|Simpan konten email sebagai templat
 Save failed.|Penyimpanan gagal.
 Save partial submissions|Simpan kiriman sebagian
 Save settings|Simpan pengaturan
 Save this draft first to get its form ID.|Simpan draf terlebih dahulu untuk memperoleh ID formulir.
+Save your draft, then choose Publish. Your link, embeds and QR code will appear here when the form is live.|Simpan draf, lalu pilih Tayangkan. Tautan, sematan, dan kode QR akan muncul di sini setelah form tayang.
 Saved template|Templat tersimpan
+Saved. Leave unchanged to keep it, or clear the field to remove it.|Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya.
 Saving…|Menyimpan…
 Scale|Skala
 Scale (1–10)|Skala (1–10)
@@ -793,14 +899,28 @@ Set to|Atur menjadi
 Set variable|Atur variabel
 Settings|Pengaturan
 Settings saved.|Pengaturan disimpan.
+Settings sections|Bagian pengaturan
+Shape|Bentuk
 Share|Bagikan
+Share a QR code|Bagikan kode QR
+Share a link|Bagikan tautan
+Share and embed|Bagikan dan sematkan
+Sharing options|Pilihan berbagi
 Short text|Teks pendek
 Shortcode|Shortcode
+Shortcode copied.|Shortcode tersalin.
+Show a contact button below the conversation|Tampilkan tombol kontak di bawah percakapan
+Show a message instead|Tampilkan pesan sebagai gantinya
 Show automatically on matching pages|Tampilkan otomatis pada halaman yang sesuai
 Show field|Tampilkan kolom
+Show hidden fields (%d)|Tampilkan kolom tersembunyi (%d)
+Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.|Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir.
 Signing secret|Rahasia penandatanganan
 Single choice|Pilihan tunggal
+Site timezone: %s|Zona waktu situs: %s
+Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.|Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri.
 Skipped|Dilewati
+Sky|Langit
 Slider|Penggeser
 Slow|Lambat
 Source / device|Sumber / perangkat
@@ -834,6 +954,7 @@ Street|Jalan
 Style|Gaya
 Subject|Subjek
 Submission|Kiriman
+Submission status|Status kiriman
 Submissions|Kiriman
 Submissions / completion rate|Jawaban / rasio penyelesaian
 Submissions per rate window|Kiriman per jendela pembatasan
@@ -847,17 +968,24 @@ System status|Status sistem
 Tablet|Tablet
 Tags (comma-separated)|Tag (pisahkan dengan koma)
 Target|Target
+Technical activity|Aktivitas teknis
+Technical details|Detail teknis
 Telephone keypad|Papan tombol telepon
 Template gallery and import|Galeri templat dan impor
+Test alternate copy or a reordered question set on new sessions.|Uji teks alternatif atau urutan pertanyaan berbeda pada sesi baru.
 Test email queued. Check the activity log for delivery.|Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman.
 Test event code (optional, for Events Manager testing)|Kode peristiwa uji (opsional, untuk pengujian Events Manager)
 Test recipient|Penerima uji
+Test your draft as a visitor. Responses here are not saved, and notifications are not sent.|Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim.
 Text colour|Warna teks
 Thank you for your submission|Terima kasih atas kiriman Anda
 Thank you!|Terima kasih!
 Thank you. Your request has been received.|Terima kasih. Permintaan Anda telah diterima.
+Thank-you message|Pesan terima kasih
 The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.|Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
+The default path runs down the list; animated arrows are rules that skip ahead.|Jalur bawaan mengalir ke bawah daftar; panah beranimasi adalah aturan yang melompat ke depan.
 The export form must match the active form filter. Change the filter or select its form before exporting.|Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor.
+The first matching outcome decides the ending instead of normal completion.|Hasil pertama yang cocok menentukan akhir formulir, bukan penyelesaian normal.
 The form could not be changed. Please try again.|Formulir tidak dapat diubah. Silakan coba lagi.
 The frozen form snapshot is unavailable.|Snapshot formulir yang dibekukan tidak tersedia.
 The live preview is unavailable. Rebuild the plugin assets.|Pratinjau langsung tidak tersedia. Bangun ulang aset plugin.
@@ -865,6 +993,7 @@ The request failed. Please try again.|Permintaan gagal. Silakan coba lagi.
 The runtime preview is unavailable. Rebuild the plugin assets.|Pratinjau runtime tidak tersedia. Bangun ulang aset plugin.
 Theme|Tema
 Theme preset|Prasetel tema
+Then|Maka
 This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.|Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas.
 This form still has submissions. Purge them in Tools before deleting the form permanently.|Formulir ini masih memiliki kiriman. Hapus kiriman tersebut di Alat sebelum menghapus formulir secara permanen.
 This is an intake request, not medical advice. For urgent care, contact local emergency services.|Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat.
@@ -879,8 +1008,10 @@ To (inclusive)|Sampai (termasuk)
 To (site timezone, inclusive)|Sampai (zona waktu situs, inklusif)
 To date (UTC)|Sampai tanggal (UTC)
 Tone|Nada
+Tool sections|Bagian alat
 Tools|Alat
 Total submissions (blank = unlimited)|Total kiriman (kosong = tanpa batas)
+Totals you can add to as answers come in, then test in rules and outcomes.|Total yang bisa ditambah saat jawaban masuk, lalu diuji di aturan dan hasil.
 Tracking is off by default. Connect your consent manager before enabling it.|Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya.
 Trash|Sampah
 Trash all selected submissions?|Pindahkan semua kiriman terpilih ke sampah?
@@ -890,6 +1021,7 @@ Trash this form? New visitors cannot start it afterwards.|Pindahkan formulir ini
 Trash this submission?|Pindahkan kiriman ini ke sampah?
 Trusted CIDR ranges (one per line)|Rentang CIDR tepercaya (satu per baris)
 Trusted proxy configuration|Konfigurasi proxy tepercaya
+Try a different status, clear the date range, or search for another answer.|Coba status lain, kosongkan rentang tanggal, atau cari jawaban lain.
 Tuesday|Selasa
 Type|Jenis
 Type DELETE to confirm|Ketik DELETE untuk konfirmasi
@@ -899,8 +1031,6 @@ Typography|Tipografi
 URL|URL
 URL keyboard|Keyboard URL
 URL parameter|Parameter URL
-Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.|Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur.
-Use this WhatsApp link|Gunakan tautan WhatsApp ini
 UTM campaign|Kampanye UTM
 UTM source|Sumber UTM
 UTM sources|Sumber UTM
@@ -911,11 +1041,13 @@ Uninstall data|Data saat penghapusan plugin
 Uninstall will permanently delete this site’s plugin data. Enable this?|Penghapusan plugin akan menghapus data plugin situs ini secara permanen. Aktifkan?
 Unit suffix|Akhiran satuan
 Unknown|Tidak diketahui
+Unknown device|Perangkat tidak diketahui
 Unread|Belum dibaca
 Unsaved draft|Draf belum disimpan
 Unstar|Hapus bintang
 Untitled form|Formulir tanpa judul
 Usage-based recommendations with two conditional endings.|Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat.
+Use any OpenRouter model ID. Requests only go to providers that support structured JSON output.|Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur.
 Use global default|Gunakan bawaan global
 Use global setting|Gunakan pengaturan global
 Use global setting (%s)|Gunakan pengaturan global (%s)
@@ -923,6 +1055,8 @@ Use hex colors for calculated feedback|Gunakan warna heksadesimal untuk perhitun
 Use optional Akismet check|Gunakan pemeriksaan Akismet opsional
 Use template|Gunakan templat
 Use the ChatFlow Form block or an Elementor Shortcode widget.|Gunakan blok Formulir ChatFlow atau widget Shortcode Elementor.
+Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.|Gunakan blok ChatFlow Form, tempel shortcode ini ke blok Shortcode, atau gunakan widget Shortcode di Elementor.
+Use this WhatsApp link|Gunakan tautan WhatsApp ini
 User / event|Pengguna / peristiwa
 User bubble colour|Warna gelembung pengguna
 User text|Teks pengguna
@@ -931,7 +1065,9 @@ Validation|Validasi
 Value|Nilai
 Values (JSON array)|Nilai (larik JSON)
 Variable|Variabel
+Variable %d|Variabel %d
 Variant|Varian
+Variant %d|Varian %d
 Variant ID|ID varian
 Variant messages, one per line; blank inherits base|Pesan varian, satu per baris; kosong menggunakan pesan dasar
 Verified proxy header|Header proxy terverifikasi
@@ -954,14 +1090,14 @@ What brings you here today?|Ada yang bisa kami bantu hari ini?
 What could we improve?|Apa yang dapat kami tingkatkan?
 What would you like help with?|Apa yang dapat kami bantu?
 What would you like to discuss at your appointment?|Apa yang ingin Anda diskusikan saat konsultasi?
-WhatsApp number with country code|Nomor WhatsApp dengan kode negara
 WhatsApp|WhatsApp
+WhatsApp number with country code|Nomor WhatsApp dengan kode negara
 Where will you use the product?|Di mana Anda akan menggunakan produk ini?
 Whitelisted field keys|Kunci kolom yang diizinkan
-Working hours|Jam kerja
-Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.
 Work|Pekerjaan
+Working hours|Jam kerja
 Working…|Sedang diproses…
+Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed.|Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan.
 Yes|Ya
 Yes / No|Ya / Tidak
 You are not allowed to access this screen.|Anda tidak diizinkan mengakses halaman ini.
@@ -970,12 +1106,17 @@ You cannot manage forms.|Anda tidak dapat mengelola formulir.
 You cannot manage settings.|Anda tidak dapat mengelola pengaturan.
 You cannot view analytics.|Anda tidak diizinkan melihat analitik.
 You cannot view submissions.|Anda tidak dapat melihat kiriman.
+Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.|Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap.
 Your description is sent to Anthropic’s Claude API. The result is an unpublished draft for you to review.|Deskripsi Anda dikirim ke Claude API milik Anthropic. Hasilnya berupa draf yang belum diterbitkan untuk Anda tinjau.
 Your description is sent to the AI provider chosen in ChatFlow Settings. The result is an unpublished draft for you to review.|Deskripsi Anda dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Hasilnya berupa draf yang belum diterbitkan untuk Anda periksa.
 Your email|Email Anda
+Your form is live. Share it with your visitors.|Form Anda sudah tayang. Bagikan kepada pengunjung.
 Your name|Nama Anda
 Your private export is ready. Sign in as its owner to download it within 24 hours:|Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 24 jam:
 age is at least|usia minimal
+always|selalu
+an empty value|nilai kosong
+closes|tutup
 contains|mengandung
 date is after|tanggal sesudah
 date is before|tanggal sebelum
@@ -993,95 +1134,22 @@ is not empty|tidak kosong
 is not one of|bukan salah satu dari
 is one of|salah satu dari
 matches pattern|cocok dengan pola
+opens|buka
 reCAPTCHA v3 minimum score (0–1)|Skor minimum reCAPTCHA v3 (0–1)
 starts with|diawali dengan
-Add another field|Tambah pertanyaan lain
-Add field|Tambah pertanyaan
-Add to a WordPress page|Pasang di halaman WordPress
-Advanced|Lanjutan
-Advanced custom element|Elemen kustom lanjutan
-Advanced filters|Filter lanjutan
-Advanced message options|Opsi pesan lanjutan
-Advanced: prefill answers|Lanjutan: isi jawaban awal
-Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.|Laporan gabungan menggunakan tanggal UTC. Funnel form di bawah menggunakan zona waktu situs, sehingga batas hari dan totalnya dapat berbeda.
-All settings saved.|Semua pengaturan tersimpan.
-Automatic launcher placement and popup triggers are set per form in Settings → Display.|Penempatan tombol chat otomatis dan pemicu popup diatur per form melalui Pengaturan → Tampilan.
-Back to editor|Kembali ke editor
-Back to flow|Kembali ke alur
-Basic|Dasar
-Changes are compared with the current live version.|Perubahan dibandingkan dengan versi yang sedang tayang.
-Choices|Pilihan
-Columns|Kolom
-Contains|Mengandung
-Copied|Tersalin
-Copy custom element|Salin elemen kustom
-Copy link|Salin tautan
-Copy response ID|Salin ID respons
-Copy shortcode|Salin shortcode
-Copy unavailable. Select and copy the text instead.|Tidak dapat menyalin otomatis. Pilih teks lalu salin secara manual.
-Create form|Buat form
-Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML.|Elemen kustom memerlukan aset runtime plugin. Jangan menyertakan token atau pengaturan privat dalam HTML.
-Dismiss|Tutup
-Display|Tampilan
-Does not equal|Tidak sama dengan
-Embed|Sematkan
-Equals|Sama dengan
-Field editor|Editor pertanyaan
-Field keys|Kunci field
-Find more forms|Cari form lain
-Form published|Form telah tayang
-Form settings sections|Bagian pengaturan form
-General|Umum
-General / Completion|Umum / Penyelesaian
-Greater than|Lebih besar dari
-Greater than or equal to|Lebih besar atau sama dengan
-Integrations|Integrasi
-Integrations and AI|Integrasi dan AI
-Is empty|Kosong
-Is not empty|Tidak kosong
-Less than|Lebih kecil dari
-Less than or equal to|Lebih kecil atau sama dengan
-Link|Tautan
-No matching fields. Try another search.|Tidak ada pertanyaan yang cocok. Coba kata pencarian lain.
-No message yet. Select this field to edit.|Belum ada pesan. Pilih pertanyaan ini untuk mengeditnya.
-Notifications|Notifikasi
-Open form|Buka form
-Overview · UTC|Ringkasan · UTC
-Preparing QR code…|Menyiapkan kode QR…
-Preview your form|Pratinjau form Anda
-Privacy|Privasi
-Privacy and retention|Privasi dan retensi
-Publication result|Hasil publikasi
-Publish form?|Tayangkan form?
-Publish your form to get a shareable link|Tayangkan form untuk mendapatkan tautan yang dapat dibagikan
-Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.|Publikasi menyimpan draf ini dan membuat versi tayang tetap dari form beserta pengaturan privatnya. Respons yang sudah ada tetap disimpan.
-QR code|Kode QR
-Questions: %d added, %d changed, %d removed.|Pertanyaan: %d ditambahkan, %d diubah, %d dihapus.
-Ratings|Penilaian
-Redirect to website|Alihkan ke situs web
-Response|Respons
-Response ID|ID respons
-Review changes and version details|Tinjau perubahan dan detail versi
-Save applies to all sections.|Penyimpanan berlaku untuk semua bagian.
-Save your draft, then choose Publish. Your link, embeds and QR code will appear here when the form is live.|Simpan draf, lalu pilih Tayangkan. Tautan, sematan, dan kode QR akan muncul di sini setelah form tayang.
-Settings sections|Bagian pengaturan
-Share a QR code|Bagikan kode QR
-Share a link|Bagikan tautan
-Share and embed|Bagikan dan sematkan
-Sharing options|Pilihan berbagi
-Shortcode copied.|Shortcode tersalin.
-Site timezone: %s|Zona waktu situs: %s
-Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.|Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri.
-Technical activity|Aktivitas teknis
-Technical details|Detail teknis
-Ending %d|Penutup %d
-Advanced redirect settings|Pengaturan pengalihan lanjutan
-Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme.|Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap.
-Test your draft as a visitor. Responses here are not saved, and notifications are not sent.|Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim.
-Thank-you message|Pesan terima kasih
-Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.|Gunakan blok ChatFlow Form, tempel shortcode ini ke blok Shortcode, atau gunakan widget Shortcode di Elementor.
-Your form is live. Share it with your visitors.|Form Anda sudah tayang. Bagikan kepada pengunjung.
 “%s” will be available to visitors. Later edits stay in your draft until you publish again.|“%s” akan tersedia bagi pengunjung. Perubahan berikutnya tetap tersimpan sebagai draf sampai Anda menayangkannya lagi.
-Other|Lainnya
-Newer activity|Aktivitas lebih baru
-Older activity|Aktivitas lebih lama
+Pre-filled message|Pesan yang sudah diisi
+This opens an external contact link, not a live-agent inbox. Answers are saved only if partial saving is enabled; contacting you does not submit the form.|Tombol ini membuka tautan kontak eksternal, bukan kotak masuk agen langsung. Jawaban hanya disimpan jika penyimpanan parsial diaktifkan; menghubungi Anda tidak mengirim formulir.
+Show a thank-you message|Tampilkan pesan terima kasih
+Go to a page or WhatsApp|Buka halaman atau WhatsApp
+The submission is saved before the visitor is redirected. For WhatsApp, build a link below; the visitor must still send the message.|Jawaban disimpan sebelum pengunjung dialihkan. Untuk WhatsApp, buat tautan di bawah; pengunjung tetap harus mengirim pesannya.
+When this choice is selected, continue to|Saat pilihan ini dipilih, lanjutkan ke
+Next step|Langkah berikutnya
+If several choices have paths, rules are evaluated in option order.|Jika beberapa pilihan memiliki alur, aturan diperiksa sesuai urutan pilihan.
+Advanced choice logic|Logika pilihan lanjutan
+Insert an answer|Sisipkan jawaban
+Answers that have not been provided appear blank. Write the message so it still makes sense without them.|Jawaban yang belum diberikan akan kosong. Tulis pesan agar tetap masuk akal tanpa jawaban tersebut.
+Text to use if the answer is missing (optional)|Teks jika jawaban tidak tersedia (opsional)
+Missing answers use the optional fallback, or appear blank if it is empty.|Jawaban yang tidak tersedia menggunakan teks pengganti, atau tampil kosong jika teks tersebut tidak diisi.
+Human contact during the conversation|Kontak manusia selama percakapan
+Conversation endings|Akhir percakapan

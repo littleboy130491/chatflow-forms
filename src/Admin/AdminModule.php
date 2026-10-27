@@ -175,6 +175,7 @@ final class AdminModule implements Module {
 			$table = new FormsTable( $this->forms );
 			$table->prepare_items();
 			echo '<div class="wrap" id="cff-forms-list"><h1>' . esc_html__( 'ChatFlow Forms', 'chatflow-forms' ) . ' <a class="page-title-action" href="' . esc_url( add_query_arg( 'page', 'cff-builder', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Create form', 'chatflow-forms' ) . '</a></h1>';
+			echo '<p>' . esc_html__( 'Conversational forms that feel like a chat. Draft here, publish when you are ready to share.', 'chatflow-forms' ) . '</p>';
 			$this->trashNotice();
 			echo '<div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
 			if ( $table->isTrashView() ) {

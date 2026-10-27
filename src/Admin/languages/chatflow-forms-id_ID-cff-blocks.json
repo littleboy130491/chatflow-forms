@@ -7,11 +7,32 @@
         "lang": "id_ID",
         "plural-forms": "nplurals=1; plural=0;"
       },
+      " and ": [
+        " dan "
+      ],
+      " or ": [
+        " atau "
+      ],
+      "%1$s: %2$s %3$s %4$s": [
+        "%1$s: %2$s %3$s %4$s"
+      ],
       "%1$s: rule %2$d": [
         "%1$s: aturan %2$d"
       ],
+      "%d fields": [
+        "%d kolom"
+      ],
+      "%d rules": [
+        "%d aturan"
+      ],
+      "%d selected": [
+        "%d dipilih"
+      ],
       "%d submissions and %d files match.": [
         "%d kiriman dan %d berkas cocok."
+      ],
+      "1 rule": [
+        "1 aturan"
       ],
       "A 0–10 recommendation score and optional feedback.": [
         "Skor rekomendasi 0–10 dan umpan balik opsional."
@@ -79,14 +100,14 @@
       "Add": [
         "Tambah"
       ],
-      "Add AND / OR": [
-        "Tambah DAN / ATAU"
-      ],
       "Add OR group": [
         "Tambah grup ATAU"
       ],
       "Add admin email": [
         "Tambah email admin"
+      ],
+      "Add another condition": [
+        "Tambah kondisi lain"
       ],
       "Add another field": [
         "Tambah pertanyaan lain"
@@ -151,14 +172,14 @@
       "Advanced": [
         "Lanjutan"
       ],
+      "Advanced choice logic": [
+        "Logika pilihan lanjutan"
+      ],
       "Advanced custom element": [
         "Elemen kustom lanjutan"
       ],
       "Advanced filters": [
         "Filter lanjutan"
-      ],
-      "Advanced message options": [
-        "Opsi pesan lanjutan"
       ],
       "Advanced redirect settings": [
         "Pengaturan pengalihan lanjutan"
@@ -201,6 +222,9 @@
       ],
       "Analytics": [
         "Analitik"
+      ],
+      "Analytics date range": [
+        "Rentang tanggal analitik"
       ],
       "Anonymized": [
         "Dianonimkan"
@@ -379,8 +403,14 @@
       "Bot text": [
         "Teks bot"
       ],
+      "Branch, score and route answers, then check the whole form for broken references in one place.": [
+        "Atur percabangan, skor, dan alur jawaban, lalu periksa seluruh formulir untuk referensi yang rusak di satu tempat."
+      ],
       "Branching flow map": [
         "Peta alur percabangan"
+      ],
+      "Branching map": [
+        "Peta percabangan"
       ],
       "Brand colour": [
         "Warna merek"
@@ -399,6 +429,9 @@
       ],
       "Bulk options (one label per line)": [
         "Pilihan massal (satu label per baris)"
+      ],
+      "Button %d": [
+        "Tombol %d"
       ],
       "Button URL (merge tags allowed)": [
         "URL tombol (tag penggabungan diizinkan)"
@@ -535,6 +568,9 @@
       "Classic": [
         "Klasik"
       ],
+      "Close export": [
+        "Tutup ekspor"
+      ],
       "Close preview": [
         "Tutup pratinjau"
       ],
@@ -646,11 +682,17 @@
       "Contrast feedback (WCAG AA normal text)": [
         "Umpan balik kontras (WCAG AA teks normal)"
       ],
+      "Conversation endings": [
+        "Akhir percakapan"
+      ],
       "Conversation flow": [
         "Alur percakapan"
       ],
       "Conversation replay": [
         "Putar ulang percakapan"
+      ],
+      "Conversational forms that feel like a chat. Draft here, publish when you are ready to share.": [
+        "Formulir percakapan yang terasa seperti obrolan. Buat draf di sini, terbitkan saat siap dibagikan."
       ],
       "Conversions API access token": [
         "Token akses Conversions API"
@@ -672,6 +714,9 @@
       ],
       "Copy link": [
         "Salin tautan"
+      ],
+      "Copy overrides": [
+        "Ganti teks"
       ],
       "Copy response ID": [
         "Salin ID respons"
@@ -823,6 +868,9 @@
       "Devices": [
         "Perangkat"
       ],
+      "Direct": [
+        "Langsung"
+      ],
       "Direct / unknown": [
         "Langsung / tidak diketahui"
       ],
@@ -900,6 +948,12 @@
       ],
       "Edit": [
         "Ubah"
+      ],
+      "Edit field: %s": [
+        "Ubah kolom: %s"
+      ],
+      "Edit rules for %s": [
+        "Ubah aturan untuk %s"
       ],
       "Email": [
         "Email"
@@ -1018,6 +1072,9 @@
       "Export filtered results": [
         "Ekspor hasil terfilter"
       ],
+      "Export responses, move forms between sites, and run maintenance safely.": [
+        "Ekspor respons, pindahkan formulir antar situs, dan jalankan pemeliharaan dengan aman."
+      ],
       "Export selected": [
         "Ekspor yang dipilih"
       ],
@@ -1042,6 +1099,9 @@
       "Field": [
         "Kolom"
       ],
+      "Field %1$d: %2$s": [
+        "Kolom %1$d: %2$s"
+      ],
       "Field editor": [
         "Editor pertanyaan"
       ],
@@ -1059,6 +1119,9 @@
       ],
       "Field palette": [
         "Palet kolom"
+      ],
+      "Field rules": [
+        "Aturan kolom"
       ],
       "Fields without an override follow the global Settings screen.": [
         "Kolom tanpa penggantian mengikuti layar Pengaturan global."
@@ -1219,6 +1282,9 @@
       "Global setting: same as completed submissions.": [
         "Pengaturan global: sama dengan kiriman selesai."
       ],
+      "Go to a page or WhatsApp": [
+        "Buka halaman atau WhatsApp"
+      ],
       "Goal": [
         "Tujuan"
       ],
@@ -1291,6 +1357,9 @@
       "Hide field": [
         "Sembunyikan kolom"
       ],
+      "Hide hidden fields": [
+        "Sembunyikan kolom tersembunyi"
+      ],
       "Hide the button": [
         "Sembunyikan tombol"
       ],
@@ -1309,6 +1378,9 @@
       "How was your experience?": [
         "Bagaimana pengalaman Anda?"
       ],
+      "Human contact during the conversation": [
+        "Kontak manusia selama percakapan"
+      ],
       "I agree that the information I provide may be used to respond to this intake request.": [
         "Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini."
       ],
@@ -1320,6 +1392,12 @@
       ],
       "Icon": [
         "Ikon"
+      ],
+      "If": [
+        "Jika"
+      ],
+      "If several choices have paths, rules are evaluated in option order.": [
+        "Jika beberapa pilihan memiliki alur, aturan diperiksa sesuai urutan pilihan."
       ],
       "Image": [
         "Gambar"
@@ -1360,11 +1438,11 @@
       "Inline": [
         "Inline"
       ],
+      "Insert an answer": [
+        "Sisipkan jawaban"
+      ],
       "Insert answer merge tag": [
         "Sisipkan tag penggabungan jawaban"
-      ],
-      "Insert merge tag": [
-        "Sisipkan tag penggabungan"
       ],
       "Inspect logic path and variables": [
         "Periksa jalur logika dan variabel"
@@ -1525,11 +1603,14 @@
       "Logic": [
         "Logika"
       ],
-      "Logic diagnostics": [
-        "Diagnostik logika"
+      "Logic overview": [
+        "Ringkasan logika"
       ],
       "Logic rules (evaluated in order)": [
         "Aturan logika (dievaluasi berurutan)"
+      ],
+      "Logic warnings": [
+        "Peringatan logika"
       ],
       "Logo URL": [
         "URL logo"
@@ -1597,8 +1678,8 @@
       "Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url=\"https://…\"]Label[/cff_button].": [
         "Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url=\"https://…\"]Label[/cff_button]."
       ],
-      "Message": [
-        "Pesan"
+      "Message %d": [
+        "Pesan %d"
       ],
       "Message intro (merge tags allowed)": [
         "Pembuka pesan (boleh memakai merge tag)"
@@ -1630,6 +1711,9 @@
       "Minimum selections": [
         "Pilihan minimum"
       ],
+      "Missing answers use the optional fallback, or appear blank if it is empty.": [
+        "Jawaban yang tidak tersedia menggunakan teks pengganti, atau tampil kosong jika teks tersebut tidak diisi."
+      ],
       "Mobile": [
         "Ponsel"
       ],
@@ -1648,11 +1732,11 @@
       "More forms": [
         "Formulir berikutnya"
       ],
-      "Move down": [
-        "Pindah ke bawah"
+      "Move rule down": [
+        "Turunkan aturan"
       ],
-      "Move up": [
-        "Pindah ke atas"
+      "Move rule up": [
+        "Naikkan aturan"
       ],
       "Multiple choice": [
         "Pilihan jamak"
@@ -1705,6 +1789,9 @@
       "Next forms": [
         "Formulir berikutnya"
       ],
+      "Next step": [
+        "Langkah berikutnya"
+      ],
       "Night": [
         "Malam"
       ],
@@ -1716,6 +1803,9 @@
       ],
       "No data for this period.": [
         "Tidak ada data untuk periode ini."
+      ],
+      "No field rules yet.": [
+        "Belum ada aturan kolom."
       ],
       "No forms found.": [
         "Tidak ada formulir yang ditemukan."
@@ -1741,8 +1831,17 @@
       "No on-screen keyboard": [
         "Tanpa keyboard layar"
       ],
+      "No outcomes yet. The form ends normally unless an outcome matches.": [
+        "Belum ada hasil. Formulir berakhir normal kecuali ada hasil yang cocok."
+      ],
       "No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery.": [
         "Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim."
+      ],
+      "No rules yet. Add a rule to show, hide or jump between fields.": [
+        "Belum ada aturan. Tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat antar kolom."
+      ],
+      "No scoring variables yet. Add one to start tallying answers.": [
+        "Belum ada variabel skor. Tambahkan satu untuk mulai menghitung jawaban."
       ],
       "Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned.": [
         "Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri."
@@ -1807,6 +1906,9 @@
       "Only trashed forms can be restored or deleted permanently.": [
         "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
       ],
+      "Open a field on the Build tab, switch to Logic and add a rule to show, hide or jump.": [
+        "Buka kolom di tab Bangun, pilih Logika, lalu tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat."
+      ],
       "Open form": [
         "Buka form"
       ],
@@ -1837,6 +1939,9 @@
       "Option label": [
         "Label pilihan"
       ],
+      "Option: %s": [
+        "Opsi: %s"
+      ],
       "Optional captcha and Akismet credentials": [
         "Kredensial captcha dan Akismet opsional"
       ],
@@ -1852,8 +1957,11 @@
       "Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting.": [
         "Klien lain memakai URL dan header Authorization yang sama di pengaturan MCP-nya. Simpan pengaturan sebelum menghubungkan."
       ],
-      "Outcome endings (first matching condition wins)": [
-        "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"
+      "Outcome %d": [
+        "Hasil %d"
+      ],
+      "Outcome endings": [
+        "Hasil akhir"
       ],
       "Outside working hours": [
         "Di luar jam kerja"
@@ -1945,8 +2053,8 @@
       "Postcode": [
         "Kode pos"
       ],
-      "Pre-filled message (merge tags allowed, e.g. {{name}})": [
-        "Pesan otomatis (tag gabungan boleh, mis. {{name}})"
+      "Pre-filled message": [
+        "Pesan yang sudah diisi"
       ],
       "Preferred appointment date (subject to confirmation)": [
         "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
@@ -2106,6 +2214,9 @@
       ],
       "Read / starred": [
         "Dibaca / berbintang"
+      ],
+      "Read every response, follow up on partial conversations and export what you need.": [
+        "Baca setiap respons, tindak lanjuti percakapan yang belum selesai, dan ekspor yang Anda perlukan."
       ],
       "Read state": [
         "Status baca"
@@ -2290,6 +2401,12 @@
       "Rule %d": [
         "Aturan %d"
       ],
+      "Rules are checked in order. The first one that matches wins.": [
+        "Aturan diperiksa berurutan. Aturan pertama yang cocok yang dipakai."
+      ],
+      "Rules run from top to bottom. The first matching rule wins.": [
+        "Aturan dijalankan dari atas ke bawah. Aturan pertama yang cocok yang dipakai."
+      ],
       "SMTP status is unknown. Verify your mail transport and test inbox delivery.": [
         "Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk."
       ],
@@ -2437,11 +2554,17 @@
       "Show a message instead": [
         "Tampilkan pesan sebagai gantinya"
       ],
+      "Show a thank-you message": [
+        "Tampilkan pesan terima kasih"
+      ],
       "Show automatically on matching pages": [
         "Tampilkan otomatis pada halaman yang sesuai"
       ],
       "Show field": [
         "Tampilkan kolom"
+      ],
+      "Show hidden fields (%d)": [
+        "Tampilkan kolom tersembunyi (%d)"
       ],
       "Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.": [
         "Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
@@ -2554,6 +2677,9 @@
       "Submission": [
         "Kiriman"
       ],
+      "Submission status": [
+        "Status kiriman"
+      ],
       "Submissions": [
         "Kiriman"
       ],
@@ -2587,14 +2713,14 @@
       "Target": [
         "Target"
       ],
-      "Technical activity": [
-        "Aktivitas teknis"
-      ],
       "Technical details": [
         "Detail teknis"
       ],
       "Telephone keypad": [
         "Papan tombol telepon"
+      ],
+      "Test alternate copy or a reordered question set on new sessions.": [
+        "Uji teks alternatif atau urutan pertanyaan berbeda pada sesi baru."
       ],
       "Test email queued. Check the activity log for delivery.": [
         "Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman."
@@ -2607,6 +2733,9 @@
       ],
       "Test your draft as a visitor. Responses here are not saved, and notifications are not sent.": [
         "Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim."
+      ],
+      "Text to use if the answer is missing (optional)": [
+        "Teks jika jawaban tidak tersedia (opsional)"
       ],
       "Thank you for your submission": [
         "Terima kasih atas kiriman Anda"
@@ -2623,8 +2752,14 @@
       "The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.": [
         "Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
       ],
+      "The default path runs down the list; animated arrows are rules that skip ahead.": [
+        "Jalur bawaan mengalir ke bawah daftar; panah beranimasi adalah aturan yang melompat ke depan."
+      ],
       "The export form must match the active form filter. Change the filter or select its form before exporting.": [
         "Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor."
+      ],
+      "The first matching outcome decides the ending instead of normal completion.": [
+        "Hasil pertama yang cocok menentukan akhir formulir, bukan penyelesaian normal."
       ],
       "The form could not be changed. Please try again.": [
         "Formulir tidak dapat diubah. Silakan coba lagi."
@@ -2641,8 +2776,14 @@
       "The runtime preview is unavailable. Rebuild the plugin assets.": [
         "Pratinjau runtime tidak tersedia. Bangun ulang aset plugin."
       ],
+      "The submission is saved before the visitor is redirected. For WhatsApp, build a link below; the visitor must still send the message.": [
+        "Jawaban disimpan sebelum pengunjung dialihkan. Untuk WhatsApp, buat tautan di bawah; pengunjung tetap harus mengirim pesannya."
+      ],
       "Theme": [
         "Tema"
+      ],
+      "Then": [
+        "Maka"
       ],
       "This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears.": [
         "Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas."
@@ -2655,6 +2796,9 @@
       ],
       "This month": [
         "Bulan ini"
+      ],
+      "This opens an external contact link, not a live-agent inbox. Answers are saved only if partial saving is enabled; contacting you does not submit the form.": [
+        "Tombol ini membuka tautan kontak eksternal, bukan kotak masuk agen langsung. Jawaban hanya disimpan jika penyimpanan parsial diaktifkan; menghubungi Anda tidak mengirim formulir."
       ],
       "This week": [
         "Minggu ini"
@@ -2680,11 +2824,17 @@
       "Tone": [
         "Nada"
       ],
+      "Tool sections": [
+        "Bagian alat"
+      ],
       "Tools": [
         "Alat"
       ],
       "Total submissions (blank = unlimited)": [
         "Total kiriman (kosong = tanpa batas)"
+      ],
+      "Totals you can add to as answers come in, then test in rules and outcomes.": [
+        "Total yang bisa ditambah saat jawaban masuk, lalu diuji di aturan dan hasil."
       ],
       "Tracking is off by default. Connect your consent manager before enabling it.": [
         "Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya."
@@ -2712,6 +2862,9 @@
       ],
       "Trusted proxy configuration": [
         "Konfigurasi proxy tepercaya"
+      ],
+      "Try a different status, clear the date range, or search for another answer.": [
+        "Coba status lain, kosongkan rentang tanggal, atau cari jawaban lain."
       ],
       "Tuesday": [
         "Selasa"
@@ -2769,6 +2922,9 @@
       ],
       "Unknown": [
         "Tidak diketahui"
+      ],
+      "Unknown device": [
+        "Perangkat tidak diketahui"
       ],
       "Unread": [
         "Belum dibaca"
@@ -2833,8 +2989,14 @@
       "Variable": [
         "Variabel"
       ],
+      "Variable %d": [
+        "Variabel %d"
+      ],
       "Variant": [
         "Varian"
+      ],
+      "Variant %d": [
+        "Varian %d"
       ],
       "Variant ID": [
         "ID varian"
@@ -2908,6 +3070,9 @@
       "WhatsApp number with country code": [
         "Nomor WhatsApp dengan kode negara"
       ],
+      "When this choice is selected, continue to": [
+        "Saat pilihan ini dipilih, lanjutkan ke"
+      ],
       "Where will you use the product?": [
         "Di mana Anda akan menggunakan produk ini?"
       ],
@@ -2970,6 +3135,12 @@
       ],
       "age is at least": [
         "usia minimal"
+      ],
+      "always": [
+        "selalu"
+      ],
+      "an empty value": [
+        "nilai kosong"
       ],
       "closes": [
         "tutup"

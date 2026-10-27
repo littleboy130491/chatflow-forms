@@ -49,6 +49,7 @@ export function focusActive(root: HTMLElement | null, type?: Step['type']): void
 export function Chat({ controller, onClose, closable = false }: { controller: RuntimeController; onClose?: () => void; closable?: boolean }) {
   const [, rerender] = useState(0);
   const [reveal, setReveal] = useState<{ stepId: string | null; count: number }>({ stepId: null, count: 0 });
+  const [endingCount, setEndingCount] = useState(0);
   const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [magicStatus, setMagicStatus] = useState('');
@@ -96,18 +97,25 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
     }
   }, [state.activeId, enabled, state.phase, state.fieldError, step?.settings?.autoContinue, reduced, controller]);
   useEffect(() => { if (state.phase === 'done') ending.current?.focus({ preventScroll: true }); }, [state.phase]);
+  useEffect(() => { setEndingCount(0); }, [state.completion]);
+  useEffect(() => {
+    const endingMessages = state.completion?.ending.messages ?? [];
+    if (state.phase !== 'done' || endingCount >= endingMessages.length) return;
+    const timer = setTimeout(() => setEndingCount(count => count + 1), typingDelay(endingMessages[endingCount]?.length ?? 0, form?.schema.bot.typingSpeed, reduced));
+    return () => clearTimeout(timer);
+  }, [state.completion, state.phase, endingCount, form?.schema.bot.typingSpeed, reduced]);
   useEffect(() => { if (confirm) confirmBox.current?.querySelector<HTMLElement>('button:not([disabled])')?.focus({ preventScroll: true }); }, [confirm]);
   const cancelRestart = () => { setConfirm(false); requestAnimationFrame(() => focusActive(active.current, step?.type)); };
-  useEffect(() => { last.current?.scrollIntoView?.({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); }, [shown, state.activeId, state.error, state.phase, reduced]);
+  useEffect(() => { last.current?.scrollIntoView?.({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); }, [shown, endingCount, state.activeId, state.error, state.phase, reduced]);
   useEffect(() => {
     const completion = state.completion;
-    if (controller.options.preview || state.phase !== 'done' || !completion?.redirectUrl) return;
+    if (controller.options.preview || state.phase !== 'done' || !completion?.redirectUrl || endingCount < completion.ending.messages.length) return;
     const url = safeLink(completion.redirectUrl);
     if (!url || !/^https?:/.test(url)) return;
     const ending = form?.schema.endings.find(e => e.id === completion.ending.id);
     const timer = setTimeout(() => location.assign(url), Math.min(30000, Math.max(0, ending?.delayMs ?? 0)));
     return () => clearTimeout(timer);
-  }, [state.completion, state.phase, controller, form]);
+  }, [state.completion, state.phase, controller, form, endingCount]);
 
   const bot = (text: string, key: string | number) => <div className="bubble bot" key={key}><Markdown text={interpolateRich(text)} /></div>;
   const summary = () => <section className="summary" aria-label={phrase('summary')}><h2>{phrase('summary')}</h2><dl>
@@ -148,7 +156,7 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
         {s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key) && <button className="bubble user" disabled={state.busy || state.phase !== 'ready'} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}: ${answerLabel(s, state.answers[s.key], phrase)}`}>{answerLabel(s, state.answers[s.key], phrase)}<small>{phrase('edit')}</small></button>}
         {s.id !== state.activeId && reactions(s, state.answers[s.key]).map((message, index) => bot(message, `reaction-${index}`))}
       </section>)}
-      <div className="sr-only" aria-live="polite" aria-atomic="false">{state.phase === 'ready' ? messages.slice(0, shown).map((message, index) => <p key={`${state.activeId}-${index}`}>{markdownText(interpolateRich(message))}</p>) : state.phase === 'done' ? <p>{phrase('complete')}</p> : null}</div>
+      <div className="sr-only" aria-live="polite" aria-atomic="false">{state.phase === 'ready' ? messages.slice(0, shown).map((message, index) => <p key={`${state.activeId}-${index}`}>{markdownText(interpolateRich(message))}</p>) : state.phase === 'done' ? <><p>{phrase('complete')}</p>{state.completion?.ending.messages.slice(0, endingCount).map((message, index) => <p key={index}>{markdownText(message)}</p>)}</> : null}</div>
       {state.phase === 'ready' && step && <div ref={active} className={`active${messages.slice(0, shown).some(message => markdownText(interpolateRich(message)).trim()) ? ' has-prompt' : ''}`} key={step.id}>
         {!enabled && <div className="typing bubble bot" role="status" aria-label={phrase('typing')}><i /><i /><i /></div>}
         {enabled && <>
@@ -162,12 +170,15 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
       {state.phase === 'ready' && !step && <div ref={active}>{summary()}<button disabled={state.busy || state.offline || state.conflict} onClick={() => void controller.submit(honeypot)}>{phrase(state.error === 'submissionPending' ? 'retry' : 'submit')}</button></div>}
       {state.phase === 'submitting' && <p role="status">{phrase('loading')}</p>}
       {state.phase === 'done' && state.completion && <section ref={ending} tabIndex={-1} className="ending" aria-label={phrase('complete')}>
-        {state.completion.ending.messages.map((message, index) => bot(message, index))}
-        {state.completion.redirectUrl && !controller.options.preview && <p role="status">{phrase('redirecting')}</p>}
-        {state.completion.ending.buttons.map(button => {
-          const url = button.url ? safeLink(interpolateLink(button.url, state.answers, controller.meta)) : null;
-          return button.action === 'restart' ? <button key={button.id} onClick={() => setConfirm(true)}>{interpolateText(button.label)}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{interpolateText(button.label)}</button> : button.action === 'link' && url ? <a className="button" key={button.id} href={url} target="_blank" rel="noopener noreferrer">{interpolateText(button.label)}</a> : null;
-        })}
+        {state.completion.ending.messages.slice(0, endingCount).map((message, index) => <div className="bubble bot" key={index}><Markdown text={message} /></div>)}
+        {endingCount < state.completion.ending.messages.length && <div className="typing bubble bot" role="status" aria-label={phrase('typing')}><i /><i /><i /></div>}
+        {endingCount >= state.completion.ending.messages.length && <>
+          {state.completion.redirectUrl && (controller.options.preview ? <p className="notice">{phrase('previewRedirect')}: {state.completion.redirectUrl}</p> : <p role="status">{phrase('redirecting')}</p>)}
+          {state.completion.ending.buttons.map(button => {
+            const url = button.url ? safeLink(button.url) : null;
+            return button.action === 'restart' ? <button key={button.id} onClick={() => setConfirm(true)}>{button.label}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{button.label}</button> : button.action === 'link' && url ? <a className="button" key={button.id} href={url} target="_blank" rel="noopener noreferrer">{button.label}</a> : null;
+          })}
+        </>}
       </section>}
       {state.conflict && <section className="notice" role="alert"><p>{phrase('conflict')}</p><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(false)}>{phrase('useServer')}</button><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(true)}>{phrase('useLocal')}</button></section>}
       {error}

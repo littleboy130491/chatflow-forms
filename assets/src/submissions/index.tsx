@@ -117,18 +117,23 @@ function SubmissionList({ api }: { api: AdminApi }) {
     );
   return (
     <main className="cff-admin">
-      <h1>{__('Submissions', 'chatflow-forms')}</h1>
-      <details className="cff-disclosure"><summary>{__('Columns', 'chatflow-forms')}</summary><fieldset><legend>{__('Answer columns (up to three)', 'chatflow-forms')}</legend>
-        {[0, 1, 2].map(index => <Select key={index} label={sprintf(__('Answer column %d', 'chatflow-forms'), index + 1)} value={columns[index] ?? ''} choices={[{value:'',label:__('No column', 'chatflow-forms')}, ...allowedKeys.map(key => ({value:key,label:columnLabel(key)}))]} onChange={key => selectColumn(index, key)} />)}
-        <p>{__('Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.', 'chatflow-forms')}</p>
-        {columnWarning && <Notice status="warning" isDismissible={false}>{columnWarning}</Notice>}
-      </fieldset></details>
+      <div className="cff-page-head">
+        <div>
+          <h1>{__('Submissions', 'chatflow-forms')}</h1>
+          <p>{__('Read every response, follow up on partial conversations and export what you need.', 'chatflow-forms')}</p>
+        </div>
+        {can(api.config, 'export_submissions') && (
+          <Button variant="secondary" onClick={() => { setExportSelected(false); setExporting(!exporting); }}>
+            {exporting ? __('Close export', 'chatflow-forms') : __('Export filtered results', 'chatflow-forms')}
+          </Button>
+        )}
+      </div>
       {actionError && (
         <Notice status="error" isDismissible={false}>
           {actionError}
         </Notice>
       )}
-      <nav className="cff-tabs">
+      <nav className="cff-tabs" aria-label={__('Submission status', 'chatflow-forms')}>
         {[
           { value: 'completed', label: __('Completed', 'chatflow-forms') },
           { value: 'partial', label: __('Partial', 'chatflow-forms') },
@@ -139,6 +144,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
           <Button
             key={item.value}
             variant={applied.status === item.value ? 'primary' : 'secondary'}
+            aria-pressed={applied.status === item.value}
             onClick={() => {
               const next = { ...filters, status: item.value as Status };
               setFilters(next);
@@ -150,38 +156,45 @@ function SubmissionList({ api }: { api: AdminApi }) {
           </Button>
         ))}
       </nav>
-      <Filters api={api} value={filters} onChange={setFilters} />
-      <Button
-        variant="secondary"
-        disabled={busy}
-        onClick={() => {
-          setApplied(freezeFilters(filters));
-          setPage(1);
-        }}
-      >
-        {__('Apply filters', 'chatflow-forms')}
-      </Button>
-      <Button
-        disabled={busy}
-        onClick={() => {
-          const next = { status: applied.status ?? 'completed' } as FilterValues;
-          setFilters(next);
-          setApplied(next);
-          setPage(1);
-        }}
-      >
-        {__('Reset filters', 'chatflow-forms')}
-      </Button>
+      <div className="cff-filter-panel">
+        <Filters api={api} value={filters} onChange={setFilters} />
+        <div className="cff-filter-actions">
+          <Button
+            variant="primary"
+            disabled={busy}
+            onClick={() => {
+              setApplied(freezeFilters(filters));
+              setPage(1);
+            }}
+          >
+            {__('Apply filters', 'chatflow-forms')}
+          </Button>
+          <Button
+            disabled={busy}
+            onClick={() => {
+              const next = { status: applied.status ?? 'completed' } as FilterValues;
+              setFilters(next);
+              setApplied(next);
+              setPage(1);
+            }}
+          >
+            {__('Reset filters', 'chatflow-forms')}
+          </Button>
+        </div>
+      </div>
+      <details className="cff-disclosure"><summary>{__('Columns', 'chatflow-forms')}</summary><fieldset><legend>{__('Answer columns (up to three)', 'chatflow-forms')}</legend>
+        {[0, 1, 2].map(index => <Select key={index} label={sprintf(__('Answer column %d', 'chatflow-forms'), index + 1)} value={columns[index] ?? ''} choices={[{value:'',label:__('No column', 'chatflow-forms')}, ...allowedKeys.map(key => ({value:key,label:columnLabel(key)}))]} onChange={key => selectColumn(index, key)} />)}
+        <p>{__('Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser.', 'chatflow-forms')}</p>
+        {columnWarning && <Notice status="warning" isDismissible={false}>{columnWarning}</Notice>}
+      </fieldset></details>
       {error && (
         <Notice status="error" isDismissible={false}>
           {error}
         </Notice>
       )}
-        {can(api.config, 'export_submissions') && (
-          <Button onClick={() => { setExportSelected(false); setExporting(!exporting); }}>{__('Export filtered results', 'chatflow-forms')}</Button>
-        )}
       {selected.length > 0 && (
-      <div className="cff-toolbar">
+      <div className="cff-toolbar cff-select-actions">
+        <span className="cff-save-state">{sprintf(__('%d selected', 'chatflow-forms'), selected.length)}</span>
         {can(api.config, 'edit_submissions') && applied.status === 'completed' && <Button disabled={busy || !selected.length} onClick={() => { void resend(); }}>{__('Resend notifications', 'chatflow-forms')}</Button>}
         {can(api.config, 'edit_submissions') && (
           <Fragment>
@@ -245,6 +258,13 @@ function SubmissionList({ api }: { api: AdminApi }) {
       {exporting && can(api.config, 'export_submissions') && (
         <Export api={api} filters={applied} ids={exportSelected ? selected : []} />
       )}
+      {!busy && list?.total === 0 ? (
+        <div className="cff-table-empty-card">
+          <strong>{__('No matching submissions.', 'chatflow-forms')}</strong>
+          <span>{__('Try a different status, clear the date range, or search for another answer.', 'chatflow-forms')}</span>
+        </div>
+      ) : (
+      <Fragment>
       <div className="cff-table-scroll">
         <table className="widefat striped">
           <thead>
@@ -288,7 +308,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                 <td>
                   <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time>
                   <small>
-                    {statusLabel(item.status)} · {item.progress}%
+                    <span className={`cff-status is-${item.status}`}>{statusLabel(item.status)}</span> · {item.progress}%
                   </small>
                 </td>
                 {columns.map(key => <td key={key}>{displayValue(item.answers[key]).slice(0, 160) || '—'}</td>)}
@@ -305,18 +325,62 @@ function SubmissionList({ api }: { api: AdminApi }) {
           </tbody>
         </table>
       </div>
+      <div className="cff-submission-cards">
+        {list?.items.map((item) => (
+          <article className="cff-submission-card" key={item.id}>
+            <div className="cff-submission-card-head">
+              <RowCheckbox
+                label={`${__('Select submission', 'chatflow-forms')} ${item.id}`}
+                value={selected.includes(item.id)}
+                onChange={(checked) =>
+                  setSelected(checked ? [...selected, item.id] : selected.filter((id) => id !== item.id))
+                }
+              />
+              <Button variant="link" onClick={() => setDetailId(item.id)}>
+                {responseLabel(item.id)}
+              </Button>
+              <span className={`cff-status is-${item.status}`}>{statusLabel(item.status)}</span>
+            </div>
+            <p className="cff-submission-card-meta">
+              {decodeTitle(formMetadata[`${item.formId}:${item.formVersion}`]?.title ?? '') || `${__('Form', 'chatflow-forms')} #${item.formId}`}
+              {' · '}
+              <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time>
+            </p>
+            <dl>
+              {columns.map(key => displayValue(item.answers[key]) ? (
+                <div key={key}>
+                  <dt>{columnLabel(key)}</dt>
+                  <dd>{displayValue(item.answers[key]).slice(0, 160)}</dd>
+                </div>
+              ) : null)}
+            </dl>
+            <p className="cff-submission-card-foot">
+              {displayValue(item.meta.utm) || __('Direct', 'chatflow-forms')}
+              {' · '}
+              {displayValue(item.meta.device) || __('Unknown device', 'chatflow-forms')}
+              {' · '}
+              {item.isRead ? __('Read', 'chatflow-forms') : __('Unread', 'chatflow-forms')}
+              {item.isStarred ? ` · ${__('Starred', 'chatflow-forms')}` : ''}
+            </p>
+          </article>
+        ))}
+      </div>
+      </Fragment>
+      )}
       {busy && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
-      {!busy && list?.total === 0 && <p>{__('No matching submissions.', 'chatflow-forms')}</p>}
-      <div className="cff-tabs">
-        <Button disabled={busy || page <= 1} onClick={() => setPage(page - 1)}>
-          {__('Previous', 'chatflow-forms')}
-        </Button>
-        <span>
-          {page} / {Math.max(1, Math.ceil((list?.total ?? 0) / perPage))} · {list?.total ?? 0}
-        </span>
-        <Button disabled={busy || page * perPage >= (list?.total ?? 0)} onClick={() => setPage(page + 1)}>
-          {__('Next', 'chatflow-forms')}
-        </Button>
+      {(list?.total ?? 0) > 0 && (
+      <div className="cff-list-footer">
+        <div className="cff-pagination">
+          <Button disabled={busy || page <= 1} onClick={() => setPage(page - 1)}>
+            {__('Previous', 'chatflow-forms')}
+          </Button>
+          <span>
+            {page} / {Math.max(1, Math.ceil((list?.total ?? 0) / perPage))} · {list?.total ?? 0}
+          </span>
+          <Button disabled={busy || page * perPage >= (list?.total ?? 0)} onClick={() => setPage(page + 1)}>
+            {__('Next', 'chatflow-forms')}
+          </Button>
+        </div>
         <Select
           label={__('Rows per page', 'chatflow-forms')}
           value={String(perPage)}
@@ -327,6 +391,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
           }}
         />
       </div>
+      )}
     </main>
   );
 }

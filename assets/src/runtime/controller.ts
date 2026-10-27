@@ -5,6 +5,8 @@ import { ApiClient, ApiError, uuid } from './api';
 import { SessionStorage, type SavedSession } from './persistence';
 import type { AnswerMap, Completion, PublicForm, ReplayContext, ReplayResult, RuntimeOptions, Session, Step } from './types';
 import { RuntimeAnalytics, type EngagementConfig } from './engagement';
+import { interpolateLink, interpolateMarkdown } from './content';
+import { interpolate } from '../shared/logic';
 
 export interface RuntimeState {
   phase: 'loading' | 'resume' | 'ready' | 'submitting' | 'done' | 'error';
@@ -20,6 +22,7 @@ export class RuntimeController {
   state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
   private listeners = new Set<() => void>();
   private renewal: Promise<void> | null = null;
+  private saving: Promise<void> | null = null;
   private session: Session | null = null;
   private context: ReplayContext = { hidden: {}, url: {}, meta: {}, now: new Date().toISOString() };
   private pending: Mutation | null = null;
@@ -157,6 +160,7 @@ export class RuntimeController {
   }
   async continueSaved(): Promise<void> {
     this.state.phase = this.state.path?.errors.length ? 'error' : 'ready'; this.notify(); this.event('cff:start', { resumed: true });
+    if (!this.state.offline && !this.session && this.saved) { await this.reconnect(); return; }
     if (this.state.dirty && !this.state.conflict) await this.flush();
   }
   private compute(): void {
@@ -244,6 +248,7 @@ export class RuntimeController {
   async magicLink(channel: 'email' | 'whatsapp'): Promise<{ accepted: boolean; link?: string }> {
     if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new ApiError('cff_magic_unavailable', 0);
     if (this.state.dirty) await this.flush();
+    if (this.state.dirty && this.state.form?.form.session.savePartial !== false) throw new ApiError('cff_save_failed', 0);
     return this.ownerOperation(() => this.api!.magicLink(this.session!, channel));
   }
   private persist(): void {
@@ -292,21 +297,26 @@ export class RuntimeController {
     return Object.fromEntries(Object.entries(this.timings).filter(([id]) => visited.has(id)));
   }
   async flush(): Promise<void> {
+    if (this.saving) return this.saving;
     if (this.disposed || this.options.preview || this.state.form?.form.session.savePartial === false || this.state.offline || this.state.busy || this.state.conflict || this.pending?.method === 'POST' || !this.session || !this.state.dirty) return;
-    this.state.busy = true; this.notify();
-    const desired = this.inputAnswers();
-    try {
-      if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: this.pathTimings(desired) } };
-      const response = await this.mutate<Session>(this.pending);
-      if (this.disposed) return;
-      const newer = JSON.stringify(desired) !== JSON.stringify(this.pending.body.answers);
-      this.pending = null; this.session = { ...this.session, ...response };
-      this.context = response.context ?? this.context;
-      if (!newer) this.state.answers = response.answers;
-      this.state.dirty = newer; this.state.error = null; this.compute(); this.persist();
-    } catch (error) { this.handle(error); }
-    finally { this.state.busy = false; this.notify(); }
-    if (this.state.dirty && !this.state.error && !this.state.offline) await this.flush();
+    this.saving = this.saveLoop();
+    try { await this.saving; } finally { this.saving = null; }
+  }
+  private async saveLoop(): Promise<void> {
+    while (!this.disposed && !this.state.offline && !this.state.conflict && this.state.dirty && this.session) {
+      const desired = this.inputAnswers();
+      try {
+        if (!this.pending) this.pending = { method: 'PATCH', key: uuid(), body: { version: this.session.version, revision: this.session.revision, answers: desired, stepTimings: this.pathTimings(desired) } };
+        const operation = this.pending;
+        const response = await this.mutate<Session>(operation);
+        if (this.disposed) return;
+        const newer = JSON.stringify(this.inputAnswers()) !== JSON.stringify(operation.body.answers);
+        this.pending = null; this.session = { ...this.session, ...response };
+        this.context = response.context ?? this.context;
+        if (!newer) this.state.answers = response.answers;
+        this.state.dirty = newer; this.state.error = null; this.compute(); this.persist();
+      } catch (error) { this.handle(error); this.notify(); return; }
+    }
   }
   async submit(honeypot = ''): Promise<void> {
     if (this.disposed || this.state.busy || this.state.offline || this.state.conflict || this.state.phase === 'done') return;
@@ -315,10 +325,21 @@ export class RuntimeController {
     if (validation.errors.length && !this.pending) { this.state.fieldError = 'invalid'; this.notify(); return; }
     if (this.options.preview) {
       const ending = this.state.form!.form.schema.endings.find(e => e.id === validation.endingId) ?? this.state.form!.form.schema.endings[0];
-      this.state.completion = { submission: { uuid: '', status: 'completed' }, ending: { ...ending, messages: ending.messages ?? [], buttons: ending.buttons ?? [] } };
+      const messages = (ending.messages ?? []).map(message => interpolateMarkdown(message, this.state.answers, this.meta));
+      const buttons = (ending.buttons ?? []).map(button => ({ ...button, label: interpolate(button.label, this.state.answers, this.meta), ...(button.url ? { url: interpolateLink(button.url, this.state.answers, this.meta) } : {}) })) as Completion['ending']['buttons'];
+      let redirectUrl: string | undefined;
+      if (ending.type === 'redirect' && ending.url) {
+        try {
+          const url = new URL(interpolateLink(ending.url, this.state.answers, this.meta), globalThis.location?.href ?? 'https://localhost/');
+          if (ending.appendQuery) for (const key of ending.queryKeys ?? []) { const value = this.state.answers[key]; if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') url.searchParams.set(key, String(value)); }
+          if (ending.appendSubmission) url.searchParams.set('submission', '[submission UUID]');
+          redirectUrl = url.href;
+        } catch { /* An invalid destination is displayed by the editor, not opened in preview. */ }
+      }
+      this.state.completion = { submission: { uuid: '', status: 'completed' }, ending: { ...ending, messages, buttons }, ...(redirectUrl ? { redirectUrl } : {}) };
       this.state.phase = 'done'; this.notify(); return;
     }
-    if (this.pending?.method !== 'POST') { await this.flush(); if (this.state.dirty && this.state.form!.form.session.savePartial !== false) return; }
+    if (this.pending?.method !== 'POST') { await this.flush(); if (this.state.busy || this.state.phase !== 'ready' || (this.state.dirty && this.state.form!.form.session.savePartial !== false) || this.state.activeId || this.state.conflict || this.state.offline) return; }
     this.state.busy = true; this.state.phase = 'submitting'; this.state.error = null; this.notify();
     try {
       if (!this.pending) {
@@ -343,6 +364,7 @@ export class RuntimeController {
   }
   async restart(): Promise<void> {
     if (this.disposed || this.state.busy || this.pending?.method === 'POST' || this.pendingStart || this.state.offline) return;
+    if (this.saving) { await this.saving; if (this.disposed || this.state.busy || this.state.offline || this.state.conflict) return; }
     this.state.busy = true; this.notify();
     try {
       if (this.session && this.state.phase !== 'done' && this.state.error !== 'expired' && !this.options.preview) {

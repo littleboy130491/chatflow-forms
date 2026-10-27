@@ -59,6 +59,12 @@ export function sampleEnvelope(form: FormDTO, config: AdminConfig): PublicSchema
   envelope.form.schema = {
     ...envelope.form.schema,
     bot: { ...envelope.form.schema.bot, typingSpeed: 'off' },
+    // Sample steps use their own keys, so the form's outcomes, experiments and
+    // graph positions would reference fields that do not exist here and break
+    // the preview with a validation error.
+    outcomes: [],
+    experiments: [],
+    flowPositions: [],
     steps: [
       { id: 'theme_goal', key: 'theme_goal', type: 'single_choice', label: __('Goal', 'chatflow-forms'), required: true, messages: [__('Hi there! 👋', 'chatflow-forms'), __('What brings you here today?', 'chatflow-forms')], options: [{ id: 'theme_quote', value: 'quote', label: __('Get a quote', 'chatflow-forms') }, { id: 'theme_question', value: 'question', label: __('Ask a question', 'chatflow-forms') }] },
       { id: 'theme_when', key: 'theme_when', type: 'single_choice', label: __('Timing', 'chatflow-forms'), required: true, messages: [__('Great choice. When would you like to start?', 'chatflow-forms')], options: [{ id: 'theme_now', value: 'now', label: __('This week', 'chatflow-forms') }, { id: 'theme_month', value: 'month', label: __('This month', 'chatflow-forms') }, { id: 'theme_later', value: 'later', label: __('Just exploring', 'chatflow-forms') }] },

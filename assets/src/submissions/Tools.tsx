@@ -9,8 +9,6 @@ import type { AdminApi, FormDTO, Page } from '../builder/api';
 import { parseFormFile } from '../builder/formIO';
 import { Export } from './Export';
 import { Purge } from './Purge';
-import { Filters } from './Filters';
-import type { Filters as FilterValues } from './model';
 function PurgeLog({ api }: { api: AdminApi }) {
   const [page, setPage] = useState(1),
     [log, setLog] = useState<Page<{
@@ -168,12 +166,16 @@ export function Tools({ api }: { api: AdminApi }) {
     { id: 'purge', cap: 'purge_submissions', label: __('Purge data', 'chatflow-forms') },
   ] as const;
   const available = tabs.filter((tab) => can(api.config, tab.cap));
-  const [tab, setTab] = useState<string>(api.config.exportId && can(api.config, 'export_submissions') ? 'export' : available[0]?.id ?? ''),
-    [filters, setFilters] = useState<FilterValues>({});
+  const [tab, setTab] = useState<string>(api.config.exportId && can(api.config, 'export_submissions') ? 'export' : available[0]?.id ?? '');
   return (
-    <main className="cff-admin">
-      <h1>{__('ChatFlow tools', 'chatflow-forms')}</h1>
-      <nav className="cff-tabs">
+    <main className="cff-admin cff-tools-page">
+      <div className="cff-page-head">
+        <div>
+          <h1>{__('ChatFlow tools', 'chatflow-forms')}</h1>
+          <p>{__('Export responses, move forms between sites, and run maintenance safely.', 'chatflow-forms')}</p>
+        </div>
+      </div>
+      <nav className="cff-tabs" aria-label={__('Tool sections', 'chatflow-forms')}>
         {available.map((item) => (
           <Button
             key={item.id}
@@ -187,10 +189,7 @@ export function Tools({ api }: { api: AdminApi }) {
       {tab === 'purge' && can(api.config, 'purge_submissions') && <Purge api={api} />}
       {tab === 'log' && can(api.config, 'purge_submissions') && <PurgeLog api={api} />}
       {tab === 'export' && can(api.config, 'export_submissions') && (
-        <React.Fragment>
-          <Filters api={api} value={filters} onChange={setFilters} />
-          <Export api={api} filters={filters} ids={[]} exportId={api.config.exportId} />
-        </React.Fragment>
+        <Export api={api} filters={{}} ids={[]} exportId={api.config.exportId} />
       )}
       {tab === 'import' && can(api.config, 'manage_forms') && <ImportForm api={api} />}
       {tab === 'system' && can(api.config, 'manage_settings') && <SystemStatus api={api} />}

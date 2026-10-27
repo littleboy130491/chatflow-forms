@@ -2,8 +2,9 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Field, JsonEditor, Select } from './controls';
+import { endingTitle } from './labels';
 import type { Condition, FormSchema, Rule } from './api';
 
 type Predicate = Extract<Condition, { field: string }>;
@@ -101,7 +102,7 @@ export function ConditionEditor({
         <JsonEditor label={__('Nested condition', 'chatflow-forms')} value={value} onChange={onChange} />
       );
     return (
-      <fieldset>
+      <div className={`cff-condition-group${depth > 0 ? ' cff-condition-group--nested' : ''}`}>
         <Select
           label={__('Match conditions', 'chatflow-forms')}
           value={mode}
@@ -111,28 +112,37 @@ export function ConditionEditor({
           ]}
           onChange={(next) => onChange(next === 'all' ? { all: conditions } : { any: conditions })}
         />
-        {conditions.map((condition, index) => (
-          <div className="cff-rule" key={index}>
-            <ConditionEditor
-              value={condition}
-              schema={schema}
-              depth={depth + 1}
-              onChange={(next) => update(conditions.map((item, at) => (at === index ? next : item)))}
-            />
-            <Button isDestructive onClick={() => update(conditions.filter((_, at) => at !== index))}>
-              {__('Remove condition', 'chatflow-forms')}
-            </Button>
-          </div>
-        ))}
-        <Button variant="secondary" onClick={() => update([...conditions, firstCondition(schema)])}>
-          {__('Add condition', 'chatflow-forms')}
-        </Button>
-        {depth < 1 && (
-          <Button onClick={() => update([...conditions, { any: [firstCondition(schema)] }])}>
-            {__('Add OR group', 'chatflow-forms')}
+        <ol className="cff-condition-list">
+          {conditions.map((condition, index) => (
+            <li className="cff-condition-row" key={index}>
+              <ConditionEditor
+                value={condition}
+                schema={schema}
+                depth={depth + 1}
+                onChange={(next) => update(conditions.map((item, at) => (at === index ? next : item)))}
+              />
+              <Button
+                variant="link"
+                isDestructive
+                className="cff-condition-remove"
+                onClick={() => update(conditions.filter((_, at) => at !== index))}
+              >
+                {__('Remove condition', 'chatflow-forms')}
+              </Button>
+            </li>
+          ))}
+        </ol>
+        <div className="cff-condition-group-foot">
+          <Button variant="secondary" onClick={() => update([...conditions, firstCondition(schema)])}>
+            {__('Add condition', 'chatflow-forms')}
           </Button>
-        )}
-      </fieldset>
+          {depth < 1 && (
+            <Button variant="link" onClick={() => update([...conditions, { any: [firstCondition(schema)] }])}>
+              {__('Add OR group', 'chatflow-forms')}
+            </Button>
+          )}
+        </div>
+      </div>
     );
   }
   const step = schema.steps.find((item) => item.key === value.field),
@@ -140,6 +150,7 @@ export function ConditionEditor({
   const shown = typeof value.value === 'object' ? JSON.stringify(value.value) : String(value.value ?? '');
   return (
     <div className="cff-condition">
+      <div className="cff-condition-grid">
       <Select
         label={__('Operand source', 'chatflow-forms')}
         value={value.source ?? 'answer'}
@@ -219,9 +230,14 @@ export function ConditionEditor({
             }}
           />
         ))}
+      </div>
       {depth === 0 && (
-        <Button onClick={() => onChange({ all: [value, firstCondition(schema)] })}>
-          {__('Add AND / OR', 'chatflow-forms')}
+        <Button
+          variant="link"
+          className="cff-condition-extend"
+          onClick={() => onChange({ all: [value, firstCondition(schema)] })}
+        >
+          {__('Add another condition', 'chatflow-forms')}
         </Button>
       )}
     </div>
@@ -237,17 +253,73 @@ export function RuleEditor({
   onChange: (rules: Rule[]) => void;
 }) {
   const set = (at: number, rule: Rule) => onChange(rules.map((item, index) => (index === at ? rule : item)));
+  const move = (at: number, by: number) => {
+    const next = [...rules];
+    next.splice(at + by, 0, ...next.splice(at, 1));
+    onChange(next);
+  };
   return (
-    <section>
-      <h3>{__('Logic rules (evaluated in order)', 'chatflow-forms')}</h3>
+    <section className="cff-logic">
+      <div className="cff-logic-intro">
+        <h3>{__('Logic rules (evaluated in order)', 'chatflow-forms')}</h3>
+        <p>{__('Rules run from top to bottom. The first matching rule wins.', 'chatflow-forms')}</p>
+      </div>
+      {rules.length === 0 && (
+        <p className="cff-logic-empty">
+          {__('No rules yet. Add a rule to show, hide or jump between fields.', 'chatflow-forms')}
+        </p>
+      )}
       {rules.map((rule, index) => (
-        <fieldset className="cff-rule" key={index}>
-          <legend>{index + 1}</legend>
+        <section className="cff-rule" key={index} aria-label={sprintf(
+          /* translators: %d: rule number */
+          __('Rule %d', 'chatflow-forms'),
+          index + 1,
+        )}>
+          <header className="cff-rule-head">
+            <span className="cff-rule-title">{sprintf(
+              /* translators: %d: rule number */
+              __('Rule %d', 'chatflow-forms'),
+              index + 1,
+            )}</span>
+            <div className="cff-rule-tools">
+              <Button
+                variant="link"
+                className="cff-rule-tool"
+                aria-label={__('Move rule up', 'chatflow-forms')}
+                title={__('Move rule up', 'chatflow-forms')}
+                disabled={index === 0}
+                onClick={() => move(index, -1)}
+              >
+                ↑
+              </Button>
+              <Button
+                variant="link"
+                className="cff-rule-tool"
+                aria-label={__('Move rule down', 'chatflow-forms')}
+                title={__('Move rule down', 'chatflow-forms')}
+                disabled={index === rules.length - 1}
+                onClick={() => move(index, 1)}
+              >
+                ↓
+              </Button>
+              <Button
+                variant="link"
+                isDestructive
+                className="cff-rule-remove"
+                onClick={() => onChange(rules.filter((_, at) => at !== index))}
+              >
+                {__('Remove rule', 'chatflow-forms')}
+              </Button>
+            </div>
+          </header>
+          <div className="cff-rule-body">
+          <p className="cff-rule-label">{__('If', 'chatflow-forms')}</p>
           <ConditionEditor
             value={rule.if}
             schema={schema}
             onChange={(condition) => set(index, { ...rule, if: condition })}
           />
+          <p className="cff-rule-label">{__('Then', 'chatflow-forms')}</p>
           {rule.then.action === 'set_variable' ? (<>
             <Select label={__('Action', 'chatflow-forms')} value="set_variable" choices={actionChoices()} onChange={action => set(index, { ...rule, then: { action: action as 'jump', to: schema.steps[0]?.id ?? '' } })} />
             <Select label={__('Variable', 'chatflow-forms')} value={rule.then.key} choices={(schema.variables ?? []).map(v => ({ value: v.key, label: v.key }))} onChange={key => set(index, { ...rule, then: { ...scoring(rule), key } })} />
@@ -274,40 +346,19 @@ export function RuleEditor({
                 value={rule.then.to}
                 choices={
                   rule.then.action === 'end'
-                    ? schema.endings.map((ending) => ({ value: ending.id, label: ending.id }))
+                    ? schema.endings.map((ending, index) => ({ value: ending.id, label: endingTitle(ending, index) }))
                     : schema.steps.map((step) => ({ value: step.id, label: `${step.label} (${step.key})` }))
                 }
                 onChange={(to) => set(index, { ...rule, then: { ...rule.then, to } as Rule['then'] })}
               />
             </>
           )}
-          <Button
-            disabled={index === 0}
-            onClick={() => {
-              const next = [...rules];
-              next.splice(index - 1, 0, ...next.splice(index, 1));
-              onChange(next);
-            }}
-          >
-            {__('Move up', 'chatflow-forms')}
-          </Button>
-          <Button
-            disabled={index === rules.length - 1}
-            onClick={() => {
-              const next = [...rules];
-              next.splice(index + 1, 0, ...next.splice(index, 1));
-              onChange(next);
-            }}
-          >
-            {__('Move down', 'chatflow-forms')}
-          </Button>
-          <Button isDestructive onClick={() => onChange(rules.filter((_, at) => at !== index))}>
-            {__('Remove rule', 'chatflow-forms')}
-          </Button>
-        </fieldset>
+          </div>
+        </section>
       ))}
       <Button
         variant="secondary"
+        className="cff-logic-add"
         disabled={rules.length >= 100}
         onClick={() =>
           onChange([

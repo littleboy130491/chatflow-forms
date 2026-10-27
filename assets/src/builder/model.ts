@@ -22,7 +22,13 @@ export const v1Types = [
   'summary',
 ];
 export function uid(prefix: string): string {
-  return `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`;
+  const cryptoApi = globalThis.crypto;
+  if (cryptoApi && typeof cryptoApi.randomUUID === 'function') {
+    return `${prefix}_${cryptoApi.randomUUID().replace(/-/g, '')}`;
+  }
+  // HTTP development hosts are not secure contexts, so randomUUID can be unavailable.
+  const random = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}_${random}`;
 }
 export function uniqueKey(label: string, steps: Step[], reserved: string[] = []): string {
   const base =

@@ -10,10 +10,10 @@ export function readable(value: JSONValue | undefined): string {
 }
 export function interpolate(text: string, answers: AnswerMap = {}, meta: AnswerMap = {}): string {
   return text.replace(/\{\{([^{}]*)\}\}/g, (_tag, content: string) => {
-    const tag = /^[ \t\r\n]*(?:(answer|meta):)?([a-z][a-z0-9_]*)[ \t\r\n]*$/.exec(content);
+    const tag = /^[ \t\r\n]*(?:(answer|meta):)?([a-z][a-z0-9_]*)[ \t\r\n]*(?:\|([^{}]*))?$/.exec(content);
     if (!tag) return '';
     const values = tag[1] === 'meta' ? meta : answers, key = tag[2]!;
-    return readable(own(values, key) ? values[key] : undefined);
+    return readable(own(values, key) ? values[key] : undefined) || tag[3] || '';
   });
 }
 export function interpolateUrl(text: string, answers: AnswerMap = {}, meta: AnswerMap = {}): string {

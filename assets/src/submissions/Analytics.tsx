@@ -60,11 +60,15 @@ export function Analytics({ api }: { api: AdminApi }) {
     { label: __('Abandoned', 'chatflow-forms'), value: report.counts.abandoned.toLocaleString() },
     { label: __('Average completion time', 'chatflow-forms'), value: report.avgDurationMs === null ? '—' : `${Math.round(report.avgDurationMs / 1000)} s` },
   ] : [];
-  return <main className="cff-admin">
-    <h1>{__('Analytics', 'chatflow-forms')}</h1>
+  return <main className="cff-admin cff-analytics-page">
+    <div className="cff-page-head">
+      <div>
+        <h1>{__('Analytics', 'chatflow-forms')}</h1>
+        <p>{__('Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.', 'chatflow-forms')}</p>
+      </div>
+    </div>
     <h2>{__('Overview · UTC', 'chatflow-forms')}</h2>
-    <p>{__('Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.', 'chatflow-forms')}</p>
-    <div className="cff-analytics-filters">
+    <div className="cff-analytics-filters" aria-label={__('Analytics date range', 'chatflow-forms')}>
       <FormPicker api={api} value={formId === '0' ? '' : formId} onChange={next => setFormId(next || '0')} />
       <Field label={__('From (UTC)', 'chatflow-forms')} type="date" value={from} onChange={setFrom} />
       <Field label={__('To (UTC, inclusive)', 'chatflow-forms')} type="date" value={to} onChange={setTo} />

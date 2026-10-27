@@ -74,11 +74,14 @@ final class Interpolator {
 		return preg_replace_callback(
 			'/\{\{([^{}]*)\}\}/',
 			static function ( array $tag ) use ( $answers, $meta, $url ): string {
-				if ( ! preg_match( '/^[ \t\r\n]*(?:(answer|meta):)?([a-z][a-z0-9_]*)[ \t\r\n]*$/D', $tag[1], $parts ) ) {
+				if ( ! preg_match( '/^[ \t\r\n]*(?:(answer|meta):)?([a-z][a-z0-9_]*)[ \t\r\n]*(?:\|([^{}]*))?$/D', $tag[1], $parts ) ) {
 					return '';
 				}
 				$source = 'meta' === $parts[1] ? $meta : $answers;
 				$value  = self::readable( $source[ $parts[2] ] ?? null );
+				if ( '' === $value ) {
+					$value = $parts[3] ?? '';
+				}
 				return $url ? rawurlencode( $value ) : $value;
 			},
 			$text

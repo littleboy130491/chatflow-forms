@@ -14,7 +14,9 @@ test('long internal field labels wrap inside the flow instead of overflowing', a
   const label = 'Pertanyaan dengan label internal yang cukup panjang untuk menguji tata letak editor dan keterbacaan di layar desktop';
   await page.getByRole('textbox', { name: 'Label', exact: true }).fill(label);
   const field = page.locator('.cff-flow article.is-selected');
-  await expect(field.getByRole('button', { name: new RegExp('^Pertanyaan dengan label internal') })).toBeVisible();
+  await expect(field.getByRole('button', { name: new RegExp('^Edit field: Pertanyaan dengan label internal') })).toBeVisible();
+  await expect(field.getByRole('button', { name: 'Duplicate field', exact: true })).toHaveCount(0);
+  await expect(page.locator('.cff-inspector').getByRole('button', { name: 'Duplicate field', exact: true })).toBeVisible();
   await expect.poll(() => field.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
   await expect(page.locator('.cff-builder-grid')).toHaveCSS('align-items', 'start');
   await expect(page.locator('.cff-palette')).toHaveCSS('overflow-y', 'auto');

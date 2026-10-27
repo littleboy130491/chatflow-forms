@@ -1,11 +1,32 @@
 msgid ""
 msgstr "Project-Id-Version: ChatFlow Forms\nLanguage: id_ID\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\n"
 
+msgid " and "
+msgstr " dan "
+
+msgid " or "
+msgstr " atau "
+
+msgid "%1$s: %2$s %3$s %4$s"
+msgstr "%1$s: %2$s %3$s %4$s"
+
 msgid "%1$s: rule %2$d"
 msgstr "%1$s: aturan %2$d"
 
+msgid "%d fields"
+msgstr "%d kolom"
+
+msgid "%d rules"
+msgstr "%d aturan"
+
+msgid "%d selected"
+msgstr "%d dipilih"
+
 msgid "%d submissions and %d files match."
 msgstr "%d kiriman dan %d berkas cocok."
+
+msgid "1 rule"
+msgstr "1 aturan"
 
 msgid "A 0–10 recommendation score and optional feedback."
 msgstr "Skor rekomendasi 0–10 dan umpan balik opsional."
@@ -73,14 +94,14 @@ msgstr "Aktivitas"
 msgid "Add"
 msgstr "Tambah"
 
-msgid "Add AND / OR"
-msgstr "Tambah DAN / ATAU"
-
 msgid "Add OR group"
 msgstr "Tambah grup ATAU"
 
 msgid "Add admin email"
 msgstr "Tambah email admin"
+
+msgid "Add another condition"
+msgstr "Tambah kondisi lain"
 
 msgid "Add another field"
 msgstr "Tambah pertanyaan lain"
@@ -145,14 +166,14 @@ msgstr "Notifikasi admin"
 msgid "Advanced"
 msgstr "Lanjutan"
 
+msgid "Advanced choice logic"
+msgstr "Logika pilihan lanjutan"
+
 msgid "Advanced custom element"
 msgstr "Elemen kustom lanjutan"
 
 msgid "Advanced filters"
 msgstr "Filter lanjutan"
-
-msgid "Advanced message options"
-msgstr "Opsi pesan lanjutan"
 
 msgid "Advanced redirect settings"
 msgstr "Pengaturan pengalihan lanjutan"
@@ -195,6 +216,9 @@ msgstr "Terjadi kesalahan tak terduga."
 
 msgid "Analytics"
 msgstr "Analitik"
+
+msgid "Analytics date range"
+msgstr "Rentang tanggal analitik"
 
 msgid "Anonymized"
 msgstr "Dianonimkan"
@@ -373,8 +397,14 @@ msgstr "Nama bot"
 msgid "Bot text"
 msgstr "Teks bot"
 
+msgid "Branch, score and route answers, then check the whole form for broken references in one place."
+msgstr "Atur percabangan, skor, dan alur jawaban, lalu periksa seluruh formulir untuk referensi yang rusak di satu tempat."
+
 msgid "Branching flow map"
 msgstr "Peta alur percabangan"
+
+msgid "Branching map"
+msgstr "Peta percabangan"
 
 msgid "Brand colour"
 msgstr "Warna merek"
@@ -393,6 +423,9 @@ msgstr "Bagian pembuat formulir"
 
 msgid "Bulk options (one label per line)"
 msgstr "Pilihan massal (satu label per baris)"
+
+msgid "Button %d"
+msgstr "Tombol %d"
 
 msgid "Button URL (merge tags allowed)"
 msgstr "URL tombol (tag penggabungan diizinkan)"
@@ -529,6 +562,9 @@ msgstr "Kota"
 msgid "Classic"
 msgstr "Klasik"
 
+msgid "Close export"
+msgstr "Tutup ekspor"
+
 msgid "Close preview"
 msgstr "Tutup pratinjau"
 
@@ -640,11 +676,17 @@ msgstr "Tombol lanjut / kirim"
 msgid "Contrast feedback (WCAG AA normal text)"
 msgstr "Umpan balik kontras (WCAG AA teks normal)"
 
+msgid "Conversation endings"
+msgstr "Akhir percakapan"
+
 msgid "Conversation flow"
 msgstr "Alur percakapan"
 
 msgid "Conversation replay"
 msgstr "Putar ulang percakapan"
+
+msgid "Conversational forms that feel like a chat. Draft here, publish when you are ready to share."
+msgstr "Formulir percakapan yang terasa seperti obrolan. Buat draf di sini, terbitkan saat siap dibagikan."
 
 msgid "Conversions API access token"
 msgstr "Token akses Conversions API"
@@ -666,6 +708,9 @@ msgstr "Salin elemen kustom"
 
 msgid "Copy link"
 msgstr "Salin tautan"
+
+msgid "Copy overrides"
+msgstr "Ganti teks"
 
 msgid "Copy response ID"
 msgstr "Salin ID respons"
@@ -817,6 +862,9 @@ msgstr "Perangkat"
 msgid "Devices"
 msgstr "Perangkat"
 
+msgid "Direct"
+msgstr "Langsung"
+
 msgid "Direct / unknown"
 msgstr "Langsung / tidak diketahui"
 
@@ -894,6 +942,12 @@ msgstr "Duplikat kolom"
 
 msgid "Edit"
 msgstr "Ubah"
+
+msgid "Edit field: %s"
+msgstr "Ubah kolom: %s"
+
+msgid "Edit rules for %s"
+msgstr "Ubah aturan untuk %s"
 
 msgid "Email"
 msgstr "Email"
@@ -1012,6 +1066,9 @@ msgstr "Ekspor kedaluwarsa atau unduhan ditolak. Buat ekspor baru."
 msgid "Export filtered results"
 msgstr "Ekspor hasil terfilter"
 
+msgid "Export responses, move forms between sites, and run maintenance safely."
+msgstr "Ekspor respons, pindahkan formulir antar situs, dan jalankan pemeliharaan dengan aman."
+
 msgid "Export selected"
 msgstr "Ekspor yang dipilih"
 
@@ -1036,6 +1093,9 @@ msgstr "Umpan balik / NPS"
 msgid "Field"
 msgstr "Kolom"
 
+msgid "Field %1$d: %2$s"
+msgstr "Kolom %1$d: %2$s"
+
 msgid "Field editor"
 msgstr "Editor pertanyaan"
 
@@ -1053,6 +1113,9 @@ msgstr "Pemetaan kolom: kolom penyedia → kunci jawaban"
 
 msgid "Field palette"
 msgstr "Palet kolom"
+
+msgid "Field rules"
+msgstr "Aturan kolom"
 
 msgid "Fields without an override follow the global Settings screen."
 msgstr "Kolom tanpa penggantian mengikuti layar Pengaturan global."
@@ -1213,6 +1276,9 @@ msgstr "Pengaturan global: %d hari."
 msgid "Global setting: same as completed submissions."
 msgstr "Pengaturan global: sama dengan kiriman selesai."
 
+msgid "Go to a page or WhatsApp"
+msgstr "Buka halaman atau WhatsApp"
+
 msgid "Goal"
 msgstr "Tujuan"
 
@@ -1285,6 +1351,9 @@ msgstr "Sumber nilai tersembunyi"
 msgid "Hide field"
 msgstr "Sembunyikan kolom"
 
+msgid "Hide hidden fields"
+msgstr "Sembunyikan kolom tersembunyi"
+
 msgid "Hide the button"
 msgstr "Sembunyikan tombol"
 
@@ -1303,6 +1372,9 @@ msgstr "Seberapa besar kemungkinan Anda merekomendasikan kami? (0–10)"
 msgid "How was your experience?"
 msgstr "Bagaimana pengalaman Anda?"
 
+msgid "Human contact during the conversation"
+msgstr "Kontak manusia selama percakapan"
+
 msgid "I agree that the information I provide may be used to respond to this intake request."
 msgstr "Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini."
 
@@ -1314,6 +1386,12 @@ msgstr "Penyimpanan IP"
 
 msgid "Icon"
 msgstr "Ikon"
+
+msgid "If"
+msgstr "Jika"
+
+msgid "If several choices have paths, rules are evaluated in option order."
+msgstr "Jika beberapa pilihan memiliki alur, aturan diperiksa sesuai urutan pilihan."
 
 msgid "Image"
 msgstr "Gambar"
@@ -1354,11 +1432,11 @@ msgstr "Gunakan font tema"
 msgid "Inline"
 msgstr "Inline"
 
+msgid "Insert an answer"
+msgstr "Sisipkan jawaban"
+
 msgid "Insert answer merge tag"
 msgstr "Sisipkan tag penggabungan jawaban"
-
-msgid "Insert merge tag"
-msgstr "Sisipkan tag penggabungan"
 
 msgid "Inspect logic path and variables"
 msgstr "Periksa jalur logika dan variabel"
@@ -1519,11 +1597,14 @@ msgstr "Memuat…"
 msgid "Logic"
 msgstr "Logika"
 
-msgid "Logic diagnostics"
-msgstr "Diagnostik logika"
+msgid "Logic overview"
+msgstr "Ringkasan logika"
 
 msgid "Logic rules (evaluated in order)"
 msgstr "Aturan logika (dievaluasi berurutan)"
+
+msgid "Logic warnings"
+msgstr "Peringatan logika"
 
 msgid "Logo URL"
 msgstr "URL logo"
@@ -1591,8 +1672,8 @@ msgstr "Tag gabung"
 msgid "Merge tags: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}} and any field key. Buttons: [cff_button url=\"https://…\"]Label[/cff_button]."
 msgstr "Tag penggabungan: {{all_answers}}, {{meta_table}}, {{admin_link}}, {{form_title}}, {{submission_id}}, {{site_name}}, {{date}}, dan kunci kolom apa pun. Tombol: [cff_button url=\"https://…\"]Label[/cff_button]."
 
-msgid "Message"
-msgstr "Pesan"
+msgid "Message %d"
+msgstr "Pesan %d"
 
 msgid "Message intro (merge tags allowed)"
 msgstr "Pembuka pesan (boleh memakai merge tag)"
@@ -1624,6 +1705,9 @@ msgstr "Panjang minimum"
 msgid "Minimum selections"
 msgstr "Pilihan minimum"
 
+msgid "Missing answers use the optional fallback, or appear blank if it is empty."
+msgstr "Jawaban yang tidak tersedia menggunakan teks pengganti, atau tampil kosong jika teks tersebut tidak diisi."
+
 msgid "Mobile"
 msgstr "Ponsel"
 
@@ -1642,11 +1726,11 @@ msgstr "Senin"
 msgid "More forms"
 msgstr "Formulir berikutnya"
 
-msgid "Move down"
-msgstr "Pindah ke bawah"
+msgid "Move rule down"
+msgstr "Turunkan aturan"
 
-msgid "Move up"
-msgstr "Pindah ke atas"
+msgid "Move rule up"
+msgstr "Naikkan aturan"
 
 msgid "Multiple choice"
 msgstr "Pilihan jamak"
@@ -1699,6 +1783,9 @@ msgstr "Berikutnya"
 msgid "Next forms"
 msgstr "Formulir berikutnya"
 
+msgid "Next step"
+msgstr "Langkah berikutnya"
+
 msgid "Night"
 msgstr "Malam"
 
@@ -1710,6 +1797,9 @@ msgstr "Tanpa kolom"
 
 msgid "No data for this period."
 msgstr "Tidak ada data untuk periode ini."
+
+msgid "No field rules yet."
+msgstr "Belum ada aturan kolom."
 
 msgid "No forms found."
 msgstr "Tidak ada formulir yang ditemukan."
@@ -1735,8 +1825,17 @@ msgstr "Belum ada pesan. Pilih pertanyaan ini untuk mengeditnya."
 msgid "No on-screen keyboard"
 msgstr "Tanpa keyboard layar"
 
+msgid "No outcomes yet. The form ends normally unless an outcome matches."
+msgstr "Belum ada hasil. Formulir berakhir normal kecuali ada hasil yang cocok."
+
 msgid "No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery."
 msgstr "Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim."
+
+msgid "No rules yet. Add a rule to show, hide or jump between fields."
+msgstr "Belum ada aturan. Tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat antar kolom."
+
+msgid "No scoring variables yet. Add one to start tallying answers."
+msgstr "Belum ada variabel skor. Tambahkan satu untuk mulai menghitung jawaban."
 
 msgid "Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned."
 msgstr "Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri."
@@ -1801,6 +1900,9 @@ msgstr "Tampilkan tombol hanya pada jam kerja"
 msgid "Only trashed forms can be restored or deleted permanently."
 msgstr "Hanya formulir di sampah yang dapat dipulihkan atau dihapus permanen."
 
+msgid "Open a field on the Build tab, switch to Logic and add a rule to show, hide or jump."
+msgstr "Buka kolom di tab Bangun, pilih Logika, lalu tambahkan aturan untuk menampilkan, menyembunyikan, atau melompat."
+
 msgid "Open form"
 msgstr "Buka form"
 
@@ -1831,6 +1933,9 @@ msgstr "Operator"
 msgid "Option label"
 msgstr "Label pilihan"
 
+msgid "Option: %s"
+msgstr "Opsi: %s"
+
 msgid "Optional captcha and Akismet credentials"
 msgstr "Kredensial captcha dan Akismet opsional"
 
@@ -1846,8 +1951,11 @@ msgstr "Lainnya (pilihan teks bebas)"
 msgid "Other clients take the same URL and Authorization header in their MCP settings. Save the settings before connecting."
 msgstr "Klien lain memakai URL dan header Authorization yang sama di pengaturan MCP-nya. Simpan pengaturan sebelum menghubungkan."
 
-msgid "Outcome endings (first matching condition wins)"
-msgstr "Penutup berdasarkan hasil (kondisi pertama yang cocok digunakan)"
+msgid "Outcome %d"
+msgstr "Hasil %d"
+
+msgid "Outcome endings"
+msgstr "Hasil akhir"
 
 msgid "Outside working hours"
 msgstr "Di luar jam kerja"
@@ -1939,8 +2047,8 @@ msgstr "Jendela pop-up"
 msgid "Postcode"
 msgstr "Kode pos"
 
-msgid "Pre-filled message (merge tags allowed, e.g. {{name}})"
-msgstr "Pesan otomatis (tag gabungan boleh, mis. {{name}})"
+msgid "Pre-filled message"
+msgstr "Pesan yang sudah diisi"
 
 msgid "Preferred appointment date (subject to confirmation)"
 msgstr "Tanggal janji temu yang diinginkan (perlu konfirmasi)"
@@ -2100,6 +2208,9 @@ msgstr "Dibaca"
 
 msgid "Read / starred"
 msgstr "Dibaca / berbintang"
+
+msgid "Read every response, follow up on partial conversations and export what you need."
+msgstr "Baca setiap respons, tindak lanjuti percakapan yang belum selesai, dan ekspor yang Anda perlukan."
 
 msgid "Read state"
 msgstr "Status baca"
@@ -2284,6 +2395,12 @@ msgstr "Baris per halaman"
 msgid "Rule %d"
 msgstr "Aturan %d"
 
+msgid "Rules are checked in order. The first one that matches wins."
+msgstr "Aturan diperiksa berurutan. Aturan pertama yang cocok yang dipakai."
+
+msgid "Rules run from top to bottom. The first matching rule wins."
+msgstr "Aturan dijalankan dari atas ke bawah. Aturan pertama yang cocok yang dipakai."
+
 msgid "SMTP status is unknown. Verify your mail transport and test inbox delivery."
 msgstr "Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk."
 
@@ -2431,11 +2548,17 @@ msgstr "Tampilkan tombol kontak di bawah percakapan"
 msgid "Show a message instead"
 msgstr "Tampilkan pesan sebagai gantinya"
 
+msgid "Show a thank-you message"
+msgstr "Tampilkan pesan terima kasih"
+
 msgid "Show automatically on matching pages"
 msgstr "Tampilkan otomatis pada halaman yang sesuai"
 
 msgid "Show field"
 msgstr "Tampilkan kolom"
+
+msgid "Show hidden fields (%d)"
+msgstr "Tampilkan kolom tersembunyi (%d)"
 
 msgid "Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form."
 msgstr "Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
@@ -2548,6 +2671,9 @@ msgstr "Subjek"
 msgid "Submission"
 msgstr "Kiriman"
 
+msgid "Submission status"
+msgstr "Status kiriman"
+
 msgid "Submissions"
 msgstr "Kiriman"
 
@@ -2581,14 +2707,14 @@ msgstr "Tag (pisahkan dengan koma)"
 msgid "Target"
 msgstr "Target"
 
-msgid "Technical activity"
-msgstr "Aktivitas teknis"
-
 msgid "Technical details"
 msgstr "Detail teknis"
 
 msgid "Telephone keypad"
 msgstr "Papan tombol telepon"
+
+msgid "Test alternate copy or a reordered question set on new sessions."
+msgstr "Uji teks alternatif atau urutan pertanyaan berbeda pada sesi baru."
 
 msgid "Test email queued. Check the activity log for delivery."
 msgstr "Email uji masuk antrean. Periksa log aktivitas untuk hasil pengiriman."
@@ -2601,6 +2727,9 @@ msgstr "Penerima uji"
 
 msgid "Test your draft as a visitor. Responses here are not saved, and notifications are not sent."
 msgstr "Coba draf sebagai pengunjung. Respons di sini tidak disimpan dan notifikasi tidak dikirim."
+
+msgid "Text to use if the answer is missing (optional)"
+msgstr "Teks jika jawaban tidak tersedia (opsional)"
 
 msgid "Thank you for your submission"
 msgstr "Terima kasih atas kiriman Anda"
@@ -2617,8 +2746,14 @@ msgstr "Pesan terima kasih"
 msgid "The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice."
 msgstr "Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
 
+msgid "The default path runs down the list; animated arrows are rules that skip ahead."
+msgstr "Jalur bawaan mengalir ke bawah daftar; panah beranimasi adalah aturan yang melompat ke depan."
+
 msgid "The export form must match the active form filter. Change the filter or select its form before exporting."
 msgstr "Formulir ekspor harus sama dengan filter formulir aktif. Ubah filternya atau pilih formulir yang sesuai sebelum mengekspor."
+
+msgid "The first matching outcome decides the ending instead of normal completion."
+msgstr "Hasil pertama yang cocok menentukan akhir formulir, bukan penyelesaian normal."
 
 msgid "The form could not be changed. Please try again."
 msgstr "Formulir tidak dapat diubah. Silakan coba lagi."
@@ -2635,8 +2770,14 @@ msgstr "Permintaan gagal. Silakan coba lagi."
 msgid "The runtime preview is unavailable. Rebuild the plugin assets."
 msgstr "Pratinjau runtime tidak tersedia. Bangun ulang aset plugin."
 
+msgid "The submission is saved before the visitor is redirected. For WhatsApp, build a link below; the visitor must still send the message."
+msgstr "Jawaban disimpan sebelum pengunjung dialihkan. Untuk WhatsApp, buat tautan di bawah; pengunjung tetap harus mengirim pesannya."
+
 msgid "Theme"
 msgstr "Tema"
+
+msgid "Then"
+msgstr "Maka"
 
 msgid "This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears."
 msgstr "Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas."
@@ -2649,6 +2790,9 @@ msgstr "Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan men
 
 msgid "This month"
 msgstr "Bulan ini"
+
+msgid "This opens an external contact link, not a live-agent inbox. Answers are saved only if partial saving is enabled; contacting you does not submit the form."
+msgstr "Tombol ini membuka tautan kontak eksternal, bukan kotak masuk agen langsung. Jawaban hanya disimpan jika penyimpanan parsial diaktifkan; menghubungi Anda tidak mengirim formulir."
 
 msgid "This week"
 msgstr "Minggu ini"
@@ -2674,11 +2818,17 @@ msgstr "Sampai tanggal (UTC)"
 msgid "Tone"
 msgstr "Nada"
 
+msgid "Tool sections"
+msgstr "Bagian alat"
+
 msgid "Tools"
 msgstr "Alat"
 
 msgid "Total submissions (blank = unlimited)"
 msgstr "Total kiriman (kosong = tanpa batas)"
+
+msgid "Totals you can add to as answers come in, then test in rules and outcomes."
+msgstr "Total yang bisa ditambah saat jawaban masuk, lalu diuji di aturan dan hasil."
 
 msgid "Tracking is off by default. Connect your consent manager before enabling it."
 msgstr "Pelacakan nonaktif secara bawaan. Hubungkan pengelola persetujuan sebelum mengaktifkannya."
@@ -2706,6 +2856,9 @@ msgstr "Rentang CIDR tepercaya (satu per baris)"
 
 msgid "Trusted proxy configuration"
 msgstr "Konfigurasi proxy tepercaya"
+
+msgid "Try a different status, clear the date range, or search for another answer."
+msgstr "Coba status lain, kosongkan rentang tanggal, atau cari jawaban lain."
 
 msgid "Tuesday"
 msgstr "Selasa"
@@ -2763,6 +2916,9 @@ msgstr "Akhiran satuan"
 
 msgid "Unknown"
 msgstr "Tidak diketahui"
+
+msgid "Unknown device"
+msgstr "Perangkat tidak diketahui"
 
 msgid "Unread"
 msgstr "Belum dibaca"
@@ -2827,8 +2983,14 @@ msgstr "Nilai (larik JSON)"
 msgid "Variable"
 msgstr "Variabel"
 
+msgid "Variable %d"
+msgstr "Variabel %d"
+
 msgid "Variant"
 msgstr "Varian"
+
+msgid "Variant %d"
+msgstr "Varian %d"
 
 msgid "Variant ID"
 msgstr "ID varian"
@@ -2902,6 +3064,9 @@ msgstr "WhatsApp"
 msgid "WhatsApp number with country code"
 msgstr "Nomor WhatsApp dengan kode negara"
 
+msgid "When this choice is selected, continue to"
+msgstr "Saat pilihan ini dipilih, lanjutkan ke"
+
 msgid "Where will you use the product?"
 msgstr "Di mana Anda akan menggunakan produk ini?"
 
@@ -2964,6 +3129,12 @@ msgstr "Ekspor privat Anda siap. Masuk sebagai pemilik untuk mengunduhnya dalam 
 
 msgid "age is at least"
 msgstr "usia minimal"
+
+msgid "always"
+msgstr "selalu"
+
+msgid "an empty value"
+msgstr "nilai kosong"
 
 msgid "closes"
 msgstr "tutup"

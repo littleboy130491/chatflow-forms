@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment, useRef, useState } from '@wordpress/element';
 import {
   Button,
   TextControl,
@@ -13,6 +13,7 @@ import {
 } from '@wordpress/components';
 import type { ComponentProps } from 'react';
 import { __ } from '@wordpress/i18n';
+import type { Step } from './api';
 
 export { Button, TextControl, TextareaControl, ToggleControl, SelectControl, Notice };
 export function Field({
@@ -42,6 +43,30 @@ export function Area({
   onChange: (value: string) => void;
 }) {
   return <TextareaControl label={label} value={value} onChange={onChange} />;
+}
+export function AnswerArea({ label, value, onChange, steps }: { label: string; value: string; onChange: (value: string) => void; steps: Step[] }) {
+  const container = useRef<HTMLDivElement>(null);
+  const selection = useRef<{ start: number; end: number } | null>(null);
+  const [fallback, setFallback] = useState('');
+  return <div ref={container} onSelect={(event) => {
+    if (event.target instanceof HTMLTextAreaElement) selection.current = { start: event.target.selectionStart, end: event.target.selectionEnd };
+  }}>
+    <Area label={label} value={value} onChange={onChange} />
+    <Field label={__('Text to use if the answer is missing (optional)', 'chatflow-forms')} value={fallback} onChange={setFallback} />
+    <Select label={__('Insert an answer', 'chatflow-forms')} value="" choices={[
+      { label: __('Choose a question', 'chatflow-forms'), value: '' },
+      ...steps.map(step => ({ label: step.label || step.key, value: `{{${step.key}}}` })),
+    ]} onChange={tag => {
+      if (!tag) return;
+      if (fallback) tag = tag.slice(0, -2) + '|' + fallback.replace(/[{}]/g, '') + '}}';
+      const start = Math.min(selection.current?.start ?? value.length, value.length);
+      const end = Math.min(selection.current?.end ?? start, value.length);
+      onChange(value.slice(0, start) + tag + value.slice(end));
+      selection.current = { start: start + tag.length, end: start + tag.length };
+      requestAnimationFrame(() => { const input = container.current?.querySelector('textarea'); input?.focus(); input?.setSelectionRange(start + tag.length, start + tag.length); });
+    }} />
+    <p className="description">{__('Missing answers use the optional fallback, or appear blank if it is empty.', 'chatflow-forms')}</p>
+  </div>;
 }
 export function Check({
   label,

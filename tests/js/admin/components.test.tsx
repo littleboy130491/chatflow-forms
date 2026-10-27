@@ -6,12 +6,13 @@ import { AdminApi } from '../../../assets/src/builder/api';
 import type { AdminConfig, FormDTO } from '../../../assets/src/builder/api';
 import { blankForm, v1Types } from '../../../assets/src/builder/model';
 import { FormStart } from '../../../assets/src/builder/index';
-import { JsonEditor } from '../../../assets/src/builder/controls';
+import { AnswerArea, JsonEditor } from '../../../assets/src/builder/controls';
 import { ConnectorSettings } from '../../../assets/src/builder/ConnectorSettings';
 import { SettingsEditor } from '../../../assets/src/builder/FormSettings';
 import { AiGenerate, applyRewrites, copyItems } from '../../../assets/src/builder/AiAssist';
 import type { FormSettings } from '../../../assets/src/builder/api';
 import { cleanupPreview, previewKey, publicDraft, resolvePreviewMedia } from '../../../assets/src/builder/Preview';
+import { replay } from '../../../assets/src/shared/logic';
 import { applyPalette, palettes, sampleEnvelope, ThemeEditor } from '../../../assets/src/builder/ThemeEditor';
 import { Purge } from '../../../assets/src/submissions/Purge';
 import { Filters } from '../../../assets/src/submissions/Filters';
@@ -179,6 +180,18 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     await change('Data', '{"x":2}');
     await click('Apply JSON');
     expect(changed).toHaveBeenCalledWith({ x: 2 });
+  });
+  it('inserts an answer at the selected text in a message', async () => {
+    const changed = vi.fn();
+    const step = blankForm().schema.steps[0];
+    await act(async () => root.render(createElement(AnswerArea, { label: 'Message', value: 'Hello friend!', onChange: changed, steps: [step] })));
+    const input = container.querySelector('textarea')!;
+    input.focus(); input.setSelectionRange(6, 12);
+    await act(async () => input.dispatchEvent(new Event('select', { bubbles: true })));
+    const select = container.querySelector('select')!;
+    select.value = `{{${step.key}}}`;
+    await act(async () => select.dispatchEvent(new Event('change', { bubbles: true })));
+    expect(changed).toHaveBeenCalledWith(`Hello {{${step.key}}}!`);
   });
   it('keeps private settings, credentials and metadata out of the preview projection', () => {
     const form: FormDTO = blankForm();
@@ -488,9 +501,20 @@ describe('chat theme editor', () => {
     expect(changed).toHaveBeenLastCalledWith(expect.objectContaining({ style: 'classic', radius: 20 }));
   });
   it('builds a sample conversation that shows answered and pending bubbles', () => {
-    const envelope = sampleEnvelope(blankForm(), config);
+    const form = blankForm();
+    form.schema.outcomes = [{ if: { field: 'not_in_sample', op: 'is_empty' }, endingId: form.schema.endings[0]!.id }];
+    form.schema.flowPositions = [{ id: 'not_in_sample', x: 10, y: 20 }];
+    const envelope = sampleEnvelope(form, config);
     expect(envelope.form.schema.steps.map(step => step.type)).toEqual(['single_choice', 'single_choice', 'summary']);
     expect(envelope.form.schema.bot.typingSpeed).toBe('off');
+    // Form outcomes reference real field keys, which the sample schema replaces.
+    expect(envelope.form.schema.outcomes).toEqual([]);
+    expect(envelope.form.schema.experiments).toEqual([]);
+    expect(envelope.form.schema.flowPositions).toEqual([]);
+    // The sample must replay cleanly, otherwise the preview shows a validation error.
+    const result = replay(envelope.form.schema, { theme_goal: 'quote' }, { now: new Date().toISOString() }, 'partial');
+    expect(result.errors).toEqual([]);
+    expect(result.currentStepId).toBe('theme_when');
     expect(applyPalette({ wallpaper: 'dots', bubbleTails: false }, palettes()[1]!)).toMatchObject({ style: 'messaging', wallpaper: 'doodle', bubbleTails: false, primary: '#008069' });
   });
 });

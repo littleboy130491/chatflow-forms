@@ -1129,6 +1129,9 @@
     }
   ],
   "interpolation": [
+    { "name": "missing answer fallback", "text": "Hi {{name|friend}}", "answers": {}, "meta": {}, "url": false, "expected": "Hi friend" },
+    { "name": "present zero does not use fallback", "text": "{{count|none}}", "answers": { "count": 0 }, "meta": {}, "url": false, "expected": "0" },
+    { "name": "URL fallback encoded", "text": "?q={{name|a & b}}", "answers": {}, "meta": {}, "url": true, "expected": "?q=a%20%26%20b" },
     {
       "name": "text-basic",
       "text": "Halo {{nama}}, {{answer:layanan}}",

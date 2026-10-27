@@ -100,9 +100,13 @@ export function Settings({ api }: { api: AdminApi }) {
   // Each provider keeps its own fields, so switching providers never loses a saved key.
   const setAi = (patch: NonNullable<GlobalSettings['ai']>) => settings && update({ ...settings, ai: { ...settings.ai, ...patch } });
   return (
-    <main className="cff-admin">
-      <h1>{__('ChatFlow settings', 'chatflow-forms')}</h1>
-      <p>{__('Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.', 'chatflow-forms')}</p>
+    <main className="cff-admin cff-settings-page">
+      <div className="cff-page-head">
+        <div>
+          <h1>{__('ChatFlow settings', 'chatflow-forms')}</h1>
+          <p>{__('Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.', 'chatflow-forms')}</p>
+        </div>
+      </div>
       <nav className="cff-settings-nav" aria-label={__('Settings sections', 'chatflow-forms')}>
         {sections.map(item => <Button key={item.id} variant={section === item.id ? 'primary' : 'secondary'} aria-current={section === item.id ? 'page' : undefined} onClick={() => setSection(item.id)}>{item.label}</Button>)}
       </nav>

@@ -106,6 +106,23 @@ it('uses summary cards, grouped palette and an explicit responsive edit surface'
  await act(async () => { const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!; setter.call(search, 'email'); search.dispatchEvent(new Event('change', { bubbles: true })); search.dispatchEvent(new Event('input', { bubbles: true })); });
 });
 
+it('opens a field from anywhere on its flow card and keeps field actions in the editor', async () => {
+  await builder();
+  await act(async () => button('Short text').click());
+  await act(async () => button('Back to flow').click());
+  const cards = () => [...host.querySelectorAll<HTMLElement>('article.cff-card')];
+  expect(cards()).toHaveLength(2);
+  // The card is one hit target: no action row, and the select checkbox stays the only control.
+  expect(host.querySelector('.cff-flow-actions')).toBeNull();
+  expect(cards()[0]!.querySelector('.cff-card-open')).not.toBeNull();
+  expect([...cards()[0]!.querySelectorAll('button')].map(b => b.className)).toEqual(['cff-card-open']);
+  await act(async () => cards()[0]!.querySelector<HTMLButtonElement>('.cff-card-open')!.click());
+  expect(cards()[0]!.classList.contains('is-selected')).toBe(true);
+  expect(host.querySelector('.cff-inspector-panel')?.classList.contains('is-open')).toBe(true);
+  const head = host.querySelector('.cff-inspector-head')!;
+  expect([...head.querySelectorAll('button')].map(b => b.textContent)).toEqual(['Duplicate field', 'Delete field']);
+});
+
 import { Share } from '../../assets/src/builder/Share';
 import { toDataURL } from 'qrcode';
 vi.mock('qrcode', () => ({ toDataURL: vi.fn(async () => 'data:image/png;base64,test') }));
@@ -285,7 +302,7 @@ it('uses readable ending names while preserving IDs and hiding technical redirec
  const form = blankForm(), id = form.schema.endings[0]!.id;
  await render(<EndingsEditor form={form} onChange={vi.fn()} />);
  expect(host.querySelector('select option')?.textContent).toBe('Ending 1 · Thank you!');
- expect(host.querySelector('legend')?.textContent).toBe('Ending 1 · Thank you!');
+ expect(host.querySelector('.cff-ending h3')?.textContent).toBe('Ending 1 · Thank you!');
  expect(host.querySelector('select option')?.getAttribute('value')).toBe(id);
  expect([...host.querySelectorAll('label')].some(l => l.textContent?.startsWith('Allowed external redirect hosts'))).toBe(false);
  const technical = [...host.querySelectorAll('details')].find(d => d.querySelector('code')?.textContent === id)!;

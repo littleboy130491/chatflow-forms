@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { act, type ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AdminConfig, FormDTO } from '../../../assets/src/builder/api';
+import type { AdminConfig, FormDTO, FormSchema } from '../../../assets/src/builder/api';
 import { blankForm, v1Types } from '../../../assets/src/builder/model';
 import { builderUrlFor, mountBuilder, themeLabels, typingSpeedLabels } from '../../../assets/src/builder/index';
+import { actionText, conditionText } from '../../../assets/src/builder/LogicOverview';
 import { shortcode } from '../../../assets/src/builder/Share';
 vi.mock('@wordpress/components', async () => {
   const { createElement: h } = await import('@wordpress/element');
@@ -112,6 +113,24 @@ describe('builder helpers', () => {
     expect(Object.keys(typingSpeedLabels)).toEqual(['off', 'fast', 'normal', 'slow']);
     expect(Object.keys(themeLabels)).toEqual(['light', 'dark', 'auto']);
   });
+  it('summarises rules as readable sentences instead of JSON', () => {
+    const form = blankForm();
+    const first = form.schema.steps[0]!;
+    const second = { ...first, id: 'stp_layanan', key: 'layanan', label: 'Layanan' };
+    const schema: FormSchema = { ...form.schema, steps: [first, second] };
+    expect(conditionText({ field: first.key, op: 'eq', value: 'Belum pernah' }, schema)).toBe(
+      `${first.label} equals “Belum pernah”`,
+    );
+    expect(
+      conditionText({ all: [{ field: first.key, op: 'eq', value: 'a' }, { field: 'layanan', op: 'is_empty' }] }, schema),
+    ).toBe(`${first.label} equals “a” and Layanan is empty`);
+    expect(conditionText({ any: [] }, schema)).toBe('always');
+    expect(actionText({ action: 'jump', to: second.id }, schema)).toBe('Jump to field “Layanan”');
+    expect(actionText({ action: 'end', to: schema.endings[0]!.id }, schema)).toContain('End with');
+    expect(actionText({ action: 'set_variable', key: 'score_1', operation: 'add', value: 2 }, schema)).toBe(
+      'Set variable: score_1 += 2',
+    );
+  });
 });
 
 describe('builder screen', () => {
@@ -133,7 +152,7 @@ describe('builder screen', () => {
     expect(button('Delete field').disabled).toBe(true);
     await act(async () => button('Short text').click());
     expect(host.querySelectorAll('article.cff-card')).toHaveLength(2);
-    await act(async () => [...host.querySelectorAll('button')].filter((b) => b.textContent === 'Delete field')[1]!.click());
+    await act(async () => button('Delete field').click());
     expect(confirm).toHaveBeenCalled();
     expect(host.querySelectorAll('article.cff-card')).toHaveLength(1);
     await act(async () => button('Save draft').click());
