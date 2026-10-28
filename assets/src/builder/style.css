@@ -3095,3 +3095,27 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+/* A control that is last in its wrapper drops its bottom margin, so wrappers that sit
+   between other controls carry the gap themselves. */
+.cff-admin :is(.cff-media-id, .cff-commit-field, .cff-answer-area, .cff-json-editor, .cff-ending):not(:last-child) {
+	margin-bottom: 18px;
+}
+
+.cff-admin .cff-json-editor {
+	display: grid;
+	gap: 8px;
+	justify-items: start;
+}
+
+.cff-admin .cff-json-editor > * {
+	width: 100%;
+}
+
+.cff-admin .cff-json-editor > .components-button {
+	width: auto;
+}
+
+.cff-admin .cff-power-item > .components-button {
+	margin-top: 12px;
+}

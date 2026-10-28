@@ -546,6 +546,7 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
         </section>
       ))}
       <Button
+        variant="secondary"
         onClick={() =>
           onChange({
             ...form,

@@ -2,7 +2,7 @@
 /** @jsx React.createElement */
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
-import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import {
   Button,
   TextControl,
@@ -126,7 +126,7 @@ export function AnswerArea({ label, value, onChange, steps }: { label: string; v
   };
   // onSelect alone is unreliable (React derives it from global focus state); blur
   // also captures the caret when the admin moves to the "Insert an answer" menu.
-  return <div ref={container} onSelect={(event) => remember(event.target)} onBlur={(event) => remember(event.target)}>
+  return <div ref={container} className="cff-answer-area" onSelect={(event) => remember(event.target)} onBlur={(event) => remember(event.target)}>
     <Area label={label} value={value} onChange={onChange} />
     <Field label={__('Text to use if the answer is missing (optional)', 'chatflow-forms')} value={fallback} onChange={setFallback} />
     <Select label={__('Insert an answer', 'chatflow-forms')} value="" choices={[
@@ -191,7 +191,7 @@ export function JsonEditor<T>({
     }
   };
   return (
-    <Fragment>
+    <div className="cff-json-editor">
       <Area label={label} value={draft ?? JSON.stringify(value, null, 2)} onChange={setDraft} />
       <Button variant="secondary" onClick={apply}>
         {__('Apply JSON', 'chatflow-forms')}
@@ -201,6 +201,6 @@ export function JsonEditor<T>({
           {error}
         </Notice>
       )}
-    </Fragment>
+    </div>
   );
 }
