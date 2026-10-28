@@ -39,7 +39,7 @@ final class EventCollector {
 				$path = ( new Engine() )->replay( $form->schema(), \ChatFlow\Logic\Experiments::inputs( $context['_answers'] ?? array(), $form->schema() ), $context );
 				foreach ( $body['events'] as $event ) {
 					$step = $event['stepId'] ?? '';
-					if ( '' === $step ? 'view' !== $event['event'] : ! in_array( $step, $path['visited'], true ) ) {
+					if ( '' === $step ? ! in_array( $event['event'], array( 'view', 'abandon' ), true ) : ! in_array( $step, $path['visited'], true ) ) {
 						return Database::error( 'cff_events_step', 'Event step does not belong to the session path.', 422 ); }
 					if ( 'answer' === $event['event'] ) {
 						$answered = false;

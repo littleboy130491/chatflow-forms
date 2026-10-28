@@ -47,9 +47,23 @@ export function Markdown({ text }: { text: string }) {
   parts.push(text.slice(last));
   return <>{parts}</>;
 }
-export function answerLabel(step: Step, value: unknown, phrase: (key: string) => string): string {
+/** Date and number answers read naturally in the visitor's locale; stored values stay ISO/raw. */
+function localizedValue(step: Step, value: unknown, locale?: string): string | null {
+  try {
+    if (step.type === 'date' && typeof value === 'string') {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+      if (!match) return null;
+      return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' }).format(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+    }
+    if (step.type === 'number' && typeof value === 'number' && Number.isFinite(value)) return new Intl.NumberFormat(locale).format(value);
+  } catch { /* Unknown locale tag: fall back to the raw value. */ }
+  return null;
+}
+export function answerLabel(step: Step, value: unknown, phrase: (key: string) => string, locale?: string): string {
   if (value === undefined || value === null || value === '') return phrase('empty');
   if (typeof value === 'boolean') return phrase(value ? 'yes' : 'no');
+  const formatted = localizedValue(step, value, locale);
+  if (formatted !== null) return formatted;
   if (step.type === 'file_upload') return phrase('uploadSaved');
   if (step.type === 'address' && value && typeof value === 'object' && !Array.isArray(value)) return Object.values(value).filter(v => typeof v === 'string').join(', ');
   const label = (v: unknown) => {

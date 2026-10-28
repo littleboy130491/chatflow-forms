@@ -16,7 +16,10 @@ export async function captchaToken(config: EngagementConfig['captcha'], containe
   if (!config.siteKey) throw new Error('captchaUnavailable');
   if (config.provider === 'recaptcha') {
     await load(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(config.siteKey)}`);
-    return new Promise((resolve, reject) => { const timer = setTimeout(() => reject(new Error('captchaUnavailable')), 120000); window.grecaptcha?.ready(() => { void window.grecaptcha!.execute(config.siteKey, { action: 'cff_submit' }).then(token => { clearTimeout(timer); resolve(token); }, error => { clearTimeout(timer); reject(error); }); }); });
+    // A blocked or replaced script can "load" without defining grecaptcha; fail fast so the visitor can retry.
+    const recaptcha = window.grecaptcha;
+    if (!recaptcha) throw new Error('captchaUnavailable');
+    return new Promise((resolve, reject) => { const timer = setTimeout(() => reject(new Error('captchaUnavailable')), 120000); recaptcha.ready(() => { void recaptcha.execute(config.siteKey, { action: 'cff_submit' }).then(token => { clearTimeout(timer); resolve(token); }, error => { clearTimeout(timer); reject(error); }); }); });
   }
   const provider = config.provider;
   await load(provider === 'turnstile' ? 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit' : 'https://js.hcaptcha.com/1/api.js?render=explicit');

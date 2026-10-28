@@ -155,7 +155,9 @@ describe('builder screen', () => {
     await act(async () => button('Delete field').click());
     expect(confirm).toHaveBeenCalled();
     expect(host.querySelectorAll('article.cff-card')).toHaveLength(1);
-    await act(async () => button('Save draft').click());
+    // There is no Save button: drafts autosave, and Ctrl/Cmd+S saves immediately.
+    expect([...host.querySelectorAll('button')].some((item) => item.textContent === 'Save draft')).toBe(false);
+    await act(async () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true, cancelable: true })));
     expect(fetch.mock.calls[0]?.[0]).toBe(config.restUrl + 'admin/forms');
     expect(window.location.search).toBe('?page=cff-builder&formId=31');
     // Publish dialog takes focus and gives it back on Escape.

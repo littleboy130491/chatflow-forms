@@ -1153,3 +1153,216 @@ Text to use if the answer is missing (optional)|Teks jika jawaban tidak tersedia
 Missing answers use the optional fallback, or appear blank if it is empty.|Jawaban yang tidak tersedia menggunakan teks pengganti, atau tampil kosong jika teks tersebut tidak diisi.
 Human contact during the conversation|Kontak manusia selama percakapan
 Conversation endings|Akhir percakapan
+Connect a step to a later step or ending to create a branch. The branch starts with an editable “answer equals” condition; open the source rule to change it. Click a branch and press Delete or Backspace to remove it. Drag nodes to arrange the map.|Hubungkan langkah ke langkah berikutnya atau akhir untuk membuat cabang. Cabang dimulai dengan kondisi “jawaban sama dengan” yang dapat diedit; buka aturan sumber untuk mengubahnya. Klik cabang lalu tekan Delete atau Backspace untuk menghapusnya. Seret node untuk menata peta.
+Edit raw HTML / merge tags|Edit HTML mentah / tag gabungan
+Body HTML|HTML isi
+Close the conversation|Tutup percakapan
+Remove this ending and update rules, outcomes and the default ending that reference it?|Hapus akhir ini dan perbarui aturan, hasil, dan akhir bawaan yang merujuknya?
+Include page IDs must be comma-separated positive numbers.|ID halaman yang disertakan harus berupa angka positif yang dipisahkan koma.
+Exclude page IDs must be comma-separated positive numbers.|ID halaman yang dikecualikan harus berupa angka positif yang dipisahkan koma.
+Webhook %d|Webhook %d
+Option image|Gambar pilihan
+Option %d|Pilihan %d
+Maximum bytes per file (blank = 10 MiB)|Ukuran maksimum per berkas dalam byte (kosong = 10 MiB)
+Rules run in order. A jump or end stops at the first match; other matching actions all apply.|Aturan dijalankan berurutan. Lompat atau akhiri berhenti pada kecocokan pertama; tindakan lain yang cocok semuanya diterapkan.
+Scoring variable|Variabel skor
+Rules run from top to bottom. A jump or end stops at the first one that matches; other matching show, hide, require and scoring actions all apply.|Aturan dijalankan dari atas ke bawah. Lompat atau akhiri berhenti pada aturan pertama yang cocok; tindakan tampilkan, sembunyikan, wajibkan, dan skor lain yang cocok semuanya diterapkan.
+Use image|Gunakan gambar
+Replace image|Ganti gambar
+Choose image|Pilih gambar
+Delete this field and remove rules, outcomes and variants that reference it?|Hapus kolom ini beserta aturan, hasil, dan varian yang merujuknya?
+Unpublished changes|Perubahan belum diterbitkan
+Go to field|Buka kolom
+Retry loading the published version|Coba muat ulang versi yang diterbitkan
+Delete selected fields and remove rules, outcomes and variants that reference them?|Hapus kolom terpilih beserta aturan, hasil, dan varian yang merujuknya?
+Avatar image|Gambar avatar
+These links use the published version. Your draft changes will appear here after you publish.|Tautan ini menggunakan versi yang diterbitkan. Perubahan draf Anda akan muncul di sini setelah diterbitkan.
+Option 1|Pilihan 1
+Choose both dates.|Pilih kedua tanggal.
+The start date must be before the end date.|Tanggal mulai harus sebelum tanggal akhir.
+Choose a date range of 367 days or less.|Pilih rentang tanggal maksimal 367 hari.
+Older than days|Lebih lama dari (hari)
+Ignored while a date range is set.|Diabaikan selama rentang tanggal diatur.
+Blank = 360 days.|Kosong = 360 hari.
+Automatic (recommended)|Otomatis (disarankan)
+Direct connection (no proxy)|Koneksi langsung (tanpa proxy)
+Cloudflare|Cloudflare
+Custom trusted proxy|Proxy tepercaya kustom
+X-Forwarded-For|X-Forwarded-For
+X-Real-IP|X-Real-IP
+CF-Connecting-IP (Cloudflare)|CF-Connecting-IP (Cloudflare)
+Fullpage base must be lowercase letters, numbers or hyphens.|Basis halaman penuh harus berupa huruf kecil, angka, atau tanda hubung.
+Retention days must be a whole number between 1 and 36,500.|Hari retensi harus bilangan bulat antara 1 dan 36.500.
+Partial retention days must be a whole number between 1 and 36,500.|Hari retensi parsial harus bilangan bulat antara 1 dan 36.500.
+Attribution cookie days must be a whole number between 1 and 90.|Hari cookie atribusi harus bilangan bulat antara 1 dan 90.
+Minimum completion seconds must be zero or more.|Detik penyelesaian minimum harus nol atau lebih.
+Rate limit must be at least 1.|Batas laju minimal 1.
+Rate window must be at least 1 second.|Jendela laju minimal 1 detik.
+reCAPTCHA minimum score must be between 0 and 1.|Skor minimum reCAPTCHA harus antara 0 dan 1.
+Spam defaults|Bawaan spam
+Resent %1$d of %2$d submissions; %3$d failed.|Mengirim ulang %1$d dari %2$d kiriman; %3$d gagal.
+Overridden · use site default|Diganti · gunakan bawaan situs
+Uses site default|Memakai bawaan situs
+Enter a stored value.|Masukkan nilai tersimpan.
+Use 255 characters or fewer.|Gunakan maksimal 255 karakter.
+Another option already uses this value.|Pilihan lain sudah memakai nilai ini.
+Applied when you leave the field. Rules that compare against this value are updated; exports and integrations see the new value.|Diterapkan saat Anda keluar dari kolom. Aturan yang membandingkan nilai ini ikut diperbarui; ekspor dan integrasi memakai nilai baru.
+Start with a lowercase letter; use only lowercase letters, numbers and underscores (64 max).|Awali dengan huruf kecil; gunakan hanya huruf kecil, angka, dan garis bawah (maksimal 64).
+Another field already uses this key.|Kolom lain sudah memakai kunci ini.
+Applied when you leave the field. Rules, merge tags, formulas, notifications and integrations that use the old key are updated. Exports use the new key.|Diterapkan saat Anda keluar dari kolom. Aturan, tag gabungan, rumus, notifikasi, dan integrasi yang memakai kunci lama ikut diperbarui. Ekspor memakai kunci baru.
+Another variable already uses this key.|Variabel lain sudah memakai kunci ini.
+Applied when you leave the field. Rules, outcomes and formulas that use this variable are updated.|Diterapkan saat Anda keluar dari kolom. Aturan, hasil, dan rumus yang memakai variabel ini ikut diperbarui.
+Remove this variable? Rules and outcomes that use it are removed, and notifications that depend on it are switched off.|Hapus variabel ini? Aturan dan hasil yang memakainya akan dihapus, dan notifikasi yang bergantung padanya dinonaktifkan.
+Delete this field? Rules, outcomes and variants that use it are removed, and notifications or integrations that depend on it are switched off.|Hapus kolom ini? Aturan, hasil, dan varian yang memakainya akan dihapus, dan notifikasi atau integrasi yang bergantung padanya dinonaktifkan.
+Draft not saved|Draf belum tersimpan
+Unsaved changes|Perubahan belum disimpan
+Draft saved %s|Draf tersimpan %s
+%d problems will stop this version from publishing:|%d masalah akan mencegah versi ini diterbitkan:
+Changes since live version %d|Perubahan sejak versi live %d
+No changes since the live version.|Tidak ada perubahan sejak versi live.
+This is the first published version.|Ini adalah versi pertama yang diterbitkan.
+Form settings|Pengaturan formulir
+Delete the selected fields? Rules, outcomes and variants that use them are removed, and notifications or integrations that depend on them are switched off.|Hapus kolom terpilih? Aturan, hasil, dan varian yang memakainya akan dihapus, dan notifikasi atau integrasi yang bergantung padanya dinonaktifkan.
+Groups label related fields in this builder to keep long forms organised. Visitors do not see them.|Grup menandai kolom yang saling terkait di builder agar formulir panjang tetap rapi. Pengunjung tidak melihatnya.
+Form name: “%1$s” → “%2$s”|Nama formulir: “%1$s” → “%2$s”
+Added field: %s|Kolom ditambahkan: %s
+Edited field: %s|Kolom diubah: %s
+Removed field: %s|Kolom dihapus: %s
+Changed the order of fields|Urutan kolom diubah
+Added ending: %s|Akhir ditambahkan: %s
+Edited ending: %s|Akhir diubah: %s
+Removed ending: %s|Akhir dihapus: %s
+Assistant name and avatar|Nama dan avatar asisten
+A/B test|Uji A/B
+Changed: %s|Diubah: %s
+Appearance|Tampilan
+Wording|Teks
+Completion|Penyelesaian
+Saving and resume|Penyimpanan dan lanjutkan
+Settings changed: %s|Pengaturan diubah: %s
+Site defaults|Bawaan situs
+Defaults for every form on this site, plus site-wide services. A form can override supported defaults in its Form settings tab.|Bawaan untuk setiap formulir di situs ini, beserta layanan tingkat situs. Formulir dapat mengganti bawaan yang didukung di tab Pengaturan formulir.
+After the last question|Setelah pertanyaan terakhir
+Submit automatically (no review)|Kirim otomatis (tanpa tinjauan)
+Show a Submit button|Tampilkan tombol Kirim
+Show answers for review, then Submit|Tampilkan jawaban untuk ditinjau, lalu Kirim
+If an automatic submit fails (offline, spam check or server error), visitors still get a Retry button.|Jika pengiriman otomatis gagal (offline, pemeriksaan spam, atau galat server), pengunjung tetap mendapat tombol Coba lagi.
+Tell visitors their answers are stored on this device|Beri tahu pengunjung bahwa jawaban mereka disimpan di perangkat ini
+Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy, or turn on the notice above for forms that collect sensitive data or are often used on shared computers.|Fitur lanjutkan menyimpan jawaban di perangkat ini. Cantumkan penyimpanan data pribadi di kebijakan privasi dan cookie Anda, atau aktifkan pemberitahuan di atas untuk formulir yang mengumpulkan data sensitif atau sering dipakai di komputer bersama.
+Add new form|Tambah formulir baru
+Add selected answers to the link|Tambahkan jawaban terpilih ke tautan
+Add the response ID to the link|Tambahkan ID jawaban ke tautan
+Allowed file types (e.g. image/png, application/pdf; blank = default)|Jenis berkas yang diizinkan (mis. image/png, application/pdf; kosong = bawaan)
+Also notify when a visitor leaves contact details but does not finish|Beri tahu juga saat pengunjung meninggalkan kontak tetapi tidak menyelesaikan formulir
+Answers to add (field keys, comma-separated)|Jawaban yang ditambahkan (kunci kolom, dipisahkan koma)
+Campaign tracking (UTM)|Pelacakan kampanye (UTM)
+Confetti when the form is completed|Konfeti saat formulir selesai
+Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in Site defaults first. Marketing and ad connectors only send when the chosen consent question was answered yes.|Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Bawaan situs terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya.
+Contact button (WhatsApp, phone, email)|Tombol kontak (WhatsApp, telepon, email)
+Custom CSS (applies only inside this form)|CSS kustom (hanya berlaku di dalam formulir ini)
+Custom font stack (CSS font-family)|Susunan font kustom (CSS font-family)
+Custom pattern (regular expression, advanced)|Pola kustom (ekspresi reguler, lanjutan)
+Device default (no external requests)|Bawaan perangkat (tanpa permintaan eksternal)
+Example answers for the preview (JSON)|Contoh jawaban untuk pratinjau (JSON)
+Extras|Tambahan
+Fields without an override follow Site defaults.|Kolom tanpa penggantian mengikuti Bawaan situs.
+Font|Font
+Formula (e.g. answer.price * answer.quantity + variable.score)|Rumus (mis. answer.price * answer.quantity + variable.score)
+Maintenance and data cleanup. Export responses from Submissions; import a form from Forms → Create form.|Pemeliharaan dan pembersihan data. Ekspor jawaban dari Kiriman; impor formulir dari Formulir → Buat formulir.
+Or preview with a real response (response number, optional)|Atau pratinjau dengan jawaban nyata (nomor jawaban, opsional)
+Parameter or cookie name (blank = field key)|Nama parameter atau cookie (kosong = kunci kolom)
+Partial/abandoned retention days (blank = use site default)|Hari retensi parsial/ditinggalkan (kosong = pakai bawaan situs)
+Preview and send a test|Pratinjau dan kirim uji
+Remember where visitors first came from (UTM and ad click IDs)|Ingat dari mana pengunjung pertama kali datang (UTM dan ID klik iklan)
+The captcha provider and its credentials are configured in Site defaults; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.|Penyedia captcha dan kredensialnya diatur di Bawaan situs; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai.
+Use my theme’s font|Gunakan font tema saya
+Use site default|Gunakan bawaan situs
+Use site default (%s)|Gunakan bawaan situs (%s)
+Wait before redirecting (seconds)|Tunggu sebelum mengalihkan (detik)
+Where the value comes from|Asal nilai
+Address prefix for full-page forms (e.g. chat → yoursite.com/chat/form-name)|Awalan alamat formulir halaman penuh (mis. chat → situsanda.com/chat/nama-formulir)
+All text colours are easy to read (WCAG AA).|Semua warna teks mudah dibaca (WCAG AA).
+Background jobs|Tugas latar belakang
+Based on|Berdasarkan
+Colour contrast|Kontras warna
+Detected|Terdeteksi
+Email delivery plugin|Plugin pengiriman email
+Field types available|Jenis kolom tersedia
+File uploads and CSV exports need a writable folder outside the public web root. Add define( 'CFF_PRIVATE_DIR', '/path/outside/web/root' ); to wp-config.php.|Unggahan berkas dan ekspor CSV memerlukan folder yang dapat ditulis di luar root web publik. Tambahkan define( 'CFF_PRIVATE_DIR', '/path/outside/web/root' ); ke wp-config.php.
+HTTPS|HTTPS
+Not configured|Belum diatur
+Not detected|Tidak terdeteksi
+Notifications use WordPress mail, which often lands in spam. An SMTP plugin (for example WP Mail SMTP or FluentSMTP) makes delivery reliable.|Notifikasi memakai email WordPress, yang sering masuk spam. Plugin SMTP (misalnya WP Mail SMTP atau FluentSMTP) membuat pengiriman lebih andal.
+On|Aktif
+PHP version|Versi PHP
+Private file storage (uploads and exports)|Penyimpanan berkas privat (unggahan dan ekspor)
+Ready|Siap
+Sender, delay and saved templates|Pengirim, penundaan, dan templat tersimpan
+Show all contrast ratios|Tampilkan semua rasio kontras
+Some text may be hard to read. Adjust these colours:|Sebagian teks mungkin sulit dibaca. Sesuaikan warna berikut:
+Visitors see a "connection is not secure" warning in the chat. Turn on HTTPS for this site before collecting personal data.|Pengunjung melihat peringatan "koneksi tidak aman" di chat. Aktifkan HTTPS untuk situs ini sebelum mengumpulkan data pribadi.
+WP-Cron only runs when someone visits the site, so emails and exports can be delayed on quiet sites. A real server cron job fixes this.|WP-Cron hanya berjalan saat ada yang mengunjungi situs, sehingga email dan ekspor bisa tertunda di situs yang sepi. Cron job server yang sebenarnya mengatasi hal ini.
+WordPress version|Versi WordPress
+Your IP address as ChatFlow sees it|Alamat IP Anda menurut ChatFlow
+Bahasa Indonesia|Bahasa Indonesia
+Change the wording|Ubah teks
+Custom phrase “%s”|Frasa kustom “%s”
+Date range|Rentang tanggal
+English|English
+Find a phrase|Cari frasa
+Floating button, popup and auto-open options are under “How the form appears” above.|Opsi tombol mengambang, popup, dan buka otomatis ada di “Cara formulir ditampilkan” di atas.
+Floating chat button (launcher)|Tombol chat mengambang (launcher)
+Form language|Bahasa formulir
+From date|Dari tanggal
+How the form appears|Cara formulir ditampilkan
+Inside the page content (inline)|Di dalam konten halaman (inline)
+Its own full page|Halaman penuh tersendiri
+Language and wording|Bahasa dan teks
+Leave a box empty to use the default shown in it. %d phrases changed.|Biarkan kotak kosong untuk memakai teks bawaan yang ditampilkan. %d frasa diubah.
+No phrase matches that search.|Tidak ada frasa yang cocok.
+Popup over the page|Popup di atas halaman
+Publish & share|Terbitkan & bagikan
+Same as the page (site language)|Sama dengan halaman (bahasa situs)
+Sets the language of the buttons, hints and messages the chat shows on its own (Continue, Skip, Start over, error messages). Your questions and endings are written on the Build tab.|Mengatur bahasa tombol, petunjuk, dan pesan yang ditampilkan chat sendiri (Lanjut, Lewati, Mulai ulang, pesan galat). Pertanyaan dan akhir formulir Anda ditulis di tab Bangun.
+Stop accepting responses after (site time, blank = never)|Berhenti menerima jawaban setelah (waktu situs, kosong = tidak pernah)
+To date|Sampai tanggal
+A/B test variants|Varian uji A/B
+Add a field|Tambah kolom
+Add “%1$s” (%2$s)|Tambahkan “%1$s” (%2$s)
+Analytics filters|Filter analitik
+Answer to question|Jawaban untuk pertanyaan
+Any question|Pertanyaan apa saja
+Automatic placement needs a published form.|Penempatan otomatis memerlukan formulir yang sudah diterbitkan.
+Average time to complete|Rata-rata waktu penyelesaian
+Choose a form above to see its question-by-question funnel and answer breakdowns.|Pilih formulir di atas untuk melihat corong per pertanyaan dan rincian jawabannya.
+Closed the chat|Menutup chat
+Completed responses only. Multiple-choice answers can count more than once per response.|Hanya jawaban yang selesai. Jawaban pilihan ganda bisa dihitung lebih dari sekali per jawaban.
+Condition|Kondisi
+Dates use your site time zone (%s).|Tanggal memakai zona waktu situs Anda (%s).
+Deleted form ID (for responses of a form that no longer exists)|ID formulir yang dihapus (untuk jawaban dari formulir yang sudah tidak ada)
+How people answered|Cara orang menjawab
+How these numbers are counted|Cara angka ini dihitung
+Leave empty to show on every page.|Biarkan kosong untuk tampil di semua halaman.
+Never show on these pages|Jangan tampilkan di halaman ini
+No published pages match.|Tidak ada halaman terbit yang cocok.
+Only show on these pages|Hanya tampilkan di halaman ini
+Page #%d|Halaman #%d
+Provider field name|Nama kolom penyedia
+Question|Pertanyaan
+Questions where visitors stopped most|Pertanyaan tempat pengunjung paling sering berhenti
+Remove|Hapus
+Remove %s|Hapus %s
+Saw it|Melihat
+Search pages and posts|Cari halaman dan pos
+Send answers to provider fields|Kirim jawaban ke kolom penyedia
+Show report|Tampilkan laporan
+Started|Mulai
+Stopped here|Berhenti di sini
+These win over the list above.|Ini mengalahkan daftar di atas.
+To|Sampai
+Unfinished (partial)|Belum selesai (parsial)
+Views|Tayangan
+Visitors who saw and answered each question. “Stopped here” is seen minus answered; branches can skip questions, so it is a guide rather than proof of abandonment.|Pengunjung yang melihat dan menjawab setiap pertanyaan. “Berhenti di sini” adalah yang melihat dikurangi yang menjawab; percabangan dapat melewati pertanyaan, jadi ini panduan, bukan bukti pengunjung meninggalkan formulir.
+Went back|Kembali
+Where visitors came from|Asal pengunjung
+Where visitors stop|Tempat pengunjung berhenti

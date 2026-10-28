@@ -41,36 +41,34 @@ final class FormsTable extends \WP_List_Table {
 		if ( ! current_user_can( 'cff_manage_forms' ) ) {
 			return array();
 		}
-		return array(
-			'all'     => '<a href="' . esc_url( add_query_arg( 'page', 'cff-forms', admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'All', 'chatflow-forms' ) . '</a>',
-			'draft'   => '<a href="' . esc_url(
-				add_query_arg(
-					array(
-						'page'   => 'cff-forms',
-						'status' => 'draft',
-					),
-					admin_url( 'admin.php' )
-				)
-			) . '">' . esc_html__( 'Draft', 'chatflow-forms' ) . '</a>',
-			'publish' => '<a href="' . esc_url(
-				add_query_arg(
-					array(
-						'page'   => 'cff-forms',
-						'status' => 'publish',
-					),
-					admin_url( 'admin.php' )
-				)
-			) . '">' . esc_html__( 'Live', 'chatflow-forms' ) . '</a>',
-			'trash'   => '<a href="' . esc_url(
-				add_query_arg(
-					array(
-						'page'   => 'cff-forms',
-						'status' => 'trash',
-					),
-					admin_url( 'admin.php' )
-				)
-			) . '"' . ( $this->isTrashView() ? ' class="current" aria-current="page"' : '' ) . '>' . esc_html__( 'Trash', 'chatflow-forms' ) . '</a>',
-		);
+		$current = $this->currentStatus();
+		$current = '' === $current ? 'all' : $current;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
+		$search  = isset( $_GET['s'] ) && is_string( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$views   = array();
+		foreach ( array(
+			'all'     => __( 'All', 'chatflow-forms' ),
+			'draft'   => __( 'Draft', 'chatflow-forms' ),
+			'publish' => __( 'Live', 'chatflow-forms' ),
+			'trash'   => __( 'Trash', 'chatflow-forms' ),
+		) as $view => $label ) {
+			$args = array( 'page' => 'cff-forms' );
+			if ( 'all' !== $view ) {
+				$args['status'] = $view;
+			}
+			if ( '' !== $search ) {
+				$args['s'] = $search;
+			}
+			$current_attr = $view === $current ? ' class="current" aria-current="page"' : '';
+			$views[ $view ] = '<a href="' . esc_url( add_query_arg( $args, admin_url( 'admin.php' ) ) ) . '"' . $current_attr . '>' . esc_html( $label ) . '</a>';
+		}
+		return $views;
+	}
+
+	private function currentStatus(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
+		$status = isset( $_GET['status'] ) && is_string( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : '';
+		return in_array( $status, array( 'draft', 'publish', 'trash' ), true ) ? $status : '';
 	}
 
 	public function isTrashView(): bool {
@@ -116,11 +114,16 @@ final class FormsTable extends \WP_List_Table {
 			}
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
+				$display   = $form->settings()['display'] ?? array();
+				$mode      = in_array( $display['mode'] ?? 'inline', array( 'inline', 'fullpage', 'launcher', 'popup' ), true ) ? $display['mode'] : 'inline';
+				$position  = ( 'launcher' === $mode || 'popup' === $mode ) && 'left' === ( $display['launcher']['position'] ?? 'right' ) ? ' position="left"' : '';
+				$shortcode = '[chatflow id="' . $form->id() . '" mode="' . $mode . '"' . $position . ']';
 				$this->items[] = array_merge(
 					array(
-						'id'     => $form->id(),
-						'name'   => $form->title(),
-						'status' => $form->status(),
+						'id'        => $form->id(),
+						'name'      => $form->title(),
+						'status'    => $form->status(),
+						'shortcode' => $shortcode,
 					),
 					Statistics::get( $form->id() )
 				);
@@ -162,8 +165,8 @@ final class FormsTable extends \WP_List_Table {
 	/** @param array<string,mixed> $item */
 	public function column_default( $item, $column_name ): string {
 		if ( 'shortcode' === $column_name ) {
-			$shortcode = '[chatflow id="' . (int) $item['id'] . '"]';
-			return '<code>' . esc_html( $shortcode ) . '</code> ' . $this->button( $item['id'], 'copy', __( 'Copy', 'chatflow-forms' ) );
+			$shortcode = (string) ( $item['shortcode'] ?? '[chatflow id="' . (int) $item['id'] . '"]' );
+			return '<code>' . esc_html( $shortcode ) . '</code> ' . $this->button( $item['id'], 'copy', __( 'Copy', 'chatflow-forms' ), $shortcode );
 		}
 		if ( 'status' === $column_name ) {
 			$labels = array(
@@ -174,6 +177,14 @@ final class FormsTable extends \WP_List_Table {
 			$status = (string) ( $item['status'] ?? 'draft' );
 			$class  = 'publish' === $status ? 'is-live' : ( 'trash' === $status ? 'is-trash' : 'is-draft' );
 			return '<span class="cff-status-pill ' . esc_attr( $class ) . '">' . esc_html( $labels[ $status ] ?? __( 'Draft', 'chatflow-forms' ) ) . '</span>';
+		}
+		if ( 'lastSubmissionAt' === $column_name ) {
+			$value = $item[ $column_name ] ?? null;
+			if ( ! is_string( $value ) || '' === $value ) {
+				return '—';
+			}
+			$timestamp = strtotime( $value . ' UTC' );
+			return esc_html( false === $timestamp ? $value : wp_date( 'M j, Y H:i', $timestamp ) );
 		}
 		$value = $item[ $column_name ] ?? '—';
 		return esc_html( (string) $value ) . ( 'completionRate' === $column_name ? '%' : '' );
@@ -187,7 +198,11 @@ final class FormsTable extends \WP_List_Table {
 		esc_html_e( 'No forms found.', 'chatflow-forms' );
 	}
 
-	private function button( int $id, string $action, string $label ): string {
-		return '<button type="button" class="button-link" data-cff-action="' . esc_attr( $action ) . '" data-form-id="' . esc_attr( (string) $id ) . '">' . esc_html( $label ) . '</button>';
+	private function button( int $id, string $action, string $label, ?string $shortcode = null ): string {
+		$data = ' data-cff-action="' . esc_attr( $action ) . '" data-form-id="' . esc_attr( (string) $id ) . '"';
+		if ( null !== $shortcode ) {
+			$data .= ' data-cff-shortcode="' . esc_attr( $shortcode ) . '"';
+		}
+		return '<button type="button" class="button-link"' . $data . '>' . esc_html( $label ) . '</button>';
 	}
 }

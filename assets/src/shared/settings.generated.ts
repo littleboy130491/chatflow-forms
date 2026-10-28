@@ -43,6 +43,10 @@ export interface ChatFlowPrivateFormSettingsV1 {
   phrases?: {
     [k: string]: string;
   };
+  /**
+   * Language of the built-in visitor phrases (buttons, hints, errors). site follows the page language.
+   */
+  language?: "site" | "en" | "id";
   completion?: {
     defaultEndingId: string;
     /**
@@ -181,6 +185,10 @@ export interface ChatFlowPrivateFormSettingsV1 {
           string,
           string
         ];
+    /**
+     * What happens after the last question: off submits automatically, button shows only a Submit button, show lists the answers for review first.
+     */
+    review?: "off" | "button" | "show";
   };
   sessions?: {
     magicLinks?: {
@@ -195,6 +203,10 @@ export interface ChatFlowPrivateFormSettingsV1 {
     resumeDays?: number;
     abandonDays?: number;
     deletePartialOnRestart?: boolean;
+    /**
+     * Tell visitors in the chat that resumable answers are stored on their device. Off by default.
+     */
+    storageNotice?: boolean;
   };
   limits?: {
     requireLogin?: boolean;

@@ -60,8 +60,9 @@ export const actionLabels: Record<(typeof actions)[number], string> = {
   set_variable: __('Set variable', 'chatflow-forms'),
 };
 const actionChoices = () => actions.map((action) => ({ value: action, label: actionLabels[action] }));
-const sourceLabels: Record<'answer' | 'hidden' | 'url', string> = {
+const sourceLabels: Record<'answer' | 'variable' | 'hidden' | 'url', string> = {
   answer: __('Answer', 'chatflow-forms'),
+  variable: __('Scoring variable', 'chatflow-forms'),
   hidden: __('Hidden field', 'chatflow-forms'),
   url: __('URL parameter', 'chatflow-forms'),
 };
@@ -75,10 +76,12 @@ export function firstCondition(schema: FormSchema): Condition {
 }
 function decodeValue(value: string, predicate: Predicate, schema: FormSchema): Predicate['value'] {
   const step = schema.steps.find((item) => item.key === predicate.field);
+  const variable = schema.variables?.find((item) => item.key === predicate.field);
   if (['in', 'not_in', 'between'].includes(predicate.op)) return JSON.parse(value) as Predicate['value'];
   if (['is_empty', 'is_not_empty'].includes(predicate.op)) return undefined;
-  if (['number'].includes(step?.type ?? '') || ['gt', 'gte', 'lt', 'lte', 'age_gte'].includes(predicate.op))
+  if (['number'].includes(step?.type ?? '') || variable?.type === 'number' || ['gt', 'gte', 'lt', 'lte', 'age_gte'].includes(predicate.op))
     return value === '' ? null : Number(value);
+  if (variable?.type === 'boolean') return value === 'true';
   if (['yes_no', 'consent'].includes(step?.type ?? '')) return value === 'true';
   return value;
 }
@@ -146,22 +149,34 @@ export function ConditionEditor({
     );
   }
   const step = schema.steps.find((item) => item.key === value.field),
+    variable = schema.variables?.find((item) => item.key === value.field),
     arrayValue = ['in', 'not_in', 'between'].includes(value.op);
   const shown = typeof value.value === 'object' ? JSON.stringify(value.value) : String(value.value ?? '');
   return (
     <div className="cff-condition">
       <div className="cff-condition-grid">
       <Select
-        label={__('Operand source', 'chatflow-forms')}
+        label={__('Based on', 'chatflow-forms')}
         value={value.source ?? 'answer'}
-        choices={(['answer', 'hidden', 'url'] as const).map((source) => ({ value: source, label: sourceLabels[source] }))}
-        onChange={(source) => onChange({ ...value, source: source as NonNullable<Predicate['source']> })}
+        choices={(['answer', 'variable', 'hidden', 'url'] as const).map((source) => ({ value: source, label: sourceLabels[source] }))}
+        onChange={(source) => {
+          const nextSource = source as NonNullable<Predicate['source']>;
+          const firstField = nextSource === 'answer' ? schema.steps[0]?.key : nextSource === 'variable' ? schema.variables?.[0]?.key : '';
+          onChange({ ...value, source: nextSource, field: firstField ?? value.field, value: '' });
+        }}
       />
       {(value.source ?? 'answer') === 'answer' ? (
         <Select
           label={__('Field', 'chatflow-forms')}
           value={value.field}
           choices={schema.steps.map((item) => ({ value: item.key, label: `${item.label} (${item.key})` }))}
+          onChange={(field) => onChange({ ...value, field, value: '' })}
+        />
+      ) : (value.source ?? 'answer') === 'variable' ? (
+        <Select
+          label={__('Variable', 'chatflow-forms')}
+          value={value.field}
+          choices={(schema.variables ?? []).map((item) => ({ value: item.key, label: `${item.key} (${item.type})` }))}
           onChange={(field) => onChange({ ...value, field, value: '' })}
         />
       ) : (
@@ -216,7 +231,7 @@ export function ConditionEditor({
             type={
               step?.type === 'date'
                 ? 'date'
-                : step?.type === 'number' || value.op === 'age_gte'
+                : step?.type === 'number' || variable?.type === 'number' || value.op === 'age_gte'
                   ? 'number'
                   : 'text'
             }
@@ -262,7 +277,7 @@ export function RuleEditor({
     <section className="cff-logic">
       <div className="cff-logic-intro">
         <h3>{__('Logic rules (evaluated in order)', 'chatflow-forms')}</h3>
-        <p>{__('Rules run from top to bottom. The first matching rule wins.', 'chatflow-forms')}</p>
+        <p>{__('Rules run from top to bottom. A jump or end stops at the first one that matches; other matching show, hide, require and scoring actions all apply.', 'chatflow-forms')}</p>
       </div>
       {rules.length === 0 && (
         <p className="cff-logic-empty">

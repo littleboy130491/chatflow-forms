@@ -132,6 +132,9 @@ final class StorageSecurityTest extends TestCase {
 		self::assertArrayNotHasKey( 'privateSecret', $public );
 		self::assertTrue( $public['features']['uploads'] );
 		self::assertArrayNotHasKey( 'unknown_secret_key!', (array) $public['form']['phrases'] );
+		// Only the review mode leaves the completion settings; the default is no review.
+		self::assertSame( array( 'review' => 'off' ), $public['form']['completion'] );
+		self::assertFalse( $public['form']['session']['storageNotice'] );
 	}
 	public function testIdempotencyCanonicalRetryConflictsPendingAndRollback(): void {
 		$guard = new Idempotency();

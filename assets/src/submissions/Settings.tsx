@@ -66,19 +66,31 @@ export const SECRET_MASK = '********';
 type AiProvider = 'anthropic' | 'openrouter' | 'openai';
 const secretHelp = (value: string | undefined): { help?: string } =>
   value === SECRET_MASK ? { help: __('Saved. Leave unchanged to keep it, or clear the field to remove it.', 'chatflow-forms') } : {};
+const proxyModeLabels: Record<GlobalSettings['proxy']['mode'], string> = {
+  automatic: __('Automatic (recommended)', 'chatflow-forms'),
+  direct: __('Direct connection (no proxy)', 'chatflow-forms'),
+  cloudflare: __('Cloudflare', 'chatflow-forms'),
+  custom: __('Custom trusted proxy', 'chatflow-forms'),
+};
+const proxyHeaderLabels: Record<GlobalSettings['proxy']['header'], string> = {
+  HTTP_X_FORWARDED_FOR: __('X-Forwarded-For', 'chatflow-forms'),
+  HTTP_X_REAL_IP: __('X-Real-IP', 'chatflow-forms'),
+  HTTP_CF_CONNECTING_IP: __('CF-Connecting-IP (Cloudflare)', 'chatflow-forms'),
+};
 export function Settings({ api }: { api: AdminApi }) {
   const [section, setSection] = useState('general');
   const sections = [
     { id: 'general', label: __('General', 'chatflow-forms') },
+    { id: 'notifications', label: __('Notifications', 'chatflow-forms') },
     { id: 'privacy', label: __('Privacy and retention', 'chatflow-forms') },
     { id: 'protection', label: __('Spam protection', 'chatflow-forms') },
-    { id: 'notifications', label: __('Notifications', 'chatflow-forms') },
     { id: 'integrations', label: __('Integrations and AI', 'chatflow-forms') },
     { id: 'advanced', label: __('Advanced', 'chatflow-forms') },
   ];
   const [smtpDetected, setSmtpDetected] = useState<boolean | null>(null);
   const [settings, setSettings] = useState<GlobalSettings | null>(null),
     [error, setError] = useState(''),
+    [validationError, setValidationError] = useState(''),
     [busy, setBusy] = useState(false),
     [saved, setSaved] = useState(false);
   useEffect(() => {
@@ -96,6 +108,20 @@ export function Settings({ api }: { api: AdminApi }) {
   const update = (next: GlobalSettings) => {
     setSettings(next);
     setSaved(false);
+    setValidationError('');
+  };
+  const validate = (): string => {
+    if (!/^[a-z0-9][a-z0-9-]{0,49}$/.test(settings.fullpageBase)) return __('Fullpage base must be lowercase letters, numbers or hyphens.', 'chatflow-forms');
+    if (!Number.isInteger(settings.retention.days) || settings.retention.days < 1 || settings.retention.days > 36500) return __('Retention days must be a whole number between 1 and 36,500.', 'chatflow-forms');
+    if (settings.retention.partialDays !== null && settings.retention.partialDays !== undefined && (!Number.isInteger(settings.retention.partialDays) || settings.retention.partialDays < 1 || settings.retention.partialDays > 36500)) return __('Partial retention days must be a whole number between 1 and 36,500.', 'chatflow-forms');
+    if (!Number.isInteger(settings.tracking.days) || settings.tracking.days < 1 || settings.tracking.days > 90) return __('Attribution cookie days must be a whole number between 1 and 90.', 'chatflow-forms');
+    if (settings.spam) {
+      if (!Number.isInteger(settings.spam.minSeconds) || settings.spam.minSeconds < 0) return __('Minimum completion seconds must be zero or more.', 'chatflow-forms');
+      if (!Number.isInteger(settings.spam.rateLimit) || settings.spam.rateLimit < 1) return __('Rate limit must be at least 1.', 'chatflow-forms');
+      if (!Number.isInteger(settings.spam.rateWindowSeconds) || settings.spam.rateWindowSeconds < 1) return __('Rate window must be at least 1 second.', 'chatflow-forms');
+      if (settings.spam.minScore !== undefined && (settings.spam.minScore < 0 || settings.spam.minScore > 1)) return __('reCAPTCHA minimum score must be between 0 and 1.', 'chatflow-forms');
+    }
+    return '';
   };
   // Each provider keeps its own fields, so switching providers never loses a saved key.
   const setAi = (patch: NonNullable<GlobalSettings['ai']>) => settings && update({ ...settings, ai: { ...settings.ai, ...patch } });
@@ -103,8 +129,8 @@ export function Settings({ api }: { api: AdminApi }) {
     <main className="cff-admin cff-settings-page">
       <div className="cff-page-head">
         <div>
-          <h1>{__('ChatFlow settings', 'chatflow-forms')}</h1>
-          <p>{__('Site-wide defaults and services. Individual forms can override supported defaults in their own Settings.', 'chatflow-forms')}</p>
+          <h1>{__('Site defaults', 'chatflow-forms')}</h1>
+          <p>{__('Defaults for every form on this site, plus site-wide services. A form can override supported defaults in its Form settings tab.', 'chatflow-forms')}</p>
         </div>
       </div>
       <nav className="cff-settings-nav" aria-label={__('Settings sections', 'chatflow-forms')}>
@@ -125,7 +151,7 @@ export function Settings({ api }: { api: AdminApi }) {
           <section className="cff-card" data-settings-section="general" hidden={section !== 'general'}>
             <h2>{__('Display defaults', 'chatflow-forms')}</h2>
             <Field
-              label={__('Fullpage base slug', 'chatflow-forms')}
+              label={__('Address prefix for full-page forms (e.g. chat → yoursite.com/chat/form-name)', 'chatflow-forms')}
               value={settings.fullpageBase}
               onChange={(fullpageBase) => update({ ...settings, fullpageBase })}
             />
@@ -139,9 +165,9 @@ export function Settings({ api }: { api: AdminApi }) {
             />
           </section>
           <section className="cff-card" data-settings-section="privacy" hidden={section !== 'privacy'}>
-            <h2>{__('First-touch attribution', 'chatflow-forms')}</h2>
+            <h2>{__('Campaign tracking (UTM)', 'chatflow-forms')}</h2>
             <Check
-              label={__('Enable first-touch tracking', 'chatflow-forms')}
+              label={__('Remember where visitors first came from (UTM and ad click IDs)', 'chatflow-forms')}
               value={settings.tracking.enabled}
               onChange={(enabled) => update({ ...settings, tracking: { ...settings.tracking, enabled } })}
             />
@@ -216,12 +242,6 @@ export function Settings({ api }: { api: AdminApi }) {
                 update({ ...settings, retention: { ...settings.retention, days: Number(value) } })
               }
             />
-            <p>
-              {__('Off by default. Per-form retention settings can override this default.', 'chatflow-forms')}
-            </p>
-          </section>
-          <section className="cff-card" data-settings-section="protection" hidden={section !== 'protection'}>
-            <h2>{__('Partial retention and spam defaults', 'chatflow-forms')}</h2>
             <Field
               label={__('Partial retention days (blank = same as completed submissions)', 'chatflow-forms')}
               type="number"
@@ -233,6 +253,12 @@ export function Settings({ api }: { api: AdminApi }) {
                 })
               }
             />
+            <p>
+              {__('Off by default. Per-form retention settings can override this default.', 'chatflow-forms')}
+            </p>
+          </section>
+          <section className="cff-card" data-settings-section="protection" hidden={section !== 'protection'}>
+            <h2>{__('Spam defaults', 'chatflow-forms')}</h2>
             <Check
               label={__('Enable honeypot protection', 'chatflow-forms')}
               value={settings.spam?.honeypotEnabled ?? true}
@@ -360,7 +386,7 @@ export function Settings({ api }: { api: AdminApi }) {
             <Select
               label={__('Proxy mode', 'chatflow-forms')}
               value={settings.proxy.mode}
-              choices={['automatic', 'direct', 'cloudflare', 'custom'].map((value) => ({ value, label: value }))}
+              choices={(['automatic', 'direct', 'cloudflare', 'custom'] as const).map((value) => ({ value, label: proxyModeLabels[value] }))}
               onChange={(mode) =>
                 update({
                   ...settings,
@@ -387,9 +413,9 @@ export function Settings({ api }: { api: AdminApi }) {
             <Select
               label={__('Verified proxy header', 'chatflow-forms')}
               value={settings.proxy.header}
-              choices={['HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP'].map((value) => ({
+              choices={(['HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'HTTP_CF_CONNECTING_IP'] as const).map((value) => ({
                 value,
-                label: value,
+                label: proxyHeaderLabels[value],
               }))}
               onChange={(header) =>
                 update({
@@ -451,8 +477,15 @@ export function Settings({ api }: { api: AdminApi }) {
           variant="primary"
           disabled={busy}
           onClick={async () => {
+            const problem = validate();
+            if (problem) {
+              setValidationError(problem);
+              setError(problem);
+              return;
+            }
             setBusy(true);
             setError('');
+            setValidationError('');
             try {
               const result = await api.request<{ settings: GlobalSettings }>('admin/settings', 'PUT', {
                 settings,
@@ -467,7 +500,7 @@ export function Settings({ api }: { api: AdminApi }) {
           }}
         >
           {__('Save settings', 'chatflow-forms')}
-        </Button><span role="status">{busy ? __('Saving…', 'chatflow-forms') : saved ? __('All settings saved.', 'chatflow-forms') : __('Save applies to all sections.', 'chatflow-forms')}</span></div>
+        </Button><span role="status">{validationError || (busy ? __('Saving…', 'chatflow-forms') : saved ? __('All settings saved.', 'chatflow-forms') : __('Save applies to all sections.', 'chatflow-forms'))}</span></div>
       </fieldset>
     </main>
   );

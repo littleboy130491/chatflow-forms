@@ -156,12 +156,12 @@ it('explains publishing in visitor language and hands off the live form without 
  const published = { ...saved, version: 1, slug: 'contact', status: 'published' as const };
  vi.stubGlobal('fetch', vi.fn(async (url: string) => { requests.push(url); return new Response(JSON.stringify(url.endsWith('/publish') || url.endsWith('/published') ? published : saved), { status: 200 }); }));
  await builder();
- await act(async () => button('Share').click());
+ await act(async () => button('Publish & share').click());
  expect(host.querySelector('.cff-share-empty')).not.toBeNull();
  expect(host.textContent).not.toContain('/chat//');
  await act(async () => button('Publish').click());
  expect(host.querySelector('[role=dialog] h2')?.textContent).toBe('Publish form?');
- expect(host.querySelector('[role=dialog] details')).not.toBeNull();
+ expect(host.querySelector('[role=dialog]')?.textContent).toContain('This is the first published version.');
  await act(async () => button('Publish new version').click());
  expect(host.textContent).toContain('Form published');
  expect(button('Copy link')).toBeTruthy();
@@ -192,7 +192,7 @@ it('shares the frozen published snapshot after editing the draft during first pu
  expect(host.querySelector('.cff-share-empty')).toBeNull();
  expect(host.querySelector('.cff-share a')?.getAttribute('href')).toContain('/chat/contact/');
  expect(title.value).toBe('New local title');
- expect(host.textContent).toContain('Unsaved draft');
+ expect(host.textContent).toContain('Unsaved changes');
  await act(async () => button('Embed').click());
  expect(host.querySelector('.cff-share pre')?.textContent).toBe('[chatflow id="31" mode="popup"]');
  vi.unstubAllGlobals();
@@ -204,7 +204,7 @@ it('loads the complete live snapshot for sharing instead of unpublished draft se
  vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(JSON.stringify(url.endsWith('/published') ? live : draft))));
  host = document.createElement('div'); document.body.append(host);
  await act(async () => mountBuilder(host, { ...config, formId: 32 }));
- await act(async () => button('Share').click());
+ await act(async () => button('Publish & share').click());
  await act(async () => button('Embed').click());
  expect(host.querySelector('.cff-share pre')?.textContent).toBe('[chatflow id="32" mode="launcher" position="left"]');
  vi.unstubAllGlobals();
@@ -218,9 +218,9 @@ it('groups settings by task without materializing inherited privacy values', asy
  await render(<SettingsEditor form={form} api={api} onChange={onChange} save={async () => form} />);
  const nav = host.querySelector('nav[aria-label="Form settings sections"]');
  expect(nav).not.toBeNull();
- expect([...nav!.querySelectorAll('button')].map(b => b.textContent)).toEqual(['General / Completion', 'Display', 'Notifications', 'Integrations', 'Privacy', 'Advanced']);
+ expect([...nav!.querySelectorAll('button')].map(b => b.textContent)).toEqual(['General', 'Notifications', 'Privacy and retention', 'Spam protection', 'Integrations', 'Language and wording']);
  expect(host.querySelector('section[data-settings-group=privacy]')?.hasAttribute('hidden')).toBe(true);
- await act(async () => button('Privacy').click());
+ await act(async () => button('Privacy and retention').click());
  const privacy = host.querySelector('section[data-settings-group=privacy]')!;
  expect(privacy.hasAttribute('hidden')).toBe(false);
  const meta = [...privacy.querySelectorAll('label')].find(l => l.textContent === 'Store tracking metadata')!.querySelector('input')!;

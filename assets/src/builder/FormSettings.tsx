@@ -4,10 +4,13 @@
 import * as React from '@wordpress/element';
 import { Fragment, useEffect, useRef, useState } from '@wordpress/element';
 import { WhatsAppLinkBuilder } from './Contact';
+import { WordingEditor } from './Wording';
+import { fromSiteInput, toSiteInput } from './siteTime';
+import { PagePicker } from './PagePicker';
 import { __, sprintf } from '@wordpress/i18n';
-import { AnswerArea, Area, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
+import { AnswerArea, Button, Check, Field, JsonEditor, Notice, Select } from './controls';
 import { ConditionEditor, firstCondition } from './RuleEditor';
-import { uid } from './model';
+import { uid, removeEnding } from './model';
 import { endingTitle } from './labels';
 import { EmailTemplates } from './EmailTemplates';
 import { ConnectorSettings, deliveryEventLabels } from './ConnectorSettings';
@@ -70,12 +73,6 @@ export function HtmlEditor({ value, onChange }: { value: string; onChange: (valu
     </label>
   );
 }
-/** Strict page ID list: any invalid entry rejects the whole input rather than guessing. */
-export function pageIds(value: string): number[] {
-  const parts = value.split(',').map((part) => part.trim()).filter(Boolean);
-  if (parts.length > 500 || parts.some((part) => !/^[1-9]\d*$/.test(part) || !Number.isSafeInteger(Number(part)))) return [];
-  return [...new Set(parts.map(Number))];
-}
 function EmailCard({
   api,
   notification,
@@ -107,8 +104,7 @@ function EmailCard({
     [rendered, setRendered] = useState<{ subject: string; html: string; plain: string } | null>(null);
   return (
     <fieldset className="cff-card">
-      <legend>{notification.id}</legend>
-      <EmailTemplates api={api} content={notification} onLoad={content => onChange({ ...notification, ...content })} />
+      <legend>{notification.subject || notification.id}</legend>
       <Check
         label={__('Enabled', 'chatflow-forms')}
         value={notification.enabled}
@@ -152,21 +148,6 @@ function EmailCard({
         ))
       )}
       <Field
-        label={__('From name', 'chatflow-forms')}
-        value={notification.fromName}
-        onChange={(fromName) => onChange({ ...notification, fromName })}
-      />
-      <Field
-        label={__('From email', 'chatflow-forms')}
-        value={notification.fromEmail}
-        onChange={(fromEmail) => onChange({ ...notification, fromEmail })}
-      />
-      <Field
-        label={__('Reply-To (address or email merge tag)', 'chatflow-forms')}
-        value={notification.replyTo}
-        onChange={(replyTo) => onChange({ ...notification, replyTo })}
-      />
-      <Field
         label={__('Subject', 'chatflow-forms')}
         value={notification.subject}
         onChange={(subject) => onChange({ ...notification, subject })}
@@ -189,17 +170,6 @@ function EmailCard({
           if (key) onChange({ ...notification, body: notification.body + `{{${key}}}` });
         }}
       />
-      <Area
-        label={__('Body HTML / merge tags', 'chatflow-forms')}
-        value={notification.body}
-        onChange={(body) => onChange({ ...notification, body })}
-      />
-      <Field
-        label={__('Delay in seconds (0 = immediate)', 'chatflow-forms')}
-        type="number"
-        value={notification.delaySeconds ?? 0}
-        onChange={(value) => onChange({ ...notification, delaySeconds: Number(value) })}
-      />
       <Check
         label={__('Send only when conditions match', 'chatflow-forms')}
         value={Boolean(notification.conditions)}
@@ -217,8 +187,37 @@ function EmailCard({
           onChange={(conditions) => onChange({ ...notification, conditions })}
         />
       )}
+      {/* Sender, timing and saved templates are occasional; the card leads with who gets what. */}
+      <details className="cff-advanced">
+        <summary>{__('Sender, delay and saved templates', 'chatflow-forms')}</summary>
+      <Field
+        label={__('From name', 'chatflow-forms')}
+        value={notification.fromName}
+        onChange={(fromName) => onChange({ ...notification, fromName })}
+      />
+      <Field
+        label={__('From email', 'chatflow-forms')}
+        value={notification.fromEmail}
+        onChange={(fromEmail) => onChange({ ...notification, fromEmail })}
+      />
+      <Field
+        label={__('Reply-To (address or email merge tag)', 'chatflow-forms')}
+        value={notification.replyTo}
+        onChange={(replyTo) => onChange({ ...notification, replyTo })}
+      />
+      <Field
+        label={__('Delay in seconds (0 = immediate)', 'chatflow-forms')}
+        type="number"
+        value={notification.delaySeconds ?? 0}
+        onChange={(value) => onChange({ ...notification, delaySeconds: Number(value) })}
+      />
+      <EmailTemplates api={api} content={notification} onLoad={content => onChange({ ...notification, ...content })} />
+      </details>
+      {/* Preview and test tools are occasional; keep the email card focused on what is sent. */}
+      <details className="cff-email-test">
+      <summary>{__('Preview and send a test', 'chatflow-forms')}</summary>
       <JsonEditor
-        label={__('Sample answers (JSON object)', 'chatflow-forms')}
+        label={__('Example answers for the preview (JSON)', 'chatflow-forms')}
         value={answers}
         onChange={(value) => {
           if (!value || Array.isArray(value) || typeof value !== 'object') {
@@ -229,7 +228,7 @@ function EmailCard({
         }}
       />
       <Field
-        label={__('Past submission ID (optional; requires submission access)', 'chatflow-forms')}
+        label={__('Or preview with a real response (response number, optional)', 'chatflow-forms')}
         type="number"
         value={submissionId}
         onChange={setSubmissionId}
@@ -292,6 +291,7 @@ function EmailCard({
       >
         {__('Send test of published version', 'chatflow-forms')}
       </Button>
+      </details>
       {error && <p role="status">{error}</p>}
       <Button isDestructive onClick={onDelete}>
         {__('Remove email', 'chatflow-forms')}
@@ -325,6 +325,29 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
           })
         }
       />
+      <Select
+        label={__('After the last question', 'chatflow-forms')}
+        value={form.settings.completion?.review ?? 'off'}
+        choices={[
+          { value: 'off', label: __('Submit automatically (no review)', 'chatflow-forms') },
+          { value: 'button', label: __('Show a Submit button', 'chatflow-forms') },
+          { value: 'show', label: __('Show answers for review, then Submit', 'chatflow-forms') },
+        ]}
+        onChange={(review) =>
+          onChange({
+            ...form,
+            settings: {
+              ...form.settings,
+              completion: {
+                ...form.settings.completion,
+                defaultEndingId: form.settings.completion?.defaultEndingId ?? schema.endings[0]?.id ?? '',
+                review: review as 'off' | 'button' | 'show',
+              },
+            },
+          })
+        }
+      />
+      <p className="description">{__('If an automatic submit fails (offline, spam check or server error), visitors still get a Retry button.', 'chatflow-forms')}</p>
       {schema.endings.some(ending => ending.type === 'redirect') && <details className="cff-ending-advanced">
       <summary>{__('Advanced redirect settings', 'chatflow-forms')}</summary>
       <Field
@@ -383,12 +406,12 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
                 onChange={(url) => change({ ...ending, url })}
               />
               <Check
-                label={__('Append whitelisted answers', 'chatflow-forms')}
+                label={__('Add selected answers to the link', 'chatflow-forms')}
                 value={ending.appendQuery}
                 onChange={(appendQuery) => change({ ...ending, appendQuery })}
               />
               <Field
-                label={__('Whitelisted field keys', 'chatflow-forms')}
+                label={__('Answers to add (field keys, comma-separated)', 'chatflow-forms')}
                 value={ending.queryKeys?.join(', ') ?? ''}
                 onChange={(value) =>
                   change({
@@ -401,15 +424,15 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
                 }
               />
               <Check
-                label={__('Append submission UUID', 'chatflow-forms')}
+                label={__('Add the response ID to the link', 'chatflow-forms')}
                 value={ending.appendSubmission}
                 onChange={(appendSubmission) => change({ ...ending, appendSubmission })}
               />
               <Field
-                label={__('Redirect delay (milliseconds)', 'chatflow-forms')}
-                value={ending.delayMs ?? 0}
+                label={__('Wait before redirecting (seconds)', 'chatflow-forms')}
+                value={(ending.delayMs ?? 0) / 1000}
                 type="number"
-                onChange={(value) => change({ ...ending, delayMs: Number(value) })}
+                onChange={(value) => change({ ...ending, delayMs: Math.max(0, Math.round(Number(value) * 1000)) })}
               />
             </Fragment>
           )}
@@ -440,6 +463,7 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
                 choices={[
                   { value: 'link', label: __('Link (including WhatsApp)', 'chatflow-forms') },
                   { value: 'restart', label: __('Start over', 'chatflow-forms') },
+                  { value: 'close', label: __('Close the conversation', 'chatflow-forms') },
                 ]}
                 onChange={(action) =>
                   change({
@@ -513,14 +537,8 @@ export function EndingsEditor({ form, onChange }: { form: FormDTO; onChange: (fo
             disabled={schema.endings.length <= 1}
             isDestructive
             onClick={() => {
-              if (window.confirm(__('Remove ending? Update any rules that reference it.', 'chatflow-forms')))
-                onChange({
-                  ...form,
-                  schema: {
-                    ...schema,
-                    endings: schema.endings.filter((item) => item.id !== ending.id) as FormSchema['endings'],
-                  },
-                });
+              if (window.confirm(__('Remove this ending and update rules, outcomes and the default ending that reference it?', 'chatflow-forms')))
+                onChange(removeEnding(form, ending.id));
             }}
           >
             {__('Remove ending', 'chatflow-forms')}
@@ -570,10 +588,78 @@ export function captchaLabel(provider: string): string {
 function InheritedValue({ overridden, onReset }: { overridden: boolean; onReset: () => void }) {
   return overridden ? (
     <Button variant="link" className="cff-inherit-reset" onClick={onReset}>
-      {__('Use global default', 'chatflow-forms')}
+      {__('Overridden · use site default', 'chatflow-forms')}
     </Button>
   ) : (
-    <p className="cff-inherited">{__('Using global default', 'chatflow-forms')}</p>
+    <p className="cff-inherited">{__('Uses site default', 'chatflow-forms')}</p>
+  );
+}
+/** Where and how the form shows up; lives on the Publish & share tab next to the embed code. */
+export function DisplaySettings({ form, api, onChange }: { form: FormDTO; api: AdminApi; onChange: (settings: FormSettings) => void }) {
+  const stored = form.settings,
+    display = stored.display ?? {},
+    launcher = display.launcher ?? {};
+  const set = <K extends keyof FormSettings>(key: K, value: FormSettings[K]) => onChange({ ...stored, [key]: value });
+  const setLauncher = (changes: Partial<typeof launcher>) =>
+    set('display', { ...display, launcher: { ...launcher, ...changes } });
+  return (
+    <section className="cff-card cff-display-settings">
+      <h2>{__('How the form appears', 'chatflow-forms')}</h2>
+      <Select
+        label={__('Display mode', 'chatflow-forms')}
+        value={display.mode ?? 'inline'}
+        choices={[
+          { value: 'inline', label: __('Inside the page content (inline)', 'chatflow-forms') },
+          { value: 'fullpage', label: __('Its own full page', 'chatflow-forms') },
+          { value: 'launcher', label: __('Floating chat button (launcher)', 'chatflow-forms') },
+          { value: 'popup', label: __('Popup over the page', 'chatflow-forms') },
+        ]}
+        onChange={(mode) => set('display', { ...display, mode: mode as NonNullable<typeof display.mode> })}
+      />
+      {(['launcher', 'popup'].includes(display.mode ?? '') && <>
+        <Check
+          label={__('Show automatically on matching pages', 'chatflow-forms')}
+          value={launcher.enabled ?? false}
+          onChange={(enabled) => setLauncher({ enabled })}
+        />
+        <Select
+          label={__('Launcher position', 'chatflow-forms')}
+          value={launcher.position ?? 'right'}
+          choices={[
+            { value: 'left', label: __('Left', 'chatflow-forms') },
+            { value: 'right', label: __('Right', 'chatflow-forms') },
+          ]}
+          onChange={(position) => setLauncher({ position: position as 'left' | 'right' })}
+        />
+        <Field
+          label={__('Auto-open after seconds (blank = off)', 'chatflow-forms')}
+          type="number"
+          value={launcher.autoOpenSeconds ?? ''}
+          onChange={(value) => setLauncher({ autoOpenSeconds: value === '' ? null : Math.max(0, Math.min(3600, Number(value) || 0)) })}
+        />
+        <Field
+          label={__('Auto-open at scroll percent (blank = off)', 'chatflow-forms')}
+          type="number"
+          value={launcher.scrollPercent ?? ''}
+          onChange={(value) => setLauncher({ scrollPercent: value === '' ? null : Math.max(0, Math.min(100, Number(value) || 0)) })}
+        />
+        <PagePicker
+          api={api}
+          label={__('Only show on these pages', 'chatflow-forms')}
+          help={__('Leave empty to show on every page.', 'chatflow-forms')}
+          value={launcher.includePageIds ?? []}
+          onChange={(ids) => setLauncher({ includePageIds: ids as NonNullable<typeof launcher.includePageIds> })}
+        />
+        <PagePicker
+          api={api}
+          label={__('Never show on these pages', 'chatflow-forms')}
+          help={__('These win over the list above.', 'chatflow-forms')}
+          value={launcher.excludePageIds ?? []}
+          onChange={(ids) => setLauncher({ excludePageIds: ids as NonNullable<typeof launcher.excludePageIds> })}
+        />
+        <p className="description">{__('Automatic placement needs a published form.', 'chatflow-forms')}</p>
+      </>)}
+    </section>
   );
 }
 export function SettingsEditor({
@@ -581,17 +667,13 @@ export function SettingsEditor({
   onChange,
   api,
   save,
-  completion,
 }: {
   form: FormDTO;
   onChange: (settings: FormSettings) => void;
   api: AdminApi;
   save: () => Promise<FormDTO>;
-  completion?: import('react').ReactNode;
 }) {
   const [section, setSection] = useState('general');
-  const [includePages, setIncludePages] = useState(() => (form.settings.display?.launcher?.includePageIds ?? []).join(','));
-  const [excludePages, setExcludePages] = useState(() => (form.settings.display?.launcher?.excludePageIds ?? []).join(','));
   // Only keys the admin changes are written; global values are shown as inherited.
   const stored = form.settings,
     inherited = api.config.defaults ?? {};
@@ -601,9 +683,7 @@ export function SettingsEditor({
       spam: { ...inherited.spam, ...stored.spam },
     },
     notifications = settings.notifications ?? {},
-    integrations = settings.integrations ?? {},
-    display = settings.display ?? {},
-    launcher = display.launcher ?? {};
+    integrations = settings.integrations ?? {};
   const set = <K extends keyof FormSettings>(key: K, value: FormSettings[K]) =>
     onChange({ ...stored, [key]: value });
   const setPrivacy = <K extends keyof Privacy>(key: K, value: Privacy[K]) =>
@@ -618,8 +698,6 @@ export function SettingsEditor({
     <InheritedValue overridden={stored.spam?.[key] !== undefined} onReset={() => resetSpam(key)} />
   );
   const globalCaptcha = inherited.spam?.captcha;
-  const setLauncher = (changes: Partial<typeof launcher>) =>
-    set('display', { ...display, launcher: { ...launcher, ...changes } });
   const test = async (notificationId: string, to: string) => {
     if (!form.id || !form.version)
       throw new Error(__('Publish the form before sending test mail.', 'chatflow-forms'));
@@ -637,16 +715,15 @@ export function SettingsEditor({
     <div className="cff-settings-layout">
       <nav className="cff-tabs cff-settings-nav" aria-label={__('Form settings sections', 'chatflow-forms')}>
         {[
-          { value: 'general', label: __('General / Completion', 'chatflow-forms') },
-          { value: 'display', label: __('Display', 'chatflow-forms') },
+          { value: 'general', label: __('General', 'chatflow-forms') },
           { value: 'notifications', label: __('Notifications', 'chatflow-forms') },
+          { value: 'privacy', label: __('Privacy and retention', 'chatflow-forms') },
+          { value: 'spam', label: __('Spam protection', 'chatflow-forms') },
           { value: 'integrations', label: __('Integrations', 'chatflow-forms') },
-          { value: 'privacy', label: __('Privacy', 'chatflow-forms') },
-          { value: 'advanced', label: __('Advanced', 'chatflow-forms') },
+          { value: 'wording', label: __('Language and wording', 'chatflow-forms') },
         ].map(item => <Button key={item.value} variant={section === item.value ? 'primary' : 'secondary'} aria-pressed={section === item.value} onClick={() => setSection(item.value)}>{item.label}</Button>)}
       </nav>
       <div className="cff-settings-grid">
-      <div hidden={section !== 'general'}>{completion}</div>
       <section className="cff-card" data-settings-group="general" hidden={section !== 'general'}>
         <h2>{__('Sessions and resume', 'chatflow-forms')}</h2>
         {(
@@ -657,6 +734,11 @@ export function SettingsEditor({
             {
               key: 'deletePartialOnRestart',
               label: __('Delete partial on start over', 'chatflow-forms'),
+              fallback: false,
+            },
+            {
+              key: 'storageNotice',
+              label: __('Tell visitors their answers are stored on this device', 'chatflow-forms'),
               fallback: false,
             },
           ] as const
@@ -670,7 +752,7 @@ export function SettingsEditor({
         ))}
         <p>
           {__(
-            'Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy.',
+            'Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy, or turn on the notice above for forms that collect sensitive data or are often used on shared computers.',
             'chatflow-forms',
           )}
         </p>
@@ -692,74 +774,8 @@ export function SettingsEditor({
         <Select label={__('Recipient email field', 'chatflow-forms')} value={settings.sessions?.magicLinks?.emailField ?? ''} choices={[{ value: '', label: __('Choose an email field', 'chatflow-forms') }, ...form.schema.steps.filter(step => step.type === 'email').map(step => ({ value: step.key, label: step.label }))]} onChange={emailField => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, emailField } })} />
         <Field label={__('Link lifetime in minutes (5–1440)', 'chatflow-forms')} type="number" value={settings.sessions?.magicLinks?.ttlMinutes ?? 30} onChange={ttlMinutes => set('sessions', { ...settings.sessions, magicLinks: { ...settings.sessions?.magicLinks, ttlMinutes: Number(ttlMinutes) } })} />
         <p>{__('Email uses your WordPress mail delivery. WhatsApp sharing opens your device share sheet or copies the link; it does not send a provider message.', 'chatflow-forms')}</p>
-        <Check
-          label={__('Notify on abandoned contact leads', 'chatflow-forms')}
-          value={notifications.notifyAbandoned}
-          onChange={(notifyAbandoned) => set('notifications', { ...notifications, notifyAbandoned })}
-        />
       </section>
 
-      <section className="cff-card" data-settings-group="display" hidden={section !== 'display'}>
-        <h2>{__('Display and engagement', 'chatflow-forms')}</h2>
-        <Select
-          label={__('Display mode', 'chatflow-forms')}
-          value={display.mode ?? 'inline'}
-          choices={[
-            { value: 'inline', label: __('Inline', 'chatflow-forms') },
-            { value: 'fullpage', label: __('Fullpage', 'chatflow-forms') },
-            { value: 'launcher', label: __('Floating launcher', 'chatflow-forms') },
-            { value: 'popup', label: __('Popup', 'chatflow-forms') },
-          ]}
-          onChange={(mode) => set('display', { ...display, mode: mode as NonNullable<typeof display.mode> })}
-        />
-        {(['launcher', 'popup'].includes(display.mode ?? '') && <>
-          <Check
-            label={__('Show automatically on matching pages', 'chatflow-forms')}
-            value={launcher.enabled ?? false}
-            onChange={(enabled) => setLauncher({ enabled })}
-          />
-          <Select
-            label={__('Launcher position', 'chatflow-forms')}
-            value={launcher.position ?? 'right'}
-            choices={[
-              { value: 'left', label: __('Left', 'chatflow-forms') },
-              { value: 'right', label: __('Right', 'chatflow-forms') },
-            ]}
-            onChange={(position) => setLauncher({ position: position as 'left' | 'right' })}
-          />
-          <Field
-            label={__('Auto-open after seconds (blank = off)', 'chatflow-forms')}
-            type="number"
-            value={launcher.autoOpenSeconds ?? ''}
-            onChange={(value) => setLauncher({ autoOpenSeconds: value === '' ? null : Math.max(0, Math.min(3600, Number(value) || 0)) })}
-          />
-          <Field
-            label={__('Auto-open at scroll percent (blank = off)', 'chatflow-forms')}
-            type="number"
-            value={launcher.scrollPercent ?? ''}
-            onChange={(value) => setLauncher({ scrollPercent: value === '' ? null : Math.max(0, Math.min(100, Number(value) || 0)) })}
-          />
-          <Field
-            label={__('Include page IDs (comma-separated; blank = all)', 'chatflow-forms')}
-            value={includePages}
-            onChange={(value) => {
-              setIncludePages(value);
-              const ids = pageIds(value);
-              if (!value.trim() || ids.length) setLauncher({ includePageIds: ids as NonNullable<typeof launcher.includePageIds> });
-            }}
-          />
-          <Field
-            label={__('Exclude page IDs (comma-separated)', 'chatflow-forms')}
-            value={excludePages}
-            onChange={(value) => {
-              setExcludePages(value);
-              const ids = pageIds(value);
-              if (!value.trim() || ids.length) setLauncher({ excludePageIds: ids as NonNullable<typeof launcher.excludePageIds> });
-            }}
-          />
-          <p>{__('Page exclusions take precedence. A published form is required for automatic placement.', 'chatflow-forms')}</p>
-        </>)}
-      </section>
       <section className="cff-card" data-settings-group="general" hidden={section !== 'general'}>
         <h2>{__('Limits', 'chatflow-forms')}</h2>
         <Check
@@ -783,14 +799,15 @@ export function SettingsEditor({
           />
         ))}
         <Field
-          label={__('Closing date (UTC ISO 8601, blank = never)', 'chatflow-forms')}
-          value={settings.limits?.closesAt ?? ''}
-          onChange={(closesAt) => set('limits', { ...settings.limits, closesAt: closesAt || null })}
+          label={__('Stop accepting responses after (site time, blank = never)', 'chatflow-forms')}
+          type="datetime-local"
+          value={toSiteInput(settings.limits?.closesAt, api.config.timezone)}
+          onChange={(value) => set('limits', { ...settings.limits, closesAt: fromSiteInput(value, api.config.timezone) })}
         />
       </section>
       <section className="cff-card" data-settings-group="privacy" hidden={section !== 'privacy'}>
-        <h2>{__('Privacy and retention override', 'chatflow-forms')}</h2>
-        <p>{__('Fields without an override follow the global Settings screen.', 'chatflow-forms')}</p>
+        <h2>{__('Privacy and retention', 'chatflow-forms')}</h2>
+        <p>{__('Fields without an override follow Site defaults.', 'chatflow-forms')}</p>
         <Check
           label={__('Store tracking metadata', 'chatflow-forms')}
           value={settings.privacy?.storeMeta ?? true}
@@ -836,13 +853,13 @@ export function SettingsEditor({
         />
         {privacyReset('retentionDays')}
         <Field
-          label={__('Partial/abandoned retention days (blank = use global setting)', 'chatflow-forms')}
+          label={__('Partial/abandoned retention days (blank = use site default)', 'chatflow-forms')}
           type="number"
           value={stored.privacy?.partialRetentionDays ?? ''}
           help={
             inherited.privacy?.partialRetentionDays
               ? sprintf(
-                  /* translators: %d: number of days configured in global Settings */
+                  /* translators: %d: number of days configured in Site defaults */
                   __('Global setting: %d days.', 'chatflow-forms'),
                   inherited.privacy.partialRetentionDays,
                 )
@@ -855,7 +872,7 @@ export function SettingsEditor({
           }
         />
       </section>
-      <section className="cff-card" data-settings-group="privacy" hidden={section !== 'privacy'}>
+      <section className="cff-card" data-settings-group="spam" hidden={section !== 'spam'}>
         <h2>{__('Spam protection', 'chatflow-forms')}</h2>
         <Check
           label={__('Honeypot', 'chatflow-forms')}
@@ -892,10 +909,10 @@ export function SettingsEditor({
               value: '',
               label:
                 globalCaptcha === undefined
-                  ? __('Use global setting', 'chatflow-forms')
+                  ? __('Use site default', 'chatflow-forms')
                   : sprintf(
-                      /* translators: %s: captcha provider configured in global Settings */
-                      __('Use global setting (%s)', 'chatflow-forms'),
+                      /* translators: %s: captcha provider configured in Site defaults */
+                      __('Use site default (%s)', 'chatflow-forms'),
                       captchaLabel(globalCaptcha),
                     ),
             },
@@ -909,10 +926,15 @@ export function SettingsEditor({
           onChange={(akismetEnabled) => setSpam('akismetEnabled', akismetEnabled)}
         />
         {spamReset('akismetEnabled')}
-        <p>{__('The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
+        <p>{__('The captcha provider and its credentials are configured in Site defaults; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice.', 'chatflow-forms')}</p>
       </section>
       <section className="cff-card" data-settings-group="notifications" hidden={section !== 'notifications'}>
         <h2>{__('Admin notifications', 'chatflow-forms')}</h2>
+        <Check
+          label={__('Also notify when a visitor leaves contact details but does not finish', 'chatflow-forms')}
+          value={notifications.notifyAbandoned}
+          onChange={(notifyAbandoned) => set('notifications', { ...notifications, notifyAbandoned })}
+        />
         {(notifications.admin ?? []).map((notification) => (
           <EmailCard
             api={api}
@@ -1028,7 +1050,7 @@ export function SettingsEditor({
             'chatflow-forms',
           )}
         </Notice>
-        {(integrations.webhooks ?? []).map((webhook) => {
+        {(integrations.webhooks ?? []).map((webhook, webhookIndex) => {
           const change = (next: Webhook) =>
             set('integrations', {
               ...integrations,
@@ -1038,7 +1060,11 @@ export function SettingsEditor({
             });
           return (
             <fieldset key={webhook.id}>
-              <legend>{webhook.id}</legend>
+              <legend>{sprintf(
+                /* translators: %d: webhook number */
+                __('Webhook %d', 'chatflow-forms'),
+                webhookIndex + 1,
+              )}</legend>
               <Check
                 label={__('Enabled', 'chatflow-forms')}
                 value={webhook.enabled}
@@ -1107,13 +1133,9 @@ export function SettingsEditor({
         </Button>
       </section>
       <div hidden={section !== 'integrations'}><ConnectorSettings schema={form.schema} integrations={integrations} onChange={(next) => set('integrations', next)} /></div>
-      <section className="cff-card" data-settings-group="advanced" hidden={section !== 'advanced'}>
-        <h2>{__('Visitor phrase overrides', 'chatflow-forms')}</h2>
-        <JsonEditor
-          label={__('Phrase key → translated text', 'chatflow-forms')}
-          value={settings.phrases ?? {}}
-          onChange={(phrases) => set('phrases', phrases)}
-        />
+      <section className="cff-card" data-settings-group="wording" hidden={section !== 'wording'}>
+        <h2>{__('Language and wording', 'chatflow-forms')}</h2>
+        <WordingEditor settings={stored} siteLocale={api.config.locale} onChange={onChange} />
       </section>
       </div>
     </div>

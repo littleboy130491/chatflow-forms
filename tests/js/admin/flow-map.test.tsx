@@ -82,7 +82,8 @@ describe('schema-backed branching map', () => {
       expect(schema.steps[0]!.options![0]!.logic).toEqual([]);
       expect(graph.edges!.some((e) => e.id === edge.id)).toBe(false);
       await act(async () => graph.onConnect?.({ source: 'first', target: 'second', sourceHandle: null, targetHandle: null }));
-      expect(schema.steps[0]!.logic).toEqual([{ if: { all: [] }, then: { action: 'jump', to: 'second' } }]);
+      // A drawn edge starts with an explicit, editable condition rather than an unconditional jump.
+      expect(schema.steps[0]!.logic).toEqual([{ if: { field: schema.steps[0]!.key, source: 'answer', op: 'eq', value: '' }, then: { action: 'jump', to: 'second' } }]);
       expect(graph.edges!.find((e) => e.id === 'rule:first:0')).toMatchObject({ label: 'Rule 1' });
       const calls = changed.mock.calls.length;
       graph.onConnect?.({ source: 'second', target: 'first', sourceHandle: null, targetHandle: null });

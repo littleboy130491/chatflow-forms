@@ -70,7 +70,7 @@ export function Share({ form, config }: { form: FormDTO; config: AdminConfig }) 
       <h3>{__('Add to a WordPress page', 'chatflow-forms')}</h3>
       <p>{__('Use the ChatFlow Form block, paste this shortcode into a Shortcode block, or use an Elementor Shortcode widget.', 'chatflow-forms')}</p>
       <pre>{shortcode(form)}</pre><CopyButton text={shortcode(form)} label={__('Copy shortcode', 'chatflow-forms')} />
-      <p>{__('Automatic launcher placement and popup triggers are set per form in Settings → Display.', 'chatflow-forms')}</p>
+      <p>{__('Floating button, popup and auto-open options are under “How the form appears” above.', 'chatflow-forms')}</p>
       <details><summary>{__('Advanced custom element', 'chatflow-forms')}</summary>
         <p>{__('Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML.', 'chatflow-forms')}</p>
         <pre>{embed}</pre><CopyButton text={embed} label={__('Copy custom element', 'chatflow-forms')} />

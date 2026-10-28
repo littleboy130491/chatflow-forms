@@ -58,7 +58,10 @@ final class AnalyticsController {
 	}
 	public function get( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error {
 		try {
-			if ( array_diff( array_keys( $request->get_query_params() ), array( 'formId', 'from', 'to' ) ) || ! ctype_digit( (string) $request['formId'] ) || ! is_string( $request['from'] ) || ! is_string( $request['to'] ) ) {
+			$params = $request->get_query_params();
+			// WordPress adds these framework parameters on plain-permalink sites.
+			unset( $params['rest_route'], $params['_locale'], $params['_wpnonce'] );
+			if ( array_diff( array_keys( $params ), array( 'formId', 'from', 'to' ) ) || ! ctype_digit( (string) $request['formId'] ) || ! is_string( $request['from'] ) || ! is_string( $request['to'] ) ) {
 				throw new \InvalidArgumentException();
 			}
 			$data = ( new Report( $this->forms ) )->get( (int) $request['formId'], $request['from'], $request['to'] );

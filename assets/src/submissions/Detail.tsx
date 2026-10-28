@@ -124,7 +124,7 @@ function DeliveryActivity({ api, id }: { api: AdminApi; id: number }) {
       <ul>
         {activity?.items.map((note) => (
           <li key={note.id}>
-            <time dateTime={note.created_at}>{readableDate(note.created_at)}</time>: {deliveryOutcome(note.body)}
+            <time dateTime={note.created_at}>{readableDate(note.created_at, api.config.timezone)}</time>: {deliveryOutcome(note.body)}
             <details><summary>{__('Technical details', 'chatflow-forms')}</summary><pre>{note.body}</pre></details>
           </li>
         ))}
@@ -202,7 +202,7 @@ export function Detail({
             {decodeTitle(detail.form?.title ?? __('Submission', 'chatflow-forms'))} · {responseLabel(detail.id)}
           </h1>
           <p>
-            <time dateTime={detail.createdAt}>{readableDate(detail.createdAt)}</time> · {statusLabel(detail.status)} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
+            <time dateTime={detail.createdAt}>{readableDate(detail.createdAt, api.config.timezone)}</time> · {statusLabel(detail.status)} · {__('Form version', 'chatflow-forms')} {detail.formVersion}{' '}
             · {Math.round(detail.durationMs / 1000)}s · {detail.progress}%
           </p>
           {can(api.config, 'edit_submissions') && (
@@ -321,7 +321,7 @@ export function Detail({
             <ul>
               {detail.notes.filter(item => item.kind === 'note').map((item) => (
                 <li key={item.id}>
-                  <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time> · {item.message}
+                  <time dateTime={item.createdAt}>{readableDate(item.createdAt, api.config.timezone)}</time> · {item.message}
                 </li>
               ))}
             </ul>

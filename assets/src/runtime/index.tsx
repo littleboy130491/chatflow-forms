@@ -129,9 +129,10 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
   };
   const label = phrases(config.locale);
   let returnFocus: HTMLElement | null = null;
-  const setOpen = (value: boolean) => {
+  // Auto-open (timer/scroll) shows the panel without taking focus from what the visitor is doing.
+  const setOpen = (value: boolean, moveFocus = true) => {
     if (!toggle || !panel || value === !panel.hidden) return;
-    if (value) {
+    if (value && moveFocus) {
       const focused = document.activeElement;
       returnFocus = focused instanceof HTMLElement && focused !== document.body && focused !== host ? focused : null;
     }
@@ -148,9 +149,11 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     toggle.setAttribute('aria-expanded', String(value));
     if (value) {
       initialize();
-      panel.focus({ preventScroll: true });
+      if (moveFocus) panel.focus({ preventScroll: true });
     } else {
-      (returnFocus?.isConnected ? returnFocus : toggle).focus({ preventScroll: true });
+      const focused = document.activeElement;
+      if (!focused || focused === document.body || focused === host) (returnFocus?.isConnected ? returnFocus : toggle).focus({ preventScroll: true });
+      returnFocus = null;
     }
   };
   if (isLauncher) {
@@ -244,14 +247,14 @@ export function mountRuntime(host: HTMLElement, options: RuntimeOptions = {}): R
     document.addEventListener('click', openTrigger);
     const seconds = host.dataset.autoOpen;
     if (seconds !== undefined && seconds !== '' && /^\d+$/.test(seconds)) {
-      autoTimer = setTimeout(() => { if (!autoOpened && !host.hidden) setOpen(true); }, Math.min(3600, Number(seconds)) * 1000);
+      autoTimer = setTimeout(() => { if (!autoOpened && !host.hidden) setOpen(true, false); }, Math.min(3600, Number(seconds)) * 1000);
     }
     const percent = host.dataset.scrollPercent;
     if (percent !== undefined && percent !== '' && /^\d+$/.test(percent)) {
       scrollHandler = () => {
         const total = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         if (!autoOpened && !host.hidden && total > 0 && window.scrollY / total * 100 >= Number(percent)) {
-          setOpen(true);
+          setOpen(true, false);
           if (scrollHandler) window.removeEventListener('scroll', scrollHandler);
         }
       };

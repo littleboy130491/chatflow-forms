@@ -105,6 +105,7 @@ final class RestModule implements Module {
 			'cff_manage_settings'
 		);
 		$this->route( '/admin/system-status', 'GET', array( $this, 'systemStatus' ), 'cff_manage_settings' );
+		$this->route( '/admin/pages', 'GET', array( $this, 'pages' ), 'cff_manage_forms' );
 		$this->route( '/admin/templates', 'GET', fn() => $this->respond( array( 'items' => \ChatFlow\Templates\Templates::catalog() ) ), 'cff_manage_forms' );
 		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'GET', fn( $r ) => $this->respond( \ChatFlow\Templates\Templates::definition( (string) $r['slug'] ) ), 'cff_manage_forms' );
 		$this->route( '/admin/templates/(?P<slug>[a-z0-9-]+)', 'POST', fn( $r ) => $this->respond( ( new \ChatFlow\Templates\Templates( $this->forms ) )->create( (string) $r['slug'] ), 201 ), 'cff_manage_forms' );
@@ -225,7 +226,13 @@ final class RestModule implements Module {
 	 * @return array<string,mixed>
 	 */
 	private function body( \WP_REST_Request $r ): array {
-		$raw = json_decode( $r->get_body(), false, 64, JSON_THROW_ON_ERROR );
+		$raw_body = trim( (string) $r->get_body() );
+		// DELETE requests and some clients legitimately send no body. Treat it as an
+		// empty object so handlers can apply their own required-field validation.
+		if ( '' === $raw_body ) {
+			return array();
+		}
+		$raw = json_decode( $raw_body, false, 64, JSON_THROW_ON_ERROR );
 		if ( ! is_object( $raw ) ) {
 			throw new \InvalidArgumentException( 'JSON object body required.' ); }
 		foreach ( array( 'schema', 'settings', 'answers', 'meta', 'prefill', 'filters', 'criteria' ) as $key ) {
@@ -327,7 +334,8 @@ final class RestModule implements Module {
 	public function submissionsList( \WP_REST_Request $r ): \WP_REST_Response {
 		[$page, $per] = $this->pagination( $r );
 		$filters      = $r->get_query_params();
-		unset( $filters['page'], $filters['perPage'] );
+		// WordPress adds these framework parameters on plain-permalink sites.
+		unset( $filters['page'], $filters['perPage'], $filters['rest_route'], $filters['_locale'], $filters['_wpnonce'] );
 		$data = $this->submissions->find( $filters, $page, $per );
 		// Frozen title and field labels per form version on this page, so the inbox needs no per-row detail requests.
 		$forms = array();
@@ -460,6 +468,39 @@ final class RestModule implements Module {
 				'perPage' => $per,
 			)
 		); }
+	/** Published posts and pages by title, for the "show on these pages" picker. */
+	public function pages( \WP_REST_Request $r ): \WP_REST_Response {
+		$types   = array_values( array_diff( get_post_types( array( 'public' => true ) ), array( 'attachment', 'cff_form' ) ) );
+		$args    = array(
+			'post_type'              => $types,
+			'post_status'            => 'publish',
+			'posts_per_page'         => 20,
+			'orderby'                => 'title',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		);
+		$include = is_string( $r['include'] ?? null ) ? array_slice( array_filter( array_map( 'absint', explode( ',', $r['include'] ) ) ), 0, 100 ) : array();
+		if ( $include ) {
+			// Resolve titles for IDs that are already selected, whatever their status.
+			$args['post__in']       = $include;
+			$args['post_status']    = 'any';
+			$args['posts_per_page'] = count( $include );
+		} elseif ( is_string( $r['search'] ?? null ) && '' !== trim( $r['search'] ) ) {
+			$args['s'] = sanitize_text_field( mb_substr( $r['search'], 0, 100 ) );
+		}
+		$items = array_map(
+			static fn( \WP_Post $post ): array => array(
+				'id'    => $post->ID,
+				'title' => html_entity_decode( get_the_title( $post ), ENT_QUOTES, 'UTF-8' ),
+				'type'  => (string) ( get_post_type_object( $post->post_type )->labels->singular_name ?? $post->post_type ),
+			),
+			( new \WP_Query( $args ) )->posts
+		);
+		return $this->respond( array( 'items' => $items ) );
+	}
+
 	public function systemStatus(): \WP_REST_Response {
 		$private = false;
 		try {

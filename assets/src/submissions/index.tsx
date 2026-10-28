@@ -25,6 +25,17 @@ type SubmissionPage = Page<SubmissionDTO> & { forms?: Record<string, { title: st
 function RowCheckbox({ label, value, onChange }: { label: string; value: boolean; onChange: (checked: boolean) => void }) {
   return <input type="checkbox" aria-label={label} checked={value} onChange={event => onChange(event.target.checked)} />;
 }
+/** The open submission lives in ?submission=ID so browser Back returns to the list. */
+function detailFromUrl(): number | null {
+  const value = new URLSearchParams(globalThis.location?.search ?? '').get('submission');
+  return value && /^[1-9]\d{0,18}$/.test(value) ? Number(value) : null;
+}
+function detailUrl(id: number | null): string {
+  const url = new URL(location.href);
+  if (id === null) url.searchParams.delete('submission');
+  else url.searchParams.set('submission', String(id));
+  return url.href;
+}
 function SubmissionList({ api }: { api: AdminApi }) {
   const columnStorageKey = `cff:answer-columns:${api.config.restUrl}`;
   const [preferredColumns, setPreferredColumns] = useState<string[] | null>(() => { try { return readAnswerColumns(localStorage, columnStorageKey); } catch { return null; } });
@@ -35,13 +46,34 @@ function SubmissionList({ api }: { api: AdminApi }) {
     [perPage, setPerPage] = useState(20),
     [list, setList] = useState<SubmissionPage | null>(null),
     [selected, setSelected] = useState<number[]>([]),
-    [detailId, setDetailId] = useState<number | null>(null),
+    [detailId, setDetailId] = useState<number | null>(detailFromUrl),
     [error, setError] = useState(''),
     [actionError, setActionError] = useState(''),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0),
     [exporting, setExporting] = useState(false),
-    [exportSelected, setExportSelected] = useState(false);
+    [exportIds, setExportIds] = useState<number[]>([]);
+  useEffect(() => {
+    const sync = () => setDetailId(detailFromUrl());
+    window.addEventListener('popstate', sync);
+    return () => window.removeEventListener('popstate', sync);
+  }, []);
+  const openDetail = (id: number) => {
+    history.pushState({ cffSubmission: id }, '', detailUrl(id));
+    setDetailId(id);
+  };
+  const navigateDetail = (id: number) => {
+    history.replaceState(history.state, '', detailUrl(id));
+    setDetailId(id);
+  };
+  const closeDetail = () => {
+    // Opened from the list: step back so the history has no dangling detail entry.
+    if ((history.state as { cffSubmission?: number } | null)?.cffSubmission) history.back();
+    else {
+      history.replaceState(null, '', detailUrl(null));
+      setDetailId(null);
+    }
+  };
   const allowedKeys = answerKeys(list?.items ?? []);
   // The list response carries each row's frozen form title and field labels (same capability as the rows).
   const formMetadata = list?.forms ?? {};
@@ -57,9 +89,16 @@ function SubmissionList({ api }: { api: AdminApi }) {
   const resend = async () => {
     if (!selected.length || !window.confirm(__('Resend all matching emails for the selected completed submissions?', 'chatflow-forms'))) return;
     setBusy(true); setActionError('');
-    const requestId = crypto.randomUUID();
-    try { for (const id of selected) await api.request(`admin/submissions/${id}/resend`, 'POST', { requestId }); }
-    catch (err) { setActionError(errorMessage(err)); } finally { setBusy(false); }
+    try {
+      const requestId = crypto.randomUUID();
+      const results = await Promise.allSettled(selected.map((id) => api.request(`admin/submissions/${id}/resend`, 'POST', { requestId })));
+      const failed = results.filter((result) => result.status === 'rejected').length;
+      if (failed) setActionError(sprintf(__('Resent %1$d of %2$d submissions; %3$d failed.', 'chatflow-forms'), selected.length - failed, selected.length, failed));
+    } catch (err) {
+      setActionError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
   };
   useEffect(() => {
     const abort = new AbortController();
@@ -73,6 +112,12 @@ function SubmissionList({ api }: { api: AdminApi }) {
         abort.signal,
       )
       .then((result) => {
+        // A bulk delete can remove the last row on the current page. Clamp to the
+        // new last page instead of leaving an empty table with an impossible "3 / 2".
+        if (!result.items.length && result.total > 0 && page > 1) {
+          setPage(Math.max(1, Math.ceil(result.total / perPage)));
+          return;
+        }
         setList(result);
         setSelected([]);
       })
@@ -108,11 +153,11 @@ function SubmissionList({ api }: { api: AdminApi }) {
         key={detailId}
         api={api}
         id={detailId}
-        onClose={() => setDetailId(null)}
+        onClose={closeDetail}
         onChanged={() => setRevision((value) => value + 1)}
         previous={list?.items[(list?.items.findIndex(row => row.id === detailId) ?? 0) - 1]?.id}
         next={list?.items[(list?.items.findIndex(row => row.id === detailId) ?? -1) + 1]?.id}
-        onNavigate={setDetailId}
+        onNavigate={navigateDetail}
       />
     );
   return (
@@ -123,7 +168,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
           <p>{__('Read every response, follow up on partial conversations and export what you need.', 'chatflow-forms')}</p>
         </div>
         {can(api.config, 'export_submissions') && (
-          <Button variant="secondary" onClick={() => { setExportSelected(false); setExporting(!exporting); }}>
+          <Button variant="secondary" onClick={() => { setExportIds([]); setExporting(!exporting); }}>
             {exporting ? __('Close export', 'chatflow-forms') : __('Export filtered results', 'chatflow-forms')}
           </Button>
         )}
@@ -157,7 +202,13 @@ function SubmissionList({ api }: { api: AdminApi }) {
         ))}
       </nav>
       <div className="cff-filter-panel">
-        <Filters api={api} value={filters} onChange={setFilters} />
+        <Filters
+          api={api}
+          value={filters}
+          onChange={setFilters}
+          // Questions known from the loaded page (all of the selected form's when one is chosen).
+          questions={Object.entries(Object.assign({}, ...Object.values(formMetadata).map((form) => form.labels)) as Record<string, string>).map(([key, label]) => ({ key, label }))}
+        />
         <div className="cff-filter-actions">
           <Button
             variant="primary"
@@ -251,14 +302,14 @@ function SubmissionList({ api }: { api: AdminApi }) {
             {__('Trash selected', 'chatflow-forms')}
           </Button>
         )}
-        {can(api.config, 'export_submissions') && <Button disabled={!selected.length} onClick={() => { setExportSelected(true); setExporting(true); }}>{__('Export selected', 'chatflow-forms')}</Button>}
+        {can(api.config, 'export_submissions') && <Button disabled={!selected.length} onClick={() => { setExportIds([...selected]); setExporting(true); }}>{__('Export selected', 'chatflow-forms')}</Button>}
         {can(api.config, 'delete_submissions') && can(api.config, 'edit_submissions') && applied.status === 'trash' && <Button isDestructive disabled={!selected.length || busy} onClick={() => { void bulk('permanent'); }}>{__('Permanently delete selected', 'chatflow-forms')}</Button>}
         {can(api.config, 'edit_submissions') && ['trash', 'spam'].includes(applied.status ?? '') && <Button disabled={!selected.length || busy} onClick={() => { void bulk({ status: 'restore' }); }}>{__('Restore selected', 'chatflow-forms')}</Button>}
       </div>)}
       {exporting && can(api.config, 'export_submissions') && (
-        <Export api={api} filters={applied} ids={exportSelected ? selected : []} />
+        <Export api={api} filters={applied} ids={exportIds} />
       )}
-      {!busy && list?.total === 0 ? (
+      {!busy && list?.items.length === 0 ? (
         <div className="cff-table-empty-card">
           <strong>{__('No matching submissions.', 'chatflow-forms')}</strong>
           <span>{__('Try a different status, clear the date range, or search for another answer.', 'chatflow-forms')}</span>
@@ -298,7 +349,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                   />
                 </td>
                 <td>
-                  <Button variant="link" onClick={() => setDetailId(item.id)}>
+                  <Button variant="link" onClick={() => openDetail(item.id)}>
                     {responseLabel(item.id)}
                   </Button>
                   <small>
@@ -306,7 +357,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                   </small>
                 </td>
                 <td>
-                  <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time>
+                  <time dateTime={item.createdAt}>{readableDate(item.createdAt, api.config.timezone)}</time>
                   <small>
                     <span className={`cff-status is-${item.status}`}>{statusLabel(item.status)}</span> · {item.progress}%
                   </small>
@@ -326,6 +377,14 @@ function SubmissionList({ api }: { api: AdminApi }) {
         </table>
       </div>
       <div className="cff-submission-cards">
+        <div className="cff-card-select-all">
+          <RowCheckbox
+            label={__('Select this page', 'chatflow-forms')}
+            value={Boolean(list?.items.length) && selected.length === list?.items.length}
+            onChange={(checked) => setSelected(checked ? (list?.items.map((item) => item.id) ?? []) : [])}
+          />
+          <span>{selected.length ? sprintf(__('%d selected', 'chatflow-forms'), selected.length) : __('Select this page', 'chatflow-forms')}</span>
+        </div>
         {list?.items.map((item) => (
           <article className="cff-submission-card" key={item.id}>
             <div className="cff-submission-card-head">
@@ -336,7 +395,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
                   setSelected(checked ? [...selected, item.id] : selected.filter((id) => id !== item.id))
                 }
               />
-              <Button variant="link" onClick={() => setDetailId(item.id)}>
+              <Button variant="link" onClick={() => openDetail(item.id)}>
                 {responseLabel(item.id)}
               </Button>
               <span className={`cff-status is-${item.status}`}>{statusLabel(item.status)}</span>
@@ -344,7 +403,7 @@ function SubmissionList({ api }: { api: AdminApi }) {
             <p className="cff-submission-card-meta">
               {decodeTitle(formMetadata[`${item.formId}:${item.formVersion}`]?.title ?? '') || `${__('Form', 'chatflow-forms')} #${item.formId}`}
               {' · '}
-              <time dateTime={item.createdAt}>{readableDate(item.createdAt)}</time>
+              <time dateTime={item.createdAt}>{readableDate(item.createdAt, api.config.timezone)}</time>
             </p>
             <dl>
               {columns.map(key => displayValue(item.answers[key]) ? (

@@ -45,7 +45,7 @@ function w(e, t) {
 function T(e) {
 	if (e.__P && e.__d) {
 		var n = e.__v, r = n.__e, i = [], a = [], o = v({}, n);
-		o.__v = n.__v + 1, t.vnode && t.vnode(o), ee(e.__P, o, n, e.__n, e.__P.namespaceURI, 32 & n.__u ? [r] : null, i, r ?? w(n), !!(32 & n.__u), a), o.__v = n.__v, o.__.__k[o.__i] = o, ne(i, o, a), n.__e = n.__ = null, o.__e != r && E(o);
+		o.__v = n.__v + 1, t.vnode && t.vnode(o), ee(e.__P, o, n, e.__n, e.__P.namespaceURI, 32 & n.__u ? [r] : null, i, r ?? w(n), !!(32 & n.__u), a), o.__v = n.__v, o.__.__k[o.__i] = o, I(i, o, a), n.__e = n.__ = null, o.__e != r && E(o);
 	}
 }
 function E(e) {
@@ -65,13 +65,13 @@ function O() {
 }
 function k(e, t, n, r, i, a, o, s, c, l, u) {
 	var d, f, p, g, _, v, y = r && r.__k || h, b = t.length;
-	for (c = A(n, t, y, c, b), d = 0; d < b; d++) (p = n.__k[d]) != null && (f = p.__i != -1 && y[p.__i] || m, p.__i = d, v = ee(e, p, f, i, a, o, s, c, l, u), g = p.__e, p.ref && f.ref != p.ref && (f.ref && ie(f.ref, null, p), u.push(p.ref, p.__c || g, p)), _ == null && g != null && (_ = g), 4 & p.__u ? (c = j(p, c, e), f.__e && (f.__e = null)) : typeof p.type == "function" && v !== void 0 ? c = v : g && (c = g.nextSibling), p.__u &= -7);
+	for (c = A(n, t, y, c, b), d = 0; d < b; d++) (p = n.__k[d]) != null && (f = p.__i != -1 && y[p.__i] || m, p.__i = d, v = ee(e, p, f, i, a, o, s, c, l, u), g = p.__e, p.ref && f.ref != p.ref && (f.ref && re(f.ref, null, p), u.push(p.ref, p.__c || g, p)), _ == null && g != null && (_ = g), 4 & p.__u ? (c = j(p, c, e), f.__e && (f.__e = null)) : typeof p.type == "function" && v !== void 0 ? c = v : g && (c = g.nextSibling), p.__u &= -7);
 	return n.__e = _, c;
 }
 function A(e, t, n, r, i) {
 	var a, o, s, c, l, u = n.length, d = u, f = 0;
 	for (e.__k = Array(i), a = 0; a < i; a++) (o = t[a]) != null && typeof o != "boolean" && typeof o != "function" ? (typeof o == "string" || typeof o == "number" || typeof o == "bigint" || o.constructor == String ? o = e.__k[a] = x(null, o, null, null, null) : _(o) ? o = e.__k[a] = x(S, { children: o }, null, null, null) : o.constructor === void 0 && o.__b > 0 ? o = e.__k[a] = x(o.type, o.props, o.key, o.ref ? o.ref : null, o.__v) : e.__k[a] = o, c = a + f, o.__ = e, o.__b = e.__b + 1, s = null, (l = o.__i = M(o, n, c, d)) != -1 && (d--, (s = n[l]) && (s.__u |= 2)), s == null || s.__v == null ? (l == -1 && (i > u ? f-- : i < u && f++), typeof o.type != "function" && (o.__u |= 4)) : l != c && (l == c - 1 ? f-- : l == c + 1 ? f++ : (l > c ? f-- : f++, o.__u |= 4))) : e.__k[a] = null;
-	if (d) for (a = 0; a < u; a++) (s = n[a]) != null && !(2 & s.__u) && (s.__e == r && (r = w(s)), ae(s, s));
+	if (d) for (a = 0; a < u; a++) (s = n[a]) != null && !(2 & s.__u) && (s.__e == r && (r = w(s)), ie(s, s));
 	return r;
 }
 function j(e, t, n) {
@@ -132,7 +132,7 @@ function ee(e, n, r, i, a, o, s, c, l, u) {
 	n: if (typeof F == "function") {
 		f = s.length;
 		try {
-			if (E = n.props, D = F.prototype && F.prototype.render, O = (d = F.contextType) && i[d.__c], A = d ? O ? O.props.value : d.__ : i, r.__c ? T = (p = n.__c = r.__c).__ = p.__E : (D ? n.__c = p = new F(E, A) : (n.__c = p = new C(E, A), p.constructor = F, p.render = L), O && O.sub(p), p.state || (p.state = {}), p.__n = i, m = p.__d = !0, p.__h = [], p._sb = []), D && p.__s == null && (p.__s = p.state), D && F.getDerivedStateFromProps != null && (p.__s == p.state && (p.__s = v({}, p.__s)), v(p.__s, F.getDerivedStateFromProps(E, p.__s))), g = p.props, b = p.state, p.__v = n, m) D && F.getDerivedStateFromProps == null && p.componentWillMount != null && p.componentWillMount(), D && p.componentDidMount != null && p.__h.push(p.componentDidMount);
+			if (E = n.props, D = F.prototype && F.prototype.render, O = (d = F.contextType) && i[d.__c], A = d ? O ? O.props.value : d.__ : i, r.__c ? T = (p = n.__c = r.__c).__ = p.__E : (D ? n.__c = p = new F(E, A) : (n.__c = p = new C(E, A), p.constructor = F, p.render = R), O && O.sub(p), p.state || (p.state = {}), p.__n = i, m = p.__d = !0, p.__h = [], p._sb = []), D && p.__s == null && (p.__s = p.state), D && F.getDerivedStateFromProps != null && (p.__s == p.state && (p.__s = v({}, p.__s)), v(p.__s, F.getDerivedStateFromProps(E, p.__s))), g = p.props, b = p.state, p.__v = n, m) D && F.getDerivedStateFromProps == null && p.componentWillMount != null && p.componentWillMount(), D && p.componentDidMount != null && p.__h.push(p.componentDidMount);
 			else {
 				if (D && F.getDerivedStateFromProps == null && E !== g && p.componentWillReceiveProps != null && p.componentWillReceiveProps(E, A), n.__v == r.__v || !p.__e && p.shouldComponentUpdate != null && !1 === p.shouldComponentUpdate(E, p.__s, A)) {
 					n.__v != r.__v && (p.props = E, p.state = p.__s, p.__d = !1), n.__e = r.__e, n.__k = r.__k, n.__k.some(function(e) {
@@ -148,7 +148,7 @@ function ee(e, n, r, i, a, o, s, c, l, u) {
 			else do
 				p.__d = !1, j && j(n), d = p.render(p.props, p.state, p.context), p.state = p.__s;
 			while (p.__d && ++M < 25);
-			p.state = p.__s, p.getChildContext != null && (i = v(v({}, i), p.getChildContext())), D && !m && p.getSnapshotBeforeUpdate != null && (x = p.getSnapshotBeforeUpdate(g, b)), N = d != null && d.type === S && d.key == null ? I(d.props.children) : d, c = k(e, _(N) ? N : [N], n, r, i, a, o, s, c, l, u), p.base = n.__e, n.__u &= -161, p.__h.length && s.push(p), T && (p.__E = p.__ = null);
+			p.state = p.__s, p.getChildContext != null && (i = v(v({}, i), p.getChildContext())), D && !m && p.getSnapshotBeforeUpdate != null && (x = p.getSnapshotBeforeUpdate(g, b)), N = d != null && d.type === S && d.key == null ? L(d.props.children) : d, c = k(e, _(N) ? N : [N], n, r, i, a, o, s, c, l, u), p.base = n.__e, n.__u &= -161, p.__h.length && s.push(p), T && (p.__E = p.__ = null);
 		} catch (e) {
 			if (s.length = f, n.__v = null, l || o != null) {
 				if (e.then) {
@@ -158,14 +158,14 @@ function ee(e, n, r, i, a, o, s, c, l, u) {
 			} else n.__e = r.__e;
 			n.__k ?? (n.__k = r.__k || []), e.then || te(n), t.__e(e, n, r);
 		}
-	} else o == null && n.__v == r.__v ? (n.__k = r.__k, n.__e = r.__e) : c = n.__e = re(r.__e, n, r, i, a, o, s, l, u);
+	} else o == null && n.__v == r.__v ? (n.__k = r.__k, n.__e = r.__e) : c = n.__e = ne(r.__e, n, r, i, a, o, s, l, u);
 	return (d = t.diffed) && d(n), 128 & n.__u ? void 0 : c;
 }
 function te(e) {
 	e && (e.__c && (e.__c.__e = !0), e.__k && e.__k.some(te));
 }
-function ne(e, n, r) {
-	for (var i = 0; i < r.length; i++) ie(r[i], r[++i], r[++i]);
+function I(e, n, r) {
+	for (var i = 0; i < r.length; i++) re(r[i], r[++i], r[++i]);
 	t.__c && t.__c(n, e), e.some(function(n) {
 		try {
 			e = n.__h, n.__h = [], e.some(function(e) {
@@ -176,10 +176,10 @@ function ne(e, n, r) {
 		}
 	});
 }
-function I(e) {
-	return typeof e != "object" || !e || e.__b > 0 ? e : _(e) ? e.map(I) : e.constructor === void 0 ? v({}, e) : null;
+function L(e) {
+	return typeof e != "object" || !e || e.__b > 0 ? e : _(e) ? e.map(L) : e.constructor === void 0 ? v({}, e) : null;
 }
-function re(n, r, i, a, o, s, c, l, u) {
+function ne(n, r, i, a, o, s, c, l, u) {
 	var d, f, p, h, g, v, b, x = i.props || m, S = r.props, C = r.type;
 	if (C == "svg" ? o = "http://www.w3.org/2000/svg" : C == "math" ? o = "http://www.w3.org/1998/Math/MathML" : o || (o = "http://www.w3.org/1999/xhtml"), s != null) {
 		for (d = 0; d < s.length; d++) if ((g = s[d]) && "setAttribute" in g == !!C && (C ? g.localName == C : g.nodeType == 3)) {
@@ -202,7 +202,7 @@ function re(n, r, i, a, o, s, c, l, u) {
 	}
 	return n;
 }
-function ie(e, n, r) {
+function re(e, n, r) {
 	try {
 		if (typeof e == "function") {
 			var i = typeof e.__u == "function";
@@ -212,9 +212,9 @@ function ie(e, n, r) {
 		t.__e(e, r);
 	}
 }
-function ae(e, n, r) {
+function ie(e, n, r) {
 	var i, a;
-	if (t.unmount && t.unmount(e), (i = e.ref) && (i.current && i.current != e.__e || ie(i, null, n)), (i = e.__c) != null) {
+	if (t.unmount && t.unmount(e), (i = e.ref) && (i.current && i.current != e.__e || re(i, null, n)), (i = e.__c) != null) {
 		if (i.componentWillUnmount) try {
 			i.componentWillUnmount();
 		} catch (e) {
@@ -222,15 +222,15 @@ function ae(e, n, r) {
 		}
 		i.base = i.__P = i.__n = null;
 	}
-	if (i = e.__k) for (a = 0; a < i.length; a++) i[a] && ae(i[a], n, r || typeof e.type != "function");
+	if (i = e.__k) for (a = 0; a < i.length; a++) i[a] && ie(i[a], n, r || typeof e.type != "function");
 	r || y(e.__e), e.__c = e.__ = e.__e = void 0;
 }
-function L(e, t, n) {
+function R(e, t, n) {
 	return this.constructor(e, n);
 }
-function R(n, r, i) {
+function z(n, r, i) {
 	var a, o, s, c;
-	r == document && (r = document.documentElement), t.__ && t.__(n, r), o = (a = typeof i == "function") ? null : i && i.__k || r.__k, s = [], c = [], ee(r, n = (!a && i || r).__k = b(S, null, [n]), o || m, m, r.namespaceURI, !a && i ? [i] : o ? null : r.firstChild ? e.call(r.childNodes) : null, s, !a && i ? i : o ? o.__e : r.firstChild, a, c), ne(s, n, c), n.props.children = null;
+	r == document && (r = document.documentElement), t.__ && t.__(n, r), o = (a = typeof i == "function") ? null : i && i.__k || r.__k, s = [], c = [], ee(r, n = (!a && i || r).__k = b(S, null, [n]), o || m, m, r.namespaceURI, !a && i ? [i] : o ? null : r.firstChild ? e.call(r.childNodes) : null, s, !a && i ? i : o ? o.__e : r.firstChild, a, c), I(s, n, c), n.props.children = null;
 }
 e = h.slice, t = { __e: function(e, t, n, r) {
 	for (var i, a, o; t = t.__;) if ((i = t.__c) && !i.__) try {
@@ -249,39 +249,39 @@ e = h.slice, t = { __e: function(e, t, n, r) {
 }, O.__r = 0, s = Math.random().toString(8), c = "__d" + s, l = "__a" + s, u = /(PointerCapture)$|Capture$/i, d = 0, f = F(!1), p = F(!0);
 //#endregion
 //#region assets/src/runtime/styles.css?inline
-var oe = ".active.has-prompt form>label[for]{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.scale{flex-wrap:wrap}.chat video,.chat img{max-width:100%;height:auto}.chat fieldset{border:0;gap:12px;padding:0;display:grid}.chat input[type=range]{width:100%}:host{--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--cff-primary:#171717;--cff-bubble-bot-bg:#f1f1f1;--cff-user-bg:#e5e5e5;--cff-text:#171717;--cff-radius:12px;--cff-font:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;--cff-width:720px;display:block;outline:none!important}*{box-sizing:border-box}.chat{font:16px/1.5 var(--cff-font);color:var(--cff-text);max-width:var(--cff-width);border-radius:var(--cff-radius);background:#fff;border:1px solid #dedede;margin-inline-start:auto;margin-inline-end:auto;overflow:hidden}.fullpage{border:0;border-radius:0;min-height:100svh}header{border-bottom:1px solid #dedede;justify-content:space-between;align-items:center;gap:8px;padding:16px;display:flex}.identity{align-items:center;gap:10px;display:flex}.identity img{object-fit:cover;border-radius:50%;width:42px;height:42px}.identity small{color:#555;display:block}.online-dot{background:#21713d;border-radius:50%;width:7px;height:7px;margin-inline-end:6px;display:inline-block}nav{gap:6px;display:flex}.progress{background:#e5e5e5;height:4px}.progress span{background:var(--cff-primary);height:100%;transition:width .25s;display:block}.conversation{scrollbar-gutter:stable;max-height:75svh;padding:20px;overflow-y:auto}.fullpage .conversation{max-height:none}.bubble{border-radius:var(--cff-radius);white-space:pre-wrap;overflow-wrap:anywhere;max-width:90%;margin-block-start:10px;margin-block-end:10px;padding:12px 16px;animation:.2s appear}.bot{background:var(--cff-bubble-bot-bg)}.user{background:var(--cff-user-bg);color:var(--cff-text);text-align:start;margin-inline-start:auto;display:block}.user small{opacity:.8;font-size:12px;display:block}button,.button,input,textarea,select{font:inherit}button,.button{background:var(--cff-primary);color:#fff;border:1px solid var(--cff-primary);border-radius:var(--cff-radius);cursor:pointer;min-height:44px;padding:10px 16px;text-decoration:none;display:inline-block}nav button{color:var(--cff-text);background:0 0;border-color:#bbb;padding:8px}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a:focus-visible{outline-offset:3px;outline:3px solid #2463eb}input:focus-visible{outline-offset:3px;outline:3px solid #2463eb}textarea:focus-visible{outline-offset:3px;outline:3px solid #2463eb}select:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a{color:inherit;text-decoration:underline}label{margin-block-start:8px;margin-block-end:8px;font-weight:600;display:block}input:not([type=checkbox]),textarea,select{border-radius:var(--cff-radius);color:#171717;background:#fff;border:1px solid #999;width:100%;min-height:44px;padding:12px}textarea{resize:vertical;min-height:100px}form button{margin-block-start:12px}small,.help{font-size:13px}.help{color:#555}.input-row{align-items:center;gap:8px;display:flex}.country select{max-width:240px}.chips{flex-wrap:wrap;gap:8px;display:flex}.chip{color:var(--cff-text);text-align:start;background:0 0;border-color:#888}.chip[aria-pressed=true]{background:var(--cff-primary);color:#fff}.continue{flex-basis:100%;margin-top:8px}.cards .chip{flex:160px}.cards img{object-fit:cover;width:100%;height:100px;margin-bottom:8px;display:block}.consent{align-items:flex-start;gap:12px;font-weight:400;display:flex}.consent input{flex-shrink:0;width:24px;height:24px}.link-button{color:var(--cff-text);background:0 0;border:0;text-decoration:underline}.summary{border-radius:var(--cff-radius);border:1px solid #bbb;padding:16px}h2{margin-top:0;font-size:18px}dl{margin:0}dl>div{border-bottom:1px solid #ddd;padding-block-start:8px;padding-block-end:8px}dt{font-weight:600}dd{overflow-wrap:anywhere;margin:0}.notice{border-radius:var(--cff-radius);color:#171717;background:#f2f2f2;margin:12px;padding:16px}.notice button,.ending .button,.ending button{margin-block-start:6px;margin-block-end:6px;margin-inline-end:8px}.typing{gap:5px;width:70px;display:flex}.typing i{background:#666;border-radius:50%;width:7px;height:7px;animation:.9s infinite dot}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}footer{color:#555;border-top:1px solid #ddd;padding:12px 20px;font-size:12px}footer small{font-size:11px;display:block}.honeypot,.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.chat.dark:not([data-style=messaging]){color:#f5f5f5;--cff-text:#f5f5f5;--cff-primary:#e5e5e5;--cff-user-bg:#3a3a3a;--cff-bubble-bot-bg:#292929;background:#171717}.chat.dark:not([data-style=messaging]) button:not(.chip):not(.link-button):not(.user):not(.close-chat){color:#171717}.dark .help,.dark footer,.dark .identity small{color:#ccc}.dark .chip[aria-pressed=true]{color:#171717}@keyframes appear{0%{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes dot{50%{opacity:.3;transform:translateY(-2px)}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media (max-width:480px){header,.conversation{padding:12px}.bubble{max-width:96%}nav button{padding:8px;font-size:13px}.chat{border-inline-start:0;border-inline-end:0;border-radius:0}}:host([data-mode=launcher]){z-index:2147480000;width:min(420px,100vw - 32px);max-height:calc(100dvh - 32px);position:fixed;bottom:16px;right:16px}:host([data-mode=launcher][data-position=left]){left:16px;right:auto}.launcher-root{flex-direction:column;align-items:flex-end;gap:12px;display:flex}.launcher-root.is-left{align-items:flex-start}.launcher-toggle{color:#fff;background:#171717;border-radius:50%;place-items:center;width:60px;height:60px;min-height:60px;padding:0;transition:transform .15s;display:grid;box-shadow:0 6px 24px #0003}.launcher-toggle:hover{transform:scale(1.05)}.launcher-toggle[hidden]{display:none!important}.launcher-panel{background:#fff;border-radius:14px;flex-direction:column;width:100%;max-height:calc(100dvh - 112px);display:flex;overflow:hidden;box-shadow:0 12px 48px #0003}.launcher-panel[hidden]{display:none!important}.launcher-panel>div:first-child{flex-direction:column;flex:auto;min-height:0;display:flex}.launcher-panel .chat{border-radius:14px;flex-direction:column;flex:auto;width:100%;max-width:none;min-height:0;display:flex}.launcher-panel .chat>*{flex:none}.launcher-panel .chat>.conversation{flex:0 auto;min-height:96px}.launcher-panel footer{max-height:30dvh;overflow-y:auto}.launcher-panel .captcha{flex:none;max-height:40dvh;overflow-y:auto}.launcher-panel .captcha:empty{display:none}.launcher-panel .conversation{max-height:min(56dvh,560px)}@media (max-width:480px){:host([data-mode=launcher]){width:calc(100vw - 24px);bottom:12px;right:12px}:host([data-mode=launcher][data-position=left]){left:12px}.launcher-panel .conversation{max-height:55dvh}}:host([data-mode=popup]){z-index:2147480000;pointer-events:none;position:fixed;top:0;bottom:0;left:0;right:0;width:auto!important;max-width:none!important;margin:0!important}.popup-root{pointer-events:none;justify-content:center;align-items:center;display:flex;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop{pointer-events:auto;background:#0000008c;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop[hidden]{display:none!important}.popup-root .launcher-panel{z-index:1;pointer-events:auto;max-width:min(640px,100vw - 32px);max-height:calc(100dvh - 88px);position:relative}.popup-root .launcher-toggle{z-index:2;pointer-events:auto;position:fixed;bottom:16px;right:16px}.popup-root.is-left .launcher-toggle{left:16px;right:auto}.popup-root .conversation{max-height:min(65dvh,650px)}.score-input{flex-wrap:wrap;gap:.45rem;display:flex}.score-chip{text-align:center;min-width:2.75rem}.score-chip[aria-pressed=true]{outline-offset:2px;outline:2px solid}.slider-reading{justify-content:space-between;align-items:baseline;gap:12px;display:flex}.slider-reading output{font-weight:700}.active input[type=range]{width:100%;max-width:100%;min-height:44px}.ending:focus{outline:none}.avatar{display:none}.chat[data-style=messaging]{--m-accent:var(--cff-primary);--m-header-bg:var(--cff-header-bg);--m-header-text:var(--cff-header-text);--m-chat-bg:var(--cff-chat-bg);--m-user-text:var(--cff-user-text);border:0;flex-direction:column;display:flex;box-shadow:0 12px 40px -12px #00000040,0 0 0 1px #0000000d}.chat[data-style=messaging] header{background:var(--m-header-bg);color:var(--m-header-text);z-index:1;border:0;padding:10px 14px;position:relative;box-shadow:0 1px #0000000f}.chat[data-style=messaging] .identity{gap:12px;min-width:0}.chat[data-style=messaging] .identity img,.chat[data-style=messaging] .avatar{border-radius:50%;flex-shrink:0;width:42px;height:42px}.chat[data-style=messaging] .avatar{background:linear-gradient(135deg,color-mix(in srgb,var(--m-accent) 70%,#fff),var(--m-accent));color:#fff;text-transform:uppercase;place-items:center;font-size:18px;font-weight:600;display:grid}.chat[data-style=messaging] .identity strong{font-size:16px;font-weight:600;line-height:1.2}.chat[data-style=messaging] .identity small{color:color-mix(in srgb,var(--m-header-text) 60%,transparent);font-size:13px}.chat[data-style=messaging] nav{gap:2px}.chat[data-style=messaging] nav button{color:var(--m-header-text);opacity:.75;background:0 0;border:0;border-radius:999px;min-height:36px;padding:6px 10px;font-size:13px}.chat[data-style=messaging] nav button:hover:not(:disabled){opacity:1;background:color-mix(in srgb,var(--m-header-text) 8%,transparent)}.chat[data-style=messaging] .progress{background:0 0;height:2px}.chat[data-style=messaging] .progress span{background:var(--m-accent)}.chat[data-style=messaging] .conversation{background-color:var(--m-chat-bg);flex:auto;padding:12px 12px 14px}.chat[data-style=messaging][data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\");background-size:160px}.chat[data-style=messaging].dark[data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23fff' stroke-opacity='.06' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\")}.chat[data-style=messaging][data-wallpaper=dots] .conversation{background-image:radial-gradient(color-mix(in srgb,currentColor 12%,transparent) 1px,transparent 1.5px);background-size:18px 18px}.chat[data-style=messaging][data-wallpaper=gradient] .conversation{background-image:linear-gradient(160deg,color-mix(in srgb,var(--m-chat-bg) 70%,#9fd8c4) 0%,color-mix(in srgb,var(--m-chat-bg) 75%,#f2e3a6) 45%,color-mix(in srgb,var(--m-chat-bg) 70%,#b9b2ef) 100%)}.chat[data-style=messaging] .step{flex-direction:column;display:flex}.chat[data-style=messaging] .bubble{max-width:min(85%,480px);margin-block-start:2px;margin-block-end:2px;padding:7px 12px 8px;font-size:15px;line-height:1.4;animation:.18s ease-out m-pop;position:relative;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .bot{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border-radius:var(--cff-radius);align-self:flex-start}.chat[data-style=messaging] .user{background:var(--cff-user-bg);color:var(--m-user-text);border-radius:var(--cff-radius);text-align:start;cursor:pointer;border:0;align-self:flex-end;align-items:flex-end;gap:8px;min-height:0;margin-block-start:4px;margin-block-end:10px;display:flex}.chat[data-style=messaging] .user small{opacity:.6;flex-shrink:0;margin-bottom:1px;font-size:11px;line-height:1}.chat[data-style=messaging] .user small:after{content:\" ✓✓\";color:var(--m-accent);opacity:1;letter-spacing:-.18em;margin-inline-start:4px}.chat[data-style=messaging] .user:hover{filter:brightness(.97)}.chat[data-style=messaging] .user:disabled{opacity:1;cursor:default}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)){border-bottom-left-radius:4px}.chat[data-style=messaging][data-tails=on] .user{border-bottom-right-radius:4px}.chat[data-style=messaging][data-tails=on] .user:before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{left:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging][data-tails=on] .user:before{right:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging] .typing{background:var(--cff-bubble-bot-bg);border-radius:var(--cff-radius);width:auto;padding:12px 14px}.chat[data-style=messaging] .typing i{background:color-mix(in srgb,var(--cff-text) 45%,transparent)}.chat[data-style=messaging] .help{color:color-mix(in srgb,var(--cff-text) 65%,transparent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 80%,transparent);border-radius:10px;padding:6px 10px;display:inline-block}.chat[data-style=messaging] .chips{gap:6px;margin-top:4px}.chat[data-style=messaging] .chip{background:var(--cff-bubble-bot-bg);color:var(--m-accent);border:1px solid color-mix(in srgb,var(--m-accent) 35%,transparent);border-radius:999px;min-height:40px;padding:8px 16px;font-weight:500;box-shadow:0 1px 1px #00000014}.chat[data-style=messaging] .chip:hover:not(:disabled){background:color-mix(in srgb,var(--m-accent) 10%,var(--cff-bubble-bot-bg))}.chat[data-style=messaging] .chip[aria-pressed=true]{background:var(--m-accent);color:var(--cff-button-text,#fff);border-color:var(--m-accent)}.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;max-width:480px;display:grid}.chat[data-style=messaging][data-choices=keyboard] .chip{text-align:center;color:var(--m-accent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:0;border-radius:10px;justify-content:center;font-size:14px;font-weight:600}.chat[data-style=messaging][data-choices=keyboard] .chip[aria-pressed=true]{background:var(--m-accent);color:var(--cff-button-text,#fff)}.chat[data-style=messaging] .continue{margin-top:6px}.chat[data-style=messaging] .button{background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;min-height:44px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] button:where(:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle):not(.close-chat)){background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;min-height:44px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] .link-button{color:color-mix(in srgb,var(--cff-text) 70%,transparent);font-size:14px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active:not(.has-prompt) form>label[for]{grid-column:1/-1;margin:0}.chat[data-style=messaging] .active form .country{grid-column:1/-1;align-items:center;gap:8px;margin:0;font-size:13px;font-weight:400;display:flex}.chat[data-style=messaging] .active form>small{color:color-mix(in srgb,var(--cff-text) 60%,transparent);order:3;grid-column:1/-1}.chat[data-style=messaging] .active form .input-row input,.chat[data-style=messaging] .active form>textarea,.chat[data-style=messaging] .active select,.chat[data-style=messaging] .active .address input{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:22px;min-height:44px;padding:11px 16px;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .active form>textarea{border-radius:18px}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]{border-radius:50%;justify-content:center;align-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;line-height:1;display:flex}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]{border-radius:50%;justify-content:center;align-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;line-height:1;display:flex}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]:before{content:\"\";background:currentColor;flex:none;width:22px;height:22px;margin:0;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]:before{content:\"\";background:currentColor;flex:none;width:22px;height:22px;margin:0;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .summary,.chat[data-style=messaging] .notice{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:16px;box-shadow:0 1px 2px #0000001f}.chat[data-style=messaging] .notice{text-align:center;max-width:92%;margin:10px auto}.chat[data-style=messaging] .summary dl>div{border-color:color-mix(in srgb,var(--cff-text) 10%,transparent)}.chat[data-style=messaging] .ending{flex-direction:column;align-items:flex-start;display:flex}.chat[data-style=messaging] footer{background:var(--m-header-bg);color:color-mix(in srgb,var(--m-header-text) 55%,transparent);border-top:1px solid color-mix(in srgb,var(--m-header-text) 8%,transparent);text-align:center;padding:8px 14px;font-size:11px}.chat[data-style=messaging] footer small{font-size:10.5px}@keyframes m-pop{0%{opacity:0;transform:translateY(6px)scale(.98)}to{opacity:1;transform:none}}.launcher-panel .chat[data-style=messaging]{box-shadow:none}[data-style=messaging] .launcher-toggle{background:var(--cff-primary);border-color:var(--cff-primary);color:#fff;font-weight:600}.chat[data-style=messaging]>.notice{max-width:none;box-shadow:none;text-align:center;background:color-mix(in srgb,var(--m-accent) 10%,var(--m-header-bg));color:var(--m-header-text);border-radius:0;margin:0;padding:6px 14px;font-size:12px}.close-chat{width:36px;height:36px;min-height:36px;color:inherit;opacity:.7;background:0 0;border:0;border-radius:50%;flex-shrink:0;place-items:center;margin-inline-start:4px;padding:0;display:grid}.close-chat:hover{opacity:1;background:color-mix(in srgb,currentColor 10%,transparent)}header nav{margin-inline-start:auto}.status-notice{margin:0}.chat[data-style=messaging] .online-dot{background:#34c759}.contact-bar{background:var(--cff-header-bg,#fff);border-top:1px solid #0000000f;padding:10px 12px}.chat:not([data-style]) .contact-bar{background:0 0}.contact-link{border-radius:var(--cff-radius);border:1px solid var(--cff-primary);width:100%;min-height:44px;color:var(--cff-primary);background:0 0;justify-content:center;align-items:center;gap:8px;padding:10px 16px;font-size:15px;font-weight:600;text-decoration:none;display:flex}.contact-link:hover{background:color-mix(in srgb,var(--cff-primary) 8%,transparent)}.contact-link.is-whatsapp{color:#fff;background:#25d366;border-color:#25d366}.contact-link.is-whatsapp:hover{background:#1ebe5b}.chat{container-type:inline-size}header{flex-wrap:nowrap}.identity{min-width:0}.identity strong,.identity small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}nav button{white-space:nowrap}@container (width<=520px){nav button{padding-inline-start:6px;padding-inline-end:6px}}@container (width<=360px){header{flex-wrap:wrap}header .identity{flex:1 1 0}header nav{flex-basis:100%;order:1;justify-content:flex-end}}.contact-closed{text-align:center;color:color-mix(in srgb,var(--cff-text) 70%,transparent);margin:0;font-size:13px;line-height:1.4}.chat:not([data-style=messaging]) .active form{gap:12px;display:grid}.chat:not([data-style=messaging]) .active form>:-webkit-any(label,.help,small,button){margin-block-start:0;margin-block-end:0}.chat:not([data-style=messaging]) .active form>:is(label,.help,small,button){margin-block-start:0;margin-block-end:0}.active input[type=range]{margin-inline-start:0;margin-inline-end:0;padding-inline-start:0;padding-inline-end:0;display:block}.slider-reading{flex-wrap:wrap;min-width:0}.slider-reading output{overflow-wrap:anywhere;min-width:0}.active>.summary{margin-block-end:16px}.summary+button,.summary+form{margin-block-start:16px}.conversation{padding:24px}.bubble{margin-block-start:8px;margin-block-end:8px}.active{margin-block-start:16px;margin-block-end:16px}.active form>:-webkit-any(.help,small,[role=alert]){margin-block-start:8px;margin-block-end:8px;line-height:1.5;display:block}.active form>:is(.help,small,[role=alert]){margin-block-start:8px;margin-block-end:8px;line-height:1.5;display:block}.active form>button{margin-block-start:16px}.active .input-row{min-width:0}.active :-webkit-any(input,textarea,select){min-width:0}.active :is(input,textarea,select){min-width:0}.summary{padding:24px}.summary dl>div{padding-block-start:12px;padding-block-end:12px}.summary .link-button{min-height:44px}.chips,.score-input{gap:8px}.chat[data-style=messaging] header{padding:16px}.chat[data-style=messaging] .conversation{padding:24px}.chat[data-style=messaging] .bubble{margin-block-start:4px;margin-block-end:4px;padding:12px 16px;line-height:1.5}.chat[data-style=messaging] .bot:not(:has(+.bot)){margin-bottom:12px}.chat[data-style=messaging] .user{min-height:44px;margin-block-start:8px;margin-block-end:12px}.chat[data-style=messaging] .active{margin-block-start:16px;margin-block-end:8px}.chat[data-style=messaging] .help{border-radius:var(--cff-radius);padding:8px 12px}.chat[data-style=messaging] .chips,.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){gap:8px;margin-top:8px}.chat[data-style=messaging] nav button,.close-chat{min-height:44px}.chat[data-style=messaging] :-webkit-any(.chip,.button){min-height:44px}.chat[data-style=messaging] :is(.chip,.button){min-height:44px}.close-chat{width:44px;height:44px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:0}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:0}.chat[data-style=messaging] .active form>small{margin:0}.chat[data-style=messaging] .continue{min-height:44px;margin-top:12px}.chat[data-style=messaging] .summary{border-radius:var(--cff-radius);padding:24px}@container (width<=520px){.conversation,.chat[data-style=messaging] .conversation,.summary,.chat[data-style=messaging] .summary{padding:16px}.chat[data-style=messaging] header{padding:12px}}@container (width<=380px){.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}}";
+var ae = ".active.has-prompt form>label[for]{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.scale{flex-wrap:wrap}.chat video,.chat img{max-width:100%;height:auto}.chat fieldset{border:0;gap:12px;padding:0;display:grid}.chat input[type=range]{width:100%}:host{--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--cff-primary:#171717;--cff-bubble-bot-bg:#f1f1f1;--cff-user-bg:#e5e5e5;--cff-text:#171717;--cff-radius:12px;--cff-font:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;--cff-width:720px;display:block;outline:none!important}*{box-sizing:border-box}.chat{font:16px/1.5 var(--cff-font);color:var(--cff-text);max-width:var(--cff-width);border-radius:var(--cff-radius);background:#fff;border:1px solid #dedede;margin-inline-start:auto;margin-inline-end:auto;position:relative;overflow:hidden}.fullpage{border:0;border-radius:0;min-height:100svh}header{border-bottom:1px solid #dedede;justify-content:space-between;align-items:center;gap:8px;padding:16px;display:flex}.identity{align-items:center;gap:10px;display:flex}.identity img{object-fit:cover;border-radius:50%;width:42px;height:42px}.identity small{color:#555;display:block}.online-dot{background:#21713d;border-radius:50%;width:7px;height:7px;margin-inline-end:6px;display:inline-block}nav{gap:6px;display:flex}.progress{background:#e5e5e5;height:4px}.progress span{background:var(--cff-primary);height:100%;transition:width .25s;display:block}.conversation{scrollbar-gutter:stable;max-height:75svh;padding:20px;overflow-y:auto}.fullpage .conversation{max-height:none}.bubble{border-radius:var(--cff-radius);white-space:pre-wrap;overflow-wrap:anywhere;max-width:90%;margin-block-start:10px;margin-block-end:10px;padding:12px 16px;animation:.2s appear}.bot{background:var(--cff-bubble-bot-bg)}.user{background:var(--cff-user-bg);color:var(--cff-text);text-align:start;margin-inline-start:auto;display:block}.user small{opacity:.8;font-size:12px;display:block}button,.button,input,textarea,select{font:inherit}button,.button{background:var(--cff-primary);color:#fff;border:1px solid var(--cff-primary);border-radius:var(--cff-radius);cursor:pointer;min-height:44px;padding:10px 16px;text-decoration:none;display:inline-block}nav button{color:var(--cff-text);background:0 0;border-color:#bbb;padding:8px}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a:focus-visible{outline-offset:3px;outline:3px solid #2463eb}input:focus-visible{outline-offset:3px;outline:3px solid #2463eb}textarea:focus-visible{outline-offset:3px;outline:3px solid #2463eb}select:focus-visible{outline-offset:3px;outline:3px solid #2463eb}a{color:inherit;text-decoration:underline}label{margin-block-start:8px;margin-block-end:8px;font-weight:600;display:block}input:not([type=checkbox]),textarea,select{border-radius:var(--cff-radius);color:#171717;background:#fff;border:1px solid #999;width:100%;min-height:44px;padding:12px}textarea{resize:vertical;min-height:100px}form button{margin-block-start:12px}small,.help{font-size:13px}.help{color:#555}.input-row{align-items:center;gap:8px;display:flex}.country select{max-width:240px}.chips{flex-wrap:wrap;gap:8px;display:flex}.chip{color:var(--cff-text);text-align:start;background:0 0;border-color:#888}.chip[aria-pressed=true]{background:var(--cff-primary);color:#fff}.continue{flex-basis:100%;margin-top:8px}.cards .chip{flex:160px}.cards img{object-fit:cover;width:100%;height:100px;margin-bottom:8px;display:block}.consent{align-items:flex-start;gap:12px;font-weight:400;display:flex}.consent input{flex-shrink:0;width:24px;height:24px}.link-button{color:var(--cff-text);background:0 0;border:0;text-decoration:underline}.summary{border-radius:var(--cff-radius);border:1px solid #bbb;padding:16px}h2{margin-top:0;font-size:18px}dl{margin:0}dl>div{border-bottom:1px solid #ddd;padding-block-start:8px;padding-block-end:8px}dt{font-weight:600}dd{overflow-wrap:anywhere;margin:0}.notice{border-radius:var(--cff-radius);color:#171717;background:#f2f2f2;margin:12px;padding:16px}.notice button,.ending .button,.ending button{margin-block-start:6px;margin-block-end:6px;margin-inline-end:8px}.typing{gap:5px;width:70px;display:flex}.typing i{background:#666;border-radius:50%;width:7px;height:7px;animation:.9s infinite dot}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}footer{color:#555;border-top:1px solid #ddd;padding:12px 20px;font-size:12px}footer small{font-size:11px;display:block}.honeypot,.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.chat.dark:not([data-style=messaging]){color:#f5f5f5;--cff-text:#f5f5f5;--cff-primary:#e5e5e5;--cff-user-bg:#3a3a3a;--cff-bubble-bot-bg:#292929;background:#171717}.chat.dark:not([data-style=messaging]) button:not(.chip):not(.link-button):not(.user):not(.close-chat){color:#171717}.dark .help,.dark footer,.dark .identity small{color:#ccc}.dark .chip[aria-pressed=true]{color:#171717}@keyframes appear{0%{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@keyframes dot{50%{opacity:.3;transform:translateY(-2px)}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}@media (max-width:480px){header,.conversation{padding:12px}.bubble{max-width:96%}nav button{padding:8px;font-size:13px}.chat{border-inline-start:0;border-inline-end:0;border-radius:0}}:host([data-mode=launcher]){z-index:2147480000;width:min(420px,100vw - 32px);max-height:calc(100dvh - 32px);position:fixed;bottom:16px;right:16px}:host([data-mode=launcher][data-position=left]){left:16px;right:auto}.launcher-root{flex-direction:column;align-items:flex-end;gap:12px;display:flex}.launcher-root.is-left{align-items:flex-start}.launcher-toggle{color:#fff;background:#171717;border-radius:50%;place-items:center;width:60px;height:60px;min-height:60px;padding:0;transition:transform .15s;display:grid;box-shadow:0 6px 24px #0003}.launcher-toggle:hover{transform:scale(1.05)}.launcher-toggle[hidden]{display:none!important}.launcher-panel{background:#fff;border-radius:14px;flex-direction:column;width:100%;max-height:calc(100dvh - 112px);display:flex;overflow:hidden;box-shadow:0 12px 48px #0003}.launcher-panel[hidden]{display:none!important}.launcher-panel>div:first-child{flex-direction:column;flex:auto;min-height:0;display:flex}.launcher-panel .chat{border-radius:14px;flex-direction:column;flex:auto;width:100%;max-width:none;min-height:0;display:flex}.launcher-panel .chat>*{flex:none}.launcher-panel .chat>.conversation{flex:0 auto;min-height:96px}.launcher-panel footer{max-height:30dvh;overflow-y:auto}.launcher-panel .captcha{flex:none;max-height:40dvh;overflow-y:auto}.launcher-panel .captcha:empty{display:none}.launcher-panel .conversation{max-height:min(56dvh,560px)}@media (max-width:480px){:host([data-mode=launcher]){width:calc(100vw - 24px);bottom:12px;right:12px}:host([data-mode=launcher][data-position=left]){left:12px}.launcher-panel .conversation{max-height:55dvh}}:host([data-mode=popup]){z-index:2147480000;pointer-events:none;position:fixed;top:0;bottom:0;left:0;right:0;width:auto!important;max-width:none!important;margin:0!important}.popup-root{pointer-events:none;justify-content:center;align-items:center;display:flex;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop{pointer-events:auto;background:#0000008c;position:absolute;top:0;bottom:0;left:0;right:0}.popup-root .popup-backdrop[hidden]{display:none!important}.popup-root .launcher-panel{z-index:1;pointer-events:auto;max-width:min(640px,100vw - 32px);max-height:calc(100dvh - 88px);position:relative}.popup-root .launcher-toggle{z-index:2;pointer-events:auto;position:fixed;bottom:16px;right:16px}.popup-root.is-left .launcher-toggle{left:16px;right:auto}.popup-root .conversation{max-height:min(65dvh,650px)}.score-input{flex-wrap:wrap;gap:.45rem;display:flex}.score-chip{text-align:center;min-width:2.75rem}.score-chip[aria-pressed=true]{outline-offset:2px;outline:2px solid}.slider-reading{justify-content:space-between;align-items:baseline;gap:12px;display:flex}.slider-reading output{font-weight:700}.active input[type=range]{width:100%;max-width:100%;min-height:44px}.ending:focus{outline:none}.avatar{display:none}.chat[data-style=messaging]{--m-accent:var(--cff-primary);--m-header-bg:var(--cff-header-bg);--m-header-text:var(--cff-header-text);--m-chat-bg:var(--cff-chat-bg);--m-user-text:var(--cff-user-text);border:0;flex-direction:column;display:flex;box-shadow:0 12px 40px -12px #00000040,0 0 0 1px #0000000d}.chat[data-style=messaging] header{background:var(--m-header-bg);color:var(--m-header-text);z-index:1;border:0;padding:10px 14px;position:relative;box-shadow:0 1px #0000000f}.chat[data-style=messaging] .identity{gap:12px;min-width:0}.chat[data-style=messaging] .identity img,.chat[data-style=messaging] .avatar{border-radius:50%;flex-shrink:0;width:42px;height:42px}.chat[data-style=messaging] .avatar{background:linear-gradient(135deg,color-mix(in srgb,var(--m-accent) 70%,#fff),var(--m-accent));color:#fff;text-transform:uppercase;place-items:center;font-size:18px;font-weight:600;display:grid}.chat[data-style=messaging] .identity strong{font-size:16px;font-weight:600;line-height:1.2}.chat[data-style=messaging] .identity small{color:color-mix(in srgb,var(--m-header-text) 60%,transparent);font-size:13px}.chat[data-style=messaging] nav{gap:2px}.chat[data-style=messaging] nav button{color:var(--m-header-text);opacity:.75;background:0 0;border:0;border-radius:999px;min-height:36px;padding:6px 10px;font-size:13px}.chat[data-style=messaging] nav button:hover:not(:disabled){opacity:1;background:color-mix(in srgb,var(--m-header-text) 8%,transparent)}.chat[data-style=messaging] .progress{background:0 0;height:2px}.chat[data-style=messaging] .progress span{background:var(--m-accent)}.chat[data-style=messaging] .conversation{background-color:var(--m-chat-bg);flex:auto;padding:12px 12px 14px}.chat[data-style=messaging][data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\");background-size:160px}.chat[data-style=messaging].dark[data-wallpaper=doodle] .conversation{background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='%23fff' stroke-opacity='.06' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 22h22a6 6 0 0 1 6 6v10a6 6 0 0 1-6 6H28l-8 6v-6h-2a6 6 0 0 1-6-6V28a6 6 0 0 1 6-6z'/%3E%3Ccircle cx='112' cy='30' r='9'/%3E%3Cpath d='M128 88l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z'/%3E%3Cpath d='M30 104c6-8 16-8 22 0s16 8 22 0'/%3E%3Cpath d='M98 130l14-14m0 14l-14-14'/%3E%3Crect x='64' y='58' width='20' height='20' rx='5'/%3E%3Cpath d='M140 146a8 8 0 1 1-8-8'/%3E%3C/svg%3E\")}.chat[data-style=messaging][data-wallpaper=dots] .conversation{background-image:radial-gradient(color-mix(in srgb,currentColor 12%,transparent) 1px,transparent 1.5px);background-size:18px 18px}.chat[data-style=messaging][data-wallpaper=gradient] .conversation{background-image:linear-gradient(160deg,color-mix(in srgb,var(--m-chat-bg) 70%,#9fd8c4) 0%,color-mix(in srgb,var(--m-chat-bg) 75%,#f2e3a6) 45%,color-mix(in srgb,var(--m-chat-bg) 70%,#b9b2ef) 100%)}.chat[data-style=messaging] .step{flex-direction:column;display:flex}.chat[data-style=messaging] .bubble{max-width:min(85%,480px);margin-block-start:2px;margin-block-end:2px;padding:7px 12px 8px;font-size:15px;line-height:1.4;animation:.18s ease-out m-pop;position:relative;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .bot{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border-radius:var(--cff-radius);align-self:flex-start}.chat[data-style=messaging] .user{background:var(--cff-user-bg);color:var(--m-user-text);border-radius:var(--cff-radius);text-align:start;cursor:pointer;border:0;align-self:flex-end;align-items:flex-end;gap:8px;min-height:0;margin-block-start:4px;margin-block-end:10px;display:flex}.chat[data-style=messaging] .user small{opacity:.6;flex-shrink:0;margin-bottom:1px;font-size:11px;line-height:1}.chat[data-style=messaging] .user small:after{content:\" ✓✓\";color:var(--m-accent);opacity:1;letter-spacing:-.18em;margin-inline-start:4px}.chat[data-style=messaging] .user:hover{filter:brightness(.97)}.chat[data-style=messaging] .user:disabled{opacity:1;cursor:default}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)){border-bottom-left-radius:4px}.chat[data-style=messaging][data-tails=on] .user{border-bottom-right-radius:4px}.chat[data-style=messaging][data-tails=on] .user:before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{content:\"\";background:inherit;filter:drop-shadow(0 1px #0000000f);width:10px;height:16px;position:absolute;bottom:0}.chat[data-style=messaging][data-tails=on] .bot:not(:has(+.bot)):before{left:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M10 0v16H0c4-1 8-4 10-16z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging][data-tails=on] .user:before{right:-9px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16'%3E%3Cpath d='M0 0v16h10C6 15 2 12 0 0z'/%3E%3C/svg%3E\") no-repeat}.chat[data-style=messaging] .typing{background:var(--cff-bubble-bot-bg);border-radius:var(--cff-radius);width:auto;padding:12px 14px}.chat[data-style=messaging] .typing i{background:color-mix(in srgb,var(--cff-text) 45%,transparent)}.chat[data-style=messaging] .help{color:color-mix(in srgb,var(--cff-text) 65%,transparent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 80%,transparent);border-radius:10px;padding:6px 10px;display:inline-block}.chat[data-style=messaging] .chips{gap:6px;margin-top:4px}.chat[data-style=messaging] .chip{background:var(--cff-bubble-bot-bg);color:var(--m-accent);border:1px solid color-mix(in srgb,var(--m-accent) 35%,transparent);border-radius:999px;min-height:40px;padding:8px 16px;font-weight:500;box-shadow:0 1px 1px #00000014}.chat[data-style=messaging] .chip:hover:not(:disabled){background:color-mix(in srgb,var(--m-accent) 10%,var(--cff-bubble-bot-bg))}.chat[data-style=messaging] .chip[aria-pressed=true]{background:var(--m-accent);color:var(--cff-button-text,#fff);border-color:var(--m-accent)}.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px;max-width:480px;display:grid}.chat[data-style=messaging][data-choices=keyboard] .chip{text-align:center;color:var(--m-accent);background:color-mix(in srgb,var(--cff-bubble-bot-bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:0;border-radius:10px;justify-content:center;font-size:14px;font-weight:600}.chat[data-style=messaging][data-choices=keyboard] .chip[aria-pressed=true]{background:var(--m-accent);color:var(--cff-button-text,#fff)}.chat[data-style=messaging] .continue{margin-top:6px}.chat[data-style=messaging] .button{background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;min-height:44px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] button:where(:not(.chip):not(.user):not(.link-button):not(nav button):not(.launcher-toggle):not(.close-chat)){background:var(--m-accent);border-color:var(--m-accent);color:var(--cff-button-text,#fff);border-radius:999px;min-height:44px;padding:9px 20px;font-weight:600}.chat[data-style=messaging] .link-button{color:color-mix(in srgb,var(--cff-text) 70%,transparent);font-size:14px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:1fr auto;align-items:end;gap:8px;margin-top:4px;display:grid}.chat[data-style=messaging] .active:not(.has-prompt) form>label[for]{grid-column:1/-1;margin:0}.chat[data-style=messaging] .active form .country{grid-column:1/-1;align-items:center;gap:8px;margin:0;font-size:13px;font-weight:400;display:flex}.chat[data-style=messaging] .active form>small{color:color-mix(in srgb,var(--cff-text) 60%,transparent);order:3;grid-column:1/-1}.chat[data-style=messaging] .active form .input-row input,.chat[data-style=messaging] .active form>textarea,.chat[data-style=messaging] .active select,.chat[data-style=messaging] .active .address input{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:22px;min-height:44px;padding:11px 16px;box-shadow:0 1px 1px #0000001f}.chat[data-style=messaging] .active form>textarea{border-radius:18px}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]{border-radius:50%;justify-content:center;align-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;line-height:1;display:flex}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]{border-radius:50%;justify-content:center;align-items:center;width:46px;height:46px;min-height:46px;margin:0;padding:0;font-size:0;line-height:1;display:flex}.chat[data-style=messaging] .active form:has(.input-row)>button[type=submit]:before{content:\"\";background:currentColor;flex:none;width:22px;height:22px;margin:0;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .active form:has(>textarea)>button[type=submit]:before{content:\"\";background:currentColor;flex:none;width:22px;height:22px;margin:0;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z'/%3E%3C/svg%3E\") 50%/contain no-repeat}.chat[data-style=messaging] .summary,.chat[data-style=messaging] .notice{background:var(--cff-bubble-bot-bg);color:var(--cff-text);border:0;border-radius:16px;box-shadow:0 1px 2px #0000001f}.chat[data-style=messaging] .notice{text-align:center;max-width:92%;margin:10px auto}.chat[data-style=messaging] .summary dl>div{border-color:color-mix(in srgb,var(--cff-text) 10%,transparent)}.chat[data-style=messaging] .ending{flex-direction:column;align-items:flex-start;display:flex}.chat[data-style=messaging] footer{background:var(--m-header-bg);color:color-mix(in srgb,var(--m-header-text) 55%,transparent);border-top:1px solid color-mix(in srgb,var(--m-header-text) 8%,transparent);text-align:center;padding:8px 14px;font-size:11px}.chat[data-style=messaging] footer small{font-size:10.5px}@keyframes m-pop{0%{opacity:0;transform:translateY(6px)scale(.98)}to{opacity:1;transform:none}}.launcher-panel .chat[data-style=messaging]{box-shadow:none}[data-style=messaging] .launcher-toggle{background:var(--cff-primary);border-color:var(--cff-primary);color:#fff;font-weight:600}.chat[data-style=messaging]>.notice{max-width:none;box-shadow:none;text-align:center;background:color-mix(in srgb,var(--m-accent) 10%,var(--m-header-bg));color:var(--m-header-text);border-radius:0;margin:0;padding:6px 14px;font-size:12px}.close-chat{width:36px;height:36px;min-height:36px;color:inherit;opacity:.7;background:0 0;border:0;border-radius:50%;flex-shrink:0;place-items:center;margin-inline-start:4px;padding:0;display:grid}.close-chat:hover{opacity:1;background:color-mix(in srgb,currentColor 10%,transparent)}header nav{margin-inline-start:auto}.status-notice{margin:0}.chat[data-style=messaging] .online-dot{background:#34c759}.contact-bar{background:var(--cff-header-bg,#fff);border-top:1px solid #0000000f;padding:10px 12px}.chat:not([data-style]) .contact-bar{background:0 0}.contact-link{border-radius:var(--cff-radius);border:1px solid var(--cff-primary);width:100%;min-height:44px;color:var(--cff-primary);background:0 0;justify-content:center;align-items:center;gap:8px;padding:10px 16px;font-size:15px;font-weight:600;text-decoration:none;display:flex}.contact-link:hover{background:color-mix(in srgb,var(--cff-primary) 8%,transparent)}.contact-link.is-whatsapp{color:#fff;background:#25d366;border-color:#25d366}.contact-link.is-whatsapp:hover{background:#1ebe5b}.chat{container-type:inline-size}header{flex-wrap:nowrap}.identity{min-width:0}.identity strong,.identity small{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}nav button{white-space:nowrap}@container (width<=520px){nav button{padding-inline-start:6px;padding-inline-end:6px}}@container (width<=360px){header{flex-wrap:wrap}header .identity{flex:1 1 0}header nav{flex-basis:100%;order:1;justify-content:flex-end}}.contact-closed{text-align:center;color:color-mix(in srgb,var(--cff-text) 70%,transparent);margin:0;font-size:13px;line-height:1.4}.chat:not([data-style=messaging]) .active form{gap:12px;display:grid}.chat:not([data-style=messaging]) .active form>:-webkit-any(label,.help,small,button){margin-block-start:0;margin-block-end:0}.chat:not([data-style=messaging]) .active form>:is(label,.help,small,button){margin-block-start:0;margin-block-end:0}.active input[type=range]{margin-inline-start:0;margin-inline-end:0;padding-inline-start:0;padding-inline-end:0;display:block}.slider-reading{flex-wrap:wrap;min-width:0}.slider-reading output{overflow-wrap:anywhere;min-width:0}.active>.summary{margin-block-end:16px}.summary+button,.summary+form{margin-block-start:16px}.conversation{padding:24px}.bubble{margin-block-start:8px;margin-block-end:8px}.active{margin-block-start:16px;margin-block-end:16px}.active form>:-webkit-any(.help,small,[role=alert]){margin-block-start:8px;margin-block-end:8px;line-height:1.5;display:block}.active form>:is(.help,small,[role=alert]){margin-block-start:8px;margin-block-end:8px;line-height:1.5;display:block}.active form>button{margin-block-start:16px}.active .input-row{min-width:0}.active :-webkit-any(input,textarea,select){min-width:0}.active :is(input,textarea,select){min-width:0}.summary{padding:24px}.summary dl>div{padding-block-start:12px;padding-block-end:12px}.summary .link-button{min-height:44px}.chips,.score-input{gap:8px}.chat[data-style=messaging] header{padding:16px}.chat[data-style=messaging] .conversation{padding:24px}.chat[data-style=messaging] .bubble{margin-block-start:4px;margin-block-end:4px;padding:12px 16px;line-height:1.5}.chat[data-style=messaging] .bot:not(:has(+.bot)){margin-bottom:12px}.chat[data-style=messaging] .user{min-height:44px;margin-block-start:8px;margin-block-end:12px}.chat[data-style=messaging] .active{margin-block-start:16px;margin-block-end:8px}.chat[data-style=messaging] .help{border-radius:var(--cff-radius);padding:8px 12px}.chat[data-style=messaging] .chips,.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){gap:8px;margin-top:8px}.chat[data-style=messaging] nav button,.close-chat{min-height:44px}.chat[data-style=messaging] :-webkit-any(.chip,.button){min-height:44px}.chat[data-style=messaging] :is(.chip,.button){min-height:44px}.close-chat{width:44px;height:44px}.chat[data-style=messaging] .active form:has(.input-row){grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:0}.chat[data-style=messaging] .active form:has(>textarea){grid-template-columns:minmax(0,1fr) auto;gap:12px;margin-top:0}.chat[data-style=messaging] .active form>small{margin:0}.chat[data-style=messaging] .continue{min-height:44px;margin-top:12px}.chat[data-style=messaging] .summary{border-radius:var(--cff-radius);padding:24px}@container (width<=520px){.conversation,.chat[data-style=messaging] .conversation,.summary,.chat[data-style=messaging] .summary{padding:16px}.chat[data-style=messaging] header{padding:12px}}@container (width<=380px){.chat[data-style=messaging][data-choices=keyboard] .chips:not(.cards){grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}}.chat{--cff-error:#b42318;--cff-error-bg:#fef3f2}.chat.dark,.chat[data-style=messaging].dark{--cff-error:#fda29b;--cff-error-bg:#f0443829}.field-error{border:1px solid color-mix(in srgb,var(--cff-error) 45%,transparent);border-radius:var(--cff-radius);background:var(--cff-error-bg);color:var(--cff-error);border-inline-start-width:4px;align-items:flex-start;gap:8px;margin:8px 0;padding:10px 12px;font-size:14px;font-weight:600;line-height:1.4;animation:.35s cff-error-in;display:flex}.field-error:before{content:\"!\";background:var(--cff-error);color:#fff;border-radius:50%;flex-shrink:0;place-items:center;width:20px;height:20px;font-size:13px;font-weight:700;line-height:1;display:grid}.dark .field-error:before{color:#171717}input[aria-invalid=true]:not([type=checkbox]),textarea[aria-invalid=true],select[aria-invalid=true]{box-shadow:0 0 0 3px color-mix(in srgb,var(--cff-error) 25%,transparent);border-color:var(--cff-error)!important}input[type=checkbox][aria-invalid=true]{outline:2px solid var(--cff-error);outline-offset:2px}.notice.is-error{color:var(--cff-text);border:1px solid color-mix(in srgb,var(--cff-error) 45%,transparent);border-inline-start:4px solid var(--cff-error);background:var(--cff-error-bg)!important}.notice.is-error p{color:var(--cff-error);font-weight:600}@keyframes cff-error-in{0%{opacity:0;transform:translate(0)}20%{opacity:1;transform:translate(-6px)}40%{transform:translate(5px)}60%{transform:translate(-3px)}80%{transform:translate(2px)}to{transform:none}}@media (prefers-reduced-motion:reduce){.field-error{animation:none}}";
 //#endregion
 //#region \0@oxc-project+runtime@0.153.0/helpers/esm/typeof.js
-function se(e) {
+function oe(e) {
 	"@babel/helpers - typeof";
-	return se = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
+	return oe = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
 		return typeof e;
 	} : function(e) {
 		return e && typeof Symbol == "function" && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
-	}, se(e);
+	}, oe(e);
 }
 //#endregion
 //#region \0@oxc-project+runtime@0.153.0/helpers/esm/toPrimitive.js
-function ce(e, t) {
-	if (se(e) != "object" || !e) return e;
+function se(e, t) {
+	if (oe(e) != "object" || !e) return e;
 	var n = e[Symbol.toPrimitive];
 	if (n !== void 0) {
 		var r = n.call(e, t || "default");
-		if (se(r) != "object") return r;
+		if (oe(r) != "object") return r;
 		throw TypeError("@@toPrimitive must return a primitive value.");
 	}
 	return (t === "string" ? String : Number)(e);
 }
 //#endregion
 //#region \0@oxc-project+runtime@0.153.0/helpers/esm/toPropertyKey.js
-function le(e) {
-	var t = ce(e, "string");
-	return se(t) == "symbol" ? t : t + "";
+function ce(e) {
+	var t = se(e, "string");
+	return oe(t) == "symbol" ? t : t + "";
 }
 //#endregion
 //#region \0@oxc-project+runtime@0.153.0/helpers/esm/defineProperty.js
-function z(e, t, n) {
-	return (t = le(t)) in e ? Object.defineProperty(e, t, {
+function B(e, t, n) {
+	return (t = ce(t)) in e ? Object.defineProperty(e, t, {
 		value: n,
 		enumerable: !0,
 		configurable: !0,
@@ -290,21 +290,21 @@ function z(e, t, n) {
 }
 //#endregion
 //#region assets/src/runtime/api.ts
-var B = class extends Error {
+var V = class extends Error {
 	constructor(e, t, n = 0, r = []) {
-		super(e), z(this, "code", void 0), z(this, "status", void 0), z(this, "retryAfter", void 0), z(this, "issues", void 0), this.code = e, this.status = t, this.retryAfter = n, this.issues = r;
+		super(e), B(this, "code", void 0), B(this, "status", void 0), B(this, "retryAfter", void 0), B(this, "issues", void 0), this.code = e, this.status = t, this.retryAfter = n, this.issues = r;
 	}
 };
-function ue() {
+function le() {
 	if ("randomUUID" in globalThis.crypto) return crypto.randomUUID();
 	let e = crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(16));
 	e[6] = e[6] & 15 | 64, e[8] = e[8] & 63 | 128;
 	let t = Array.from(e, (e) => e.toString(16).padStart(2, "0")).join("");
 	return `${t.slice(0, 8)}-${t.slice(8, 12)}-${t.slice(12, 16)}-${t.slice(16, 20)}-${t.slice(20)}`;
 }
-var de = class {
+var ue = class {
 	constructor(e, t = (e, t) => globalThis.fetch(e, t), n = (e) => new Promise((t) => setTimeout(t, e))) {
-		if (z(this, "fetcher", void 0), z(this, "pause", void 0), z(this, "base", void 0), this.fetcher = t, this.pause = n, this.base = new URL(e, globalThis.location?.href ?? "https://localhost/"), !["https:", "http:"].includes(this.base.protocol) || this.base.username || this.base.password || this.base.hash || [...this.base.searchParams.keys()].some((e) => e !== "rest_route") || globalThis.location && this.base.origin !== location.origin) throw new B("cff_unsafe_endpoint", 0);
+		if (B(this, "fetcher", void 0), B(this, "pause", void 0), B(this, "base", void 0), this.fetcher = t, this.pause = n, this.base = new URL(e, globalThis.location?.href ?? "https://localhost/"), !["https:", "http:"].includes(this.base.protocol) || this.base.username || this.base.password || this.base.hash || [...this.base.searchParams.keys()].some((e) => e !== "rest_route") || globalThis.location && this.base.origin !== location.origin) throw new V("cff_unsafe_endpoint", 0);
 		!this.base.searchParams.has("rest_route") && !this.base.pathname.endsWith("/") && (this.base.pathname += "/");
 	}
 	url(e, t) {
@@ -330,7 +330,7 @@ var de = class {
 					signal: s.signal
 				});
 			} catch {
-				if (clearTimeout(c), n === 2 || globalThis.navigator?.onLine === !1) throw new B("cff_network", 0);
+				if (clearTimeout(c), n === 2 || globalThis.navigator?.onLine === !1) throw new V("cff_network", 0);
 				await this.pause(500 * 2 ** n);
 				continue;
 			}
@@ -339,15 +339,15 @@ var de = class {
 			try {
 				u = await l.json();
 			} catch {
-				if (l.status < 500 && l.status !== 429) throw new B("cff_invalid_response", l.status);
+				if (l.status < 500 && l.status !== 429) throw new V("cff_invalid_response", l.status);
 				u = {};
 			}
 			if (l.ok) return u;
 			let d = u && typeof u == "object" ? u : {}, f = d.data?.retryAfter ?? l.headers.get("Retry-After") ?? 0, p = Math.max(0, (Number.isFinite(Number(f)) ? Number(f) : (Date.parse(String(f)) - Date.now()) / 1e3) || 0), m = typeof d.code == "string" ? d.code : "cff_request_failed";
 			if ((l.status >= 500 || l.status === 429 || m === "cff_request_pending" || m === "cff_idempotency_pending") && n < 2 && p <= 30) await this.pause(Math.max(p * 1e3, 500 * 2 ** n));
-			else throw new B(m, l.status, p, Array.isArray(d.data?.errors) ? d.data.errors : []);
+			else throw new V(m, l.status, p, Array.isArray(d.data?.errors) ? d.data.errors : []);
 		}
-		throw new B("cff_network", 0);
+		throw new V("cff_network", 0);
 	}
 	form(e, t) {
 		return this.request(`forms/${e}`, "GET", void 0, {}, "default", t);
@@ -382,11 +382,11 @@ var de = class {
 		}, { "X-CFF-Request-Token": e.requestToken });
 	}
 	get(e) {
-		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new B("cff_invalid_session", 0);
+		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new V("cff_invalid_session", 0);
 		return this.request(`sessions/${e.sessionId}`, "GET", void 0, { "X-CFF-Request-Token": e.requestToken });
 	}
 	mutate(e, t, n, r) {
-		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new B("cff_invalid_session", 0);
+		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new V("cff_invalid_session", 0);
 		return this.request(`sessions/${e.sessionId}${t === "POST" ? "/submit" : ""}`, t, n, {
 			"X-CFF-Request-Token": e.requestToken,
 			"Idempotency-Key": r
@@ -396,7 +396,7 @@ var de = class {
 		return this.mutate(e, "POST", t, n);
 	}
 	async upload(e, t, n) {
-		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new B("cff_invalid_session", 0);
+		if (!/^[a-f0-9-]{36}$/i.test(e.sessionId)) throw new V("cff_invalid_session", 0);
 		let r = new FormData();
 		r.append("fieldId", t), r.append("file", n);
 		let i = new AbortController(), a = setTimeout(() => i.abort(), 12e4);
@@ -406,7 +406,7 @@ var de = class {
 				body: r,
 				headers: {
 					"X-CFF-Request-Token": e.requestToken,
-					"Idempotency-Key": ue(),
+					"Idempotency-Key": le(),
 					Accept: "application/json"
 				},
 				credentials: "same-origin",
@@ -414,30 +414,30 @@ var de = class {
 				redirect: "error",
 				signal: i.signal
 			});
-			if (!t.ok) throw new B("cff_upload_failed", t.status);
+			if (!t.ok) throw new V("cff_upload_failed", t.status);
 			return await t.json();
 		} finally {
 			clearTimeout(a);
 		}
 	}
-}, fe, V, pe, me, he = 0, ge = [], H = t, _e = H.__b, ve = H.__r, ye = H.diffed, be = H.__c, xe = H.unmount, Se = H.__;
-function Ce(e, t) {
-	H.__h && H.__h(V, e, he || t), he = 0;
-	var n = V.__H || (V.__H = {
+}, de, H, fe, pe, me = 0, he = [], U = t, ge = U.__b, _e = U.__r, ve = U.diffed, ye = U.__c, be = U.unmount, xe = U.__;
+function Se(e, t) {
+	U.__h && U.__h(H, e, me || t), me = 0;
+	var n = H.__H || (H.__H = {
 		__: [],
 		__h: []
 	});
 	return e >= n.__.length && n.__.push({}), n.__[e];
 }
-function U(e) {
-	return he = 1, we(Pe, e);
+function W(e) {
+	return me = 1, Ce(Ne, e);
 }
-function we(e, t, n) {
-	var r = Ce(fe++, 2);
-	if (r.t = e, !r.__c && (r.__ = [n ? n(t) : Pe(void 0, t), function(e) {
+function Ce(e, t, n) {
+	var r = Se(de++, 2);
+	if (r.t = e, !r.__c && (r.__ = [n ? n(t) : Ne(void 0, t), function(e) {
 		var t = r.__N ? r.__N[0] : r.__[0], n = r.t(t, e);
 		t !== n && (r.__N = [n, r.__[1]], r.__c.setState({}));
-	}], r.__c = V, !V.__f)) {
+	}], r.__c = H, !H.__f)) {
 		var i = function(e, t, n) {
 			if (!r.__c.__H) return !0;
 			var i = !1, o = r.__c.props !== e;
@@ -453,110 +453,110 @@ function we(e, t, n) {
 			}
 			return !i || o;
 		};
-		V.__f = !0;
-		var a = V.shouldComponentUpdate, o = V.componentWillUpdate;
-		V.componentWillUpdate = function(e, t, n) {
+		H.__f = !0;
+		var a = H.shouldComponentUpdate, o = H.componentWillUpdate;
+		H.componentWillUpdate = function(e, t, n) {
 			if (this.__e) {
 				var r = a;
 				a = void 0, i(e, t, n), a = r;
 			}
 			o && o.call(this, e, t, n);
-		}, V.shouldComponentUpdate = i;
+		}, H.shouldComponentUpdate = i;
 	}
 	return r.__N || r.__;
 }
-function W(e, t) {
-	var n = Ce(fe++, 3);
-	!H.__s && Ne(n.__H, t) && (n.__ = e, n.u = t, V.__H.__h.push(n));
+function G(e, t) {
+	var n = Se(de++, 3);
+	!U.__s && Me(n.__H, t) && (n.__ = e, n.u = t, H.__H.__h.push(n));
 }
-function Te(e, t) {
-	var n = Ce(fe++, 4);
-	!H.__s && Ne(n.__H, t) && (n.__ = e, n.u = t, V.__h.push(n));
+function we(e, t) {
+	var n = Se(de++, 4);
+	!U.__s && Me(n.__H, t) && (n.__ = e, n.u = t, H.__h.push(n));
 }
-function Ee(e) {
-	return he = 5, De(function() {
+function Te(e) {
+	return me = 5, Ee(function() {
 		return { current: e };
 	}, []);
 }
-function De(e, t) {
-	var n = Ce(fe++, 7);
-	return Ne(n.__H, t) && (n.__ = e(), n.__H = t, n.__h = e), n.__;
+function Ee(e, t) {
+	var n = Se(de++, 7);
+	return Me(n.__H, t) && (n.__ = e(), n.__H = t, n.__h = e), n.__;
 }
-function Oe() {
-	for (var e; e = ge.shift();) {
+function De() {
+	for (var e; e = he.shift();) {
 		var t = e.__H;
 		if (e.__P && t) try {
-			t.__h.some(je), t.__h.some(Me), t.__h = [];
+			t.__h.some(Ae), t.__h.some(je), t.__h = [];
 		} catch (n) {
-			t.__h = [], H.__e(n, e.__v);
+			t.__h = [], U.__e(n, e.__v);
 		}
 	}
 }
-H.__b = function(e) {
-	V = null, _e && _e(e);
-}, H.__ = function(e, t) {
-	e && t.__k && t.__k.__m && (e.__m = t.__k.__m), Se && Se(e, t);
-}, H.__r = function(e) {
-	ve && ve(e), fe = 0;
-	var t = (V = e.__c).__H;
-	t && (pe === V ? (t.__h = [], V.__h = [], t.__.some(function(e) {
+U.__b = function(e) {
+	H = null, ge && ge(e);
+}, U.__ = function(e, t) {
+	e && t.__k && t.__k.__m && (e.__m = t.__k.__m), xe && xe(e, t);
+}, U.__r = function(e) {
+	_e && _e(e), de = 0;
+	var t = (H = e.__c).__H;
+	t && (fe === H ? (t.__h = [], H.__h = [], t.__.some(function(e) {
 		e.__N && (e.__ = e.__N), e.u = e.__N = void 0;
-	})) : (t.__h.some(je), t.__h.some(Me), t.__h = [], fe = 0)), pe = V;
-}, H.diffed = function(e) {
-	ye && ye(e);
+	})) : (t.__h.some(Ae), t.__h.some(je), t.__h = [], de = 0)), fe = H;
+}, U.diffed = function(e) {
+	ve && ve(e);
 	var t = e.__c;
-	t && t.__H && (t.__H.__h.length && (ge.push(t) !== 1 && me === H.requestAnimationFrame || ((me = H.requestAnimationFrame) || Ae)(Oe)), t.__H.__.some(function(e) {
+	t && t.__H && (t.__H.__h.length && (he.push(t) !== 1 && pe === U.requestAnimationFrame || ((pe = U.requestAnimationFrame) || ke)(De)), t.__H.__.some(function(e) {
 		e.u && (e.__H = e.u, e.u = void 0);
-	})), pe = V = null;
-}, H.__c = function(e, t) {
+	})), fe = H = null;
+}, U.__c = function(e, t) {
 	t.some(function(e) {
 		try {
-			e.__h.some(je), e.__h = e.__h.filter(function(e) {
-				return !e.__ || Me(e);
+			e.__h.some(Ae), e.__h = e.__h.filter(function(e) {
+				return !e.__ || je(e);
 			});
 		} catch (n) {
 			t.some(function(e) {
 				e.__h && (e.__h = []);
-			}), t = [], H.__e(n, e.__v);
+			}), t = [], U.__e(n, e.__v);
 		}
-	}), be && be(e, t);
-}, H.unmount = function(e) {
-	xe && xe(e);
+	}), ye && ye(e, t);
+}, U.unmount = function(e) {
+	be && be(e);
 	var t, n = e.__c;
 	n && n.__H && (n.__H.__.some(function(e) {
 		try {
-			je(e);
+			Ae(e);
 		} catch (e) {
 			t = e;
 		}
-	}), n.__H = void 0, t && H.__e(t, n.__v));
+	}), n.__H = void 0, t && U.__e(t, n.__v));
 };
-var ke = typeof requestAnimationFrame == "function";
-function Ae(e) {
+var Oe = typeof requestAnimationFrame == "function";
+function ke(e) {
 	var t, n = function() {
-		clearTimeout(r), ke && cancelAnimationFrame(t), setTimeout(e);
+		clearTimeout(r), Oe && cancelAnimationFrame(t), setTimeout(e);
 	}, r = setTimeout(n, 35);
-	ke && (t = requestAnimationFrame(n));
+	Oe && (t = requestAnimationFrame(n));
+}
+function Ae(e) {
+	var t = H, n = e.__c;
+	typeof n == "function" && (e.__c = void 0, n()), H = t;
 }
 function je(e) {
-	var t = V, n = e.__c;
-	typeof n == "function" && (e.__c = void 0, n()), V = t;
+	var t = H;
+	e.__c = e.__(), H = t;
 }
-function Me(e) {
-	var t = V;
-	e.__c = e.__(), V = t;
-}
-function Ne(e, t) {
+function Me(e, t) {
 	return !e || e.length !== t.length || t.some(function(t, n) {
 		return t !== e[n];
 	});
 }
-function Pe(e, t) {
+function Ne(e, t) {
 	return typeof t == "function" ? t(e) : t;
 }
 //#endregion
 //#region assets/src/shared/logic/value.ts
-var Fe = (e, t) => Object.prototype.hasOwnProperty.call(e, t), Ie = () => Object.create(null), G = (e, t, n, r) => r === void 0 ? {
+var Pe = (e, t) => Object.prototype.hasOwnProperty.call(e, t), Fe = () => Object.create(null), K = (e, t, n, r) => r === void 0 ? {
 	path: e,
 	code: t,
 	message: n
@@ -565,15 +565,15 @@ var Fe = (e, t) => Object.prototype.hasOwnProperty.call(e, t), Ie = () => Object
 	code: t,
 	message: n,
 	fieldKey: r
-}, K = (e) => e.replace(/~/g, "~0").replace(/\//g, "~1"), Le = (e) => typeof e == "object" && !!e && !Array.isArray(e) && Object.keys(e).sort().join(",") === "other,value" && typeof e.value == "string" && typeof e.other == "string", Re = (e) => Le(e) ? e.value : e, ze = (e) => e == null || e === "" || Array.isArray(e) && e.length === 0 || typeof e == "object" && !!e && Object.keys(e).length === 0;
-function Be(e, t) {
+}, q = (e) => e.replace(/~/g, "~0").replace(/\//g, "~1"), Ie = (e) => typeof e == "object" && !!e && !Array.isArray(e) && Object.keys(e).sort().join(",") === "other,value" && typeof e.value == "string" && typeof e.other == "string", Le = (e) => Ie(e) ? e.value : e, Re = (e) => e == null || e === "" || Array.isArray(e) && e.length === 0 || typeof e == "object" && !!e && Object.keys(e).length === 0;
+function ze(e, t) {
 	if (e === t) return !0;
 	if (e === null || t === null || typeof e != "object" || typeof t != "object" || Array.isArray(e) !== Array.isArray(t)) return !1;
 	let n = e, r = t, i = Object.keys(n);
-	return i.length === Object.keys(r).length && i.every((e) => Fe(r, e) && Be(n[e], r[e]));
+	return i.length === Object.keys(r).length && i.every((e) => Pe(r, e) && ze(n[e], r[e]));
 }
-var q = (e) => typeof e == "number" && Number.isFinite(e);
-function Ve(e) {
+var J = (e) => typeof e == "number" && Number.isFinite(e);
+function Be(e) {
 	if (typeof e != "string" || !/^\d{4}-\d{2}-\d{2}$/.test(e)) return null;
 	let [t, n, r] = e.split("-").map(Number), i = [
 		31,
@@ -595,13 +595,13 @@ function Ve(e) {
 		r
 	] : null;
 }
-function He(e, t) {
-	let n = Ve(e);
+function Ve(e, t) {
+	let n = Be(e);
 	if (!t || !/^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,6})?Z$/.test(t)) return null;
-	let r = Ve(t.slice(0, 10));
+	let r = Be(t.slice(0, 10));
 	return !n || !r || e > t.slice(0, 10) ? null : r[0] - n[0] - +(r[1] * 100 + r[2] < n[1] * 100 + n[2]);
 }
-function Ue(e) {
+function He(e) {
 	if (typeof e != "string" || e.length > 512 || /[^\x20-\x7e]|[()|]/.test(e)) return null;
 	let t = {
 		d: "0-9",
@@ -664,8 +664,8 @@ function Ue(e) {
 	}
 	return r;
 }
-function We(e) {
-	let t = Ue(e);
+function Ue(e) {
+	let t = He(e);
 	if (t === null) return null;
 	try {
 		return new RegExp(t, "u");
@@ -673,7 +673,7 @@ function We(e) {
 		return null;
 	}
 }
-var Ge = (e, t) => typeof e == "string" && [...e].length <= 4096 && (We(t)?.test(e) ?? !1), Ke = {
+var We = (e, t) => typeof e == "string" && [...e].length <= 4096 && (Ue(t)?.test(e) ?? !1), Ge = {
 	version: 4,
 	country_calling_codes: {
 		1: [
@@ -8101,13 +8101,13 @@ var Ge = (e, t) => typeof e == "string" && [...e].length <= 4096 && (We(t)?.test
 };
 //#endregion
 //#region node_modules/libphonenumber-js/min/exports/withMetadataArgument.js
-function qe(e, t) {
+function Ke(e, t) {
 	var n = Array.prototype.slice.call(t);
-	return n.push(Ke), e.apply(this, n);
+	return n.push(Ge), e.apply(this, n);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/tools/semver-compare.js
-function Je(e, t) {
+function qe(e, t) {
 	e = e.split("-"), t = t.split("-");
 	for (var n = e[0].split("."), r = t[0].split("."), i = 0; i < 3; i++) {
 		var a = Number(n[i]), o = Number(r[i]);
@@ -8120,57 +8120,57 @@ function Je(e, t) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/isObject.js
-var Ye = {}.constructor;
-function Xe(e) {
-	return e != null && e.constructor === Ye;
+var Je = {}.constructor;
+function Ye(e) {
+	return e != null && e.constructor === Je;
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/isCallingCode.js
-var Ze = /^\d+$/;
-function Qe(e) {
-	return Ze.test(e);
+var Xe = /^\d+$/;
+function Ze(e) {
+	return Xe.test(e);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/metadata.js
-function $e(e) {
+function Qe(e) {
 	"@babel/helpers - typeof";
-	return $e = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
+	return Qe = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
 		return typeof e;
 	} : function(e) {
 		return e && typeof Symbol == "function" && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
-	}, $e(e);
+	}, Qe(e);
 }
-function et(e, t) {
+function $e(e, t) {
 	if (!(e instanceof t)) throw TypeError("Cannot call a class as a function");
 }
-function tt(e, t) {
+function et(e, t) {
 	for (var n = 0; n < t.length; n++) {
 		var r = t[n];
-		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, rt(r.key), r);
+		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, nt(r.key), r);
 	}
 }
-function nt(e, t, n) {
-	return t && tt(e.prototype, t), n && tt(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
+function tt(e, t, n) {
+	return t && et(e.prototype, t), n && et(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
 }
-function rt(e) {
-	var t = it(e, "string");
-	return $e(t) == "symbol" ? t : t + "";
+function nt(e) {
+	var t = rt(e, "string");
+	return Qe(t) == "symbol" ? t : t + "";
 }
-function it(e, t) {
-	if ($e(e) != "object" || !e) return e;
+function rt(e, t) {
+	if (Qe(e) != "object" || !e) return e;
 	var n = e[Symbol.toPrimitive];
 	if (n !== void 0) {
 		var r = n.call(e, t || "default");
-		if ($e(r) != "object") return r;
+		if (Qe(r) != "object") return r;
 		throw TypeError("@@toPrimitive must return a primitive value.");
 	}
 	return (t === "string" ? String : Number)(e);
 }
-var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
+var it = "1.2.0", at = "1.7.35", ot = " ext. ", Y = /*#__PURE__*/ function() {
 	function e(t) {
-		et(this, e), pt(t), this.metadata = t, _t.call(this, t);
+		$e(this, e), ft(t), this.metadata = t, gt.call(this, t);
 	}
-	return nt(e, [
+	return tt(e, [
 		{
 			key: "getCountries",
 			value: function() {
@@ -8225,13 +8225,13 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 			key: "selectNumberingPlan",
 			value: function(e, t) {
 				var n, r;
-				if (e && (Qe(e) ? r = e : n = e), t && (r = t), n && n !== "001") {
+				if (e && (Ze(e) ? r = e : n = e), t && (r = t), n && n !== "001") {
 					var i = this.getCountryMetadata(n);
 					if (!i) throw Error(`Unknown country: ${n}`);
-					this.numberingPlan = new ct(i, this);
+					this.numberingPlan = new st(i, this);
 				} else if (r) {
 					if (!this.hasCallingCode(r)) throw Error(`Unknown calling code: ${r}`);
-					this.numberingPlan = new ct(this.getNumberingPlanMetadata(r), this);
+					this.numberingPlan = new st(this.getNumberingPlanMetadata(r), this);
 				} else this.numberingPlan = void 0;
 				return this;
 			}
@@ -8355,11 +8355,11 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 			}
 		}
 	]);
-}(), ct = /*#__PURE__*/ function() {
+}(), st = /*#__PURE__*/ function() {
 	function e(t, n) {
-		et(this, e), this.globalMetadataObject = n, this.metadata = t, _t.call(this, n.metadata);
+		$e(this, e), this.globalMetadataObject = n, this.metadata = t, gt.call(this, n.metadata);
 	}
-	return nt(e, [
+	return tt(e, [
 		{
 			key: "callingCode",
 			value: function() {
@@ -8413,7 +8413,7 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 			value: function() {
 				var e = this;
 				return (this._getFormats(this.metadata) || this._getFormats(this._getDefaultCountryMetadataForThisCallingCode()) || []).map(function(t) {
-					return new lt(t, e);
+					return new ct(t, e);
 				});
 			}
 		},
@@ -8486,21 +8486,21 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 		{
 			key: "type",
 			value: function(e) {
-				if (this.hasTypes() && ft(this.types(), e)) return new dt(ft(this.types(), e), this);
+				if (this.hasTypes() && dt(this.types(), e)) return new ut(dt(this.types(), e), this);
 			}
 		},
 		{
 			key: "ext",
 			value: function() {
-				return this.v1 || this.v2 ? st : this.metadata[13] || st;
+				return this.v1 || this.v2 ? ot : this.metadata[13] || ot;
 			}
 		}
 	]);
-}(), lt = /*#__PURE__*/ function() {
+}(), ct = /*#__PURE__*/ function() {
 	function e(t, n) {
-		et(this, e), this._format = t, this.metadata = n;
+		$e(this, e), this._format = t, this.metadata = n;
 	}
-	return nt(e, [
+	return tt(e, [
 		{
 			key: "pattern",
 			value: function() {
@@ -8540,7 +8540,7 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 		{
 			key: "usesNationalPrefix",
 			value: function() {
-				return !(!this.nationalPrefixFormattingRule() || ut.test(this.nationalPrefixFormattingRule()));
+				return !(!this.nationalPrefixFormattingRule() || lt.test(this.nationalPrefixFormattingRule()));
 			}
 		},
 		{
@@ -8550,11 +8550,11 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 			}
 		}
 	]);
-}(), ut = /^\(?\$1\)?$/, dt = /*#__PURE__*/ function() {
+}(), lt = /^\(?\$1\)?$/, ut = /*#__PURE__*/ function() {
 	function e(t, n) {
-		et(this, e), this.type = t, this.metadata = n;
+		$e(this, e), this.type = t, this.metadata = n;
 	}
-	return nt(e, [{
+	return tt(e, [{
 		key: "pattern",
 		value: function() {
 			return this.metadata.v1 ? this.type : this.type[0];
@@ -8566,7 +8566,7 @@ var at = "1.2.0", ot = "1.7.35", st = " ext. ", J = /*#__PURE__*/ function() {
 		}
 	}]);
 }();
-function ft(e, t) {
+function dt(e, t) {
 	switch (t) {
 		case "FIXED_LINE": return e[0];
 		case "MOBILE": return e[1];
@@ -8580,32 +8580,32 @@ function ft(e, t) {
 		case "SHARED_COST": return e[9];
 	}
 }
-function pt(e) {
+function ft(e) {
 	if (!e) throw Error("[libphonenumber-js] `metadata` argument not passed. Check your arguments.");
-	if (!Xe(e) || !Xe(e.countries)) throw Error(`[libphonenumber-js] \`metadata\` argument was passed but it's not a valid metadata. Must be an object having \`.countries\` child object property. Got ${Xe(e) ? "an object of shape: { " + Object.keys(e).join(", ") + " }" : "a " + mt(e) + ": " + e}.`);
+	if (!Ye(e) || !Ye(e.countries)) throw Error(`[libphonenumber-js] \`metadata\` argument was passed but it's not a valid metadata. Must be an object having \`.countries\` child object property. Got ${Ye(e) ? "an object of shape: { " + Object.keys(e).join(", ") + " }" : "a " + pt(e) + ": " + e}.`);
 }
 /* istanbul ignore next */
-var mt = function(e) {
-	return $e(e);
+var pt = function(e) {
+	return Qe(e);
 };
-function ht(e, t) {
-	var n = new J(t);
+function mt(e, t) {
+	var n = new Y(t);
 	if (n.hasCountry(e)) return n.selectNumberingPlan(e).countryCallingCode();
 	throw Error(`Unknown country: ${e}`);
 }
-function gt(e, t) {
+function ht(e, t) {
 	return t.countries.hasOwnProperty(e);
 }
-function _t(e) {
+function gt(e) {
 	var t = e.version;
-	typeof t == "number" ? (this.v1 = t === 1, this.v2 = t === 2, this.v3 = t === 3, this.v4 = t === 4) : t ? Je(t, at) === -1 ? this.v2 = !0 : Je(t, ot) === -1 ? this.v3 = !0 : this.v4 = !0 : this.v1 = !0;
+	typeof t == "number" ? (this.v1 = t === 1, this.v2 = t === 2, this.v3 = t === 3, this.v4 = t === 4) : t ? qe(t, it) === -1 ? this.v2 = !0 : qe(t, at) === -1 ? this.v3 = !0 : this.v4 = !0 : this.v1 = !0;
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/mergeArrays.js
-function vt(e, t) {
+function _t(e, t) {
 	var n = typeof Symbol < "u" && e[Symbol.iterator] || e["@@iterator"];
 	if (n) return (n = n.call(e)).next.bind(n);
-	if (Array.isArray(e) || (n = yt(e)) || t && e && typeof e.length == "number") {
+	if (Array.isArray(e) || (n = vt(e)) || t && e && typeof e.length == "number") {
 		n && (e = n);
 		var r = 0;
 		return function() {
@@ -8617,20 +8617,20 @@ function vt(e, t) {
 	}
 	throw TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
-function yt(e, t) {
+function vt(e, t) {
 	if (e) {
-		if (typeof e == "string") return bt(e, t);
+		if (typeof e == "string") return yt(e, t);
 		var n = {}.toString.call(e).slice(8, -1);
-		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? bt(e, t) : void 0;
+		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? yt(e, t) : void 0;
 	}
 }
-function bt(e, t) {
+function yt(e, t) {
 	(t == null || t > e.length) && (t = e.length);
 	for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
 	return r;
 }
-function xt(e, t) {
-	for (var n = e.slice(), r = vt(t), i; !(i = r()).done;) {
+function bt(e, t) {
+	for (var n = e.slice(), r = _t(t), i; !(i = r()).done;) {
 		var a = i.value;
 		e.indexOf(a) < 0 && n.push(a);
 	}
@@ -8640,28 +8640,28 @@ function xt(e, t) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/checkNumberLength.js
-function St(e, t, n) {
-	return Ct(e, void 0, t, n);
+function xt(e, t, n) {
+	return St(e, void 0, t, n);
 }
-function Ct(e, t, n, r) {
-	n && (r = new J(r.metadata), r.selectNumberingPlan(n));
+function St(e, t, n, r) {
+	n && (r = new Y(r.metadata), r.selectNumberingPlan(n));
 	var i = r.type(t), a = i && i.possibleLengths() || r.possibleLengths();
 	if (!a) return "IS_POSSIBLE";
 	if (t === "FIXED_LINE_OR_MOBILE") {
 		/* istanbul ignore next */
-		if (!r.type("FIXED_LINE")) return Ct(e, "MOBILE", n, r);
+		if (!r.type("FIXED_LINE")) return St(e, "MOBILE", n, r);
 		var o = r.type("MOBILE");
-		o && (a = xt(a, o.possibleLengths()));
+		o && (a = bt(a, o.possibleLengths()));
 	} else if (t && !i) return "INVALID_LENGTH";
 	var s = e.length, c = a[0];
 	return c === s ? "IS_POSSIBLE" : c > s ? "TOO_SHORT" : a[a.length - 1] < s ? "TOO_LONG" : a.indexOf(s, 1) >= 0 ? "IS_POSSIBLE" : "INVALID_LENGTH";
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/isPossible.js
-function wt(e, t, n) {
+function Ct(e, t, n) {
 	/* istanbul ignore if */
 	t === void 0 && (t = {});
-	var r = new J(n);
+	var r = new Y(n);
 	if (t.v2) {
 		if (!e.countryCallingCode) throw Error("Invalid phone number object passed");
 		r.selectNumberingPlan(e.country || e.countryCallingCode);
@@ -8675,27 +8675,27 @@ function wt(e, t, n) {
 			r.selectNumberingPlan(e.countryCallingCode);
 		}
 	}
-	if (r.possibleLengths()) return Tt(e.phone || e.nationalNumber, r);
+	if (r.possibleLengths()) return wt(e.phone || e.nationalNumber, r);
 	if (e.countryCallingCode && r.isNonGeographicCallingCode(e.countryCallingCode)) return !0;
 	throw Error("Missing \"possibleLengths\" in metadata. Perhaps the metadata has been generated before v1.0.18.");
 }
-function Tt(e, t) {
-	switch (St(e, void 0, t)) {
+function wt(e, t) {
+	switch (xt(e, void 0, t)) {
 		case "IS_POSSIBLE": return !0;
 		default: return !1;
 	}
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/matchesEntirely.js
-function Et(e, t) {
+function Tt(e, t) {
 	return e = e || "", RegExp("^(?:" + t + ")$").test(e);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/getNumberType.js
-function Dt(e, t) {
+function Et(e, t) {
 	var n = typeof Symbol < "u" && e[Symbol.iterator] || e["@@iterator"];
 	if (n) return (n = n.call(e)).next.bind(n);
-	if (Array.isArray(e) || (n = Ot(e)) || t && e && typeof e.length == "number") {
+	if (Array.isArray(e) || (n = Dt(e)) || t && e && typeof e.length == "number") {
 		n && (e = n);
 		var r = 0;
 		return function() {
@@ -8707,19 +8707,19 @@ function Dt(e, t) {
 	}
 	throw TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
-function Ot(e, t) {
+function Dt(e, t) {
 	if (e) {
-		if (typeof e == "string") return kt(e, t);
+		if (typeof e == "string") return Ot(e, t);
 		var n = {}.toString.call(e).slice(8, -1);
-		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? kt(e, t) : void 0;
+		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Ot(e, t) : void 0;
 	}
 }
-function kt(e, t) {
+function Ot(e, t) {
 	(t == null || t > e.length) && (t = e.length);
 	for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
 	return r;
 }
-var At = [
+var kt = [
 	"MOBILE",
 	"PREMIUM_RATE",
 	"TOLL_FREE",
@@ -8730,74 +8730,74 @@ var At = [
 	"UAN",
 	"VOICEMAIL"
 ];
-function jt(e, t, n) {
+function At(e, t, n) {
 	if (t = t || {}, e.country || e.countryCallingCode) {
-		var r = new J(n);
+		var r = new Y(n);
 		r.selectNumberingPlan(e.country || e.countryCallingCode);
 		var i = t.v2 ? e.nationalNumber : e.phone;
-		if (Et(i, r.nationalNumberPattern())) {
-			if (Mt(i, "FIXED_LINE", r)) return r.type("MOBILE") && r.type("MOBILE").pattern() === "" || !r.type("MOBILE") || Mt(i, "MOBILE", r) ? "FIXED_LINE_OR_MOBILE" : "FIXED_LINE";
-			for (var a = Dt(At), o; !(o = a()).done;) {
+		if (Tt(i, r.nationalNumberPattern())) {
+			if (jt(i, "FIXED_LINE", r)) return r.type("MOBILE") && r.type("MOBILE").pattern() === "" || !r.type("MOBILE") || jt(i, "MOBILE", r) ? "FIXED_LINE_OR_MOBILE" : "FIXED_LINE";
+			for (var a = Et(kt), o; !(o = a()).done;) {
 				var s = o.value;
-				if (Mt(i, s, r)) return s;
+				if (jt(i, s, r)) return s;
 			}
 		}
 	}
 }
-function Mt(e, t, n) {
+function jt(e, t, n) {
 	var r = n.type(t);
-	return !r || !r.pattern() || r.possibleLengths() && r.possibleLengths().indexOf(e.length) < 0 ? !1 : Et(e, r.pattern());
+	return !r || !r.pattern() || r.possibleLengths() && r.possibleLengths().indexOf(e.length) < 0 ? !1 : Tt(e, r.pattern());
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/isValid.js
-function Nt(e, t, n) {
+function Mt(e, t, n) {
 	t = t || {};
-	var r = new J(n);
-	return r.selectNumberingPlan(e.country || e.countryCallingCode), r.hasTypes() ? jt(e, t, r.metadata) !== void 0 : Et(t.v2 ? e.nationalNumber : e.phone, r.nationalNumberPattern());
+	var r = new Y(n);
+	return r.selectNumberingPlan(e.country || e.countryCallingCode), r.hasTypes() ? At(e, t, r.metadata) !== void 0 : Tt(t.v2 ? e.nationalNumber : e.phone, r.nationalNumberPattern());
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/isCountryCode.js
-var Pt = /^[A-Z]{2}$/;
-function Ft(e) {
-	return Pt.test(e);
+var Nt = /^[A-Z]{2}$/;
+function Pt(e) {
+	return Nt.test(e);
 }
-function It(e, t) {
-	var n, r, i = new J(t);
-	return Ft(e) ? (n = e, i.selectNumberingPlan(n), r = i.countryCallingCode()) : r = e, {
+function Ft(e, t) {
+	var n, r, i = new Y(t);
+	return Pt(e) ? (n = e, i.selectNumberingPlan(n), r = i.countryCallingCode()) : r = e, {
 		country: n,
 		callingCode: r
 	};
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/getPossibleCountriesForNumber.js
-function Lt(e, t, n) {
-	var r = new J(n).getCountryCodesForCallingCode(e);
+function It(e, t, n) {
+	var r = new Y(n).getCountryCodesForCallingCode(e);
 	return r ? r.filter(function(e) {
-		return Rt(t, e, n);
+		return Lt(t, e, n);
 	}) : [];
 }
-function Rt(e, t, n) {
-	var r = new J(n);
+function Lt(e, t, n) {
+	var r = new Y(n);
 	return r.selectNumberingPlan(t), r.numberingPlan.possibleLengths().indexOf(e.length) >= 0;
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/constants.js
-var Y = "0-9０-９٠-٩۰-۹", zt = "-‐-―−ー－／/．. \xA0­​⁠　()（）［］\\[\\]~⁓∼～", Bt = "+＋", Vt = RegExp("([" + Y + "])");
-function Ht(e, t, n, r) {
+var X = "0-9０-９٠-٩۰-۹", Rt = "-‐-―−ー－／/．. \xA0­​⁠　()（）［］\\[\\]~⁓∼～", zt = "+＋", Bt = RegExp("([" + X + "])");
+function Vt(e, t, n, r) {
 	if (t) {
-		var i = new J(r);
+		var i = new Y(r);
 		i.selectNumberingPlan(t || n);
 		var a = new RegExp(i.IDDPrefix());
 		if (e.search(a) === 0) {
 			e = e.slice(e.match(a)[0].length);
-			var o = e.match(Vt);
+			var o = e.match(Bt);
 			if (!(o && o[1] != null && o[1].length > 0 && o[1] === "0")) return e;
 		}
 	}
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/extractNationalNumberFromPossiblyIncompleteNumber.js
-function Ut(e, t) {
+function Ht(e, t) {
 	if (e && t.numberingPlan.nationalPrefixForParsing()) {
 		var n = RegExp("^(?:" + t.numberingPlan.nationalPrefixForParsing() + ")"), r = n.exec(e);
 		if (r) {
@@ -8823,10 +8823,10 @@ function Ut(e, t) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/getCountryByNationalNumber.js
-function Wt(e, t) {
+function Ut(e, t) {
 	var n = typeof Symbol < "u" && e[Symbol.iterator] || e["@@iterator"];
 	if (n) return (n = n.call(e)).next.bind(n);
-	if (Array.isArray(e) || (n = Gt(e)) || t && e && typeof e.length == "number") {
+	if (Array.isArray(e) || (n = Wt(e)) || t && e && typeof e.length == "number") {
 		n && (e = n);
 		var r = 0;
 		return function() {
@@ -8838,50 +8838,50 @@ function Wt(e, t) {
 	}
 	throw TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
-function Gt(e, t) {
+function Wt(e, t) {
 	if (e) {
-		if (typeof e == "string") return Kt(e, t);
+		if (typeof e == "string") return Gt(e, t);
 		var n = {}.toString.call(e).slice(8, -1);
-		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Kt(e, t) : void 0;
+		return n === "Object" && e.constructor && (n = e.constructor.name), n === "Map" || n === "Set" ? Array.from(e) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? Gt(e, t) : void 0;
 	}
 }
-function Kt(e, t) {
+function Gt(e, t) {
 	(t == null || t > e.length) && (t = e.length);
 	for (var n = 0, r = Array(t); n < t; n++) r[n] = e[n];
 	return r;
 }
-function qt(e, t, n) {
-	for (var r = new J(n), i = Wt(t), a; !(a = i()).done;) {
+function Kt(e, t, n) {
+	for (var r = new Y(n), i = Ut(t), a; !(a = i()).done;) {
 		var o = a.value;
 		if (r.selectNumberingPlan(o), r.leadingDigits()) {
 			if (e && e.search(r.leadingDigits()) === 0) return o;
-		} else if (jt({
+		} else if (At({
 			phone: e,
 			country: o
 		}, void 0, r.metadata)) return o;
 	}
 }
-function Jt(e, t) {
+function qt(e, t) {
 	var n = t.nationalNumber, r = t.metadata, i = r.getCountryCodesForCallingCode(e);
-	if (i) return i.length === 1 ? i[0] : qt(n, i, r.metadata);
+	if (i) return i.length === 1 ? i[0] : Kt(n, i, r.metadata);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/extractNationalNumber.js
-function Yt(e, t, n) {
-	var r = Ut(e, n), i = r.carrierCode, a = r.nationalNumber;
-	return a !== e && (!Xt(e, a, n) || n.numberingPlan.possibleLengths() && (t || (t = Jt(n.numberingPlan.callingCode(), {
+function Jt(e, t, n) {
+	var r = Ht(e, n), i = r.carrierCode, a = r.nationalNumber;
+	return a !== e && (!Yt(e, a, n) || n.numberingPlan.possibleLengths() && (t || (t = qt(n.numberingPlan.callingCode(), {
 		nationalNumber: a,
 		metadata: n
-	})), !Zt(a, t, n))) ? { nationalNumber: e } : {
+	})), !Xt(a, t, n))) ? { nationalNumber: e } : {
 		nationalNumber: a,
 		carrierCode: i
 	};
 }
-function Xt(e, t, n) {
-	return !(Et(e, n.nationalNumberPattern()) && !Et(t, n.nationalNumberPattern()));
+function Yt(e, t, n) {
+	return !(Tt(e, n.nationalNumberPattern()) && !Tt(t, n.nationalNumberPattern()));
 }
-function Zt(e, t, n) {
-	switch (St(e, t, n)) {
+function Xt(e, t, n) {
+	switch (xt(e, t, n)) {
 		case "TOO_SHORT":
 		case "INVALID_LENGTH": return !1;
 		default: return !0;
@@ -8889,14 +8889,14 @@ function Zt(e, t, n) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/extractCountryCallingCodeFromInternationalNumberWithoutPlusSign.js
-function Qt(e, t, n, r, i) {
+function Zt(e, t, n, r, i) {
 	if (!(t || n || r)) return { number: e };
-	var a = t || n ? ht(t || n, i) : r;
+	var a = t || n ? mt(t || n, i) : r;
 	if (e.indexOf(a) === 0) {
-		var o = new J(i);
+		var o = new Y(i);
 		o.selectNumberingPlan(t || n || r);
-		var s = e.slice(a.length), c = Yt(s, void 0, o).nationalNumber, l = Yt(e, void 0, o).nationalNumber;
-		if (!Et(l, o.nationalNumberPattern()) && Et(c, o.nationalNumberPattern()) || St(l, void 0, o) === "TOO_LONG") return {
+		var s = e.slice(a.length), c = Jt(s, void 0, o).nationalNumber, l = Jt(e, void 0, o).nationalNumber;
+		if (!Tt(l, o.nationalNumberPattern()) && Tt(c, o.nationalNumberPattern()) || xt(l, void 0, o) === "TOO_LONG") return {
 			countryCallingCode: a,
 			number: s
 		};
@@ -8905,15 +8905,15 @@ function Qt(e, t, n, r, i) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/extractCountryCallingCode.js
-function $t(e, t, n, r, i) {
+function Qt(e, t, n, r, i) {
 	if (!e) return {};
 	var a;
 	if (e[0] !== "+") {
-		var o = Ht(e, t || n, r, i);
+		var o = Vt(e, t || n, r, i);
 		if (o && o !== e) a = !0, e = "+" + o;
 		else {
 			if (t || n || r) {
-				var s = Qt(e, t, n, r, i), c = s.countryCallingCode, l = s.number;
+				var s = Zt(e, t, n, r, i), c = s.countryCallingCode, l = s.number;
 				if (c) return {
 					countryCallingCodeSource: "FROM_NUMBER_WITHOUT_PLUS_SIGN",
 					countryCallingCode: c,
@@ -8924,7 +8924,7 @@ function $t(e, t, n, r, i) {
 		}
 	}
 	if (e[1] === "0") return {};
-	for (var u = new J(i), d = 2; d - 1 <= 3 && d <= e.length;) {
+	for (var u = new Y(i), d = 2; d - 1 <= 3 && d <= e.length;) {
 		var f = e.slice(1, d);
 		if (u.hasCallingCode(f)) return u.selectNumberingPlan(f), {
 			countryCallingCodeSource: a ? "FROM_NUMBER_WITH_IDD" : "FROM_NUMBER_WITH_PLUS_SIGN",
@@ -8937,47 +8937,47 @@ function $t(e, t, n, r, i) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/applyInternationalSeparatorStyle.js
-function en(e) {
-	return e.replace(RegExp(`[${zt}]+`, "g"), " ").trim();
+function $t(e) {
+	return e.replace(RegExp(`[${Rt}]+`, "g"), " ").trim();
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/formatNationalNumberUsingFormat.js
-var tn = /(\$\d)/;
-function nn(e, t, n) {
+var en = /(\$\d)/;
+function tn(e, t, n) {
 	var r = n.useInternationalFormat, i = n.withNationalPrefix;
 	n.carrierCode, n.metadata;
-	var a = e.replace(new RegExp(t.pattern()), r ? t.internationalFormat() : i && t.nationalPrefixFormattingRule() ? t.format().replace(tn, t.nationalPrefixFormattingRule()) : t.format());
-	return r ? en(a) : a;
+	var a = e.replace(new RegExp(t.pattern()), r ? t.internationalFormat() : i && t.nationalPrefixFormattingRule() ? t.format().replace(en, t.nationalPrefixFormattingRule()) : t.format());
+	return r ? $t(a) : a;
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/getIddPrefix.js
-var rn = /^[\d]+(?:[~\u2053\u223C\uFF5E][\d]+)?$/;
-function an(e, t, n) {
-	var r = new J(n);
+var nn = /^[\d]+(?:[~\u2053\u223C\uFF5E][\d]+)?$/;
+function rn(e, t, n) {
+	var r = new Y(n);
 	if (r.selectNumberingPlan(e || t), r.defaultIDDPrefix()) return r.defaultIDDPrefix();
-	if (rn.test(r.IDDPrefix())) return r.IDDPrefix();
+	if (nn.test(r.IDDPrefix())) return r.IDDPrefix();
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/extension/createExtensionPattern.js
-var on = ";ext=", sn = function(e) {
-	return `([${Y}]{1,${e}})`;
+var an = ";ext=", on = function(e) {
+	return `([${X}]{1,${e}})`;
 };
-function cn(e) {
-	var t = "20", n = "15", r = "9", i = "6", a = "[ \xA0\\t,]*", o = "[:\\.．]?[ \xA0\\t,-]*", s = "#?", c = "(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)", l = "(?:[xｘ#＃~～]|int|ｉｎｔ)", u = "[- ]+", d = "[ \xA0\\t]*", f = "(?:,{2}|;)", p = on + sn(t), m = a + c + o + sn(t) + s, h = a + l + o + sn(r) + s, g = u + sn(i) + "#", _ = d + f + o + sn(n) + s, v = d + "(?:,)+" + o + sn(r) + s;
+function sn(e) {
+	var t = "20", n = "15", r = "9", i = "6", a = "[ \xA0\\t,]*", o = "[:\\.．]?[ \xA0\\t,-]*", s = "#?", c = "(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)", l = "(?:[xｘ#＃~～]|int|ｉｎｔ)", u = "[- ]+", d = "[ \xA0\\t]*", f = "(?:,{2}|;)", p = an + on(t), m = a + c + o + on(t) + s, h = a + l + o + on(r) + s, g = u + on(i) + "#", _ = d + f + o + on(n) + s, v = d + "(?:,)+" + o + on(r) + s;
 	return p + "|" + m + "|" + h + "|" + g + "|" + _ + "|" + v;
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/isViablePhoneNumber.js
-var ln = "[" + Y + "]{2}", un = "[" + Bt + "]{0,1}(?:[" + zt + "]*[" + Y + "]){3,}[" + zt + Y + "]*", dn = RegExp("^[" + Bt + "]{0,1}(?:[" + zt + "]*[" + Y + "]){1,2}$", "i"), fn = un + "(?:" + cn() + ")?", pn = RegExp("^" + ln + "$|^" + fn + "$", "i");
-function mn(e) {
-	return e.length >= 2 && pn.test(e);
+var cn = "[" + X + "]{2}", ln = "[" + zt + "]{0,1}(?:[" + Rt + "]*[" + X + "]){3,}[" + Rt + X + "]*", un = RegExp("^[" + zt + "]{0,1}(?:[" + Rt + "]*[" + X + "]){1,2}$", "i"), dn = ln + "(?:" + sn() + ")?", fn = RegExp("^" + cn + "$|^" + dn + "$", "i");
+function pn(e) {
+	return e.length >= 2 && fn.test(e);
 }
-function hn(e) {
-	return dn.test(e);
+function mn(e) {
+	return un.test(e);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/helpers/RFC3966.js
-function gn(e) {
+function hn(e) {
 	var t = e.number, n = e.ext;
 	if (!t) return "";
 	if (t[0] !== "+") throw Error("\"formatRFC3966()\" expects \"number\" to be in E.164 format.");
@@ -8985,12 +8985,12 @@ function gn(e) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/format.js
-var _n = { formatExtension: function(e, t, n) {
+var gn = { formatExtension: function(e, t, n) {
 	return `${e}${n.ext()}${t}`;
 } };
-function vn(e, t, n, r) {
-	n = n ? Cn({}, _n, n) : _n;
-	var i = new J(r);
+function _n(e, t, n, r) {
+	n = n ? Sn({}, gn, n) : gn;
+	var i = new Y(r);
 	if (e.country && e.country !== "001") {
 		if (!i.hasCountry(e.country)) throw Error(`Unknown country: ${e.country}`);
 		i.selectNumberingPlan(e.country);
@@ -8998,57 +8998,57 @@ function vn(e, t, n, r) {
 	else return e.phone || "";
 	var a = i.countryCallingCode(), o = n.v2 ? e.nationalNumber : e.phone, s;
 	switch (t) {
-		case "NATIONAL": return o ? (s = yn(o, e.carrierCode, "NATIONAL", i, n), xn(s, e.ext, i, n.formatExtension)) : "";
-		case "INTERNATIONAL": return o ? (s = yn(o, null, "INTERNATIONAL", i, n), s = `+${a} ${s}`, xn(s, e.ext, i, n.formatExtension)) : `+${a}`;
+		case "NATIONAL": return o ? (s = vn(o, e.carrierCode, "NATIONAL", i, n), bn(s, e.ext, i, n.formatExtension)) : "";
+		case "INTERNATIONAL": return o ? (s = vn(o, null, "INTERNATIONAL", i, n), s = `+${a} ${s}`, bn(s, e.ext, i, n.formatExtension)) : `+${a}`;
 		case "E.164": return `+${a}${o}`;
-		case "RFC3966": return gn({
+		case "RFC3966": return hn({
 			number: `+${a}${o}`,
 			ext: e.ext
 		});
 		case "IDD":
 			if (!n.fromCountry) return;
-			var c = Sn(o, e.carrierCode, a, n.fromCountry, i);
-			return c ? xn(c, e.ext, i, n.formatExtension) : void 0;
+			var c = xn(o, e.carrierCode, a, n.fromCountry, i);
+			return c ? bn(c, e.ext, i, n.formatExtension) : void 0;
 		default: throw Error(`Unknown "format" argument passed to "formatNumber()": "${t}"`);
 	}
 }
-function yn(e, t, n, r, i) {
-	var a = bn(r.formats(), e);
-	return a ? nn(e, a, {
+function vn(e, t, n, r, i) {
+	var a = yn(r.formats(), e);
+	return a ? tn(e, a, {
 		useInternationalFormat: n === "INTERNATIONAL",
 		withNationalPrefix: !(a.nationalPrefixIsOptionalWhenFormattingInNationalFormat() && i && i.nationalPrefix === !1),
 		carrierCode: t,
 		metadata: r
 	}) : e;
 }
-function bn(e, t) {
-	return wn(e, function(e) {
+function yn(e, t) {
+	return Cn(e, function(e) {
 		if (e.leadingDigitsPatterns().length > 0) {
 			var n = e.leadingDigitsPatterns()[e.leadingDigitsPatterns().length - 1];
 			if (t.search(n) !== 0) return !1;
 		}
-		return Et(t, e.pattern());
+		return Tt(t, e.pattern());
 	});
 }
-function xn(e, t, n, r) {
+function bn(e, t, n, r) {
 	return t ? r(e, t, n) : e;
 }
-function Sn(e, t, n, r, i) {
-	if (ht(r, i.metadata) === n) {
-		var a = yn(e, t, "NATIONAL", i);
+function xn(e, t, n, r, i) {
+	if (mt(r, i.metadata) === n) {
+		var a = vn(e, t, "NATIONAL", i);
 		return n === "1" ? n + " " + a : a;
 	}
-	var o = an(r, void 0, i.metadata);
-	if (o) return `${o} ${n} ${yn(e, null, "INTERNATIONAL", i)}`;
+	var o = rn(r, void 0, i.metadata);
+	if (o) return `${o} ${n} ${vn(e, null, "INTERNATIONAL", i)}`;
 }
-function Cn() {
+function Sn() {
 	for (var e = 1, t = [...arguments]; e < t.length;) {
 		if (t[e]) for (var n in t[e]) t[0][n] = t[e][n];
 		e++;
 	}
 	return t[0];
 }
-function wn(e, t) {
+function Cn(e, t) {
 	for (var n = 0; n < e.length;) {
 		if (t(e[n])) return e[n];
 		n++;
@@ -9056,15 +9056,15 @@ function wn(e, t) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/PhoneNumber.js
-function Tn(e) {
+function wn(e) {
 	"@babel/helpers - typeof";
-	return Tn = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
+	return wn = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
 		return typeof e;
 	} : function(e) {
 		return e && typeof Symbol == "function" && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
-	}, Tn(e);
+	}, wn(e);
 }
-function En(e, t) {
+function Tn(e, t) {
 	var n = Object.keys(e);
 	if (Object.getOwnPropertySymbols) {
 		var r = Object.getOwnPropertySymbols(e);
@@ -9074,72 +9074,72 @@ function En(e, t) {
 	}
 	return n;
 }
-function Dn(e) {
+function En(e) {
 	for (var t = 1; t < arguments.length; t++) {
 		var n = arguments[t] == null ? {} : arguments[t];
-		t % 2 ? En(Object(n), !0).forEach(function(t) {
-			On(e, t, n[t]);
-		}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n)) : En(Object(n)).forEach(function(t) {
+		t % 2 ? Tn(Object(n), !0).forEach(function(t) {
+			Dn(e, t, n[t]);
+		}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n)) : Tn(Object(n)).forEach(function(t) {
 			Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
 		});
 	}
 	return e;
 }
-function On(e, t, n) {
-	return (t = Mn(t)) in e ? Object.defineProperty(e, t, {
+function Dn(e, t, n) {
+	return (t = jn(t)) in e ? Object.defineProperty(e, t, {
 		value: n,
 		enumerable: !0,
 		configurable: !0,
 		writable: !0
 	}) : e[t] = n, e;
 }
-function kn(e, t) {
+function On(e, t) {
 	if (!(e instanceof t)) throw TypeError("Cannot call a class as a function");
 }
-function An(e, t) {
+function kn(e, t) {
 	for (var n = 0; n < t.length; n++) {
 		var r = t[n];
-		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, Mn(r.key), r);
+		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, jn(r.key), r);
 	}
 }
-function jn(e, t, n) {
-	return t && An(e.prototype, t), n && An(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
+function An(e, t, n) {
+	return t && kn(e.prototype, t), n && kn(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
 }
-function Mn(e) {
-	var t = Nn(e, "string");
-	return Tn(t) == "symbol" ? t : t + "";
+function jn(e) {
+	var t = Mn(e, "string");
+	return wn(t) == "symbol" ? t : t + "";
 }
-function Nn(e, t) {
-	if (Tn(e) != "object" || !e) return e;
+function Mn(e, t) {
+	if (wn(e) != "object" || !e) return e;
 	var n = e[Symbol.toPrimitive];
 	if (n !== void 0) {
 		var r = n.call(e, t || "default");
-		if (Tn(r) != "object") return r;
+		if (wn(r) != "object") return r;
 		throw TypeError("@@toPrimitive must return a primitive value.");
 	}
 	return (t === "string" ? String : Number)(e);
 }
-var Pn = /*#__PURE__*/ function() {
+var Nn = /*#__PURE__*/ function() {
 	function e(t, n, r) {
-		if (kn(this, e), !t) throw TypeError("First argument is required");
+		if (On(this, e), !t) throw TypeError("First argument is required");
 		if (typeof t != "string") throw TypeError("First argument must be a string");
 		if (t[0] === "+" && !n) throw TypeError("`metadata` argument not passed");
-		if (Xe(n) && Xe(n.countries)) {
+		if (Ye(n) && Ye(n.countries)) {
 			r = n;
 			var i = t;
-			if (!Fn.test(i)) throw Error("Invalid `number` argument passed: must consist of a \"+\" followed by digits");
-			var a = $t(i, void 0, void 0, void 0, r), o = a.countryCallingCode;
+			if (!Pn.test(i)) throw Error("Invalid `number` argument passed: must consist of a \"+\" followed by digits");
+			var a = Qt(i, void 0, void 0, void 0, r), o = a.countryCallingCode;
 			if (n = a.number, t = o, !n) throw Error("Invalid `number` argument passed: too short");
 		}
 		if (!n) throw TypeError("`nationalNumber` argument is required");
 		if (typeof n != "string") throw TypeError("`nationalNumber` argument must be a string");
-		pt(r);
-		var s = It(t, r), c = s.country, l = s.callingCode;
+		ft(r);
+		var s = Ft(t, r), c = s.country, l = s.callingCode;
 		this.country = c, this.countryCallingCode = l, this.nationalNumber = n, this.number = "+" + this.countryCallingCode + this.nationalNumber, this.getMetadata = function() {
 			return r;
 		};
 	}
-	return jn(e, [
+	return An(e, [
 		{
 			key: "setExt",
 			value: function(e) {
@@ -9149,25 +9149,25 @@ var Pn = /*#__PURE__*/ function() {
 		{
 			key: "getPossibleCountries",
 			value: function() {
-				return this.country ? [this.country] : Lt(this.countryCallingCode, this.nationalNumber, this.getMetadata());
+				return this.country ? [this.country] : It(this.countryCallingCode, this.nationalNumber, this.getMetadata());
 			}
 		},
 		{
 			key: "isPossible",
 			value: function() {
-				return wt(this, { v2: !0 }, this.getMetadata());
+				return Ct(this, { v2: !0 }, this.getMetadata());
 			}
 		},
 		{
 			key: "isValid",
 			value: function() {
-				return Nt(this, { v2: !0 }, this.getMetadata());
+				return Mt(this, { v2: !0 }, this.getMetadata());
 			}
 		},
 		{
 			key: "isNonGeographic",
 			value: function() {
-				return new J(this.getMetadata()).isNonGeographicCallingCode(this.countryCallingCode);
+				return new Y(this.getMetadata()).isNonGeographicCallingCode(this.countryCallingCode);
 			}
 		},
 		{
@@ -9179,13 +9179,13 @@ var Pn = /*#__PURE__*/ function() {
 		{
 			key: "getType",
 			value: function() {
-				return jt(this, { v2: !0 }, this.getMetadata());
+				return At(this, { v2: !0 }, this.getMetadata());
 			}
 		},
 		{
 			key: "format",
 			value: function(e, t) {
-				return vn(this, e, t ? Dn(Dn({}, t), {}, { v2: !0 }) : { v2: !0 }, this.getMetadata());
+				return _n(this, e, t ? En(En({}, t), {}, { v2: !0 }) : { v2: !0 }, this.getMetadata());
 			}
 		},
 		{
@@ -9207,122 +9207,122 @@ var Pn = /*#__PURE__*/ function() {
 			}
 		}
 	]);
-}(), Fn = /^\+\d+$/;
+}(), Pn = /^\+\d+$/;
 //#endregion
 //#region node_modules/libphonenumber-js/es6/ParseError.js
-function In(e) {
+function Fn(e) {
 	"@babel/helpers - typeof";
-	return In = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
+	return Fn = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e) {
 		return typeof e;
 	} : function(e) {
 		return e && typeof Symbol == "function" && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
-	}, In(e);
+	}, Fn(e);
 }
-function Ln(e, t) {
+function In(e, t) {
 	for (var n = 0; n < t.length; n++) {
 		var r = t[n];
-		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, zn(r.key), r);
+		r.enumerable = r.enumerable || !1, r.configurable = !0, "value" in r && (r.writable = !0), Object.defineProperty(e, Rn(r.key), r);
 	}
 }
-function Rn(e, t, n) {
-	return t && Ln(e.prototype, t), n && Ln(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
+function Ln(e, t, n) {
+	return t && In(e.prototype, t), n && In(e, n), Object.defineProperty(e, "prototype", { writable: !1 }), e;
 }
-function zn(e) {
-	var t = Bn(e, "string");
-	return In(t) == "symbol" ? t : t + "";
+function Rn(e) {
+	var t = zn(e, "string");
+	return Fn(t) == "symbol" ? t : t + "";
 }
-function Bn(e, t) {
-	if (In(e) != "object" || !e) return e;
+function zn(e, t) {
+	if (Fn(e) != "object" || !e) return e;
 	var n = e[Symbol.toPrimitive];
 	if (n !== void 0) {
 		var r = n.call(e, t || "default");
-		if (In(r) != "object") return r;
+		if (Fn(r) != "object") return r;
 		throw TypeError("@@toPrimitive must return a primitive value.");
 	}
 	return (t === "string" ? String : Number)(e);
 }
-function Vn(e, t) {
+function Bn(e, t) {
 	if (!(e instanceof t)) throw TypeError("Cannot call a class as a function");
 }
-function Hn(e, t, n) {
-	return t = Zn(t), Un(e, Jn() ? Reflect.construct(t, n || [], Zn(e).constructor) : t.apply(e, n));
+function Vn(e, t, n) {
+	return t = Xn(t), Hn(e, qn() ? Reflect.construct(t, n || [], Xn(e).constructor) : t.apply(e, n));
 }
-function Un(e, t) {
-	if (t && (In(t) == "object" || typeof t == "function")) return t;
+function Hn(e, t) {
+	if (t && (Fn(t) == "object" || typeof t == "function")) return t;
 	if (t !== void 0) throw TypeError("Derived constructors may only return object or undefined");
-	return Wn(e);
+	return Un(e);
 }
-function Wn(e) {
+function Un(e) {
 	if (e === void 0) throw ReferenceError("this hasn't been initialised - super() hasn't been called");
 	return e;
 }
-function Gn(e, t) {
+function Wn(e, t) {
 	if (typeof t != "function" && t !== null) throw TypeError("Super expression must either be null or a function");
 	e.prototype = Object.create(t && t.prototype, { constructor: {
 		value: e,
 		writable: !0,
 		configurable: !0
-	} }), Object.defineProperty(e, "prototype", { writable: !1 }), t && Xn(e, t);
+	} }), Object.defineProperty(e, "prototype", { writable: !1 }), t && Yn(e, t);
 }
-function Kn(e) {
+function Gn(e) {
 	var t = typeof Map == "function" ? /* @__PURE__ */ new Map() : void 0;
-	return Kn = function(e) {
-		if (e === null || !Yn(e)) return e;
+	return Gn = function(e) {
+		if (e === null || !Jn(e)) return e;
 		if (typeof e != "function") throw TypeError("Super expression must either be null or a function");
 		if (t !== void 0) {
 			if (t.has(e)) return t.get(e);
 			t.set(e, n);
 		}
 		function n() {
-			return qn(e, arguments, Zn(this).constructor);
+			return Kn(e, arguments, Xn(this).constructor);
 		}
 		return n.prototype = Object.create(e.prototype, { constructor: {
 			value: n,
 			enumerable: !1,
 			writable: !0,
 			configurable: !0
-		} }), Xn(n, e);
-	}, Kn(e);
+		} }), Yn(n, e);
+	}, Gn(e);
 }
-function qn(e, t, n) {
-	if (Jn()) return Reflect.construct.apply(null, arguments);
+function Kn(e, t, n) {
+	if (qn()) return Reflect.construct.apply(null, arguments);
 	var r = [null];
 	r.push.apply(r, t);
 	var i = new (e.bind.apply(e, r))();
-	return n && Xn(i, n.prototype), i;
+	return n && Yn(i, n.prototype), i;
 }
-function Jn() {
+function qn() {
 	try {
 		var e = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
 	} catch {}
-	return (Jn = function() {
+	return (qn = function() {
 		return !!e;
 	})();
 }
-function Yn(e) {
+function Jn(e) {
 	try {
 		return Function.toString.call(e).indexOf("[native code]") !== -1;
 	} catch {
 		return typeof e == "function";
 	}
 }
-function Xn(e, t) {
-	return Xn = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function(e, t) {
+function Yn(e, t) {
+	return Yn = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function(e, t) {
 		return e.__proto__ = t, e;
-	}, Xn(e, t);
+	}, Yn(e, t);
 }
-function Zn(e) {
-	return Zn = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function(e) {
+function Xn(e) {
+	return Xn = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function(e) {
 		return e.__proto__ || Object.getPrototypeOf(e);
-	}, Zn(e);
+	}, Xn(e);
 }
-var X = /*#__PURE__*/ function(e) {
+var Zn = /*#__PURE__*/ function(e) {
 	function t(e) {
 		var n;
-		return Vn(this, t), n = Hn(this, t, [e]), Object.setPrototypeOf(n, t.prototype), n.name = n.constructor.name, n;
+		return Bn(this, t), n = Vn(this, t, [e]), Object.setPrototypeOf(n, t.prototype), n.name = n.constructor.name, n;
 	}
-	return Gn(t, e), Rn(t);
-}(/*#__PURE__*/ Kn(Error)), Qn = RegExp("(?:" + cn() + ")$", "i");
+	return Wn(t, e), Ln(t);
+}(/*#__PURE__*/ Gn(Error)), Qn = RegExp("(?:" + sn() + ")$", "i");
 function $n(e) {
 	var t = e.search(Qn);
 	if (t < 0) return {};
@@ -9427,7 +9427,7 @@ function or(e, t, n) {
 	}
 	return tr(e);
 }
-var sr = "([" + Y + "]|[\\-\\.\\(\\)]?)", cr = "^\\+" + sr + "*[" + Y + "]" + sr + "*$", lr = new RegExp(cr, "g"), ur = Y, dr = "[" + ur + "]+((\\-)*[" + ur + "])*", fr = "[a-zA-Z]+((\\-)*[" + ur + "])*", pr = "^(" + dr + "\\.)*" + fr + "\\.?$", mr = new RegExp(pr, "g"), hr = "tel:", gr = ";phone-context=", _r = ";isub=";
+var sr = "([" + X + "]|[\\-\\.\\(\\)]?)", cr = "^\\+" + sr + "*[" + X + "]" + sr + "*$", lr = new RegExp(cr, "g"), ur = X, dr = "[" + ur + "]+((\\-)*[" + ur + "])*", fr = "[a-zA-Z]+((\\-)*[" + ur + "])*", pr = "^(" + dr + "\\.)*" + fr + "\\.?$", mr = new RegExp(pr, "g"), hr = "tel:", gr = ";phone-context=", _r = ";isub=";
 function vr(e) {
 	var t = e.indexOf(gr);
 	if (t < 0) return null;
@@ -9443,7 +9443,7 @@ function yr(e) {
 //#region node_modules/libphonenumber-js/es6/helpers/extractFormattedPhoneNumberFromPossibleRfc3966NumberUri.js
 function br(e, t) {
 	var n = t.extractFormattedPhoneNumber, r = vr(e);
-	if (!yr(r)) throw new X("NOT_A_NUMBER");
+	if (!yr(r)) throw new Zn("NOT_A_NUMBER");
 	var i;
 	if (r === null) i = n(e) || "";
 	else {
@@ -9456,41 +9456,41 @@ function br(e, t) {
 }
 //#endregion
 //#region node_modules/libphonenumber-js/es6/parse.js
-var xr = 250, Sr = RegExp("[" + Bt + Y + "]"), Cr = RegExp("[^" + Y + "#]+$");
+var xr = 250, Sr = RegExp("[" + zt + X + "]"), Cr = RegExp("[^" + X + "#]+$");
 function wr(e, t, n) {
 	t = t || {};
-	var r = new J(n);
-	if (t.defaultCountry && !r.hasCountry(t.defaultCountry)) throw t.v2 ? new X("INVALID_COUNTRY") : Error(`Unknown country: ${t.defaultCountry}`);
+	var r = new Y(n);
+	if (t.defaultCountry && !r.hasCountry(t.defaultCountry)) throw t.v2 ? new Zn("INVALID_COUNTRY") : Error(`Unknown country: ${t.defaultCountry}`);
 	var i = Er(e, t.v2, t.extract), a = i.number, o = i.ext, s = i.error;
 	if (!a) {
-		if (t.v2) throw s === "TOO_SHORT" ? new X("TOO_SHORT") : new X("NOT_A_NUMBER");
+		if (t.v2) throw s === "TOO_SHORT" ? new Zn("TOO_SHORT") : new Zn("NOT_A_NUMBER");
 		return {};
 	}
 	var c = Or(a, t.defaultCountry, t.defaultCallingCode, r), l = c.country, u = c.nationalNumber, d = c.countryCallingCode, f = c.countryCallingCodeSource, p = c.carrierCode;
 	if (!r.hasSelectedNumberingPlan()) {
-		if (t.v2) throw new X("INVALID_COUNTRY");
+		if (t.v2) throw new Zn("INVALID_COUNTRY");
 		return {};
 	}
 	if (!u || u.length < 2) {
 		/* istanbul ignore if */
-		if (t.v2) throw new X("TOO_SHORT");
+		if (t.v2) throw new Zn("TOO_SHORT");
 		return {};
 	}
 	if (u.length > 17) {
-		if (t.v2) throw new X("TOO_LONG");
+		if (t.v2) throw new Zn("TOO_LONG");
 		return {};
 	}
 	if (t.v2) {
-		var m = new Pn(d, u, r.metadata);
+		var m = new Nn(d, u, r.metadata);
 		return l && (m.country = l), p && (m.carrierCode = p), o && (m.ext = o), m.__countryCallingCodeSource = f, m;
 	}
-	var h = (t.extended ? r.hasSelectedNumberingPlan() : l) ? Et(u, r.nationalNumberPattern()) : !1;
+	var h = (t.extended ? r.hasSelectedNumberingPlan() : l) ? Tt(u, r.nationalNumberPattern()) : !1;
 	return t.extended ? {
 		country: l,
 		countryCallingCode: d,
 		carrierCode: p,
 		valid: h,
-		possible: h ? !0 : !!(t.extended === !0 && r.possibleLengths() && Tt(u, r)),
+		possible: h ? !0 : !!(t.extended === !0 && r.possibleLengths() && wt(u, r)),
 		phone: u,
 		ext: o
 	} : h ? Dr(l, u, o) : {};
@@ -9498,7 +9498,7 @@ function wr(e, t, n) {
 function Tr(e, t, n) {
 	if (e) {
 		if (e.length > xr) {
-			if (n) throw new X("TOO_LONG");
+			if (n) throw new Zn("TOO_LONG");
 		} else {
 			if (t === !1) return e;
 			var r = e.search(Sr);
@@ -9511,7 +9511,7 @@ function Er(e, t, n) {
 		return Tr(e, n, t);
 	} });
 	if (!r) return {};
-	if (!mn(r)) return hn(r) ? { error: "TOO_SHORT" } : {};
+	if (!pn(r)) return mn(r) ? { error: "TOO_SHORT" } : {};
 	var i = $n(r);
 	return i.ext ? i : { number: r };
 }
@@ -9523,7 +9523,7 @@ function Dr(e, t, n) {
 	return n && (r.ext = n), r;
 }
 function Or(e, t, n, r) {
-	var i = $t(ar(e), void 0, t, n, r.metadata), a = i.countryCallingCodeSource, o = i.countryCallingCode, s = i.number, c;
+	var i = Qt(ar(e), void 0, t, n, r.metadata), a = i.countryCallingCodeSource, o = i.countryCallingCode, s = i.number, c;
 	if (o) r.selectNumberingPlan(o);
 	else if (s && (t || n)) t ? (c = t, r.selectNumberingPlan(t), o = r.numberingPlan.callingCode()) : (r.selectNumberingPlan(n), o = n);
 	else return {};
@@ -9531,7 +9531,7 @@ function Or(e, t, n, r) {
 		countryCallingCodeSource: a,
 		countryCallingCode: o
 	};
-	var l = Yt(ar(s), void 0, r), u = l.nationalNumber, d = l.carrierCode, f = Jt(o, {
+	var l = Jt(ar(s), void 0, r), u = l.nationalNumber, d = l.carrierCode, f = qt(o, {
 		nationalNumber: u,
 		metadata: r
 	});
@@ -9699,7 +9699,7 @@ function Jr(e) {
 	if (typeof n == "string") o = n;
 	else throw TypeError("A text for parsing must be a string.");
 	if (!r || typeof r == "string") a ? (s = i, c = a) : (s = void 0, c = i), r && (s = Rr({ defaultCountry: r }, s));
-	else if (Xe(r)) i ? (s = r, c = i) : c = r;
+	else if (Ye(r)) i ? (s = r, c = i) : c = r;
 	else throw Error(`Invalid second argument: ${r}`);
 	return {
 		text: o,
@@ -9761,12 +9761,12 @@ function ei(e, t) {
 	return (t === "string" ? String : Number)(e);
 }
 function ti(e, t, n) {
-	t && t.defaultCountry && !gt(t.defaultCountry, n) && (t = Zr(Zr({}, t), {}, { defaultCountry: void 0 }));
+	t && t.defaultCountry && !ht(t.defaultCountry, n) && (t = Zr(Zr({}, t), {}, { defaultCountry: void 0 }));
 	try {
 		return Fr(e, t, n);
 	} catch (e) {
 		/* istanbul ignore else */
-		if (!(e instanceof X)) throw e;
+		if (!(e instanceof Zn)) throw e;
 	}
 }
 //#endregion
@@ -9778,27 +9778,27 @@ function ni() {
 //#endregion
 //#region node_modules/libphonenumber-js/es6/getCountries.js
 function ri(e) {
-	return new J(e).getCountries();
+	return new Y(e).getCountries();
 }
 //#endregion
 //#region node_modules/libphonenumber-js/min/exports/parsePhoneNumber.js
 function ii() {
-	return qe(ni, arguments);
+	return Ke(ni, arguments);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/min/exports/isSupportedCountry.js
 function ai() {
-	return qe(gt, arguments);
+	return Ke(ht, arguments);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/min/exports/getCountries.js
 function oi() {
-	return qe(ri, arguments);
+	return Ke(ri, arguments);
 }
 //#endregion
 //#region node_modules/libphonenumber-js/min/exports/getCountryCallingCode.js
 function si() {
-	return qe(ht, arguments);
+	return Ke(mt, arguments);
 }
 var ci = [
 	"short_text",
@@ -9848,7 +9848,7 @@ function mi(e, t) {
 }
 function hi(e, t, n = {}) {
 	switch (e.type) {
-		case "single_choice": return Le(t) ? {
+		case "single_choice": return Ie(t) ? {
 			value: t.value,
 			other: pi(t.other)
 		} : t;
@@ -9872,7 +9872,7 @@ function hi(e, t, n = {}) {
 var gi = (e) => e.length <= 254 && /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}$/.test(e) && e.split("@")[0].length <= 64 && !e.includes("..") && !e.startsWith(".") && !e.split("@")[0].endsWith(".") && e.split("@")[1].split(".").every((e) => e.length <= 63 && !e.startsWith("-") && !e.endsWith("-")), _i = (e) => /^(?:https?:\/\/)?[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}(?::[0-9]{1,5})?(?:[/?#][^\s<>]*)?$/.test(e) && !e.includes("..");
 function vi(e, t, n = {}) {
 	let r = [], i = (t, n) => {
-		r.push(G("/answers/" + K(e.key), t, n, e.key));
+		r.push(K("/answers/" + q(e.key), t, n, e.key));
 	};
 	if (!di(e.type)) return i("unsupported_type", "This field type is not supported."), r;
 	if (fi(e.type)) return r;
@@ -9912,7 +9912,7 @@ function vi(e, t, n = {}) {
 		case "scale":
 		case "nps":
 		case "slider":
-			s = q(a);
+			s = J(a);
 			break;
 		case "yes_no":
 		case "consent":
@@ -9922,23 +9922,23 @@ function vi(e, t, n = {}) {
 			s = Array.isArray(a) && a.every((e) => typeof e == "string");
 			break;
 		case "single_choice":
-			s = typeof a == "string" || Le(a);
+			s = typeof a == "string" || Ie(a);
 			break;
 		case "hidden":
-			s = typeof a == "string" || typeof a == "boolean" || q(a);
+			s = typeof a == "string" || typeof a == "boolean" || J(a);
 			break;
 		default: s = typeof a == "string";
 	}
 	if (!s) return i("type_mismatch", "The answer has an invalid type."), r;
-	if (o && (ze(a) || e.type === "consent" && a !== !0)) return i("required", "An answer is required."), r;
-	if (ze(a)) return r;
+	if (o && (Re(a) || e.type === "consent" && a !== !0)) return i("required", "An answer is required."), r;
+	if (Re(a)) return r;
 	let c = e.validation ?? {};
 	if (typeof a == "string") {
 		let t = [...a].length, r = c.maxLength ?? (e.type === "long_text" ? 1e5 : 1e4);
-		if (c.minLength !== void 0 && t < c.minLength && i("min_length", "The answer is too short."), t > r && i("max_length", "The answer is too long."), c.pattern !== void 0 && (We(c.pattern) ? Ge(a, c.pattern) || i("pattern", "The answer does not match the pattern.") : i("invalid_pattern", "The validation pattern is not supported.")), (e.type === "email" || c.format === "email") && !gi(a) && i("invalid_email", "Enter a valid email address."), c.format === "url" && !_i(a) && i("invalid_url", "Enter a valid website address."), e.type === "phone" && !/^\+[1-9][0-9]{6,14}$/.test(a) && i("invalid_phone", "Enter a valid international phone number."), e.type === "date") {
-			if (!Ve(a)) i("invalid_date", "Enter a valid date in YYYY-MM-DD format.");
-			else if (Ve(c.min) && a < String(c.min) && i("min", "The answer is below the minimum."), Ve(c.max) && a > String(c.max) && i("max", "The answer exceeds the maximum."), c.minAge !== void 0) {
-				let e = He(a, n.now);
+		if (c.minLength !== void 0 && t < c.minLength && i("min_length", "The answer is too short."), t > r && i("max_length", "The answer is too long."), c.pattern !== void 0 && (Ue(c.pattern) ? We(a, c.pattern) || i("pattern", "The answer does not match the pattern.") : i("invalid_pattern", "The validation pattern is not supported.")), (e.type === "email" || c.format === "email") && !gi(a) && i("invalid_email", "Enter a valid email address."), c.format === "url" && !_i(a) && i("invalid_url", "Enter a valid website address."), e.type === "phone" && !/^\+[1-9][0-9]{6,14}$/.test(a) && i("invalid_phone", "Enter a valid international phone number."), e.type === "date") {
+			if (!Be(a)) i("invalid_date", "Enter a valid date in YYYY-MM-DD format.");
+			else if (Be(c.min) && a < String(c.min) && i("min", "The answer is below the minimum."), Be(c.max) && a > String(c.max) && i("max", "The answer exceeds the maximum."), c.minAge !== void 0) {
+				let e = Ve(a, n.now);
 				e === null ? i("invalid_context", "A valid frozen UTC date is required.") : e < c.minAge && i("min_age", "The minimum age is not met.");
 			}
 		}
@@ -9949,7 +9949,7 @@ function vi(e, t, n = {}) {
 		"scale",
 		"nps",
 		"slider"
-	].includes(e.type) && q(a)) {
+	].includes(e.type) && J(a)) {
 		let [t, n, r] = e.type === "rating" ? [
 			1,
 			5,
@@ -9971,16 +9971,16 @@ function vi(e, t, n = {}) {
 			c.max,
 			c.step
 		];
-		if (q(t) && a < t && i("min", "The answer is below the minimum."), q(n) && a > n && i("max", "The answer exceeds the maximum."), q(r) && r > 0) {
-			let e = (a - (q(t) ? t : 0)) / r;
+		if (J(t) && a < t && i("min", "The answer is below the minimum."), J(n) && a > n && i("max", "The answer exceeds the maximum."), J(r) && r > 0) {
+			let e = (a - (J(t) ? t : 0)) / r;
 			(!Number.isFinite(e) || Math.abs(e - Math.round(e)) > 1e-8) && i("step", "The answer does not match the allowed increment.");
 		}
 	}
 	if (e.type === "single_choice" || e.type === "multi_choice") {
-		let t = Array.isArray(a) ? a : [Re(a)], n = e.options ?? [];
+		let t = Array.isArray(a) ? a : [Le(a)], n = e.options ?? [];
 		if (t.some((e) => !n.some((t) => t.value === e)) && i("invalid_choice", "Choose a configured option value."), e.type === "single_choice") {
 			let e = n.find((e) => e.value === t[0]);
-			Le(a) ? (e?.isOther || i("invalid_other", "Free text is only accepted for an Other option."), a.other || i("required_other", "Enter text for the Other option."), [...a.other].length > 1e3 && i("max_length", "The answer is too long.")) : e?.isOther && i("required_other", "Enter text for the Other option.");
+			Ie(a) ? (e?.isOther || i("invalid_other", "Free text is only accepted for an Other option."), a.other || i("required_other", "Enter text for the Other option."), [...a.other].length > 1e3 && i("max_length", "The answer is too long.")) : e?.isOther && i("required_other", "Enter text for the Other option.");
 		}
 		new Set(t).size !== t.length && i("duplicate_choice", "Choose each option only once."), t.length > 1 && n.some((e) => e.isExclusive && t.includes(e.value)) && i("exclusive_choice", "An exclusive option cannot be combined."), e.type === "multi_choice" && (c.minSelections !== void 0 && t.length < c.minSelections && i("min_selections", "Choose more options."), c.maxSelections !== void 0 && t.length > c.maxSelections && i("max_selections", "Choose fewer options."));
 	}
@@ -10050,7 +10050,7 @@ function Ci(e) {
 	let t = [], n = new Map(e.steps.map((e, t) => [e.key, {
 		step: e,
 		index: t
-	}])), r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Set([...e.steps.map((e) => e.id), ...e.endings.map((e) => e.id)]), a = new Map((e.variables ?? []).map((e) => [e.key, e.type])), o = (e, n) => t.push(G(e, "invalid_power", n));
+	}])), r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Set([...e.steps.map((e) => e.id), ...e.endings.map((e) => e.id)]), a = new Map((e.variables ?? []).map((e) => [e.key, e.type])), o = (e, n) => t.push(K(e, "invalid_power", n));
 	for (let [t, n] of (e.flowPositions ?? []).entries()) (!i.has(n.id) || r.has(n.id)) && o(`/flowPositions/${t}`, "Graph positions must reference unique existing nodes."), r.add(n.id);
 	for (let [t, n] of (e.variables ?? []).entries()) typeof n.default == "number" && Math.abs(n.default) > 0xe8d4a51000 && o(`/variables/${t}`, "Numeric variables are limited to +/- 1e12.");
 	e.steps.forEach((e, t) => {
@@ -10131,12 +10131,12 @@ function Ei(e) {
 //#region assets/src/shared/logic/diagnostics.ts
 function Di(e) {
 	let t = [], n = (e, n, r) => {
-		t.push(G(e, n, r));
+		t.push(K(e, n, r));
 	};
 	if (!Array.isArray(e.steps) || !e.steps.length || e.steps.length > 500 || !Array.isArray(e.endings) || !e.endings.length) return n("", "invalid_schema", "The schema needs 1–500 steps and an ending."), t;
 	let r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Map(), a = /* @__PURE__ */ new Map(), o = new Map((e.variables ?? []).map((e) => [e.key, e.type])), s = /* @__PURE__ */ new Set();
 	(e.variables ?? []).forEach((e, t) => {
-		s.has(e.key) && n(`/variables/${t}/key`, "duplicate_key", "Variable keys must be unique."), s.add(e.key), (e.type === "number" ? !q(e.default) : typeof e.default !== e.type) && n(`/variables/${t}/default`, "invalid_variable", "The variable default has an invalid type.");
+		s.has(e.key) && n(`/variables/${t}/key`, "duplicate_key", "Variable keys must be unique."), s.add(e.key), (e.type === "number" ? !J(e.default) : typeof e.default !== e.type) && n(`/variables/${t}/default`, "invalid_variable", "The variable default has an invalid type.");
 	});
 	let c = new Set(e.endings.map((e) => e.id)), l = (e, t) => {
 		r.has(e) && n(t, "duplicate_id", "IDs must be globally unique."), r.add(e);
@@ -10165,7 +10165,7 @@ function Di(e) {
 			return;
 		}
 		let s = e.source ?? "answer";
-		s === "answer" ? i.has(e.field) ? i.get(e.field) > r && n(t + "/field", "later_reference", "This condition references a later answer.") : n(t + "/field", "missing_reference", "The referenced answer does not exist.") : s === "variable" && !o.has(e.field) && n(t + "/field", "missing_reference", "The referenced variable does not exist."), e.op === "matches" && !We(e.value) && n(t + "/value", "invalid_pattern", "The validation pattern is not supported.");
+		s === "answer" ? i.has(e.field) ? i.get(e.field) > r && n(t + "/field", "later_reference", "This condition references a later answer.") : n(t + "/field", "missing_reference", "The referenced answer does not exist.") : s === "variable" && !o.has(e.field) && n(t + "/field", "missing_reference", "The referenced variable does not exist."), e.op === "matches" && !Ue(e.value) && n(t + "/value", "invalid_pattern", "The validation pattern is not supported.");
 	}, d = (e, t) => {
 		if (e.action === "set_variable") {
 			let r = o.get(e.key);
@@ -10174,7 +10174,7 @@ function Di(e) {
 	}, f = /* @__PURE__ */ new Map(), p = e.steps.flatMap((e) => [...e.logic ?? [], ...(e.options ?? []).flatMap((e) => e.logic ?? [])]), m = /* @__PURE__ */ new Set([...e.steps.filter((e) => e.hiddenByDefault).map((e) => e.id), ...p.filter((e) => e.then.action === "hide").map((e) => e.then.to)]);
 	e.steps.forEach((t, r) => {
 		let i = `/steps/${r}`;
-		di(t.type) || n(i + "/type", "unsupported_type", "This field type is not supported."), t.validation?.pattern !== void 0 && !We(t.validation.pattern) && n(i + "/validation/pattern", "invalid_pattern", "The validation pattern is not supported."), t.validation?.mxCheck && n(i + "/validation/mxCheck", "unsupported_validation", "MX checking is not enabled."), ["single_choice", "multi_choice"].includes(t.type) && !t.options?.length && n(i + "/options", "missing_options", "Choice fields need at least one option."), [...t.logic ?? [], ...(t.options ?? []).flatMap((e) => e.logic ?? [])].forEach((e) => {
+		di(t.type) || n(i + "/type", "unsupported_type", "This field type is not supported."), t.validation?.pattern !== void 0 && !Ue(t.validation.pattern) && n(i + "/validation/pattern", "invalid_pattern", "The validation pattern is not supported."), t.validation?.mxCheck && n(i + "/validation/mxCheck", "unsupported_validation", "MX checking is not enabled."), ["single_choice", "multi_choice"].includes(t.type) && !t.options?.length && n(i + "/options", "missing_options", "Choice fields need at least one option."), [...t.logic ?? [], ...(t.options ?? []).flatMap((e) => e.logic ?? [])].forEach((e) => {
 			if (e.then.action === "jump") {
 				let n = f.get(t.id) ?? /* @__PURE__ */ new Set();
 				n.add(e.then.to), f.set(t.id, n);
@@ -10193,14 +10193,14 @@ function Di(e) {
 			"nps"
 		].includes(t.type) && (o.min !== void 0 || o.max !== void 0 || o.step !== void 0) && n(i + "/validation", "unsupported_validation", "Score fields use a fixed numeric range."), t.type === "slider") {
 			let e = o.min ?? 0, t = o.max ?? 100, r = o.step ?? 1;
-			(!q(e) || !q(t) || !q(r) || Math.abs(Number(e)) > 1e4 || Math.abs(Number(t)) > 1e4 || Number(e) >= Number(t) || Number(r) <= 0 || Number(r) > Number(t) - Number(e)) && n(i + "/validation", "invalid_range", "Slider bounds and increment must form a valid finite range.");
+			(!J(e) || !J(t) || !J(r) || Math.abs(Number(e)) > 1e4 || Math.abs(Number(t)) > 1e4 || Number(e) >= Number(t) || Number(r) <= 0 || Number(r) > Number(t) - Number(e)) && n(i + "/validation", "invalid_range", "Slider bounds and increment must form a valid finite range.");
 		}
 		for (let [e, t] of [
 			[o.minLength, o.maxLength],
 			[o.minSelections, o.maxSelections],
 			[o.min, o.max]
 		]) e !== void 0 && t !== void 0 && typeof e == typeof t && e > t && n(i + "/validation", "invalid_range", "Minimum must not exceed maximum.");
-		if (o.step !== void 0 && (!q(o.step) || o.step <= 0) && n(i + "/validation/step", "invalid_range", "The numeric increment must be positive."), t.type !== "single_choice" && t.options?.some((e) => e.isOther) && n(i + "/options", "unsupported_other", "Other free text is only supported for single-choice fields."), e.steps[r + 1] && (m.has(t.id) || !t.logic?.some((e) => ["jump", "end"].includes(e.then.action) && "all" in e.if && !e.if.all.length))) {
+		if (o.step !== void 0 && (!J(o.step) || o.step <= 0) && n(i + "/validation/step", "invalid_range", "The numeric increment must be positive."), t.type !== "single_choice" && t.options?.some((e) => e.isOther) && n(i + "/options", "unsupported_other", "Other free text is only supported for single-choice fields."), e.steps[r + 1] && (m.has(t.id) || !t.logic?.some((e) => ["jump", "end"].includes(e.then.action) && "all" in e.if && !e.if.all.length))) {
 			let n = f.get(t.id) ?? /* @__PURE__ */ new Set();
 			n.add(e.steps[r + 1].id), f.set(t.id, n);
 		}
@@ -10245,14 +10245,14 @@ function Di(e) {
 //#endregion
 //#region assets/src/shared/logic/interpolate.ts
 function Oi(e) {
-	return e == null ? "" : Le(e) ? `${e.value}: ${e.other}` : Array.isArray(e) ? e.map(Oi).join(", ") : typeof e == "object" ? Object.keys(e).sort().map((t) => `${t}: ${Oi(e[t])}`).join(", ") : String(e);
+	return e == null ? "" : Ie(e) ? `${e.value}: ${e.other}` : Array.isArray(e) ? e.map(Oi).join(", ") : typeof e == "object" ? Object.keys(e).sort().map((t) => `${t}: ${Oi(e[t])}`).join(", ") : String(e);
 }
 function ki(e, t = {}, n = {}) {
 	return e.replace(/\{\{([^{}]*)\}\}/g, (e, r) => {
 		let i = /^[ \t\r\n]*(?:(answer|meta):)?([a-z][a-z0-9_]*)[ \t\r\n]*(?:\|([^{}]*))?$/.exec(r);
 		if (!i) return "";
 		let a = i[1] === "meta" ? n : t, o = i[2];
-		return Oi(Fe(a, o) ? a[o] : void 0) || i[3] || "";
+		return Oi(Pe(a, o) ? a[o] : void 0) || i[3] || "";
 	});
 }
 //#endregion
@@ -10266,28 +10266,28 @@ function Ai(e, t = {}, n = {}, r = {}, i = 0) {
 		variable: n,
 		hidden: r.hidden ?? {},
 		url: r.url ?? {}
-	}[e.source ?? "answer"], o = Fe(a, e.field) ? a[e.field] ?? null : null, s = (e.source ?? "answer") === "answer" ? Re(o) : o, c = e.value ?? null, l = () => typeof s == "string" && typeof c == "string" ? s.includes(c) : Array.isArray(s) && s.some((e) => Be(e, c)), u = () => Array.isArray(c) && c.some((e) => Be(s, e));
+	}[e.source ?? "answer"], o = Pe(a, e.field) ? a[e.field] ?? null : null, s = (e.source ?? "answer") === "answer" ? Le(o) : o, c = e.value ?? null, l = () => typeof s == "string" && typeof c == "string" ? s.includes(c) : Array.isArray(s) && s.some((e) => ze(e, c)), u = () => Array.isArray(c) && c.some((e) => ze(s, e));
 	switch (e.op) {
-		case "eq": return Be(s, c);
-		case "neq": return !Be(s, c);
+		case "eq": return ze(s, c);
+		case "neq": return !ze(s, c);
 		case "contains": return l();
 		case "not_contains": return !l();
 		case "in": return u();
 		case "not_in": return !u();
-		case "gt": return q(s) && q(c) && s > c;
-		case "gte": return q(s) && q(c) && s >= c;
-		case "lt": return q(s) && q(c) && s < c;
-		case "lte": return q(s) && q(c) && s <= c;
-		case "between": return q(s) && Array.isArray(c) && c.length === 2 && q(c[0]) && q(c[1]) && s >= c[0] && s <= c[1];
-		case "is_empty": return ze(s);
-		case "is_not_empty": return !ze(s);
+		case "gt": return J(s) && J(c) && s > c;
+		case "gte": return J(s) && J(c) && s >= c;
+		case "lt": return J(s) && J(c) && s < c;
+		case "lte": return J(s) && J(c) && s <= c;
+		case "between": return J(s) && Array.isArray(c) && c.length === 2 && J(c[0]) && J(c[1]) && s >= c[0] && s <= c[1];
+		case "is_empty": return Re(s);
+		case "is_not_empty": return !Re(s);
 		case "starts_with": return typeof s == "string" && typeof c == "string" && s.startsWith(c);
-		case "matches": return Ge(s, c);
-		case "date_before": return Ve(s) !== null && Ve(c) !== null && s < c;
-		case "date_after": return Ve(s) !== null && Ve(c) !== null && s > c;
+		case "matches": return We(s, c);
+		case "date_before": return Be(s) !== null && Be(c) !== null && s < c;
+		case "date_after": return Be(s) !== null && Be(c) !== null && s > c;
 		case "age_gte": {
-			let e = He(s, r.now);
-			return e !== null && q(c) && c >= 0 && e >= c;
+			let e = Ve(s, r.now);
+			return e !== null && J(c) && c >= 0 && e >= c;
 		}
 		default: return !1;
 	}
@@ -10295,15 +10295,15 @@ function Ai(e, t = {}, n = {}, r = {}, i = 0) {
 //#endregion
 //#region assets/src/shared/logic/replay.ts
 function ji(e, t, n) {
-	if (Fe(n.hidden ?? {}, e.key)) return n.hidden[e.key] ?? null;
+	if (Pe(n.hidden ?? {}, e.key)) return n.hidden[e.key] ?? null;
 	let r = e.settings?.source ?? "default", i = e.settings?.sourceKey ?? e.key;
-	return r === "url" ? Fe(n.url ?? {}, i) ? n.url[i] ?? null : e.defaultValue ?? null : r === "meta" ? Fe(n.meta ?? {}, i) ? n.meta[i] ?? null : e.defaultValue ?? null : r === "merge" ? ki(String(e.defaultValue ?? ""), t, n.meta) : r === "cookie" ? null : e.defaultValue ?? null;
+	return r === "url" ? Pe(n.url ?? {}, i) ? n.url[i] ?? null : e.defaultValue ?? null : r === "meta" ? Pe(n.meta ?? {}, i) ? n.meta[i] ?? null : e.defaultValue ?? null : r === "merge" ? ki(String(e.defaultValue ?? ""), t, n.meta) : r === "cookie" ? null : e.defaultValue ?? null;
 }
 function Mi(e, t, n = {}, r = "partial") {
 	let i = {
 		visited: [],
-		answers: Ie(),
-		variables: Ie(),
+		answers: Fe(),
+		variables: Fe(),
 		currentStepId: null,
 		endingId: null,
 		progress: 0,
@@ -10315,7 +10315,7 @@ function Mi(e, t, n = {}, r = "partial") {
 		"later_reference"
 	].includes(e.code));
 	if (i.errors.push(...a), a.some((e) => e.code === "invalid_schema")) return i.discardedKeys = Object.keys(t).sort(), i;
-	r !== "partial" && r !== "complete" && i.errors.push(G("/mode", "invalid_mode", "Replay mode must be partial or complete."));
+	r !== "partial" && r !== "complete" && i.errors.push(K("/mode", "invalid_mode", "Replay mode must be partial or complete."));
 	for (let t of e.variables ?? []) i.variables[t.key] = t.default;
 	let o = e.steps ?? [], s = new Map(o.map((e, t) => [e.id, t])), c = new Map(o.map((e) => [e.key, e])), l = new Map(o.map((e) => [e.id, !e.hiddenByDefault])), u = new Map(o.map((e) => [e.id, e.required === !0 || e.type === "consent"])), d = /* @__PURE__ */ new Set(), f = /* @__PURE__ */ new Set(), p = /* @__PURE__ */ new Set(), m = e.endings.some((e) => e.id === n.defaultEndingId) ? n.defaultEndingId : e.endings[0]?.id ?? null, h = 0, g = 0, _ = (e, t, n, r, a = i.errors) => {
 		switch (e.action) {
@@ -10330,26 +10330,26 @@ function Mi(e, t, n = {}, r = "partial") {
 			case "set_variable": {
 				let n = t[e.key];
 				if (e.operation === "set") t[e.key] = e.value;
-				else if (q(n) && q(e.value)) {
+				else if (J(n) && J(e.value)) {
 					let r = n + (e.operation === "add" ? e.value : -e.value);
 					try {
 						t[e.key] = yi(r);
 					} catch {
-						a.push(G("/variables/" + K(e.key), "invalid_variable", "The variable value exceeds the finite calculation limit."));
+						a.push(K("/variables/" + q(e.key), "invalid_variable", "The variable value exceeds the finite calculation limit."));
 					}
-				} else a.push(G("/variables/" + K(e.key), "invalid_variable", "The variable action has an invalid type."));
+				} else a.push(K("/variables/" + q(e.key), "invalid_variable", "The variable action has an invalid type."));
 				break;
 			}
 		}
 	}, v = (e) => [...e.logic ?? [], ...(e.options ?? []).filter((t) => {
-		let n = Re(i.answers[e.key]);
+		let n = Le(i.answers[e.key]);
 		return Array.isArray(n) ? n.includes(t.value) : n === t.value;
 	}).flatMap((e) => e.logic ?? [])];
 	if (!i.errors.length) {
 		for (; h < o.length;) {
 			let e = o[h];
 			if (d.has(e.id) || d.size >= 1e3) {
-				i.currentStepId = e.id, i.errors.push(G("/steps/" + h, "cff_logic_loop", "The logic path revisits a step."));
+				i.currentStepId = e.id, i.errors.push(K("/steps/" + h, "cff_logic_loop", "The logic path revisits a step."));
 				break;
 			}
 			if (d.add(e.id), !l.get(e.id)) {
@@ -10359,20 +10359,20 @@ function Mi(e, t, n = {}, r = "partial") {
 			i.visited.push(e.id);
 			let a = fi(e.type), c = e.type === "hidden", m = e.type === "calculated";
 			if (!a) {
-				let a = Fe(t, e.key);
+				let a = Pe(t, e.key);
 				if (!c && !m && !a && (r === "partial" || u.get(e.id))) {
-					i.currentStepId = e.id, r === "complete" && i.errors.push(G("/answers/" + K(e.key), "required", "An answer is required.", e.key));
+					i.currentStepId = e.id, r === "complete" && i.errors.push(K("/answers/" + q(e.key), "required", "An answer is required.", e.key));
 					break;
 				}
 				let o;
 				try {
 					o = m ? bi(e.settings?.expression ?? "", i.answers, i.variables) : c ? ji(e, i.answers, n) : a ? t[e.key] ?? null : null;
 				} catch {
-					i.currentStepId = e.id, i.errors.push(G("/answers/" + K(e.key), "calculation_error", "The calculation is invalid or outside its limits.", e.key));
+					i.currentStepId = e.id, i.errors.push(K("/answers/" + q(e.key), "calculation_error", "The calculation is invalid or outside its limits.", e.key));
 					break;
 				}
 				let s = hi(e, o, n);
-				f.add(e.key), m && a && (p.add(e.key), i.errors.push(G("/answers/" + K(e.key), "computed_answer_tampered", "Calculated answers cannot be supplied by visitors.", e.key))), c && a && !Be(t[e.key], s) && (p.add(e.key), i.errors.push(G("/answers/" + K(e.key), "hidden_answer_tampered", "Hidden answers are server-derived.", e.key)));
+				f.add(e.key), m && a && (p.add(e.key), i.errors.push(K("/answers/" + q(e.key), "computed_answer_tampered", "Calculated answers cannot be supplied by visitors.", e.key))), c && a && !ze(t[e.key], s) && (p.add(e.key), i.errors.push(K("/answers/" + q(e.key), "hidden_answer_tampered", "Hidden answers are server-derived.", e.key)));
 				let l = m ? [] : vi({
 					...e,
 					required: u.get(e.id) === !0
@@ -10407,11 +10407,11 @@ function Mi(e, t, n = {}, r = "partial") {
 	}
 	for (let e of Object.keys(t).sort()) {
 		let t = c.get(e);
-		t ? fi(t.type) ? (p.add(e), i.errors.push(G("/answers/" + K(e), "display_answer", "Display steps do not store answers.", e))) : f.has(e) || (p.add(e), i.errors.push(G("/answers/" + K(e), "unvisited_answer", "Answers to unvisited steps are not accepted.", e))) : (p.add(e), i.errors.push(G("/answers/" + K(e), "unknown_answer", "The answer key does not exist.", e)));
+		t ? fi(t.type) ? (p.add(e), i.errors.push(K("/answers/" + q(e), "display_answer", "Display steps do not store answers.", e))) : f.has(e) || (p.add(e), i.errors.push(K("/answers/" + q(e), "unvisited_answer", "Answers to unvisited steps are not accepted.", e))) : (p.add(e), i.errors.push(K("/answers/" + q(e), "unknown_answer", "The answer key does not exist.", e)));
 	}
 	if (i.discardedKeys = [...p].sort(), i.endingId) i.progress = 100;
 	else if (i.currentStepId && !i.errors.some((e) => e.code === "cff_logic_loop")) {
-		let e = new Map(l), t = { ...i.variables }, r = /* @__PURE__ */ new Set(), a = 0, c = s.get(i.currentStepId), d = (e) => "all" in e ? e.all.every(d) : "any" in e ? e.any.every(d) : e.source !== void 0 && e.source !== "answer" || Fe(i.answers, e.field);
+		let e = new Map(l), t = { ...i.variables }, r = /* @__PURE__ */ new Set(), a = 0, c = s.get(i.currentStepId), d = (e) => "all" in e ? e.all.every(d) : "any" in e ? e.any.every(d) : e.source !== void 0 && e.source !== "answer" || Pe(i.answers, e.field);
 		for (; c < o.length;) {
 			let l = o[c];
 			if (r.has(l.id)) break;
@@ -10519,42 +10519,57 @@ function zi({ text: e }) {
 	return t.push(e.slice(r)), /* @__PURE__ */ Z(S, { children: t });
 }
 function Bi(e, t, n) {
+	try {
+		if (e.type === "date" && typeof t == "string") {
+			let e = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+			return e ? new Intl.DateTimeFormat(n, {
+				dateStyle: "medium",
+				timeZone: "UTC"
+			}).format(Date.UTC(Number(e[1]), Number(e[2]) - 1, Number(e[3]))) : null;
+		}
+		if (e.type === "number" && typeof t == "number" && Number.isFinite(t)) return new Intl.NumberFormat(n).format(t);
+	} catch {}
+	return null;
+}
+function Vi(e, t, n, r) {
 	if (t == null || t === "") return n("empty");
 	if (typeof t == "boolean") return n(t ? "yes" : "no");
+	let i = Bi(e, t, r);
+	if (i !== null) return i;
 	if (e.type === "file_upload") return n("uploadSaved");
 	if (e.type === "address" && t && typeof t == "object" && !Array.isArray(t)) return Object.values(t).filter((e) => typeof e == "string").join(", ");
-	let r = (t) => {
+	let a = (t) => {
 		if (t && typeof t == "object" && !Array.isArray(t)) {
 			let n = t;
 			if (typeof n.value == "string" && typeof n.other == "string") return `${e.options?.find((e) => e.value === n.value)?.label ?? n.value}: ${n.other}`;
 		}
 		return e.options?.find((e) => e.value === t)?.label ?? String(t);
 	};
-	return Array.isArray(t) ? t.map(r).join(", ") : r(t);
+	return Array.isArray(t) ? t.map(a).join(", ") : a(t);
 }
 //#endregion
 //#region assets/src/runtime/registry.ts
-var Vi = /* @__PURE__ */ new Map(), Hi = new Set(ci);
-function Ui(e, t) {
+var Hi = /* @__PURE__ */ new Map(), Ui = new Set(ci);
+function Wi(e, t) {
 	if (!/^[a-z][a-z0-9_]{0,63}$/.test(e) || typeof t != "function") throw TypeError("Invalid field renderer");
-	if (Hi.has(e)) throw Error("Built-in field types cannot be replaced");
-	if (Vi.has(e)) throw Error("Field renderer already registered");
-	return Vi.set(e, t), () => {
-		Vi.get(e) === t && Vi.delete(e);
+	if (Ui.has(e)) throw Error("Built-in field types cannot be replaced");
+	if (Hi.has(e)) throw Error("Field renderer already registered");
+	return Hi.set(e, t), () => {
+		Hi.get(e) === t && Hi.delete(e);
 	};
 }
-function Wi(e) {
-	return Vi.get(e);
+function Gi(e) {
+	return Hi.get(e);
 }
 //#endregion
 //#region assets/src/runtime/phase2-inputs.tsx
-function Gi({ step: e, value: t, onAnswer: n, disabled: r, phrase: i, error: a }) {
+function Ki({ step: e, value: t, onAnswer: n, disabled: r, phrase: i, error: a }) {
 	let o = e.settings?.addressFields ?? [
 		"street",
 		"city",
 		"postcode",
 		"country"
-	], s = t && typeof t == "object" && !Array.isArray(t) ? t : {}, [c, l] = U(Object.fromEntries(o.map((e) => [e, typeof s[e] == "string" ? s[e] : ""]))), u = {
+	], s = t && typeof t == "object" && !Array.isArray(t) ? t : {}, [c, l] = W(Object.fromEntries(o.map((e) => [e, typeof s[e] == "string" ? s[e] : ""]))), u = {
 		street: "street-address",
 		city: "address-level2",
 		postcode: "postal-code",
@@ -10593,8 +10608,8 @@ function Gi({ step: e, value: t, onAnswer: n, disabled: r, phrase: i, error: a }
 		]
 	});
 }
-function Ki({ step: e, upload: t, onAnswer: n, disabled: r, phrase: i, value: a, error: o }) {
-	let [s, c] = U(!1), [l, u] = U(!1), [d, f] = U(""), p = Math.min(52428800, e.validation?.maxBytes ?? 10485760);
+function qi({ step: e, upload: t, onAnswer: n, disabled: r, phrase: i, value: a, error: o }) {
+	let [s, c] = W(!1), [l, u] = W(!1), [d, f] = W(""), p = Math.min(52428800, e.validation?.maxBytes ?? 10485760);
 	return /* @__PURE__ */ Z("div", { children: [
 		/* @__PURE__ */ Z("label", {
 			for: `input-${e.id}`,
@@ -10652,7 +10667,7 @@ function Ki({ step: e, upload: t, onAnswer: n, disabled: r, phrase: i, value: a,
 		})
 	] });
 }
-function qi({ step: e, media: t, disabled: n, onAnswer: r, phrase: i }) {
+function Ji({ step: e, media: t, disabled: n, onAnswer: r, phrase: i }) {
 	let a = e.settings?.media, o = Q((a?.attachmentId ? t?.[a.attachmentId]?.url : a?.url) ?? "");
 	return /* @__PURE__ */ Z("div", { children: [o && /^https?:/.test(o) && (a?.type === "video" ? /* @__PURE__ */ Z("video", {
 		controls: !0,
@@ -10671,14 +10686,14 @@ function qi({ step: e, media: t, disabled: n, onAnswer: r, phrase: i }) {
 }
 //#endregion
 //#region assets/src/runtime/inputs.tsx
-function Ji(e, t, n) {
+function Yi(e, t, n) {
 	return e.includes(t) ? e.filter((e) => e !== t) : n.find((e) => e.value === t)?.isExclusive ? [t] : [...e.filter((e) => !n.find((t) => t.value === e)?.isExclusive), t];
 }
-function Yi(e, t = "ID") {
+function Xi(e, t = "ID") {
 	let n = ii(e, t);
 	return n?.isValid() ? n.number : e.trim();
 }
-function Xi(e) {
+function Zi(e) {
 	let { step: t, disabled: n, onAnswer: r, phrase: i } = e, a = t.type === "yes_no" ? [{
 		id: "yes",
 		value: !0,
@@ -10687,8 +10702,8 @@ function Xi(e) {
 		id: "no",
 		value: !1,
 		label: i("no")
-	}] : t.options ?? [], [o, s] = U(Array.isArray(e.value) ? e.value : []), c = e.value && typeof e.value == "object" && !Array.isArray(e.value) ? e.value : null, [l, u] = U(typeof e.value == "string" ? e.value : typeof c?.value == "string" ? c.value : ""), [d, f] = U(typeof c?.value == "string" ? c.value : ""), [p, m] = U(typeof c?.other == "string" ? c.other : ""), h = Ee(null), g = t.type === "multi_choice", _ = (e) => {
-		n || (g ? s(Ji(o, String(e), t.options ?? [])) : t.options?.some((t) => t.value === e && t.isOther) ? f(String(e)) : (f(""), r(e)));
+	}] : t.options ?? [], [o, s] = W(Array.isArray(e.value) ? e.value : []), c = e.value && typeof e.value == "object" && !Array.isArray(e.value) ? e.value : null, [l, u] = W(typeof e.value == "string" ? e.value : typeof c?.value == "string" ? c.value : ""), [d, f] = W(typeof c?.value == "string" ? c.value : ""), [p, m] = W(typeof c?.other == "string" ? c.other : ""), h = Te(null), g = t.type === "multi_choice", _ = (e) => {
+		n || (g ? s(Yi(o, String(e), t.options ?? [])) : t.options?.some((t) => t.value === e && t.isOther) ? f(String(e)) : (f(""), r(e)));
 	}, v = (a) => /* @__PURE__ */ Z("div", {
 		className: "other-input",
 		children: [/* @__PURE__ */ Z("label", {
@@ -10711,7 +10726,7 @@ function Xi(e) {
 			}
 		})]
 	});
-	W(() => {
+	G(() => {
 		d && h.current?.querySelector(`#other-${t.id}`)?.focus();
 	}, [d, t.id]);
 	let y = (e) => {
@@ -10809,9 +10824,9 @@ function Xi(e) {
 		]
 	});
 }
-function Zi({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }) {
-	let [o, s] = U(t == null ? "" : String(t)), c = e.settings?.country ?? "ID", [l, u] = U(oi().includes(c) ? c : "ID"), d = Ee(null), f = () => r(e.type === "number" ? o.trim() ? Number(o) : null : e.type === "phone" ? Yi(o, l) : o);
-	W(() => {
+function Qi({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }) {
+	let [o, s] = W(t == null ? "" : String(t)), c = e.settings?.country ?? "ID", [l, u] = W(oi().includes(c) ? c : "ID"), d = Te(null), f = () => r(e.type === "number" ? o.trim() ? Number(o) : null : e.type === "phone" ? Xi(o, l) : o);
+	G(() => {
 		d.current && (d.current.style.height = "auto", d.current.style.height = `${Math.min(240, d.current.scrollHeight)}px`);
 	}, [o]);
 	let p = e.type === "email" ? "email" : e.type === "phone" ? "tel" : e.type === "number" ? "number" : e.type === "date" ? "date" : "text", m = {
@@ -10884,7 +10899,7 @@ function Zi({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }
 		]
 	});
 }
-function Qi({ step: e, value: t, disabled: n, onAnswer: r }) {
+function $i({ step: e, value: t, disabled: n, onAnswer: r }) {
 	let i = e.type === "nps" ? 0 : 1, a = e.type === "rating" ? 5 : 10, o = typeof t == "number" ? t : null, s = Array.from({ length: a - i + 1 }, (e, t) => t + i);
 	return /* @__PURE__ */ Z("div", {
 		role: "group",
@@ -10908,8 +10923,8 @@ function Qi({ step: e, value: t, disabled: n, onAnswer: r }) {
 		}, t))
 	});
 }
-function $i({ step: e, value: t, disabled: n, onAnswer: r, phrase: i }) {
-	let a = typeof e.validation?.min == "number" ? e.validation.min : 0, o = typeof e.validation?.max == "number" ? e.validation.max : 100, s = e.validation?.step ?? 1, [c, l] = U(typeof t == "number" ? t : a);
+function ea({ step: e, value: t, disabled: n, onAnswer: r, phrase: i }) {
+	let a = typeof e.validation?.min == "number" ? e.validation.min : 0, o = typeof e.validation?.max == "number" ? e.validation.max : 100, s = e.validation?.step ?? 1, [c, l] = W(typeof t == "number" ? t : a);
 	return /* @__PURE__ */ Z("form", {
 		onSubmit: (e) => {
 			e.preventDefault(), r(c);
@@ -10948,8 +10963,8 @@ function $i({ step: e, value: t, disabled: n, onAnswer: r, phrase: i }) {
 		]
 	});
 }
-function ea({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }) {
-	let [o, s] = U(t === !0), c = e.settings?.privacyUrl ? Q(e.settings.privacyUrl) : null;
+function ta({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }) {
+	let [o, s] = W(t === !0), c = e.settings?.privacyUrl ? Q(e.settings.privacyUrl) : null;
 	return /* @__PURE__ */ Z("form", {
 		onSubmit: (e) => {
 			e.preventDefault(), r(o);
@@ -10979,47 +10994,47 @@ function ea({ step: e, value: t, disabled: n, onAnswer: r, phrase: i, error: a }
 		]
 	});
 }
-function ta(e) {
-	let t = e.step.type, n = Wi(t);
-	return n ? /* @__PURE__ */ Z(n, { ...e }) : t === "address" ? /* @__PURE__ */ Z(Gi, { ...e }) : t === "media" ? /* @__PURE__ */ Z(qi, { ...e }) : t === "file_upload" ? /* @__PURE__ */ Z(Ki, { ...e }) : [
+function na(e) {
+	let t = e.step.type, n = Gi(t);
+	return n ? /* @__PURE__ */ Z(n, { ...e }) : t === "address" ? /* @__PURE__ */ Z(Ki, { ...e }) : t === "media" ? /* @__PURE__ */ Z(Ji, { ...e }) : t === "file_upload" ? /* @__PURE__ */ Z(qi, { ...e }) : [
 		"single_choice",
 		"multi_choice",
 		"yes_no"
-	].includes(t) ? /* @__PURE__ */ Z(Xi, { ...e }) : [
+	].includes(t) ? /* @__PURE__ */ Z(Zi, { ...e }) : [
 		"rating",
 		"scale",
 		"nps"
-	].includes(t) ? /* @__PURE__ */ Z(Qi, { ...e }) : t === "slider" ? /* @__PURE__ */ Z($i, { ...e }) : t === "consent" ? /* @__PURE__ */ Z(ea, { ...e }) : [
+	].includes(t) ? /* @__PURE__ */ Z($i, { ...e }) : t === "slider" ? /* @__PURE__ */ Z(ea, { ...e }) : t === "consent" ? /* @__PURE__ */ Z(ta, { ...e }) : [
 		"short_text",
 		"long_text",
 		"email",
 		"phone",
 		"number",
 		"date"
-	].includes(t) ? /* @__PURE__ */ Z(Zi, { ...e }) : /* @__PURE__ */ Z("p", {
+	].includes(t) ? /* @__PURE__ */ Z(Qi, { ...e }) : /* @__PURE__ */ Z("p", {
 		role: "alert",
 		children: e.phrase("unsupported")
 	});
 }
 //#endregion
 //#region assets/src/shared/whatsapp.ts
-var na = /* @__PURE__ */ new Set([
+var ra = /* @__PURE__ */ new Set([
 	"wa.me",
 	"api.whatsapp.com",
 	"web.whatsapp.com",
 	"whatsapp.com",
 	"www.whatsapp.com"
 ]);
-function ra(e) {
+function ia(e) {
 	try {
-		return na.has(new URL(e).hostname.toLowerCase());
+		return ra.has(new URL(e).hostname.toLowerCase());
 	} catch {
 		return !1;
 	}
 }
 //#endregion
 //#region assets/src/shared/hours.ts
-var ia = [
+var aa = [
 	"mon",
 	"tue",
 	"wed",
@@ -11027,16 +11042,16 @@ var ia = [
 	"fri",
 	"sat",
 	"sun"
-], aa = /^([01]\d|2[0-3]):([0-5]\d)$/, oa = (e) => {
-	let t = aa.exec(e);
+], oa = /^([01]\d|2[0-3]):([0-5]\d)$/, sa = (e) => {
+	let t = oa.exec(e);
 	return t ? Number(t[1]) * 60 + Number(t[2]) : null;
 };
-function sa(e, t) {
+function ca(e, t) {
 	let n = /^([+-])(\d{2}):(\d{2})$/.exec(t);
 	if (n) {
 		let t = (n[1] === "-" ? -1 : 1) * (Number(n[2]) * 60 + Number(n[3])), r = new Date(e.getTime() + t * 6e4);
 		return {
-			day: ia[(r.getUTCDay() + 6) % 7],
+			day: aa[(r.getUTCDay() + 6) % 7],
 			minute: r.getUTCHours() * 60 + r.getUTCMinutes()
 		};
 	}
@@ -11048,7 +11063,7 @@ function sa(e, t) {
 			minute: "2-digit",
 			hourCycle: "h23"
 		}).formatToParts(e), r = (e) => n.find((t) => t.type === e)?.value ?? "", i = r("weekday").toLowerCase().slice(0, 3);
-		return ia.includes(i) ? {
+		return aa.includes(i) ? {
 			day: i,
 			minute: Number(r("hour")) * 60 + Number(r("minute"))
 		} : null;
@@ -11056,19 +11071,19 @@ function sa(e, t) {
 		return null;
 	}
 }
-function ca(e, t) {
+function la(e, t) {
 	if (!e?.enabled) return !0;
-	let n = sa(t, e.timezone || "UTC");
+	let n = ca(t, e.timezone || "UTC");
 	if (!n) return !0;
-	let r = ia.indexOf(n.day), i = (t, r) => {
-		let i = e.days?.[t], a = i ? oa(i.from) : null, o = i ? oa(i.to) : null;
+	let r = aa.indexOf(n.day), i = (t, r) => {
+		let i = e.days?.[t], a = i ? sa(i.from) : null, o = i ? sa(i.to) : null;
 		return a === null || o === null ? !1 : a === o ? !r : a < o ? !r && n.minute >= a && n.minute < o : r ? n.minute < o : n.minute >= a;
 	};
-	return i(n.day, !1) || i(ia[(r + 6) % 7], !0);
+	return i(n.day, !1) || i(aa[(r + 6) % 7], !0);
 }
 //#endregion
 //#region assets/src/runtime/appearance.ts
-var la = /* @__PURE__ */ new Set([
+var ua = /* @__PURE__ */ new Set([
 	"color",
 	"background-color",
 	"border-color",
@@ -11094,15 +11109,15 @@ var la = /* @__PURE__ */ new Set([
 	"width",
 	"height",
 	"opacity"
-]), ua = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
-function da(e) {
-	if (!e || ua.test(e) || /var\s*\(/i.test(e)) return;
+]), da = /[\\@<>]|url\s*\(|expression\s*\(|image-set\s*\(|attr\s*\(|paint\s*\(|element\s*\(/i;
+function fa(e) {
+	if (!e || da.test(e) || /var\s*\(/i.test(e)) return;
 	let t = document.createElement("span").style;
 	return t.color = e, t.color || void 0;
 }
-function fa(e) {
+function pa(e) {
 	let t = document.createElement("span");
-	t.style.color = da(e) ?? "#171717", t.style.display = "none", document.documentElement.append(t);
+	t.style.color = fa(e) ?? "#171717", t.style.display = "none", document.documentElement.append(t);
 	let n = getComputedStyle(t).color;
 	t.remove();
 	let r = /^rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*[\d.]+)?\)$/.exec(n)?.slice(1, 4).map(Number);
@@ -11119,11 +11134,11 @@ function fa(e) {
 	}), a = i[0] * .2126 + i[1] * .7152 + i[2] * .0722, o = ((23 / 255 + .055) / 1.055) ** 2.4;
 	return (a + .05) / (o + .05) >= 1.05 / (a + .05) ? "#171717" : "#ffffff";
 }
-function pa(e) {
+function ma(e) {
 	return e && /^[\w\s,"'-]{1,255}$/.test(e) ? e : void 0;
 }
-function ma(e) {
-	if (!e || e.length > 2e4 || ua.test(e)) return "";
+function ha(e) {
+	if (!e || e.length > 2e4 || da.test(e)) return "";
 	let t = e.replace(/\/\*[\s\S]*?\*\//g, ""), n = [...t.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
 	return t.replace(/([^{}]+)\{([^{}]*)\}/g, "").trim() ? "" : n.map(([, e, t]) => {
 		if (!e || !t || !/^[\w\s.#,:>-]+$/.test(e) || /:(?!(?:hover|focus-visible|focus|disabled|active|checked)(?:\b|$))/i.test(e)) return "";
@@ -11131,7 +11146,7 @@ function ma(e) {
 			let t = e.indexOf(":");
 			if (t < 1) return [];
 			let n = e.slice(0, t).trim().toLowerCase(), r = e.slice(t + 1).trim();
-			if (!la.has(n) || !r || ua.test(r) || /var\s*\(/i.test(r)) return [];
+			if (!ua.has(n) || !r || da.test(r) || /var\s*\(/i.test(r)) return [];
 			let i = document.createElement("span").style;
 			return i.setProperty(n, r), i.getPropertyValue(n) ? [`${n}:${i.getPropertyValue(n)}`] : [];
 		});
@@ -11139,8 +11154,8 @@ function ma(e) {
 	}).join("\n");
 }
 //#endregion
-//#region assets/src/runtime/i18n.ts
-var ha = {
+//#region assets/src/runtime/phrase-catalog.ts
+var ga = {
 	previewRedirect: "Preview destination (no redirect)",
 	invalidEmail: "Enter a valid email address.",
 	openChat: "Open chat",
@@ -11190,6 +11205,7 @@ var ha = {
 	review: "Review and submit",
 	insecure: "This connection is not secure. Use HTTPS before entering personal information.",
 	unsupported: "This field is not available in this form.",
+	offlineNoSave: "You are offline. This form cannot store answers on this device; reconnect to continue.",
 	sessionStorage: "To resume, your answers (including personal information) are stored on this device until completion, restart or expiry.",
 	submissionPending: "Submission may already have arrived. Retry to confirm; do not start a duplicate response.",
 	honeypot: "Leave this field empty",
@@ -11219,7 +11235,7 @@ var ha = {
 	opensNewTab: "opens in a new tab",
 	select: "Select…",
 	captchaFailed: "The spam check did not complete. Try again to submit."
-}, ga = {
+}, _a = {
 	previewRedirect: "Tujuan pratinjau (tanpa pengalihan)",
 	invalidEmail: "Masukkan alamat email yang valid.",
 	openChat: "Buka chat",
@@ -11269,6 +11285,7 @@ var ha = {
 	review: "Periksa dan kirim",
 	insecure: "Koneksi ini tidak aman. Gunakan HTTPS sebelum memasukkan data pribadi.",
 	unsupported: "Kolom ini tidak tersedia dalam formulir.",
+	offlineNoSave: "Anda sedang offline. Formulir ini tidak dapat menyimpan jawaban di perangkat ini; sambungkan kembali untuk melanjutkan.",
 	sessionStorage: "Untuk melanjutkan nanti, jawaban (termasuk data pribadi) disimpan di perangkat ini hingga selesai, mulai ulang, atau kedaluwarsa.",
 	submissionPending: "Jawaban mungkin sudah diterima. Coba lagi untuk memastikan; jangan buat jawaban duplikat.",
 	honeypot: "Biarkan kolom ini kosong",
@@ -11298,227 +11315,236 @@ var ha = {
 	opensNewTab: "terbuka di tab baru",
 	select: "Pilih…",
 	captchaFailed: "Pemeriksaan spam belum selesai. Coba lagi untuk mengirim."
-};
-function _a(e = "en", t = {}) {
-	return (n) => t[n] ?? (/^id(?:[-_]|$)/i.test(e) ? ga[n] : void 0) ?? globalThis.window?.wp?.i18n?.__(ha[n] ?? n, "chatflow-forms") ?? ha[n] ?? n;
+}, va = () => globalThis.wp?.i18n;
+function ya(e, t) {
+	return e && e !== "site" ? e : t;
+}
+function ba(e = "en", t = {}) {
+	return (n) => t[n] ?? (/^id(?:[-_]|$)/i.test(e) ? _a[n] : void 0) ?? va()?.__(ga[n] ?? n, "chatflow-forms") ?? ga[n] ?? n;
 }
 //#endregion
 //#region assets/src/runtime/chat.tsx
-function va(e, t = "normal", n = !1) {
+function xa(e, t = "normal", n = !1) {
 	return n || t === "off" ? 0 : Math.min(1200, Math.max(400, e * (t === "fast" ? 10 : t === "slow" ? 30 : 20)));
 }
-function ya(e, t) {
+function Sa(e, t) {
 	return e.stepId === t ? e.count : 0;
 }
-var ba = {
+var Ca = {
 	whatsapp: "M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z",
 	chat: "M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 22l4.5-2.2c1 .3 2.1.5 3.3.5 5.5 0 10-3.9 10-8.6S17.5 3 12 3z",
 	phone: "M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z",
 	email: "M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7.2L4 7.3V17h16V7.3zM5.2 7l6.8 4.2L18.8 7z"
 };
-function xa(e, t) {
-	return t && t !== "auto" ? t : ra(e) ? "whatsapp" : e.startsWith("tel:") ? "phone" : e.startsWith("mailto:") ? "email" : "chat";
+function wa(e, t) {
+	return t && t !== "auto" ? t : ia(e) ? "whatsapp" : e.startsWith("tel:") ? "phone" : e.startsWith("mailto:") ? "email" : "chat";
 }
-function Sa(e) {
+function Ta(e) {
 	return e.type !== "statement" || e.settings?.autoContinue === !1;
 }
-function Ca(e, t) {
+function Ea(e, t) {
 	e && ((!t || t === "summary" || t === "statement" ? e.querySelector(":scope > button:not(.link-button)") : e.querySelector("input:not([type=hidden]):not([type=file]),textarea") ?? e.querySelector("select,input[type=file],button:not(.link-button)")) ?? e.querySelector("button"))?.focus({ preventScroll: !0 });
 }
-function wa({ controller: e, onClose: t, closable: n = !1 }) {
-	let [, r] = U(0), [i, a] = U({
+function Da({ controller: e, onClose: t, closable: n = !1 }) {
+	let [, r] = W(0), [i, a] = W({
 		stepId: null,
 		count: 0
-	}), [o, s] = U(0), [c, l] = U(!1), [u, d] = U(""), [f, p] = U(""), [m, h] = U(() => Date.now()), [g, _] = U(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? !1), v = Ee(null), y = Ee(null), b = Ee(null), x = Ee(null), C = e.state, w = C.form?.form, T = _a(e.options.locale ?? globalThis.document?.documentElement.lang ?? "en", w?.phrases), E = e.activeStep, D = E?.messages ?? [], O = ya(i, C.activeId), k = O >= D.length, A = (t) => ki(t, C.answers, e.meta), j = (t) => Ri(t, C.answers, e.meta);
-	Te(() => e.subscribe(() => r((e) => e + 1)), [e]);
-	let M = !!e.state.form?.form.schema.bot.contact?.hours?.enabled;
-	W(() => {
-		if (!M) return;
+	}), [o, s] = W(0), [c, l] = W(""), [u, d] = W(!1), [f, p] = W(""), [m, h] = W(() => Date.now()), [g, _] = W(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? !1), v = Te(null), y = Te(null), b = Te(null), x = e.state, C = x.form?.form, w = C?.completion?.review ?? "off", T = ya(C?.language, e.options.locale ?? globalThis.document?.documentElement.lang ?? "en"), E = ba(T, C?.phrases), D = e.activeStep, O = D?.messages ?? [], k = Sa(i, x.activeId), A = k >= O.length, j = (t) => ki(t, x.answers, e.meta), M = (t) => Ri(t, x.answers, e.meta);
+	we(() => e.subscribe(() => r((e) => e + 1)), [e]);
+	let N = !!e.state.form?.form.schema.bot.contact?.hours?.enabled;
+	G(() => {
+		if (!N) return;
 		let e = setInterval(() => h(Date.now()), 6e4);
 		return () => clearInterval(e);
-	}, [M]), W(() => {
+	}, [N]), G(() => {
 		let e = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)"), t = () => _(e?.matches ?? !1);
 		return e?.addEventListener("change", t), () => e?.removeEventListener("change", t);
-	}, []), W(() => {
+	}, []), G(() => {
 		a({
-			stepId: C.activeId,
+			stepId: x.activeId,
 			count: 0
 		});
-	}, [C.activeId]), W(() => {
-		if (C.phase !== "ready" || O >= D.length) return;
-		let e = C.activeId, t = setTimeout(() => a((t) => t.stepId === e ? {
+	}, [x.activeId]), G(() => {
+		if (x.phase !== "ready" || k >= O.length) return;
+		let e = x.activeId, t = setTimeout(() => a((t) => t.stepId === e ? {
 			...t,
 			count: t.count + 1
-		} : t), va(D[O]?.length ?? 0, w?.schema.bot.typingSpeed, g));
+		} : t), xa(O[k]?.length ?? 0, C?.schema.bot.typingSpeed, g));
 		return () => clearTimeout(t);
 	}, [
-		C.activeId,
-		C.phase,
-		O,
-		D.length,
+		x.activeId,
+		x.phase,
+		k,
+		O.length,
 		g,
-		w?.schema.bot.typingSpeed
-	]), W(() => {
-		if (k && C.phase === "ready" && (Ca(v.current, E?.type), E?.type === "statement" && Sa(E) === !1)) {
+		C?.schema.bot.typingSpeed
+	]), G(() => {
+		if (!A || x.phase !== "ready") return;
+		let t = v.current, n = t?.getRootNode(), r = n instanceof ShadowRoot ? n.host : null, i = r?.getBoundingClientRect(), a = document.activeElement, o = !a || a === document.body || a === r;
+		if ((!i || o && i.top < window.innerHeight && i.bottom > 0) && Ea(t, D?.type), D?.type === "statement" && Ta(D) === !1) {
 			let t = setTimeout(() => {
 				e.answer(null);
 			}, g ? 0 : 600);
 			return () => clearTimeout(t);
 		}
 	}, [
-		C.activeId,
-		k,
-		C.phase,
-		C.fieldError,
-		E?.settings?.autoContinue,
+		x.activeId,
+		A,
+		x.phase,
+		x.fieldError,
+		D?.settings?.autoContinue,
 		g,
 		e
-	]), W(() => {
-		C.phase === "done" && b.current?.focus({ preventScroll: !0 });
-	}, [C.phase]), W(() => {
+	]), G(() => {
+		D || x.phase !== "ready" ? D && d(!1) : w !== "off" || u || x.busy || x.error || x.conflict || x.offline || (d(!0), e.submit(c));
+	}, [
+		D,
+		x.phase,
+		x.busy,
+		x.error,
+		x.conflict,
+		x.offline,
+		w,
+		u,
+		e,
+		c
+	]), G(() => {
+		x.phase === "done" && b.current?.focus({ preventScroll: !0 });
+	}, [x.phase]), G(() => {
 		s(0);
-	}, [C.completion]), W(() => {
-		let e = C.completion?.ending.messages ?? [];
-		if (C.phase !== "done" || o >= e.length) return;
-		let t = setTimeout(() => s((e) => e + 1), va(e[o]?.length ?? 0, w?.schema.bot.typingSpeed, g));
+	}, [x.completion]), G(() => {
+		let e = x.completion?.ending.messages ?? [];
+		if (x.phase !== "done" || o >= e.length) return;
+		let t = setTimeout(() => s((e) => e + 1), xa(e[o]?.length ?? 0, C?.schema.bot.typingSpeed, g));
 		return () => clearTimeout(t);
 	}, [
-		C.completion,
-		C.phase,
+		x.completion,
+		x.phase,
 		o,
-		w?.schema.bot.typingSpeed,
+		C?.schema.bot.typingSpeed,
 		g
-	]), W(() => {
-		c && x.current?.querySelector("button:not([disabled])")?.focus({ preventScroll: !0 });
-	}, [c]);
-	let N = () => {
-		l(!1), requestAnimationFrame(() => Ca(v.current, E?.type));
-	};
-	W(() => {
-		y.current?.scrollIntoView?.({
+	]), G(() => {
+		let e = y.current?.closest(".conversation");
+		e ? e.scrollTop = e.scrollHeight : y.current?.scrollIntoView?.({
 			behavior: g ? "auto" : "smooth",
 			block: "nearest"
 		});
 	}, [
-		O,
+		k,
 		o,
-		C.activeId,
-		C.error,
-		C.phase,
+		x.activeId,
+		x.error,
+		x.phase,
 		g
-	]), W(() => {
-		let t = C.completion;
-		if (e.options.preview || C.phase !== "done" || !t?.redirectUrl || o < t.ending.messages.length) return;
+	]), G(() => {
+		let t = x.completion;
+		if (e.options.preview || x.phase !== "done" || !t?.redirectUrl || o < t.ending.messages.length) return;
 		let n = Q(t.redirectUrl);
 		if (!n || !/^https?:/.test(n)) return;
-		let r = w?.schema.endings.find((e) => e.id === t.ending.id), i = setTimeout(() => location.assign(n), Math.min(3e4, Math.max(0, r?.delayMs ?? 0)));
+		let r = C?.schema.endings.find((e) => e.id === t.ending.id), i = setTimeout(() => location.assign(n), Math.min(3e4, Math.max(0, r?.delayMs ?? 0)));
 		return () => clearTimeout(i);
 	}, [
-		C.completion,
-		C.phase,
+		x.completion,
+		x.phase,
 		e,
-		w,
+		C,
 		o
 	]);
 	let P = (e, t) => /* @__PURE__ */ Z("div", {
 		className: "bubble bot",
-		children: /* @__PURE__ */ Z(zi, { text: j(e) })
+		children: /* @__PURE__ */ Z(zi, { text: M(e) })
 	}, t), F = () => /* @__PURE__ */ Z("section", {
 		className: "summary",
-		"aria-label": T("summary"),
-		children: [/* @__PURE__ */ Z("h2", { children: T("summary") }), /* @__PURE__ */ Z("dl", { children: (C.path?.visited ?? []).map((e) => w?.schema.steps.find((t) => t.id === e)).filter((e) => !!e && ![
+		"aria-label": E("summary"),
+		children: [/* @__PURE__ */ Z("h2", { children: E("summary") }), /* @__PURE__ */ Z("dl", { children: (x.path?.visited ?? []).map((e) => C?.schema.steps.find((t) => t.id === e)).filter((e) => !!e && ![
 			"hidden",
 			"statement",
 			"summary",
 			"media",
 			"calculated"
-		].includes(e.type) && Object.prototype.hasOwnProperty.call(C.answers, e.key)).map((t) => /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("dt", { children: t.label }), /* @__PURE__ */ Z("dd", { children: [
-			Bi(t, C.answers[t.key], T),
+		].includes(e.type) && Object.prototype.hasOwnProperty.call(x.answers, e.key)).map((t) => /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("dt", { children: t.label }), /* @__PURE__ */ Z("dd", { children: [
+			Vi(t, x.answers[t.key], E, T),
 			" ",
 			/* @__PURE__ */ Z("button", {
 				className: "link-button",
-				disabled: C.busy,
+				disabled: x.busy,
 				onClick: () => e.edit(t.id),
-				"aria-label": `${T("edit")}: ${t.label}`,
-				children: T("edit")
+				"aria-label": `${E("edit")}: ${t.label}`,
+				children: E("edit")
 			})
 		] })] }, t.id)) })]
 	}), ee = /* @__PURE__ */ Z("button", {
-		disabled: C.busy || C.error === "submissionPending",
-		onClick: () => l(!0),
-		children: T("startOver")
-	}), te = C.error && /* @__PURE__ */ Z("div", {
-		className: "notice",
+		disabled: x.busy || x.offline || x.error === "submissionPending",
+		onClick: () => void e.restart(),
+		children: E("startOver")
+	}), te = x.error && /* @__PURE__ */ Z("div", {
+		className: "notice is-error",
 		role: "alert",
-		children: [/* @__PURE__ */ Z("p", { children: T(C.error) }), !C.conflict && /* @__PURE__ */ Z("button", {
-			disabled: C.busy || C.offline,
+		children: [/* @__PURE__ */ Z("p", { children: E(x.error) }), !x.conflict && !x.validation && /* @__PURE__ */ Z("button", {
+			disabled: x.busy || x.offline,
 			onClick: () => void e.retry(),
-			children: T("retry")
+			children: E("retry")
 		})]
-	}), ne = w?.schema.bot.avatar ? w.media?.[w.schema.bot.avatar] : null, I = ne ? Q(ne.url) : null, re = w?.appearance ?? {}, ie = re.style === "messaging" ? {
+	}), I = C?.schema.bot.avatar ? C.media?.[C.schema.bot.avatar] : null, L = I ? Q(I.url) : null, ne = C?.appearance ?? {}, re = ne.style === "messaging" ? {
 		"data-style": "messaging",
-		"data-wallpaper": re.wallpaper ?? "doodle",
-		"data-choices": re.choiceStyle ?? "keyboard",
-		"data-tails": re.bubbleTails === !1 ? "off" : "on"
-	} : {}, ae = w?.schema.bot.name ?? "ChatFlow", L = w?.schema.bot.contact, R = L?.url ? Q(Pi(L.url, C.answers, e.meta)) : null, oe = R ? xa(R, L?.icon) : "none", se = L?.label || T(R && ra(R) ? "whatsapp" : "contactUs"), ce = da(L?.color), le = da(L?.textColor), z = ca(L?.hours, new Date(m)), B = !z && L?.hours?.outside === "message" && L.hours.message ? A(L.hours.message) : "", ue = R && z && /* @__PURE__ */ Z("a", {
-		className: `contact-link${ra(R) ? " is-whatsapp" : ""}`,
-		href: R,
+		"data-wallpaper": ne.wallpaper ?? "doodle",
+		"data-choices": ne.choiceStyle ?? "keyboard",
+		"data-tails": ne.bubbleTails === !1 ? "off" : "on"
+	} : {}, ie = C?.schema.bot.name ?? "ChatFlow", R = C?.schema.bot.contact, z = R?.url ? Q(Pi(R.url, x.answers, e.meta)) : null, ae = z ? wa(z, R?.icon) : "none", oe = R?.label || E(z && ia(z) ? "whatsapp" : "contactUs"), se = fa(R?.color), ce = fa(R?.textColor), B = la(R?.hours, new Date(m)), V = !B && R?.hours?.outside === "message" && R.hours.message ? j(R.hours.message) : "", le = z && B && /* @__PURE__ */ Z("a", {
+		className: `contact-link${ia(z) ? " is-whatsapp" : ""}`,
+		href: z,
 		target: "_blank",
 		rel: "noopener noreferrer",
-		"aria-label": `${se} (${T("opensNewTab")})`,
+		"aria-label": `${oe} (${E("opensNewTab")})`,
 		onClick: () => e.contactClicked(),
 		style: {
-			...ce ? {
-				background: ce,
-				borderColor: ce
+			...se ? {
+				background: se,
+				borderColor: se
 			} : {},
-			...le ? { color: le } : {}
+			...ce ? { color: ce } : {}
 		},
-		children: [oe !== "none" && /* @__PURE__ */ Z("svg", {
+		children: [ae !== "none" && /* @__PURE__ */ Z("svg", {
 			viewBox: "0 0 24 24",
 			width: "18",
 			height: "18",
 			"aria-hidden": "true",
 			children: /* @__PURE__ */ Z("path", {
 				fill: "currentColor",
-				d: ba[oe]
+				d: Ca[ae]
 			})
-		}), /* @__PURE__ */ Z("span", { children: se })]
+		}), /* @__PURE__ */ Z("span", { children: oe })]
 	});
 	return /* @__PURE__ */ Z("section", {
 		className: `chat ${e.options.mode === "fullpage" ? "fullpage" : ""}`,
-		...ie,
+		...re,
 		dir: globalThis.document?.documentElement.dir === "rtl" ? "rtl" : "ltr",
-		"aria-label": w?.title ?? "ChatFlow",
-		"aria-busy": C.busy,
+		"aria-label": C?.title ?? "ChatFlow",
+		"aria-busy": x.busy,
 		children: [
 			/* @__PURE__ */ Z("header", { children: [
 				/* @__PURE__ */ Z("div", {
 					className: "identity",
-					children: [I && /^https?:/.test(I) ? /* @__PURE__ */ Z("img", {
-						src: I,
-						alt: ne?.alt ?? T("botAvatar")
+					children: [L && /^https?:/.test(L) ? /* @__PURE__ */ Z("img", {
+						src: L,
+						alt: I?.alt ?? E("botAvatar")
 					}) : /* @__PURE__ */ Z("span", {
 						className: "avatar",
 						"aria-hidden": "true",
-						children: [...ae.trim()][0] ?? ""
-					}), /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("strong", { children: ae }), /* @__PURE__ */ Z("small", { children: [/* @__PURE__ */ Z("span", {
+						children: [...ie.trim()][0] ?? ""
+					}), /* @__PURE__ */ Z("div", { children: [/* @__PURE__ */ Z("strong", { children: ie }), /* @__PURE__ */ Z("small", { children: [/* @__PURE__ */ Z("span", {
 						className: "online-dot",
 						"aria-hidden": "true"
-					}), T(C.offline ? "offline" : "online")] })] })]
+					}), E(x.offline ? "offline" : "online")] })] })]
 				}),
 				/* @__PURE__ */ Z("nav", {
-					"aria-label": T("back"),
-					children: [/* @__PURE__ */ Z("button", {
-						disabled: C.busy || C.phase !== "ready" || !e.visibleSteps.some((e) => e.id !== C.activeId && Object.prototype.hasOwnProperty.call(C.answers, e.key)),
-						onClick: () => e.back(),
-						children: T("back")
-					}), ee]
+					"aria-label": E("formDialog"),
+					children: x.phase !== "resume" && ee
 				}),
 				n && /* @__PURE__ */ Z("button", {
 					type: "button",
 					className: "close-chat",
-					"aria-label": T("closeChat"),
+					"aria-label": E("closeChat"),
 					onClick: t,
 					children: /* @__PURE__ */ Z("svg", {
 						viewBox: "0 0 24 24",
@@ -11538,217 +11564,194 @@ function wa({ controller: e, onClose: t, closable: n = !1 }) {
 			/* @__PURE__ */ Z("div", {
 				className: "progress",
 				role: "progressbar",
-				"aria-label": T("progress"),
+				"aria-label": E("progress"),
 				"aria-valuemin": 0,
 				"aria-valuemax": 100,
-				"aria-valuenow": Math.round(C.phase === "done" ? 100 : C.path?.progress ?? 0),
-				children: /* @__PURE__ */ Z("span", { style: { width: `${C.phase === "done" ? 100 : C.path?.progress ?? 0}%` } })
+				"aria-valuenow": Math.round(x.phase === "done" ? 100 : x.path?.progress ?? 0),
+				children: /* @__PURE__ */ Z("span", { style: { width: `${x.phase === "done" ? 100 : x.path?.progress ?? 0}%` } })
 			}),
 			e.options.preview && /* @__PURE__ */ Z("p", {
 				className: "notice",
-				children: T("preview")
+				children: E("preview")
 			}),
 			!e.options.preview && globalThis.location?.protocol === "http:" && !["localhost", "127.0.0.1"].includes(location.hostname) && /* @__PURE__ */ Z("p", {
 				className: "notice",
 				role: "alert",
-				children: T("insecure")
+				children: E("insecure")
 			}),
 			/* @__PURE__ */ Z("main", {
 				className: "conversation",
 				children: [
-					c && /* @__PURE__ */ Z("section", {
-						ref: x,
-						className: "notice",
-						role: "alertdialog",
-						"aria-modal": "false",
-						"aria-label": T("confirmRestart"),
-						onKeyDown: (e) => {
-							e.key === "Escape" && (e.stopPropagation(), N());
-						},
-						children: [
-							/* @__PURE__ */ Z("p", { children: T("confirmRestart") }),
-							/* @__PURE__ */ Z("button", {
-								disabled: C.offline || C.busy,
-								onClick: () => {
-									l(!1), e.restart();
-								},
-								children: T("startOver")
-							}),
-							/* @__PURE__ */ Z("button", {
-								onClick: N,
-								children: T("cancel")
-							})
-						]
-					}),
-					C.phase === "loading" && /* @__PURE__ */ Z("p", {
+					x.phase === "loading" && /* @__PURE__ */ Z("p", {
 						role: "status",
-						children: T("loading")
+						children: E("loading")
 					}),
-					C.phase === "resume" && /* @__PURE__ */ Z("section", {
+					x.phase === "resume" && /* @__PURE__ */ Z("section", {
 						className: "notice",
 						children: [
-							/* @__PURE__ */ Z("p", { children: T(C.newerVersion ? "newerVersion" : "welcomeBack") }),
+							/* @__PURE__ */ Z("p", { children: E(x.newerVersion ? "newerVersion" : "welcomeBack") }),
 							/* @__PURE__ */ Z("button", {
-								disabled: C.busy,
+								disabled: x.busy,
 								onClick: () => void e.continueSaved(),
-								children: T(C.newerVersion ? "continueOld" : "continue")
+								children: E(x.newerVersion ? "continueOld" : "continue")
 							}),
 							ee
 						]
 					}),
-					C.phase !== "resume" && e.visibleSteps.map((t) => /* @__PURE__ */ Z("section", {
+					x.phase !== "resume" && e.visibleSteps.map((t) => /* @__PURE__ */ Z("section", {
 						className: "step",
 						"aria-label": t.label,
 						children: [
-							(t.id === C.activeId && C.phase === "ready" ? t.messages.slice(0, O) : t.messages).map((e, t) => P(e, t)),
-							t.id !== C.activeId && Object.prototype.hasOwnProperty.call(C.answers, t.key) && /* @__PURE__ */ Z("button", {
+							(t.id === x.activeId && x.phase === "ready" ? t.messages.slice(0, k) : t.messages).map((e, t) => P(e, t)),
+							t.id !== x.activeId && Object.prototype.hasOwnProperty.call(x.answers, t.key) && /* @__PURE__ */ Z("button", {
 								className: "bubble user",
-								disabled: C.busy || C.phase !== "ready",
+								disabled: x.busy || x.phase !== "ready",
 								onClick: () => e.edit(t.id),
-								"aria-label": `${T("edit")}: ${t.label}: ${Bi(t, C.answers[t.key], T)}`,
-								children: [Bi(t, C.answers[t.key], T), /* @__PURE__ */ Z("small", { children: T("edit") })]
+								"aria-label": `${E("edit")}: ${t.label}: ${Vi(t, x.answers[t.key], E, T)}`,
+								children: [Vi(t, x.answers[t.key], E, T), /* @__PURE__ */ Z("small", { children: E("edit") })]
 							}),
-							t.id !== C.activeId && Fi(t, C.answers[t.key]).map((e, t) => P(e, `reaction-${t}`))
+							t.id !== x.activeId && Fi(t, x.answers[t.key]).map((e, t) => P(e, `reaction-${t}`))
 						]
 					}, t.id)),
 					/* @__PURE__ */ Z("div", {
 						className: "sr-only",
 						"aria-live": "polite",
 						"aria-atomic": "false",
-						children: C.phase === "ready" ? D.slice(0, O).map((e, t) => /* @__PURE__ */ Z("p", { children: $(j(e)) }, `${C.activeId}-${t}`)) : C.phase === "done" ? /* @__PURE__ */ Z(S, { children: [/* @__PURE__ */ Z("p", { children: T("complete") }), C.completion?.ending.messages.slice(0, o).map((e, t) => /* @__PURE__ */ Z("p", { children: $(e) }, t))] }) : null
+						children: x.phase === "ready" ? O.slice(0, k).map((e, t) => /* @__PURE__ */ Z("p", { children: $(M(e)) }, `${x.activeId}-${t}`)) : x.phase === "done" ? /* @__PURE__ */ Z(S, { children: [/* @__PURE__ */ Z("p", { children: E("complete") }), x.completion?.ending.messages.slice(0, o).map((e, t) => /* @__PURE__ */ Z("p", { children: $(e) }, t))] }) : null
 					}),
-					C.phase === "ready" && E && /* @__PURE__ */ Z("div", {
+					x.phase === "ready" && D && /* @__PURE__ */ Z("div", {
 						ref: v,
-						className: `active${D.slice(0, O).some((e) => $(j(e)).trim()) ? " has-prompt" : ""}`,
-						children: [!k && /* @__PURE__ */ Z("div", {
+						className: `active${O.slice(0, k).some((e) => $(M(e)).trim()) ? " has-prompt" : ""}`,
+						children: [!A && /* @__PURE__ */ Z("div", {
 							className: "typing bubble bot",
 							role: "status",
-							"aria-label": T("typing"),
+							"aria-label": E("typing"),
 							children: [
 								/* @__PURE__ */ Z("i", {}),
 								/* @__PURE__ */ Z("i", {}),
 								/* @__PURE__ */ Z("i", {})
 							]
-						}), k && /* @__PURE__ */ Z(S, { children: [
-							E.helpText && /* @__PURE__ */ Z("p", {
-								id: `help-${E.id}`,
+						}), A && /* @__PURE__ */ Z(S, { children: [
+							D.helpText && /* @__PURE__ */ Z("p", {
+								id: `help-${D.id}`,
 								className: "help",
-								children: /* @__PURE__ */ Z(zi, { text: j(E.helpText) })
+								children: /* @__PURE__ */ Z(zi, { text: M(D.helpText) })
 							}),
-							C.fieldError && /* @__PURE__ */ Z("p", {
-								id: `error-${E.id}`,
+							x.fieldError && /* @__PURE__ */ Z("p", {
+								id: `error-${D.id}`,
 								className: "field-error",
 								role: "alert",
-								children: T(C.fieldError)
+								children: E(x.fieldError)
 							}),
-							E.type === "summary" && F(),
-							E.type === "statement" && !Sa(E) ? null : ["statement", "summary"].includes(E.type) ? /* @__PURE__ */ Z("button", {
-								disabled: C.busy,
+							D.type === "summary" && F(),
+							D.type === "statement" && !Ta(D) ? null : ["statement", "summary"].includes(D.type) ? /* @__PURE__ */ Z("button", {
+								disabled: x.busy,
 								onClick: async () => {
-									await e.answer(null), E.type === "summary" && !e.state.activeId && await e.submit(u);
+									await e.answer(null), D.type === "summary" && !e.state.activeId && await e.submit(c);
 								},
-								children: E.settings?.buttonLabel ?? T(E.type === "summary" ? "submit" : "continue")
-							}) : /* @__PURE__ */ Z(ta, {
+								children: D.settings?.buttonLabel ?? E(D.type === "summary" ? "submit" : "continue")
+							}) : /* @__PURE__ */ Z(na, {
 								step: {
-									...E,
-									label: A(E.label),
+									...D,
+									label: j(D.label),
 									settings: {
-										...E.settings,
-										...E.settings?.consentText ? { consentText: j(E.settings.consentText) } : {}
+										...D.settings,
+										...D.settings?.consentText ? { consentText: M(D.settings.consentText) } : {}
 									}
 								},
-								value: e.inputValue(E),
-								disabled: C.busy || C.conflict || !!C.completion,
-								phrase: T,
+								value: e.inputValue(D),
+								disabled: x.busy || x.conflict || !!x.completion,
+								phrase: E,
 								onAnswer: async (t) => {
-									await e.answer(t), e.state.fieldError && Ca(v.current, E.type);
+									await e.answer(t), e.state.fieldError && Ea(v.current, D.type);
 								},
-								...C.form?.features.uploads && !e.options.preview ? { upload: (t) => e.upload(E, t) } : {},
-								...C.fieldError ? { error: T(C.fieldError) } : {},
-								...w?.media ? { media: w.media } : {}
-							}, `${E.id}:${JSON.stringify(e.inputValue(E))}`),
+								...x.form?.features.uploads && !e.options.preview ? { upload: (t) => e.upload(D, t) } : {},
+								...x.fieldError ? { error: E(x.fieldError) } : {},
+								...C?.media ? { media: C.media } : {}
+							}, `${D.id}:${JSON.stringify(e.inputValue(D))}`),
 							e.canSkip && /* @__PURE__ */ Z("button", {
 								className: "link-button",
-								disabled: C.busy || C.conflict,
+								disabled: x.busy || x.conflict,
 								onClick: () => void e.answer(null),
-								children: T("skip")
+								children: E("skip")
 							})
 						] })]
-					}, E.id),
-					C.phase === "ready" && !E && /* @__PURE__ */ Z("div", {
+					}, D.id),
+					x.phase === "ready" && !D && (w !== "off" || u) && /* @__PURE__ */ Z("div", {
 						ref: v,
-						children: [F(), /* @__PURE__ */ Z("button", {
-							disabled: C.busy || C.offline || C.conflict,
-							onClick: () => void e.submit(u),
-							children: T(C.error === "submissionPending" ? "retry" : "submit")
+						children: [w === "show" && F(), /* @__PURE__ */ Z("button", {
+							disabled: x.busy || x.offline || x.conflict,
+							onClick: () => void e.submit(c),
+							children: E(x.error === "submissionPending" ? "retry" : "submit")
 						})]
 					}),
-					C.phase === "submitting" && /* @__PURE__ */ Z("p", {
+					x.phase === "submitting" && /* @__PURE__ */ Z("p", {
 						role: "status",
-						children: T("loading")
+						children: E("loading")
 					}),
-					C.phase === "done" && C.completion && /* @__PURE__ */ Z("section", {
+					x.phase === "done" && x.completion && /* @__PURE__ */ Z("section", {
 						ref: b,
 						tabIndex: -1,
 						className: "ending",
-						"aria-label": T("complete"),
+						"aria-label": E("complete"),
 						children: [
-							C.completion.ending.messages.slice(0, o).map((e, t) => /* @__PURE__ */ Z("div", {
+							x.completion.ending.messages.slice(0, o).map((e, t) => /* @__PURE__ */ Z("div", {
 								className: "bubble bot",
 								children: /* @__PURE__ */ Z(zi, { text: e })
 							}, t)),
-							o < C.completion.ending.messages.length && /* @__PURE__ */ Z("div", {
+							o < x.completion.ending.messages.length && /* @__PURE__ */ Z("div", {
 								className: "typing bubble bot",
 								role: "status",
-								"aria-label": T("typing"),
+								"aria-label": E("typing"),
 								children: [
 									/* @__PURE__ */ Z("i", {}),
 									/* @__PURE__ */ Z("i", {}),
 									/* @__PURE__ */ Z("i", {})
 								]
 							}),
-							o >= C.completion.ending.messages.length && /* @__PURE__ */ Z(S, { children: [C.completion.redirectUrl && (e.options.preview ? /* @__PURE__ */ Z("p", {
+							o >= x.completion.ending.messages.length && /* @__PURE__ */ Z(S, { children: [x.completion.redirectUrl && (e.options.preview ? /* @__PURE__ */ Z("p", {
 								className: "notice",
 								children: [
-									T("previewRedirect"),
+									E("previewRedirect"),
 									": ",
-									C.completion.redirectUrl
+									x.completion.redirectUrl
 								]
 							}) : /* @__PURE__ */ Z("p", {
 								role: "status",
-								children: T("redirecting")
-							})), C.completion.ending.buttons.map((e) => {
-								let n = e.url ? Q(e.url) : null;
-								return e.action === "restart" ? /* @__PURE__ */ Z("button", {
-									onClick: () => l(!0),
-									children: e.label
-								}, e.id) : e.action === "close" ? /* @__PURE__ */ Z("button", {
+								children: E("redirecting")
+							})), x.completion.ending.buttons.map((n) => {
+								let r = n.url ? Q(n.url) : null;
+								return n.action === "restart" ? /* @__PURE__ */ Z("button", {
+									disabled: x.busy || x.offline,
+									onClick: () => void e.restart(),
+									children: n.label
+								}, n.id) : n.action === "close" ? /* @__PURE__ */ Z("button", {
 									onClick: t,
-									children: e.label
-								}, e.id) : e.action === "link" && n ? /* @__PURE__ */ Z("a", {
+									children: n.label
+								}, n.id) : n.action === "link" && r ? /* @__PURE__ */ Z("a", {
 									className: "button",
-									href: n,
+									href: r,
 									target: "_blank",
 									rel: "noopener noreferrer",
-									children: e.label
-								}, e.id) : null;
+									children: n.label
+								}, n.id) : null;
 							})] })
 						]
 					}),
-					C.conflict && /* @__PURE__ */ Z("section", {
-						className: "notice",
+					x.conflict && /* @__PURE__ */ Z("section", {
+						className: "notice is-error",
 						role: "alert",
 						children: [
-							/* @__PURE__ */ Z("p", { children: T("conflict") }),
+							/* @__PURE__ */ Z("p", { children: E("conflict") }),
 							/* @__PURE__ */ Z("button", {
-								disabled: C.busy || C.offline,
+								disabled: x.busy || x.offline,
 								onClick: () => void e.resolveConflict(!1),
-								children: T("useServer")
+								children: E("useServer")
 							}),
 							/* @__PURE__ */ Z("button", {
-								disabled: C.busy || C.offline,
+								disabled: x.busy || x.offline,
 								onClick: () => void e.resolveConflict(!0),
-								children: T("useLocal")
+								children: E("useLocal")
 							})
 						]
 					}),
@@ -11756,72 +11759,79 @@ function wa({ controller: e, onClose: t, closable: n = !1 }) {
 					/* @__PURE__ */ Z("div", { ref: y })
 				]
 			}),
-			(ue || B) && /* @__PURE__ */ Z("div", {
+			(le || V) && /* @__PURE__ */ Z("div", {
 				className: "contact-bar",
-				children: ue || /* @__PURE__ */ Z("p", {
+				children: le || /* @__PURE__ */ Z("p", {
 					className: "contact-closed",
-					children: B
+					children: V
 				})
 			}),
 			!e.options.preview && /* @__PURE__ */ Z(S, { children: [
 				/* @__PURE__ */ Z("label", {
 					className: "honeypot",
 					"aria-hidden": "true",
-					children: [T("honeypot"), /* @__PURE__ */ Z("input", {
+					children: [E("honeypot"), /* @__PURE__ */ Z("input", {
 						type: "text",
 						name: "cff_website_check",
 						maxLength: 255,
 						autoComplete: "off",
 						tabIndex: -1,
-						value: u,
-						onInput: (e) => d(e.currentTarget.value)
+						value: c,
+						onInput: (e) => l(e.currentTarget.value)
 					})]
 				}),
 				/* @__PURE__ */ Z("span", {
 					className: "sr-only",
 					role: "status",
-					children: C.offline ? T("offline") : C.storageUnavailable ? T("storageUnavailable") : ""
+					children: x.offline ? E(C?.session.savePartial === !1 ? "offlineNoSave" : "offline") : x.storageUnavailable ? E("storageUnavailable") : ""
 				}),
-				(C.offline || C.storageUnavailable || w?.session.magicLinks?.enabled && C.phase === "ready") && /* @__PURE__ */ Z("footer", { children: [(C.offline || C.storageUnavailable) && /* @__PURE__ */ Z("p", {
-					className: "status-notice",
-					children: T(C.offline ? "offline" : "storageUnavailable")
-				}), w?.session.magicLinks?.enabled && C.phase === "ready" && /* @__PURE__ */ Z("div", {
-					className: "cff-magic",
-					children: [
-						/* @__PURE__ */ Z("button", {
-							disabled: C.busy || C.offline || C.conflict,
-							onClick: () => {
-								window.confirm(T("magicEmailConfirm")) && e.magicLink("email").then(() => p(T("magicEmailAccepted"))).catch(() => p(T("magicEmailError")));
-							},
-							children: T("magicEmail")
-						}),
-						w.session.magicLinks.whatsapp && /* @__PURE__ */ Z("button", {
-							disabled: C.busy || C.offline || C.conflict,
-							onClick: () => {
-								window.confirm(T("magicShareConfirm")) && e.magicLink("whatsapp").then(async (e) => {
-									if (!e.link) p(T("magicShareError"));
-									else try {
-										navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), p(T("magicCopied")));
-									} catch {
-										p(T("magicCancelled"));
-									}
-								}).catch(() => p(T("magicShareError")));
-							},
-							children: T("magicShare")
-						}),
-						/* @__PURE__ */ Z("small", {
-							role: "status",
-							children: f
-						})
-					]
-				})] })
+				(x.offline || x.storageUnavailable || C?.session.resumeEnabled && C.session.storageNotice || C?.session.magicLinks?.enabled && x.phase === "ready") && /* @__PURE__ */ Z("footer", { children: [
+					(x.offline || x.storageUnavailable) && /* @__PURE__ */ Z("p", {
+						className: "status-notice",
+						children: E(x.offline ? C?.session.savePartial === !1 ? "offlineNoSave" : "offline" : "storageUnavailable")
+					}),
+					C?.session.resumeEnabled && C.session.storageNotice && x.phase !== "done" && /* @__PURE__ */ Z("p", {
+						className: "status-notice session-note",
+						children: E("sessionStorage")
+					}),
+					C?.session.magicLinks?.enabled && x.phase === "ready" && /* @__PURE__ */ Z("div", {
+						className: "cff-magic",
+						children: [
+							/* @__PURE__ */ Z("button", {
+								disabled: x.busy || x.offline || x.conflict,
+								onClick: () => {
+									window.confirm(E("magicEmailConfirm")) && e.magicLink("email").then(() => p(E("magicEmailAccepted"))).catch(() => p(E("magicEmailError")));
+								},
+								children: E("magicEmail")
+							}),
+							C.session.magicLinks.whatsapp && /* @__PURE__ */ Z("button", {
+								disabled: x.busy || x.offline || x.conflict,
+								onClick: () => {
+									window.confirm(E("magicShareConfirm")) && e.magicLink("whatsapp").then(async (e) => {
+										if (!e.link) p(E("magicShareError"));
+										else try {
+											navigator.share ? await navigator.share({ text: e.link }) : (await navigator.clipboard.writeText(e.link), p(E("magicCopied")));
+										} catch {
+											p(E("magicCancelled"));
+										}
+									}).catch(() => p(E("magicShareError")));
+								},
+								children: E("magicShare")
+							}),
+							/* @__PURE__ */ Z("small", {
+								role: "status",
+								children: f
+							})
+						]
+					})
+				] })
 			] })
 		]
 	});
 }
 //#endregion
 //#region assets/src/shared/prefill.ts
-function Ta(e, t) {
+function Oa(e, t) {
 	let n = new URLSearchParams(e), r = {};
 	for (let e of t.steps) {
 		if ([
@@ -11846,9 +11856,9 @@ function Ta(e, t) {
 }
 //#endregion
 //#region assets/src/runtime/persistence.ts
-var Ea = class {
-	constructor(e = Da(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
-		z(this, "store", void 0), z(this, "doc", void 0), z(this, "secure", void 0), z(this, "now", void 0), this.store = e, this.doc = t, this.secure = n, this.now = r;
+var ka = class {
+	constructor(e = Aa(), t = globalThis.document, n = globalThis.location?.protocol === "https:", r = () => Date.now()) {
+		B(this, "store", void 0), B(this, "doc", void 0), B(this, "secure", void 0), B(this, "now", void 0), this.store = e, this.doc = t, this.secure = n, this.now = r;
 	}
 	key(e, t) {
 		return `cff:session:${e}:${t}`;
@@ -11861,7 +11871,7 @@ var Ea = class {
 				let r = this.store.key(n);
 				if (!r?.startsWith(`cff:session:${e}:`)) continue;
 				let i = JSON.parse(this.store.getItem(r) ?? "null");
-				!Oa(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
+				!ja(i) || i.formId !== e || Date.parse(i.expiresAt) <= this.now() ? this.store.removeItem(r) : (!t || i.version > t.version) && (t = i);
 			}
 			return t;
 		} catch {
@@ -11901,37 +11911,72 @@ var Ea = class {
 		} catch {}
 	}
 };
-function Da() {
+function Aa() {
 	try {
 		return globalThis.localStorage;
 	} catch {
 		return;
 	}
 }
-function Oa(e) {
+function ja(e) {
 	if (!e || typeof e != "object") return !1;
 	let t = e;
 	return Number.isSafeInteger(t.formId) && Number.isSafeInteger(t.version) && typeof t.sessionId == "string" && typeof t.resumeToken == "string" && /^r1\.[A-Za-z0-9_-]+\.\d+\.[A-Za-z0-9_-]+$/.test(t.resumeToken) && typeof t.expiresAt == "string" && Number.isFinite(Date.parse(t.expiresAt)) && Number.isSafeInteger(t.revision) && !!t.answers && typeof t.answers == "object" && !Array.isArray(t.answers) && Array.isArray(t.acknowledged) && t.acknowledged.every((e) => typeof e == "string") && typeof t.dirty == "boolean" && !!t.stepTimings && typeof t.stepTimings == "object";
 }
 //#endregion
 //#region assets/src/tracking/index.ts
-var ka = "cff_ft";
-function Aa(e) {
-	return !!e.enabled && !(e.consentRequired && !e.consentGranted) && (e.respectDnt === !1 || globalThis.navigator?.doNotTrack !== "1");
+var Ma = "cff_ft";
+function Na(e) {
+	let t = globalThis.navigator?.globalPrivacyControl === !0;
+	return !!e.enabled && !t && !(e.consentRequired && !e.consentGranted) && (e.respectDnt === !1 || globalThis.navigator?.doNotTrack !== "1");
 }
-var ja = [
+var Pa = [
 	"source",
 	"medium",
 	"campaign",
 	"term",
 	"content"
-], Ma = [
+], Fa = [
 	"gclid",
 	"fbclid",
 	"msclkid",
 	"ttclid"
-];
-function Na(e) {
+], Ia = /^[a-zA-Z][a-zA-Z0-9_]{0,63}$/;
+function La(e) {
+	let t = /* @__PURE__ */ new Set(), n = (e) => {
+		if (!e || typeof e != "object") return;
+		let r = e;
+		if (Array.isArray(r.all)) {
+			r.all.forEach(n);
+			return;
+		}
+		if (Array.isArray(r.any)) {
+			r.any.forEach(n);
+			return;
+		}
+		let i = e;
+		(i.source ?? "answer") === "url" && typeof i.field == "string" && Ia.test(i.field) && t.add(i.field);
+	};
+	for (let r of e.steps) {
+		if (r.type === "hidden" && r.settings?.source === "url") {
+			let e = r.settings.sourceKey || r.key;
+			Ia.test(e) && t.add(e);
+		}
+		for (let e of [...r.logic ?? [], ...(r.options ?? []).flatMap((e) => e.logic ?? [])]) n(e.if);
+	}
+	for (let t of e.outcomes ?? []) n(t.if);
+	return [...t].slice(0, 100);
+}
+function Ra(e) {
+	let t = new URLSearchParams(globalThis.location?.search ?? ""), n = {};
+	for (let r of e.slice(0, 100)) {
+		if (!Ia.test(r)) continue;
+		let e = t.get(r);
+		e !== null && e.length <= 1e3 && (n[r] = e);
+	}
+	return n;
+}
+function za(e) {
 	try {
 		let t = new URL(e);
 		return ["http:", "https:"].includes(t.protocol) ? `${t.origin}${t.pathname}`.slice(0, 2048) : "";
@@ -11939,14 +11984,14 @@ function Na(e) {
 		return "";
 	}
 }
-function Pa(e = {}, t = Da(), n = {
+function Ba(e = {}, t = Aa(), n = {
 	href: globalThis.location?.href ?? "",
 	referrer: globalThis.document?.referrer ?? ""
 }, r = Date.now()) {
-	if (!Aa(e)) return La(t), {};
+	if (!Na(e)) return Ua(t), {};
 	try {
 		let e = JSON.parse(t?.getItem("cff_ft") ?? "null");
-		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return Fa(e);
+		if (e && typeof e == "object" && Number(e.expiresAt) > r && Number(e.expiresAt) <= r + 7776e6) return Va(e);
 	} catch {}
 	let i;
 	try {
@@ -11956,70 +12001,73 @@ function Pa(e = {}, t = Da(), n = {
 	}
 	if (!["http:", "https:"].includes(i.protocol)) return {};
 	let a = {}, o = {};
-	for (let e of ja) {
+	for (let e of Pa) {
 		let t = i.searchParams.get(`utm_${e}`);
 		t && (a[e] = t.slice(0, 255));
 	}
-	for (let e of Ma) {
+	for (let e of Fa) {
 		let t = i.searchParams.get(e);
 		t && (o[e] = t.slice(0, 255));
 	}
 	let s = {
-		landingPage: Na(n.href),
-		landingReferrer: Na(n.referrer),
+		landingPage: za(n.href),
+		landingReferrer: za(n.referrer),
 		utm: a,
 		clickIds: o,
 		expiresAt: r + Math.min(90, Math.max(1, Number.isFinite(e.days) ? e.days : 30)) * 864e5
 	};
 	try {
-		t?.setItem(ka, JSON.stringify(s));
+		t?.setItem(Ma, JSON.stringify(s));
 	} catch {}
-	return Fa(s);
+	return Va(s);
 }
-function Fa(e) {
+function Va(e) {
 	let t = {}, n = {};
-	for (let n of ja) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
-	for (let t of Ma) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
+	for (let n of Pa) typeof e.utm?.[n] == "string" && (t[n] = e.utm[n].slice(0, 255));
+	for (let t of Fa) typeof e.clickIds?.[t] == "string" && (n[t] = e.clickIds[t].slice(0, 255));
 	return {
-		landingPage: Na(e.landingPage ?? ""),
-		landingReferrer: Na(e.landingReferrer ?? ""),
+		landingPage: za(e.landingPage ?? ""),
+		landingReferrer: za(e.landingReferrer ?? ""),
 		utm: t,
 		clickIds: n
 	};
 }
-function Ia(e = {}) {
-	return Aa(e) ? {
-		...Pa(e),
+function Ha(e = {}, t = []) {
+	if (!Na(e)) return Ua(), {};
+	let n = Ra(t);
+	return {
+		...Ba(e),
 		pageTitle: globalThis.document?.title?.slice(0, 500) ?? "",
-		pageUrl: Na(globalThis.location?.href ?? ""),
-		referrer: Na(globalThis.document?.referrer ?? ""),
+		pageUrl: za(globalThis.location?.href ?? ""),
+		referrer: za(globalThis.document?.referrer ?? ""),
+		...Object.keys(n).length ? { urlParams: n } : {},
 		locale: globalThis.navigator?.language?.slice(0, 35) ?? "",
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 		screen: globalThis.screen ? `${screen.width}x${screen.height}` : ""
-	} : (La(), {});
+	};
 }
-function La(e = Da()) {
+function Ua(e = Aa()) {
 	try {
-		e?.removeItem(ka);
+		e?.removeItem(Ma);
 	} catch {}
 }
-typeof window < "u" && window.cffTracking?.enabled && Pa(window.cffTracking);
+typeof window < "u" && window.cffTracking?.enabled && Ba(window.cffTracking);
 //#endregion
 //#region assets/src/runtime/engagement.ts
-function Ra(e, t, n) {
+function Wa(e, t, n) {
 	let r = globalThis.navigator;
 	return e.enabled && !n && !r?.globalPrivacyControl && !(e.respectDnt && r?.doNotTrack === "1") && (!e.consentRequired || t);
 }
-var za = class {
+var Ga = class {
 	constructor(e, t, n, r) {
-		z(this, "api", void 0), z(this, "config", void 0), z(this, "consent", void 0), z(this, "optOut", void 0), z(this, "events", []), z(this, "sent", 0), z(this, "busy", !1), this.api = e, this.config = t, this.consent = n, this.optOut = r;
+		B(this, "api", void 0), B(this, "config", void 0), B(this, "consent", void 0), B(this, "optOut", void 0), B(this, "events", []), B(this, "sent", 0), B(this, "busy", !1), this.api = e, this.config = t, this.consent = n, this.optOut = r;
 	}
 	add(e) {
-		Ra(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
+		Wa(this.config, this.consent(), this.optOut()) && this.events.length + this.sent < 200 && this.events.push(e);
 	}
 	async flush(e) {
 		if (!this.busy) {
-			if (!Ra(this.config, this.consent(), this.optOut())) this.events = [];
+			if (!Wa(this.config, this.consent(), this.optOut())) this.events = [];
 			else {
 				this.busy = !0;
 				try {
@@ -12039,22 +12087,32 @@ var za = class {
 			}
 		}
 	}
-}, Ba = (e) => [
+}, Ka = (e) => [
 	"statement",
 	"summary",
 	"media"
-].includes(e.type), Va = class {
+].includes(e.type), qa = class {
 	async loadEngagement() {
-		this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version && (this.engagement = null, this.analytics = null, this.state.form.features.engagement && (this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version), this.analytics = new za(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
-			try {
-				return this.options.analyticsOptOut === !0 || localStorage.getItem("cff_analytics_optout") === "1";
-			} catch {
-				return this.options.analyticsOptOut === !0;
+		if (this.state.form && !this.options.preview && this.engagementVersion !== this.state.form.form.version) {
+			if (this.engagement = null, this.analytics = null, this.state.form.features.engagement) {
+				try {
+					this.engagement = await this.api.request(`forms/${this.state.form.form.id}/engagement`, "GET", void 0, {}, "no-store", this.state.form.form.version);
+				} catch {
+					return;
+				}
+				this.analytics = new Ga(this.api, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => {
+					try {
+						return this.options.analyticsOptOut === !0 || localStorage.getItem("cff_analytics_optout") === "1";
+					} catch {
+						return this.options.analyticsOptOut === !0;
+					}
+				});
 			}
-		})), this.engagementVersion = this.state.form.form.version);
+			this.engagementVersion = this.state.form.form.version;
+		}
 	}
-	constructor(e, t, n = new Ea(), r = () => {}) {
-		z(this, "options", void 0), z(this, "api", void 0), z(this, "storage", void 0), z(this, "emit", void 0), z(this, "state", {
+	constructor(e, t, n = new ka(), r = () => {}) {
+		B(this, "options", void 0), B(this, "api", void 0), B(this, "storage", void 0), B(this, "emit", void 0), B(this, "state", {
 			phase: "loading",
 			form: null,
 			answers: {},
@@ -12068,14 +12126,15 @@ var za = class {
 			fieldError: null,
 			conflict: !1,
 			newerVersion: !1,
+			validation: !1,
 			storageUnavailable: !1,
 			completion: null
-		}), z(this, "listeners", /* @__PURE__ */ new Set()), z(this, "renewal", null), z(this, "saving", null), z(this, "session", null), z(this, "context", {
+		}), B(this, "listeners", /* @__PURE__ */ new Set()), B(this, "renewal", null), B(this, "saving", null), B(this, "session", null), B(this, "context", {
 			hidden: {},
 			url: {},
 			meta: {},
 			now: (/* @__PURE__ */ new Date()).toISOString()
-		}), z(this, "pending", null), z(this, "pendingStart", null), z(this, "saved", null), z(this, "latest", null), z(this, "stepStarted", Date.now()), z(this, "timings", {}), z(this, "disposed", !1), z(this, "submittedOnce", !1), z(this, "editing", null), z(this, "prefill", void 0), z(this, "engagement", null), z(this, "analytics", null), z(this, "engagementVersion", 0), this.options = e, this.api = t, this.storage = n, this.emit = r, this.prefill = e.prefill ?? {}, e.preview && e.context && (this.context = e.context);
+		}), B(this, "pending", null), B(this, "pendingStart", null), B(this, "saved", null), B(this, "latest", null), B(this, "stepStarted", Date.now()), B(this, "timings", {}), B(this, "disposed", !1), B(this, "submittedOnce", !1), B(this, "editing", null), B(this, "prefill", void 0), B(this, "engagement", null), B(this, "analytics", null), B(this, "engagementVersion", 0), this.options = e, this.api = t, this.storage = n, this.emit = r, this.prefill = e.prefill ?? {}, e.preview && e.context && (this.context = e.context);
 	}
 	subscribe(e) {
 		return this.listeners.add(e), () => this.listeners.delete(e);
@@ -12106,7 +12165,7 @@ var za = class {
 		}), this.analytics?.flush(this.session));
 	}
 	async upload(e, t) {
-		if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new B("cff_upload_unavailable", 0);
+		if (!this.session || !this.api || !this.state.form?.features.uploads || this.options.preview || this.state.offline || this.state.busy || this.state.conflict) throw new V("cff_upload_unavailable", 0);
 		return this.ownerOperation(() => this.api.upload(this.session, e.id, t));
 	}
 	async initialize() {
@@ -12120,7 +12179,7 @@ var za = class {
 				return;
 			}
 			this.prefill = {
-				...Ta(globalThis.location?.search ?? "", this.state.form.form.schema),
+				...Oa(globalThis.location?.search ?? "", this.state.form.form.schema),
 				...this.prefill
 			}, await this.loadEngagement();
 			let n = this.state.form.form;
@@ -12136,23 +12195,23 @@ var za = class {
 			}
 			await this.start();
 		} catch (e) {
-			e instanceof B && e.code === "cff_network" && this.saved?.form && this.saved.context && !this.options.preview ? (this.state.form = this.saved.form, this.context = this.saved.context, this.state.answers = this.saved.answers, this.state.acknowledged = this.saved.acknowledged, this.state.dirty = this.saved.dirty, this.timings = this.saved.stepTimings, this.state.offline = !0, this.state.phase = "resume", this.compute()) : this.handle(e);
+			e instanceof V && e.code === "cff_network" && this.saved?.form && this.saved.context && !this.options.preview ? (this.state.form = this.saved.form, this.context = this.saved.context, this.state.answers = this.saved.answers, this.state.acknowledged = this.saved.acknowledged, this.state.dirty = this.saved.dirty, this.timings = this.saved.stepTimings, this.state.offline = !0, this.state.phase = "resume", this.compute()) : this.handle(e);
 		} finally {
 			this.notify();
 		}
 	}
 	displayBeforeCurrent() {
 		let e = this.state.form.form.schema.steps;
-		return (this.session?.visited ?? []).filter((t) => t !== this.session?.currentStepId && e.some((e) => e.id === t && Ba(e)));
+		return (this.session?.visited ?? []).filter((t) => t !== this.session?.currentStepId && e.some((e) => e.id === t && Ka(e)));
 	}
 	async adopt(e) {
 		if (!this.disposed) {
-			if (!this.state.form || e.formId !== this.state.form.form.id || !e.context?.now || !Number.isFinite(Date.parse(e.context.now))) throw new B("cff_invalid_response", 0);
-			if (e.status !== "active") throw this.storage.clear(e.formId), new B("cff_session_expired", 401);
+			if (!this.state.form || e.formId !== this.state.form.form.id || !e.context?.now || !Number.isFinite(Date.parse(e.context.now))) throw new V("cff_invalid_response", 0);
+			if (e.status !== "active") throw this.storage.clear(e.formId), new V("cff_session_expired", 401);
 			if (e.version !== this.state.form.form.version) {
 				let t = await this.api.form(e.formId, e.version);
 				if (this.disposed) return;
-				if (t.form.version !== e.version) throw new B("cff_version_conflict", 409);
+				if (t.form.version !== e.version) throw new V("cff_version_conflict", 409);
 				this.state.form = t;
 			}
 			e.schema && (this.state.form = {
@@ -12174,11 +12233,11 @@ var za = class {
 					if (!this.pendingStart) {
 						let t = await this.api.startToken(e.id, e.version);
 						if (this.disposed) return;
-						if (t.version !== e.version) throw new B("cff_version_conflict", 409);
+						if (t.version !== e.version) throw new V("cff_version_conflict", 409);
 						this.pendingStart = {
 							token: t.startToken,
-							key: ue(),
-							meta: Ia(this.options.tracking ?? globalThis.window?.cffTracking),
+							key: le(),
+							meta: Ha(this.options.tracking ?? globalThis.window?.cffTracking, La(e.schema)),
 							prefill: {},
 							version: e.version
 						};
@@ -12208,7 +12267,7 @@ var za = class {
 			t = Mi(e.form.schema, n, this.context, "partial");
 		}
 		this.state.path = t, this.state.answers = t.answers, t.errors.length && (this.state.error = "invalid", this.state.phase = "error");
-		let n = this.editing ?? t.visited.find((t) => e.form.schema.steps.some((e) => e.id === t && Ba(e)) && !this.state.acknowledged.includes(t)) ?? t.currentStepId;
+		let n = this.editing ?? t.visited.find((t) => e.form.schema.steps.some((e) => e.id === t && Ka(e)) && !this.state.acknowledged.includes(t)) ?? t.currentStepId;
 		this.state.activeId !== n && (this.state.activeId = n ?? null, this.stepStarted = Date.now(), n && this.event("cff:step", { stepId: n })), this.notify();
 	}
 	get activeStep() {
@@ -12216,7 +12275,7 @@ var za = class {
 	}
 	get canSkip() {
 		let e = this.activeStep;
-		if (!e || e.type === "consent" || Ba(e)) return !1;
+		if (!e || e.type === "consent" || Ka(e)) return !1;
 		let t = Mi(this.state.form.form.schema, {
 			...this.state.answers,
 			[e.key]: null
@@ -12234,11 +12293,12 @@ var za = class {
 	}
 	async answer(e) {
 		let t = this.activeStep;
-		if (!t || this.state.busy || this.pending?.method === "POST" || this.state.conflict) return;
-		if (this.state.fieldError = null, Ba(t)) {
+		if (!t || this.pending?.method === "POST" || this.state.conflict) return;
+		if (this.state.fieldError = null, this.state.validation && (this.state.validation = !1, this.state.error = null), Ka(t)) {
 			this.timings[t.id] = (this.timings[t.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted), this.state.acknowledged = [.../* @__PURE__ */ new Set([...this.state.acknowledged, t.id])], this.compute(), this.persist();
 			return;
 		}
+		if (this.state.busy) return;
 		let n = {
 			...this.state.answers,
 			[t.key]: e
@@ -12251,14 +12311,14 @@ var za = class {
 	edit(e) {
 		if (this.state.busy || this.state.phase !== "ready" || this.pending?.method === "POST") return;
 		let t = this.state.path, n = this.state.form?.form.schema.steps.find((t) => t.id === e);
-		if (!t?.visited.includes(e) || !n || Ba(n) || n.type === "hidden" || n.type === "calculated") return;
+		if (!t?.visited.includes(e) || !n || Ka(n) || n.type === "hidden" || n.type === "calculated") return;
 		this.editing = e, this.state.fieldError = null;
 		let r = t.visited.indexOf(e);
 		this.state.acknowledged = this.state.acknowledged.filter((e) => t.visited.indexOf(e) < r), this.compute();
 	}
 	back() {
-		let e = this.visibleSteps.filter((e) => !Ba(e) && e.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, e.key)), t = e[e.length - 1];
-		t && (this.edit(t.id), this.session && (this.analytics?.add({
+		let e = this.visibleSteps.filter((e) => !Ka(e) && e.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, e.key)), t = e[e.length - 1];
+		t && (this.edit(t.id), this.session && this.state.form?.form.session.savePartial !== !1 && (this.analytics?.add({
 			event: "back",
 			stepId: t.id
 		}), this.analytics?.flush(this.session)));
@@ -12294,12 +12354,12 @@ var za = class {
 		].includes(e.type) ? void 0 : this.prefill[e.key]) ?? e.defaultValue;
 	}
 	inputAnswers() {
-		let e = new Set(this.state.form.form.schema.steps.filter((e) => !Ba(e) && e.type !== "hidden" && e.type !== "calculated").map((e) => e.key));
+		let e = new Set(this.state.form.form.schema.steps.filter((e) => !Ka(e) && e.type !== "hidden" && e.type !== "calculated").map((e) => e.key));
 		return Object.fromEntries(Object.entries(this.state.answers).filter(([t]) => e.has(t)));
 	}
 	async magicLink(e) {
-		if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new B("cff_magic_unavailable", 0);
-		if (this.state.dirty && await this.flush(), this.state.dirty && this.state.form?.form.session.savePartial !== !1) throw new B("cff_save_failed", 0);
+		if (!this.api || !this.session || !this.state.form?.form.session.magicLinks?.enabled || this.options.preview || this.state.offline || this.state.conflict || this.state.busy) throw new V("cff_magic_unavailable", 0);
+		if (this.state.dirty && await this.flush(), this.state.dirty && this.state.form?.form.session.savePartial !== !1) throw new V("cff_save_failed", 0);
 		return this.ownerOperation(() => this.api.magicLink(this.session, e));
 	}
 	persist() {
@@ -12325,24 +12385,24 @@ var za = class {
 		}));
 	}
 	async mutate(e) {
-		if (!this.session) throw new B("cff_session_expired", 401);
+		if (!this.session) throw new V("cff_session_expired", 401);
 		e.method === "POST" && this.submittedOnce || await this.renewCredential();
 		try {
 			return e.method === "POST" && (this.submittedOnce = !0), await this.api.mutate(this.session, e.method, e.body, e.key);
 		} catch (t) {
-			if (!(t instanceof B) || t.status !== 401 || !this.session.resumeToken) throw t;
+			if (!(t instanceof V) || t.status !== 401 || !this.session.resumeToken) throw t;
 			return await this.renewCredential(!0), this.api.mutate(this.session, e.method, e.body, e.key);
 		}
 	}
 	async renewCredential(e = !1) {
-		if (!this.session || !this.api) throw new B("cff_session_expired", 401);
+		if (!this.session || !this.api) throw new V("cff_session_expired", 401);
 		if (!(!e && Date.parse(this.session.requestExpiresAt) > Date.now() + 5e3)) {
-			if (!this.session.resumeToken) throw new B("cff_session_expired", 401);
+			if (!this.session.resumeToken) throw new V("cff_session_expired", 401);
 			if (!this.renewal) {
 				let e = this.session;
 				this.renewal = this.api.resume(e.formId, e.resumeToken).then((t) => {
-					if (this.disposed) throw new B("cff_cancelled", 0);
-					if (t.status !== "active") throw new B("cff_session_expired", 401);
+					if (this.disposed) throw new V("cff_cancelled", 0);
+					if (t.status !== "active") throw new V("cff_session_expired", 401);
 					this.session = {
 						...t,
 						answers: e.answers
@@ -12359,7 +12419,7 @@ var za = class {
 		try {
 			return await e();
 		} catch (t) {
-			if (!(t instanceof B) || t.status !== 401 || !this.session?.resumeToken) throw t;
+			if (!(t instanceof V) || t.status !== 401 || !this.session?.resumeToken) throw t;
 			return await this.renewCredential(!0), e();
 		}
 	}
@@ -12384,7 +12444,7 @@ var za = class {
 			try {
 				this.pending || (this.pending = {
 					method: "PATCH",
-					key: ue(),
+					key: le(),
 					body: {
 						version: this.session.version,
 						revision: this.session.revision,
@@ -12440,6 +12500,7 @@ var za = class {
 			try {
 				if (!this.pending) {
 					let t = "";
+					if (await this.loadEngagement(), this.disposed) return;
 					if (this.engagement && this.engagement.captcha.provider !== "none") {
 						try {
 							t = await this.options.captcha?.(this.engagement.captcha) ?? "";
@@ -12455,7 +12516,7 @@ var za = class {
 					if (this.disposed) return;
 					this.pending = {
 						method: "POST",
-						key: ue(),
+						key: le(),
 						body: {
 							version: this.session.version,
 							revision: this.session.revision,
@@ -12483,7 +12544,7 @@ var za = class {
 			try {
 				if (this.session && this.state.phase !== "done" && this.state.error !== "expired" && !this.options.preview && (this.pending?.method === "PATCH" && (this.state.busy = !1, await this.flush(), this.state.busy = !0, this.pending) || (this.pending ?? (this.pending = {
 					method: "DELETE",
-					key: ue(),
+					key: le(),
 					body: {
 						version: this.session.version,
 						revision: this.session.revision
@@ -12535,32 +12596,34 @@ var za = class {
 		this.pending?.method === "POST" ? await this.submit() : this.pending?.method === "DELETE" ? await this.restart() : this.state.error === "captchaFailed" ? await this.submit() : this.session ? await this.flush() : this.saved ? await this.reconnect() : this.state.form ? await this.start() : await this.initialize();
 	}
 	handle(e) {
-		let t = e instanceof B ? e : new B("cff_request_failed", 0);
-		if (([401, 422].includes(t.status) || t.status === 409 && !t.code.includes("pending")) && (this.pendingStart = null), (t.status === 401 || t.code === "cff_session_expired") && this.state.form && !this.options.preview && this.storage.clear(this.state.form.form.id), this.state.error = t.status === 429 ? "error" : t.code === "cff_version_conflict" ? "versionConflict" : t.status === 401 || t.code === "cff_session_expired" ? "expired" : t.status === 409 ? "conflict" : "error", t.status === 409 && t.code !== "cff_version_conflict" && !t.code.includes("pending") && !t.code.includes("idempotency") && (this.state.conflict = !0), t.status === 422) {
+		let t = e instanceof V ? e : new V("cff_request_failed", 0);
+		([401, 422].includes(t.status) || t.status === 409 && !t.code.includes("pending")) && (this.pendingStart = null), (t.status === 401 || t.code === "cff_session_expired") && this.state.form && !this.options.preview && this.storage.clear(this.state.form.form.id);
+		let n = t.issues.find((e) => typeof e.message == "string" && e.message !== "")?.message;
+		if (this.state.validation = t.status === 422, this.state.error = t.status === 429 ? "error" : t.code === "cff_version_conflict" ? "versionConflict" : t.status === 401 || t.code === "cff_session_expired" ? "expired" : t.status === 409 ? "conflict" : t.status === 422 ? n ?? "invalid" : "error", t.status === 409 && t.code !== "cff_version_conflict" && !t.code.includes("pending") && !t.code.includes("idempotency") && (this.state.conflict = !0), t.status === 422) {
 			this.pending = null, this.submittedOnce = !1, this.state.fieldError = "invalid";
 			let e = this.state.form?.form.schema.steps.find((e) => t.issues.some((t) => t?.fieldKey === e.key));
 			e && this.state.path?.visited.includes(e.id) && (this.editing = e.id, this.compute());
 		}
 		this.session || (this.state.phase = "error"), this.pending?.method === "POST" && (t.status === 0 || t.status >= 500 || t.code.includes("pending")) && (this.state.error = "submissionPending"), this.state.error !== "expired" && this.persist(), this.notify();
 	}
-}, Ha = [
+}, Ja = [
 	"Inter",
 	"Roboto",
 	"Open Sans"
 ];
-function Ua(e) {
-	return Ha.find((t) => t === e);
+function Ya(e) {
+	return Ja.find((t) => t === e);
 }
-function Wa(e) {
-	if (!Ua(e)) throw TypeError("Unsupported Google font.");
+function Xa(e) {
+	if (!Ya(e)) throw TypeError("Unsupported Google font.");
 	let t = new URL("https://fonts.googleapis.com/css2");
 	return t.searchParams.set("family", `${e}:wght@400;600`), t.searchParams.set("display", "swap"), t.href;
 }
 //#endregion
 //#region assets/src/runtime/fonts.ts
-var Ga = 65536, Ka = /* @__PURE__ */ new WeakMap();
-function qa(e, t) {
-	if (!Ua(t) || e.length > Ga) throw Error("Invalid font stylesheet.");
+var Za = 65536, Qa = /* @__PURE__ */ new WeakMap();
+function $a(e, t) {
+	if (!Ya(t) || e.length > Za) throw Error("Invalid font stylesheet.");
 	let n = e.replace(/\/\*[\s\S]*?\*\//g, "");
 	if (/[\\<>]/.test(n)) throw Error("Invalid font stylesheet.");
 	let r = [...n.matchAll(/@font-face\s*\{([^{}]+)\}/g)];
@@ -12588,32 +12651,32 @@ function qa(e, t) {
 		return `@font-face{font-family:"${t}";font-style:normal;font-weight:${n.get("font-weight")};font-display:swap;src:url("${r[1]}") format("${r[3]}");${i ? `unicode-range:${i};` : ""}}`;
 	}).join("\n");
 }
-async function Ja(e, t) {
-	let n = await fetch(Wa(e), {
+async function eo(e, t) {
+	let n = await fetch(Xa(e), {
 		credentials: "omit",
 		referrerPolicy: "no-referrer",
 		redirect: "error",
 		mode: "cors",
 		signal: t
 	});
-	if (!n.ok || n.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "text/css" || Number(n.headers.get("content-length") ?? 0) > Ga || !n.body) throw Error("Font stylesheet unavailable.");
+	if (!n.ok || n.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "text/css" || Number(n.headers.get("content-length") ?? 0) > Za || !n.body) throw Error("Font stylesheet unavailable.");
 	let r = n.body.getReader(), i = new TextDecoder(), a = "", o = 0;
 	try {
 		for (;;) {
 			let { done: e, value: t } = await r.read();
 			if (e) break;
-			if (o += t.byteLength, o > Ga) throw await r.cancel(), Error("Font stylesheet too large.");
+			if (o += t.byteLength, o > Za) throw await r.cancel(), Error("Font stylesheet too large.");
 			a += i.decode(t, { stream: !0 });
 		}
-		return qa(a + i.decode(), e);
+		return $a(a + i.decode(), e);
 	} finally {
 		r.releaseLock();
 	}
 }
-function Ya(e, t) {
-	if (!Ua(t)) return () => {};
-	let n = Ka.get(e);
-	n || (n = /* @__PURE__ */ new Map(), Ka.set(e, n));
+function to(e, t) {
+	if (!Ya(t)) return () => {};
+	let n = Qa.get(e);
+	n || (n = /* @__PURE__ */ new Map(), Qa.set(e, n));
 	let r = n.get(t);
 	if (!r) {
 		r = {
@@ -12622,7 +12685,7 @@ function Ya(e, t) {
 			abort: new AbortController()
 		}, r.style.dataset.cffGoogleFont = t, n.set(t, r);
 		let i = r, a = setTimeout(() => i.abort.abort(), 5e3);
-		Ja(t, i.abort.signal).then((t) => {
+		eo(t, i.abort.signal).then((t) => {
 			!i.abort.signal.aborted && i.refs && (i.style.textContent = t, e.head.append(i.style));
 		}).catch(() => {}).finally(() => clearTimeout(a));
 	}
@@ -12634,9 +12697,9 @@ function Ya(e, t) {
 }
 //#endregion
 //#region assets/src/runtime/captcha.ts
-var Xa = /* @__PURE__ */ new Map();
-function Za(e) {
-	let t = Xa.get(e);
+var no = /* @__PURE__ */ new Map();
+function ro(e) {
+	let t = no.get(e);
 	if (t) return t;
 	let n = new Promise((t, n) => {
 		let r = document.createElement("script"), i = setTimeout(() => {
@@ -12648,23 +12711,28 @@ function Za(e) {
 			clearTimeout(i), r.remove(), n(/* @__PURE__ */ Error("captchaUnavailable"));
 		}, document.head.append(r);
 	});
-	return Xa.set(e, n), n.catch(() => Xa.delete(e)), n;
+	return no.set(e, n), n.catch(() => no.delete(e)), n;
 }
-async function Qa(e, t) {
+async function io(e, t) {
 	if (e.provider === "none") return "";
 	if (!e.siteKey) throw Error("captchaUnavailable");
-	if (e.provider === "recaptcha") return await Za(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`), new Promise((t, n) => {
-		let r = setTimeout(() => n(/* @__PURE__ */ Error("captchaUnavailable")), 12e4);
-		window.grecaptcha?.ready(() => {
-			window.grecaptcha.execute(e.siteKey, { action: "cff_submit" }).then((e) => {
-				clearTimeout(r), t(e);
-			}, (e) => {
-				clearTimeout(r), n(e);
+	if (e.provider === "recaptcha") {
+		await ro(`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(e.siteKey)}`);
+		let t = window.grecaptcha;
+		if (!t) throw Error("captchaUnavailable");
+		return new Promise((n, r) => {
+			let i = setTimeout(() => r(/* @__PURE__ */ Error("captchaUnavailable")), 12e4);
+			t.ready(() => {
+				t.execute(e.siteKey, { action: "cff_submit" }).then((e) => {
+					clearTimeout(i), n(e);
+				}, (e) => {
+					clearTimeout(i), r(e);
+				});
 			});
 		});
-	});
+	}
 	let n = e.provider;
-	await Za(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
+	await ro(n === "turnstile" ? "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" : "https://js.hcaptcha.com/1/api.js?render=explicit");
 	let r = n === "turnstile" ? window.turnstile : window.hcaptcha;
 	if (!r) throw Error("captchaUnavailable");
 	return new Promise((n, i) => {
@@ -12684,28 +12752,28 @@ async function Qa(e, t) {
 		}
 	});
 }
-var $a = (e) => e.replace(/[&<>"']/g, (e) => ({
+var ao = (e) => e.replace(/[&<>"']/g, (e) => ({
 	"&": "&amp;",
 	"<": "&lt;",
 	">": "&gt;",
 	"\"": "&quot;",
 	"'": "&#39;"
 })[e]);
-function eo(e) {
+function oo(e) {
 	let t = /\\([\\[\]()*])|\[((?:\\.|[^\]\\\n])+)\]\(([^\s)]+)\)|\*\*((?:\\.|[^*\\\n])+)\*\*|\*((?:\\.|[^*\\\n])+)\*/g, n = "", r = 0;
 	for (let i of e.matchAll(t)) {
-		if (n += $a(e.slice(r, i.index)), i[1]) n += $a(i[1]);
+		if (n += ao(e.slice(r, i.index)), i[1]) n += ao(i[1]);
 		else if (i[2] && i[3]) {
-			let e = Q(i[3]), t = $a($(i[2]));
-			n += e ? `<a href="${$a(e)}" target="_blank" rel="noopener noreferrer">${t}</a>` : t;
-		} else i[4] ? n += `<strong>${$a($(i[4]))}</strong>` : i[5] && (n += `<em>${$a($(i[5]))}</em>`);
+			let e = Q(i[3]), t = ao($(i[2]));
+			n += e ? `<a href="${ao(e)}" target="_blank" rel="noopener noreferrer">${t}</a>` : t;
+		} else i[4] ? n += `<strong>${ao($(i[4]))}</strong>` : i[5] && (n += `<em>${ao($(i[5]))}</em>`);
 		r = i.index + i[0].length;
 	}
-	return n + $a(e.slice(r));
+	return n + ao(e.slice(r));
 }
-function to(e, t = () => "") {
-	let n = (t) => _a(e.options.locale ?? "en", e.state.form?.form.phrases)(t), r = (t) => ki(t, e.state.answers, e.meta), i = () => {
-		let t = e.state, i = t.form?.form, a = i?.schema.bot.contact, o = a?.url ? Q(Pi(a.url, t.answers, e.meta)) : null, s = ca(a?.hours, /* @__PURE__ */ new Date());
+function so(e, t = () => "") {
+	let n = (t) => ba(ya(e.state.form?.form.language, e.options.locale ?? "en"), e.state.form?.form.phrases)(t), r = (t) => ki(t, e.state.answers, e.meta), i = () => {
+		let t = e.state, i = t.form?.form, a = i?.schema.bot.contact, o = a?.url ? Q(Pi(a.url, t.answers, e.meta)) : null, s = la(a?.hours, /* @__PURE__ */ new Date());
 		return {
 			phase: t.phase,
 			form: i ? {
@@ -12732,8 +12800,8 @@ function to(e, t = () => "") {
 			} : null,
 			contact: o && s ? {
 				url: o,
-				label: a?.label || n(ra(o) ? "whatsapp" : "contactUs"),
-				whatsapp: ra(o)
+				label: a?.label || n(ia(o) ? "whatsapp" : "contactUs"),
+				whatsapp: ia(o)
 			} : null,
 			contactClosedMessage: o && !s && a?.hours?.outside === "message" && a.hours.message ? r(a.hours.message) : null
 		};
@@ -12762,17 +12830,17 @@ function to(e, t = () => "") {
 		},
 		contactClicked: () => e.contactClicked(),
 		inputValue: (t) => e.inputValue(t),
-		answerLabel: (e, t) => Bi(e, t, n),
+		answerLabel: (t, r) => Vi(t, r, n, e.options.locale),
 		phrase: n,
 		text: r,
 		markdown: (t) => Ri(t, e.state.answers, e.meta),
-		html: eo,
+		html: oo,
 		link: (t) => Q(Pi(t, e.state.answers, e.meta))
 	};
 }
 //#endregion
 //#region assets/src/runtime/index.tsx
-var no = {
+var co = {
 	primary: void 0,
 	botBubbleBackground: void 0,
 	userBubbleBackground: void 0,
@@ -12781,7 +12849,7 @@ var no = {
 	headerText: "#171717",
 	chatBackground: "#ffffff",
 	userTextColor: "#171717"
-}, ro = {
+}, lo = {
 	primary: "#3390ec",
 	botBubbleBackground: "#ffffff",
 	userBubbleBackground: "#e1fec6",
@@ -12790,7 +12858,7 @@ var no = {
 	headerText: "#000000",
 	chatBackground: "#dbe6ee",
 	userTextColor: "#000000"
-}, io = {
+}, uo = {
 	primary: "#5eb5f7",
 	botBubbleBackground: "#182533",
 	userBubbleBackground: "#2b5278",
@@ -12799,17 +12867,17 @@ var no = {
 	headerText: "#f5f5f5",
 	chatBackground: "#0e1621",
 	userTextColor: "#ffffff"
-}, ao = null, oo = /* @__PURE__ */ new Map(), so = 4e3;
-function co(e) {
+}, fo = null, po = /* @__PURE__ */ new Map(), mo = 4e3;
+function ho(e) {
 	if (typeof e != "function") throw TypeError("A frontend must be a function");
-	ao = e;
-	for (let [e, t] of oo) clearTimeout(t), oo.delete(e), ho(e);
+	fo = e;
+	for (let [e, t] of po) clearTimeout(t), po.delete(e), xo(e);
 	return () => {
-		ao === e && (ao = null);
+		fo === e && (fo = null);
 	};
 }
-var lo = /* @__PURE__ */ new Map(), uo = 0;
-function fo(e) {
+var go = /* @__PURE__ */ new Map(), _o = 0;
+function vo(e) {
 	return {
 		phase: e.state.phase,
 		visited: [...e.state.path?.visited ?? []],
@@ -12819,11 +12887,11 @@ function fo(e) {
 		errors: [...e.state.path?.errors ?? []]
 	};
 }
-function po(e) {
+function yo(e) {
 	return e.mode === "launcher" || e.mode === "popup";
 }
-function mo(e, t = {}) {
-	lo.get(e)?.handle.unmount();
+function bo(e, t = {}) {
+	go.get(e)?.handle.unmount();
 	let n = t.form?.form.id ?? t.formId ?? Number(e.dataset.formId);
 	if (!Number.isSafeInteger(n) || n <= 0) throw TypeError("Invalid form ID");
 	if (t.preview && !t.form) throw TypeError("Preview requires a public form envelope");
@@ -12838,7 +12906,7 @@ function mo(e, t = {}) {
 	let i = e.shadowRoot ?? e.attachShadow({ mode: "open" });
 	e.querySelector("[data-cff-loading]")?.remove();
 	let a = document.createElement("style");
-	a.textContent = oe;
+	a.textContent = ae;
 	let o = document.createElement("style"), s = document.createElement("div");
 	i.replaceChildren(a, o, s);
 	let c = t.themeStyle ?? e.dataset.themeStyle ?? "", l = c ? Q(c) : null;
@@ -12856,18 +12924,18 @@ function mo(e, t = {}) {
 			"popup"
 		].includes(e.dataset.mode ?? "") ? e.dataset.mode : "inline")
 	}, d = document.createElement("div");
-	d.className = "captcha", u.captcha ?? (u.captcha = (e) => Qa(e, d));
-	let f = t.preview ? null : new de(r), p = new Va(u, f, void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
+	d.className = "captcha", u.captcha ?? (u.captcha = (e) => io(e, d));
+	let f = t.preview ? null : new ue(r), p = new qa(u, f, void 0, (t, n) => e.dispatchEvent(new CustomEvent(t, {
 		detail: n,
 		bubbles: !0,
 		composed: !0
 	}))), m, h = () => {}, g = (t = !1) => {
 		let n = (p.state.form ?? u.form)?.form.appearance;
 		if (!n) return;
-		let r = n.inheritFont || t ? void 0 : Ua(n.googleFont);
-		r !== m && (h(), m = r, h = r ? Ya(e.ownerDocument, r) : () => {});
-		let i = n.theme === "dark" || n.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches, a = n.style === "messaging" ? i ? io : ro : no, c = (e) => da(n[e]) ?? a[e], l = {
-			"--cff-button-text": n.style === "messaging" ? fa(c("primary")) : void 0,
+		let r = n.inheritFont || t ? void 0 : Ya(n.googleFont);
+		r !== m && (h(), m = r, h = r ? to(e.ownerDocument, r) : () => {});
+		let i = n.theme === "dark" || n.theme === "auto" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches, a = n.style === "messaging" ? i ? uo : lo : co, c = (e) => fa(n[e]) ?? a[e], l = {
+			"--cff-button-text": n.style === "messaging" ? pa(c("primary")) : void 0,
 			"--cff-primary": c("primary"),
 			"--cff-bubble-bot-bg": c("botBubbleBackground"),
 			"--cff-user-bg": c("userBubbleBackground"),
@@ -12876,21 +12944,21 @@ function mo(e, t = {}) {
 			"--cff-header-text": c("headerText"),
 			"--cff-chat-bg": c("chatBackground"),
 			"--cff-user-text": c("userTextColor"),
-			"--cff-font": n.inheritFont ? "inherit" : r ? `"${r}", ${pa(n.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : pa(n.font),
+			"--cff-font": n.inheritFont ? "inherit" : r ? `"${r}", ${ma(n.font) ?? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"}` : ma(n.font),
 			"--cff-radius": Number.isFinite(n.radius) ? `${Math.max(0, Math.min(128, n.radius))}px` : void 0,
 			"--cff-width": Number.isFinite(n.width) ? `${Math.max(280, Math.min(2e3, n.width))}px` : void 0
 		};
 		for (let [e, t] of Object.entries(l)) t ? s.style.setProperty(e, t) : s.style.removeProperty(e);
-		s.querySelector(".chat")?.classList.toggle("dark", !!i), n.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = ma(n.customCss);
+		s.querySelector(".chat")?.classList.toggle("dark", !!i), n.style === "messaging" ? s.dataset.style = "messaging" : delete s.dataset.style, o.textContent = ha(n.customCss);
 	}, _ = () => g(), v = p.subscribe(_);
-	po(u) && g(!0);
+	yo(u) && g(!0);
 	let y = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
 	y?.addEventListener("change", _);
 	let b = () => p.setOffline(navigator.onLine === !1), x = (e) => {
 		e.key?.startsWith(`cff:session:${n}:`) && p.markConflict();
 	};
 	t.preview || (window.addEventListener("online", b), window.addEventListener("offline", b), window.addEventListener("storage", x));
-	let S = u.mode === "popup", C = u.mode === "launcher" || S, w = `cff-overlay-${++uo}`, T = !1, E = null, D = null, O = null, k = null, A = s, j = null, M = null, N = !1, P = !1, F = () => {
+	let S = u.mode === "popup", C = u.mode === "launcher" || S, w = `cff-overlay-${++_o}`, T = !1, E = null, D = null, O = null, k = null, A = s, j = null, M = null, N = !1, P = !1, F = () => {
 		N || (N = !0, b(), p.initialize().then(() => {
 			g(), ee();
 		}));
@@ -12898,17 +12966,21 @@ function mo(e, t = {}) {
 		if (t.preview || P || !f || e.hidden || p.state.phase === "error") return;
 		let r = p.state.form?.form.version;
 		r && (P = !0, f.view(n, r).catch(() => void 0));
-	}, te = _a(u.locale), ne = null, I = (t) => {
+	}, te = ba(u.locale), I = null, L = (t, n = !0) => {
 		if (j && M && t !== !M.hidden) {
-			if (t) {
+			if (t && n) {
 				let t = document.activeElement;
-				ne = t instanceof HTMLElement && t !== document.body && t !== e ? t : null;
+				I = t instanceof HTMLElement && t !== document.body && t !== e ? t : null;
 			}
 			if (!t && !M.hidden && p.close(), e.hidden = !1, M.hidden = !t, S) {
 				let e = s.querySelector(".popup-backdrop");
 				e && (e.hidden = !t);
 			}
-			t && (T = !0), j.hidden = t, j.setAttribute("aria-expanded", String(t)), t ? (F(), M.focus({ preventScroll: !0 })) : (ne?.isConnected ? ne : j).focus({ preventScroll: !0 });
+			if (t && (T = !0), j.hidden = t, j.setAttribute("aria-expanded", String(t)), t) F(), n && M.focus({ preventScroll: !0 });
+			else {
+				let t = document.activeElement;
+				(!t || t === document.body || t === e) && (I?.isConnected ? I : j).focus({ preventScroll: !0 }), I = null;
+			}
 		}
 	};
 	if (C) {
@@ -12917,13 +12989,13 @@ function mo(e, t = {}) {
 		let n = document.createElement("span");
 		if (n.className = "sr-only", n.textContent = te("openChat"), j.append(n), j.setAttribute("aria-controls", w), j.setAttribute("aria-expanded", "false"), M = document.createElement("div"), M.className = "launcher-panel", M.id = w, M.role = "dialog", M.setAttribute("aria-label", te("formDialog")), S && M.setAttribute("aria-modal", "true"), M.tabIndex = -1, M.hidden = !0, S) {
 			let e = document.createElement("div");
-			e.className = "popup-backdrop", e.hidden = !0, e.addEventListener("click", () => I(!1)), t.append(e);
+			e.className = "popup-backdrop", e.hidden = !0, e.addEventListener("click", () => L(!1)), t.append(e);
 		}
-		t.append(M, j), s.append(t), A = document.createElement("div"), M.append(A, d), j.addEventListener("click", () => I(M.hidden));
+		t.append(M, j), s.append(t), A = document.createElement("div"), M.append(A, d), j.addEventListener("click", () => L(M.hidden));
 		let r = (e) => {
 			if (!M || M.hidden) return;
 			let t = e.composedPath().includes(M);
-			if (e.key === "Escape" && (t || S) && (e.preventDefault(), I(!1)), S && e.key === "Tab") {
+			if (e.key === "Escape" && (t || S) && (e.preventDefault(), L(!1)), S && e.key === "Tab") {
 				let t = [...M.querySelectorAll("button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]")].filter((e) => e.tabIndex >= 0 && !e.closest(".honeypot,[hidden],[aria-hidden=\"true\"]")), n = t[0], r = t.at(-1), a = i.activeElement;
 				!n || !r ? (e.preventDefault(), M.focus()) : e.shiftKey && (!M.contains(a) || a === n || a === M) ? (e.preventDefault(), r.focus()) : !e.shiftKey && (a === r || !M.contains(a)) && (e.preventDefault(), n.focus());
 			}
@@ -12933,104 +13005,104 @@ function mo(e, t = {}) {
 		}, document.addEventListener("keydown", k);
 	}
 	C || s.after(d);
-	let re = () => {
-		C ? I(!1) : t.preview || (p.close(), e.hidden = !0);
-	}, ie = (t.frontend ?? (e.dataset.frontend === "theme" ? "theme" : "default")) === "theme", ae;
-	if (ie && ao) try {
-		ae = ao({
-			api: to(p),
+	let ne = () => {
+		C ? L(!1) : t.preview || (p.close(), e.hidden = !0);
+	}, re = (t.frontend ?? (e.dataset.frontend === "theme" ? "theme" : "default")) === "theme", ie;
+	if (re && fo) try {
+		ie = fo({
+			api: so(p),
 			root: A,
 			shadowRoot: i,
 			host: e,
 			mode: u.mode ?? "inline",
 			preview: t.preview === !0,
-			close: re
+			close: ne
 		});
 	} catch (e) {
-		console.error("ChatFlow: the theme frontend failed; using the built-in chat.", e), A.replaceChildren(), R(/* @__PURE__ */ Z(wa, {
+		console.error("ChatFlow: the theme frontend failed; using the built-in chat.", e), A.replaceChildren(), z(/* @__PURE__ */ Z(Da, {
 			controller: p,
 			closable: C,
-			onClose: re
+			onClose: ne
 		}), A);
 	}
-	else R(/* @__PURE__ */ Z(wa, {
+	else z(/* @__PURE__ */ Z(Da, {
 		controller: p,
 		closable: C,
-		onClose: re
+		onClose: ne
 	}), A);
-	let L = {
+	let R = {
 		unmount: () => {
-			if (E && clearTimeout(E), D && window.removeEventListener("scroll", D), O && document.removeEventListener("click", O), k && document.removeEventListener("keydown", k), v(), h(), y?.removeEventListener("change", _), p.dispose(), typeof ae == "function") try {
-				ae();
+			if (E && clearTimeout(E), D && window.removeEventListener("scroll", D), O && document.removeEventListener("click", O), k && document.removeEventListener("keydown", k), v(), h(), y?.removeEventListener("change", _), p.dispose(), typeof ie == "function") try {
+				ie();
 			} catch {}
-			R(null, A), i.replaceChildren(), window.removeEventListener("online", b), window.removeEventListener("offline", b), window.removeEventListener("storage", x), lo.delete(e);
+			z(null, A), i.replaceChildren(), window.removeEventListener("online", b), window.removeEventListener("offline", b), window.removeEventListener("storage", x), go.delete(e);
 		},
 		prefill: (e) => p.prefillAnswers(e),
-		getState: () => fo(p),
+		getState: () => vo(p),
 		jumpToStep: (e) => p.jumpToStep(e),
 		setAppearance: (e) => {
 			t.preview && p.setAppearance(e);
 		},
 		open: () => {
-			C ? I(!0) : (e.hidden = !1, F(), e.scrollIntoView?.({
+			C ? L(!0) : (e.hidden = !1, F(), e.scrollIntoView?.({
 				behavior: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
 				block: "start"
 			}), (e.shadowRoot?.querySelector(".active input:not([type=hidden]),.active textarea,.active select,.active button") ?? e.shadowRoot?.querySelector(".chat"))?.focus({ preventScroll: !0 }));
 		}
 	};
-	if (lo.set(e, {
-		handle: L,
+	if (go.set(e, {
+		handle: R,
 		id: n,
 		controller: p
 	}), C && !t.preview) {
 		O = (e) => {
-			(e.target instanceof Element ? e.target.closest("[data-cff-open]") : null)?.dataset.cffOpen === String(n) && (e.preventDefault(), I(!0));
+			(e.target instanceof Element ? e.target.closest("[data-cff-open]") : null)?.dataset.cffOpen === String(n) && (e.preventDefault(), L(!0));
 		}, document.addEventListener("click", O);
 		let t = e.dataset.autoOpen;
 		t !== void 0 && t !== "" && /^\d+$/.test(t) && (E = setTimeout(() => {
-			!T && !e.hidden && I(!0);
+			!T && !e.hidden && L(!0, !1);
 		}, Math.min(3600, Number(t)) * 1e3));
 		let r = e.dataset.scrollPercent;
 		r !== void 0 && r !== "" && /^\d+$/.test(r) && (D = () => {
 			let t = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-			!T && !e.hidden && t > 0 && window.scrollY / t * 100 >= Number(r) && (I(!0), D && window.removeEventListener("scroll", D));
+			!T && !e.hidden && t > 0 && window.scrollY / t * 100 >= Number(r) && (L(!0, !1), D && window.removeEventListener("scroll", D));
 		}, window.addEventListener("scroll", D, { passive: !0 }));
 	}
-	return C || F(), L;
+	return C || F(), R;
 }
-function ho(e, t) {
+function xo(e, t) {
 	let n = t ? { frontend: t } : {}, r = e.querySelector("script[type=\"application/json\"][data-cff-schema]");
 	if (r) try {
 		n.form = JSON.parse(r.textContent ?? "");
 	} catch {}
 	try {
-		mo(e, n);
+		bo(e, n);
 	} catch {
 		e.textContent = "ChatFlow: configuration error";
 	}
 }
-function go(e = document) {
-	for (let t of e.querySelectorAll("cff-chat[data-form-id]")) lo.has(t) || oo.has(t) || (t.dataset.frontend === "theme" && !ao ? oo.set(t, setTimeout(() => {
-		oo.delete(t), ho(t, "default");
-	}, so)) : ho(t));
+function So(e = document) {
+	for (let t of e.querySelectorAll("cff-chat[data-form-id]")) go.has(t) || po.has(t) || (t.dataset.frontend === "theme" && !fo ? po.set(t, setTimeout(() => {
+		po.delete(t), xo(t, "default");
+	}, mo)) : xo(t));
 }
 typeof window < "u" && (window.ChatFlow = {
 	optOutAnalytics(e = !0) {
 		try {
 			localStorage.setItem("cff_analytics_optout", e ? "1" : "0");
 		} catch {}
-		for (let { controller: t } of lo.values()) t.options.analyticsOptOut = e;
+		for (let { controller: t } of go.values()) t.options.analyticsOptOut = e;
 	},
 	open: (e) => {
-		go();
-		let t = [...lo.keys()].find((t) => lo.get(t)?.id === Number(e));
-		return t ? (lo.get(t).handle.open(), !0) : !1;
+		So();
+		let t = [...go.keys()].find((t) => go.get(t)?.id === Number(e));
+		return t ? (go.get(t).handle.open(), !0) : !1;
 	},
 	prefill: (e, t) => {
-		for (let { handle: n, id: r } of lo.values()) (t === void 0 || Number(t) === r) && n.prefill(e);
+		for (let { handle: n, id: r } of go.values()) (t === void 0 || Number(t) === r) && n.prefill(e);
 	},
-	registerField: Ui,
-	registerFrontend: co
-}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => go(), { once: !0 }) : go());
+	registerField: Wi,
+	registerFrontend: ho
+}, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", () => So(), { once: !0 }) : So());
 //#endregion
-export { so as THEME_FRONTEND_TIMEOUT_MS, go as autoMount, mo as mountRuntime, Ui as registerField, co as registerFrontend };
+export { mo as THEME_FRONTEND_TIMEOUT_MS, So as autoMount, bo as mountRuntime, Wi as registerField, ho as registerFrontend };

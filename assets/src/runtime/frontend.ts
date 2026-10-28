@@ -13,7 +13,7 @@ import { interpolate } from '../shared/logic';
 import { isOpen } from '../shared/hours';
 import { isWhatsapp } from '../shared/whatsapp';
 import { answerLabel, interpolateLink, interpolateMarkdown, markdownText, safeLink } from './content';
-import { phrases } from './i18n';
+import { formLocale, phrases } from './i18n';
 import type { RuntimeController } from './controller';
 import type { AnswerMap, PublicForm, Step } from './types';
 
@@ -100,7 +100,7 @@ export function markdownHtml(text: string): string {
 }
 
 export function frontendApi(controller: RuntimeController, honeypot: () => string = () => ''): FrontendApi {
-  const phrase = (key: string) => phrases(controller.options.locale ?? 'en', controller.state.form?.form.phrases)(key);
+  const phrase = (key: string) => phrases(formLocale(controller.state.form?.form.language, controller.options.locale ?? 'en'), controller.state.form?.form.phrases)(key);
   const text = (template: string) => interpolate(template, controller.state.answers, controller.meta);
   const getState = (): FrontendState => {
     const state = controller.state, form = state.form?.form;
@@ -139,7 +139,7 @@ export function frontendApi(controller: RuntimeController, honeypot: () => strin
     upload: file => { const step = controller.activeStep; if (!step) return Promise.reject(new Error('No active step')); return controller.upload(step, file); },
     contactClicked: () => controller.contactClicked(),
     inputValue: step => controller.inputValue(step),
-    answerLabel: (step, value) => answerLabel(step, value, phrase),
+    answerLabel: (step, value) => answerLabel(step, value, phrase, controller.options.locale),
     phrase,
     text,
     markdown: template => interpolateMarkdown(template, controller.state.answers, controller.meta),

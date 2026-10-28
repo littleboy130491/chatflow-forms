@@ -23,13 +23,21 @@ export interface ClientMeta {
   pageUrl?: string; pageTitle?: string; referrer?: string; landingPage?: string; landingReferrer?: string;
   utm?: { source?: string; medium?: string; campaign?: string; term?: string; content?: string };
   clickIds?: { gclid?: string; fbclid?: string; msclkid?: string; ttclid?: string };
+  /** Only query parameters the form references (never the full URL). */
+  urlParams?: Record<string, string>;
   locale?: string; timezone?: string; screen?: string; stepTimings?: Record<string, number>;
 }
 export interface PublicSchemaEnvelope {
   form: { id: number; title: string; slug: string; version: number; schema: FormSchema;
     appearance: NonNullable<FormSettings['appearance']>; phrases: NonNullable<FormSettings['phrases']>;
     media?: Record<string, { url: string; alt?: string }>;
-    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean; magicLinks?: { enabled: boolean; whatsapp: boolean } } };
+    session: { resumeEnabled: boolean; resumePrompt: boolean; resumeDays: number; savePartial: boolean; magicLinks?: { enabled: boolean; whatsapp: boolean };
+      /** Show the on-device storage notice in the chat (resume must be enabled). */
+      storageNotice?: boolean };
+    /** Visitor phrase language; missing or "site" follows the page language. */
+    language?: 'site' | 'en' | 'id';
+    /** Missing means "off": the form submits automatically after the last question. */
+    completion?: { review: 'off' | 'button' | 'show' } };
   features: { fieldTypes: string[]; uploads: boolean; engagement: boolean };
 }
 export interface SessionEnvelope {

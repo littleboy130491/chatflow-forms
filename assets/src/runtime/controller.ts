@@ -1,6 +1,6 @@
 import { allowFieldTypes, replay } from '../shared/logic';
 import { readPrefill } from '../shared/prefill';
-import { collectMeta } from '../tracking';
+import { collectMeta, urlSourceKeys } from '../tracking';
 import { ApiClient, ApiError, uuid } from './api';
 import { SessionStorage, type SavedSession } from './persistence';
 import type { AnswerMap, Completion, PublicForm, ReplayContext, ReplayResult, RuntimeOptions, Session, Step } from './types';
@@ -13,13 +13,13 @@ export interface RuntimeState {
   form: PublicForm | null; answers: AnswerMap; path: ReplayResult | null; activeId: string | null;
   acknowledged: string[]; busy: boolean; dirty: boolean; offline: boolean;
   error: string | null; fieldError: string | null; conflict: boolean; newerVersion: boolean;
-  storageUnavailable: boolean; completion: Completion | null;
+  validation: boolean; storageUnavailable: boolean; completion: Completion | null;
 }
 type Mutation = { method: 'PATCH' | 'DELETE' | 'POST'; body: Record<string, unknown>; key: string };
 const display = (step: Step) => ['statement', 'summary', 'media'].includes(step.type);
 
 export class RuntimeController {
-  state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, storageUnavailable: false, completion: null };
+  state: RuntimeState = { phase: 'loading', form: null, answers: {}, path: null, activeId: null, acknowledged: [], busy: false, dirty: false, offline: false, error: null, fieldError: null, conflict: false, newerVersion: false, validation: false, storageUnavailable: false, completion: null };
   private listeners = new Set<() => void>();
   private renewal: Promise<void> | null = null;
   private saving: Promise<void> | null = null;
@@ -42,7 +42,10 @@ export class RuntimeController {
     if (!this.state.form || this.options.preview || this.engagementVersion === this.state.form.form.version) return;
     this.engagement = null; this.analytics = null;
     if (this.state.form.features.engagement) {
-      this.engagement = await this.api!.request<EngagementConfig>(`forms/${this.state.form.form.id}/engagement`, 'GET', undefined, {}, 'no-store', this.state.form.form.version);
+      // Captcha/analytics config is not essential to answering. If it cannot load, let the
+      // visitor continue; it is retried before submit, where the server enforces captcha.
+      try { this.engagement = await this.api!.request<EngagementConfig>(`forms/${this.state.form.form.id}/engagement`, 'GET', undefined, {}, 'no-store', this.state.form.form.version); }
+      catch { return; }
       this.analytics = new RuntimeAnalytics(this.api!, this.engagement.analytics, () => !!(this.options.tracking ?? globalThis.window?.cffTracking)?.consentGranted, () => { try { return this.options.analyticsOptOut === true || localStorage.getItem('cff_analytics_optout') === '1'; } catch { return this.options.analyticsOptOut === true; } });
     }
     this.engagementVersion = this.state.form.form.version;
@@ -147,7 +150,7 @@ export class RuntimeController {
           const token = await this.api!.startToken(form.id, form.version);
           if (this.disposed) return;
           if (token.version !== form.version) throw new ApiError('cff_version_conflict', 409);
-          this.pendingStart = { token: token.startToken, key: uuid(), meta: collectMeta(this.options.tracking ?? globalThis.window?.cffTracking), prefill: {}, version: form.version };
+          this.pendingStart = { token: token.startToken, key: uuid(), meta: collectMeta(this.options.tracking ?? globalThis.window?.cffTracking, urlSourceKeys(form.schema)), prefill: {}, version: form.version };
         }
         const operation = this.pendingStart;
         await this.adopt(await this.api!.start(form.id, operation.version, operation.meta, operation.prefill, operation.token, operation.key));
@@ -193,13 +196,18 @@ export class RuntimeController {
   }
   async answer(value: unknown): Promise<void> {
     const step = this.activeStep;
-    if (!step || this.state.busy || this.pending?.method === 'POST' || this.state.conflict) return;
+    if (!step || this.pending?.method === 'POST' || this.state.conflict) return;
     this.state.fieldError = null;
+    if (this.state.validation) { this.state.validation = false; this.state.error = null; }
     if (display(step)) {
+      // Display steps do not mutate answers; acknowledge them even while the
+      // previous answer's PATCH is still saving, otherwise an auto-continued
+      // statement can be dropped and leave the visitor stranded.
       this.timings[step.id] = (this.timings[step.id] ?? 0) + Math.max(0, Date.now() - this.stepStarted);
       this.state.acknowledged = [...new Set([...this.state.acknowledged, step.id])];
       this.compute(); this.persist(); return;
     }
+    if (this.state.busy) return;
     const candidate = { ...this.state.answers, [step.key]: value } as AnswerMap;
     const test = replay(this.state.form!.form.schema, candidate, this.context, 'partial');
     const issue = test.errors.find(issue => issue.fieldKey === step.key);
@@ -221,7 +229,7 @@ export class RuntimeController {
   }
   back(): void {
     const steps = this.visibleSteps.filter(step => !display(step) && step.id !== this.state.activeId && Object.prototype.hasOwnProperty.call(this.state.answers, step.key));
-    const previous = steps[steps.length - 1]; if (previous) { this.edit(previous.id); if (this.session) { this.analytics?.add({ event: 'back', stepId: previous.id }); void this.analytics?.flush(this.session); } }
+    const previous = steps[steps.length - 1]; if (previous) { this.edit(previous.id); if (this.session && this.state.form?.form.session.savePartial !== false) { this.analytics?.add({ event: 'back', stepId: previous.id }); void this.analytics?.flush(this.session); } }
   }
   prefillAnswers(answers: AnswerMap): void {
     if (this.state.phase === 'done' || this.pending?.method === 'POST') return;
@@ -344,6 +352,8 @@ export class RuntimeController {
     try {
       if (!this.pending) {
         let captchaToken = '';
+        await this.loadEngagement();
+        if (this.disposed) return;
         if (this.engagement && this.engagement.captcha.provider !== 'none') {
           try { captchaToken = await this.options.captcha?.(this.engagement.captcha) ?? ''; } catch { captchaToken = ''; }
           if (this.disposed) return;
@@ -424,7 +434,19 @@ export class RuntimeController {
     const api = error instanceof ApiError ? error : new ApiError('cff_request_failed', 0);
     if ([401, 422].includes(api.status) || (api.status === 409 && !api.code.includes('pending'))) this.pendingStart = null;
     if ((api.status === 401 || api.code === 'cff_session_expired') && this.state.form && !this.options.preview) this.storage.clear(this.state.form.form.id);
-    this.state.error = api.status === 429 ? 'error' : api.code === 'cff_version_conflict' ? 'versionConflict' : api.status === 401 || api.code === 'cff_session_expired' ? 'expired' : api.status === 409 ? 'conflict' : 'error';
+    const validationMessage = api.issues.find(issue => typeof issue.message === 'string' && issue.message !== '')?.message;
+    this.state.validation = api.status === 422;
+    this.state.error = api.status === 429
+      ? 'error'
+      : api.code === 'cff_version_conflict'
+        ? 'versionConflict'
+        : api.status === 401 || api.code === 'cff_session_expired'
+          ? 'expired'
+          : api.status === 409
+            ? 'conflict'
+            : api.status === 422
+              ? (validationMessage ?? 'invalid')
+              : 'error';
     if (api.status === 409 && api.code !== 'cff_version_conflict' && !api.code.includes('pending') && !api.code.includes('idempotency')) this.state.conflict = true;
     if (api.status === 422) {
       this.pending = null; this.submittedOnce = false; this.state.fieldError = 'invalid';

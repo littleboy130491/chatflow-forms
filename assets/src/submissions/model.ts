@@ -129,10 +129,22 @@ export function exportOptions(
 export function responseLabel(id: number): string {
   return `${__('Response', 'chatflow-forms')} #${id}`;
 }
-export function readableDate(value: string): string {
+export function readableDate(value: string, timeZone = 'UTC'): string {
   // Database timestamps without an offset are UTC, not the viewer's local time.
   const date = new Date(/^\d{4}-\d{2}-\d{2} \d{2}:/.test(value) ? value.replace(' ', 'T') + 'Z' : value);
-  return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(date) + ' UTC';
+  if (Number.isNaN(date.getTime())) return value;
+  // WordPress reports a manual offset as "+07:00"; Intl expects an IANA zone.
+  const offset = /^([+-])(\d{2}):(\d{2})$/.exec(timeZone);
+  if (offset) {
+    const minutes = (offset[1] === '-' ? -1 : 1) * (Number(offset[2]) * 60 + Number(offset[3]));
+    const shifted = new Date(date.getTime() + minutes * 60000);
+    return `${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(shifted)} (UTC${timeZone})`;
+  }
+  try {
+    return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(date);
+  } catch {
+    return `${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(date)} UTC`;
+  }
 }
 export function operatorLabel(operator: string): string {
   const labels: Record<string, string> = {

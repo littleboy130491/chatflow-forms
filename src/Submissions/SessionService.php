@@ -77,9 +77,11 @@ final class SessionService {
 					return $limit; }
 				$meta = $metadata->collect( $form, $client, $_SERVER );
 				$meta = HookDispatcher::filter( 'cff_submission_meta', $meta, array( $form ) );
-				// Revalidate extensions: arbitrary keys never become stored metadata.
-				$meta                       = $this->safeMeta( is_array( $meta ) ? $meta : array() );
+				$meta = is_array( $meta ) ? $meta : array();
+				// Build replay context before storage filtering: url_params and custom
+				// extension keys are intentionally not persisted as submission metadata.
 				$context                    = $metadata->context( $form, $meta );
+				$meta                       = $this->safeMeta( $meta );
 				$context['defaultEndingId'] = $form->settings()['completion']['defaultEndingId'] ?? '';
 				$variant                    = \ChatFlow\Logic\Experiments::assign( $form );
 				$context['_variantId']      = $variant['id'];
@@ -348,7 +350,16 @@ final class SessionService {
 		$parts = explode( '.', $token );
 		if ( count( $parts ) !== 3 || strlen( $token ) > 2048 ) {
 			return false; }
-		$claims = Database::decode( base64_decode( strtr( $parts[1], '-_', '+/' ), true ) );
+		$decoded = base64_decode( strtr( $parts[1], '-_', '+/' ), true );
+		if ( false === $decoded ) {
+			return false;
+		}
+		try {
+			$claims = Database::decode( $decoded );
+		} catch ( \Throwable $error ) {
+			// An arbitrary client-supplied token must be a 401, never a 500/503.
+			return false;
+		}
 		// Receipts replay only for a day after the token was issued, not for any token ever minted.
 		if ( ! is_int( $claims['iat'] ?? null ) || $claims['iat'] < time() - DAY_IN_SECONDS ) {
 			return false; }
@@ -476,7 +487,7 @@ final class SessionService {
 			if ( 'consent' === $step['type'] && true === ( $replay['answers'][ $step['key'] ] ?? null ) ) {
 				$data['consent'][] = array(
 					'fieldKey'   => $step['key'],
-					'text'       => $step['settings']['consentText'] ?? implode( '\n', $step['messages'] ),
+					'text'       => $step['settings']['consentText'] ?? implode( "\n", $step['messages'] ),
 					'version'    => $form->version(),
 					'acceptedAt' => gmdate( 'c' ),
 				); }

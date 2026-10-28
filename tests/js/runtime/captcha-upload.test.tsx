@@ -32,6 +32,12 @@ describe('explicit CAPTCHA providers', () => {
     document.head.querySelector<HTMLScriptElement>('script[src]')!.dispatchEvent(new Event('load'));
     expect(await token).toBe('v3-test-response'); expect(execute).toHaveBeenCalledWith('public-v3-test-key', { action: 'cff_submit' });
   });
+  it('fails fast when the recaptcha script loads without defining grecaptcha', async () => {
+    delete window.grecaptcha;
+    const token = captchaToken({ provider: 'recaptcha', siteKey: 'public-v3-missing-key' }, document.createElement('div'));
+    document.head.querySelector<HTMLScriptElement>('script[src*="public-v3-missing-key"]')!.dispatchEvent(new Event('load'));
+    await expect(token).rejects.toThrow('captchaUnavailable');
+  });
 });
 describe('protected uploads and optional input behavior', () => {
   const step: Step = { id: 'file', key: 'file', type: 'file_upload', label: 'File', messages: [], validation: { maxBytes: 100, mimeTypes: ['text/plain'] } };

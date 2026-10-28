@@ -16,6 +16,9 @@ msgstr "%1$s: aturan %2$d"
 msgid "%d fields"
 msgstr "%d kolom"
 
+msgid "%d problems will stop this version from publishing:"
+msgstr "%d masalah akan mencegah versi ini diterbitkan:"
+
 msgid "%d rules"
 msgstr "%d aturan"
 
@@ -52,6 +55,12 @@ msgstr "Pernyataan sambutan yang siap dilengkapi pertanyaan Anda."
 msgid "A/B copy and order experiment"
 msgstr "Eksperimen A/B teks dan urutan"
 
+msgid "A/B test"
+msgstr "Uji A/B"
+
+msgid "A/B test variants"
+msgstr "Varian uji A/B"
+
 msgid "AI assist"
 msgstr "Bantuan AI"
 
@@ -60,9 +69,6 @@ msgstr "Kunci API (diakhiri kode pusat data, mis. -us21)"
 
 msgid "API key (optional for keyless gateways)"
 msgstr "Kunci API (opsional untuk gateway tanpa kunci)"
-
-msgid "Abandon"
-msgstr "Ditinggalkan"
 
 msgid "Abandon after days (1–90)"
 msgstr "Tandai ditinggalkan setelah hari (1–90)"
@@ -75,9 +81,6 @@ msgstr "Kiriman ditinggalkan"
 
 msgid "Accent (buttons, links, ticks)"
 msgstr "Aksen (tombol, tautan, centang)"
-
-msgid "Accessibility and extras"
-msgstr "Aksesibilitas dan tambahan"
 
 msgid "Action"
 msgstr "Tindakan"
@@ -96,6 +99,9 @@ msgstr "Tambah"
 
 msgid "Add OR group"
 msgstr "Tambah grup ATAU"
+
+msgid "Add a field"
+msgstr "Tambah kolom"
 
 msgid "Add admin email"
 msgstr "Tambah email admin"
@@ -127,6 +133,9 @@ msgstr "Tambah pertanyaan"
 msgid "Add message"
 msgstr "Tambah pesan"
 
+msgid "Add new form"
+msgstr "Tambah formulir baru"
+
 msgid "Add note"
 msgstr "Tambah catatan"
 
@@ -145,6 +154,12 @@ msgstr "Tambah aturan"
 msgid "Add score"
 msgstr "Tambah nilai"
 
+msgid "Add selected answers to the link"
+msgstr "Tambahkan jawaban terpilih ke tautan"
+
+msgid "Add the response ID to the link"
+msgstr "Tambahkan ID jawaban ke tautan"
+
 msgid "Add the server to your agent with HTTP Basic authentication: your username and the application password. For example, in Claude Code:"
 msgstr "Tambahkan server ke agen Anda dengan autentikasi HTTP Basic: nama pengguna dan kata sandi aplikasi Anda. Contohnya, di Claude Code:"
 
@@ -157,8 +172,20 @@ msgstr "Tambah varian"
 msgid "Add webhook"
 msgstr "Tambah webhook"
 
+msgid "Add “%1$s” (%2$s)"
+msgstr "Tambahkan “%1$s” (%2$s)"
+
+msgid "Added ending: %s"
+msgstr "Akhir ditambahkan: %s"
+
+msgid "Added field: %s"
+msgstr "Kolom ditambahkan: %s"
+
 msgid "Address"
 msgstr "Alamat"
+
+msgid "Address prefix for full-page forms (e.g. chat → yoursite.com/chat/form-name)"
+msgstr "Awalan alamat formulir halaman penuh (mis. chat → situsanda.com/chat/nama-formulir)"
 
 msgid "Admin notifications"
 msgstr "Notifikasi admin"
@@ -181,8 +208,8 @@ msgstr "Pengaturan pengalihan lanjutan"
 msgid "Advanced: prefill answers"
 msgstr "Lanjutan: isi jawaban awal"
 
-msgid "Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ."
-msgstr "Laporan gabungan menggunakan tanggal UTC. Funnel form di bawah menggunakan zona waktu situs, sehingga batas hari dan totalnya dapat berbeda."
+msgid "After the last question"
+msgstr "Setelah pertanyaan terakhir"
 
 msgid "All"
 msgstr "Semua"
@@ -199,14 +226,20 @@ msgstr "Semua pengaturan tersimpan."
 msgid "All statuses"
 msgstr "Semua status"
 
+msgid "All text colours are easy to read (WCAG AA)."
+msgstr "Semua warna teks mudah dibaca (WCAG AA)."
+
 msgid "Allow user-initiated WhatsApp sharing"
 msgstr "Izinkan berbagi melalui WhatsApp atas tindakan pengguna"
 
-msgid "Allowed MIME types (comma separated)"
-msgstr "Jenis MIME yang diizinkan (dipisahkan koma)"
-
 msgid "Allowed external redirect hosts (comma-separated)"
 msgstr "Host pengalihan eksternal yang diizinkan (pisahkan dengan koma)"
+
+msgid "Allowed file types (e.g. image/png, application/pdf; blank = default)"
+msgstr "Jenis berkas yang diizinkan (mis. image/png, application/pdf; kosong = bawaan)"
+
+msgid "Also notify when a visitor leaves contact details but does not finish"
+msgstr "Beri tahu juga saat pengunjung meninggalkan kontak tetapi tidak menyelesaikan formulir"
 
 msgid "Alternative text"
 msgstr "Teks alternatif"
@@ -217,14 +250,23 @@ msgstr "Terjadi kesalahan tak terduga."
 msgid "Analytics"
 msgstr "Analitik"
 
-msgid "Analytics date range"
-msgstr "Rentang tanggal analitik"
+msgid "Analytics filters"
+msgstr "Filter analitik"
 
 msgid "Anonymized"
 msgstr "Dianonimkan"
 
 msgid "Another admin changed this draft. Autosave is paused; your local edits are preserved."
 msgstr "Admin lain mengubah draf ini. Penyimpanan otomatis dijeda; perubahan lokal Anda tetap tersimpan."
+
+msgid "Another field already uses this key."
+msgstr "Kolom lain sudah memakai kunci ini."
+
+msgid "Another option already uses this value."
+msgstr "Pilihan lain sudah memakai nilai ini."
+
+msgid "Another variable already uses this key."
+msgstr "Variabel lain sudah memakai kunci ini."
 
 msgid "Answer"
 msgstr "Jawaban"
@@ -238,20 +280,20 @@ msgstr "Kolom jawaban %d"
 msgid "Answer columns (up to three)"
 msgstr "Kolom jawaban (maksimal tiga)"
 
-msgid "Answer distributions"
-msgstr "Distribusi jawaban"
-
 msgid "Answer field key"
 msgstr "Kunci kolom jawaban"
 
-msgid "Answer operator"
-msgstr "Operator jawaban"
+msgid "Answer to question"
+msgstr "Jawaban untuk pertanyaan"
 
 msgid "Answer value"
 msgstr "Nilai jawaban"
 
 msgid "Answered"
 msgstr "Dijawab"
+
+msgid "Answers to add (field keys, comma-separated)"
+msgstr "Jawaban yang ditambahkan (kunci kolom, dipisahkan koma)"
 
 msgid "Anthropic (Claude)"
 msgstr "Anthropic (Claude)"
@@ -265,6 +307,9 @@ msgstr "Apa pun"
 msgid "Any (OR)"
 msgstr "Salah satu (ATAU)"
 
+msgid "Any question"
+msgstr "Pertanyaan apa saja"
+
 msgid "Any text"
 msgstr "Teks apa pun"
 
@@ -274,17 +319,23 @@ msgstr "Ada hal lain yang ingin disampaikan?"
 msgid "Anything else we should know?"
 msgstr "Adakah hal lain yang perlu kami ketahui?"
 
+msgid "Appearance"
+msgstr "Tampilan"
+
 msgid "Append options"
 msgstr "Tambahkan pilihan"
 
-msgid "Append submission UUID"
-msgstr "Tambahkan UUID kiriman"
-
-msgid "Append whitelisted answers"
-msgstr "Tambahkan jawaban yang diizinkan"
-
 msgid "Application passwords are not available for your account. WordPress requires HTTPS (or a local development site) and a plugin or setting may have turned them off."
 msgstr "Kata sandi aplikasi tidak tersedia untuk akun Anda. WordPress mensyaratkan HTTPS (atau situs pengembangan lokal), dan sebuah plugin atau pengaturan mungkin telah menonaktifkannya."
+
+msgid "Applied when you leave the field. Rules that compare against this value are updated; exports and integrations see the new value."
+msgstr "Diterapkan saat Anda keluar dari kolom. Aturan yang membandingkan nilai ini ikut diperbarui; ekspor dan integrasi memakai nilai baru."
+
+msgid "Applied when you leave the field. Rules, merge tags, formulas, notifications and integrations that use the old key are updated. Exports use the new key."
+msgstr "Diterapkan saat Anda keluar dari kolom. Aturan, tag gabungan, rumus, notifikasi, dan integrasi yang memakai kunci lama ikut diperbarui. Ekspor memakai kunci baru."
+
+msgid "Applied when you leave the field. Rules, outcomes and formulas that use this variable are updated."
+msgstr "Diterapkan saat Anda keluar dari kolom. Aturan, hasil, dan rumus yang memakai variabel ini ikut diperbarui."
 
 msgid "Apply JSON"
 msgstr "Terapkan JSON"
@@ -298,9 +349,6 @@ msgstr "Menerapkan perubahan terbaru Anda…"
 msgid "Appointment request"
 msgstr "Permintaan janji temu"
 
-msgid "Arithmetic expression (answer.key, variable.key)"
-msgstr "Ekspresi aritmetika (answer.key, variable.key)"
-
 msgid "Ask a question"
 msgstr "Ajukan pertanyaan"
 
@@ -313,11 +361,17 @@ msgstr "Tetapkan varian ke sesi baru"
 msgid "Assistant"
 msgstr "Asisten"
 
+msgid "Assistant name and avatar"
+msgstr "Nama dan avatar asisten"
+
 msgid "Associated private files are deleted together with submissions."
 msgstr "Berkas pribadi terkait dihapus bersama kiriman."
 
 msgid "Attribution cookie days"
 msgstr "Masa cookie atribusi (hari)"
+
+msgid "Attribution cookie days must be a whole number between 1 and 90."
+msgstr "Hari cookie atribusi harus bilangan bulat antara 1 dan 90."
 
 msgid "Auto (follow visitor device)"
 msgstr "Otomatis (ikuti perangkat pengunjung)"
@@ -334,8 +388,11 @@ msgstr "Pelengkapan otomatis"
 msgid "Automatic (from the link)"
 msgstr "Otomatis (dari tautan)"
 
-msgid "Automatic launcher placement and popup triggers are set per form in Settings → Display."
-msgstr "Penempatan tombol chat otomatis dan pemicu popup diatur per form melalui Pengaturan → Tampilan."
+msgid "Automatic (recommended)"
+msgstr "Otomatis (disarankan)"
+
+msgid "Automatic placement needs a published form."
+msgstr "Penempatan otomatis memerlukan formulir yang sudah diterbitkan."
 
 msgid "Automatic retention"
 msgstr "Retensi otomatis"
@@ -346,17 +403,14 @@ msgstr "Hapus kiriman lama secara otomatis"
 msgid "Autoresponders"
 msgstr "Balasan otomatis"
 
-msgid "Avatar attachment ID"
-msgstr "ID lampiran avatar"
+msgid "Avatar image"
+msgstr "Gambar avatar"
 
-msgid "Average completion time"
+msgid "Average time to complete"
 msgstr "Rata-rata waktu penyelesaian"
 
 msgid "BCC"
 msgstr "BCC"
-
-msgid "Back"
-msgstr "Kembali"
 
 msgid "Back to editor"
 msgstr "Kembali ke editor"
@@ -367,8 +421,17 @@ msgstr "Kembali ke alur"
 msgid "Back to submissions"
 msgstr "Kembali ke kiriman"
 
+msgid "Background jobs"
+msgstr "Tugas latar belakang"
+
+msgid "Bahasa Indonesia"
+msgstr "Bahasa Indonesia"
+
 msgid "Base URL (https, e.g. https://api.openai.com/v1)"
 msgstr "URL dasar (https, mis. https://api.openai.com/v1)"
+
+msgid "Based on"
+msgstr "Berdasarkan"
 
 msgid "Basic"
 msgstr "Dasar"
@@ -379,8 +442,8 @@ msgstr "Di bawah 4,5:1"
 msgid "Blank"
 msgstr "Kosong"
 
-msgid "Body HTML / merge tags"
-msgstr "Isi HTML / tag penggabungan"
+msgid "Blank = 360 days."
+msgstr "Kosong = 360 hari."
 
 msgid "Bot"
 msgstr "Bot"
@@ -451,8 +514,14 @@ msgstr "Warna teks tombol"
 msgid "CC"
 msgstr "CC"
 
+msgid "CF-Connecting-IP (Cloudflare)"
+msgstr "CF-Connecting-IP (Cloudflare)"
+
 msgid "Calculated number"
 msgstr "Angka terhitung"
+
+msgid "Campaign tracking (UTM)"
+msgstr "Pelacakan kampanye (UTM)"
 
 msgid "Cancel"
 msgstr "Batal"
@@ -466,14 +535,20 @@ msgstr "Penyedia captcha"
 msgid "Cards"
 msgstr "Kartu"
 
+msgid "Change the wording"
+msgstr "Ubah teks"
+
 msgid "Change this submission to “%s”?"
 msgstr "Ubah kiriman ini menjadi “%s”?"
 
-msgid "Changes are compared with the current live version."
-msgstr "Perubahan dibandingkan dengan versi yang sedang tayang."
+msgid "Changed the order of fields"
+msgstr "Urutan kolom diubah"
 
-msgid "Changing a value changes exports and integrations. Its ID stays unchanged."
-msgstr "Mengubah nilai memengaruhi ekspor dan integrasi. ID tetap sama."
+msgid "Changed: %s"
+msgstr "Diubah: %s"
+
+msgid "Changes since live version %d"
+msgstr "Perubahan sejak versi live %d"
 
 msgid "Chat background"
 msgstr "Latar percakapan"
@@ -505,14 +580,8 @@ msgstr "Ekspor ChatFlow siap"
 msgid "ChatFlow form"
 msgstr "Formulir ChatFlow"
 
-msgid "ChatFlow settings"
-msgstr "Pengaturan ChatFlow"
-
 msgid "ChatFlow tools"
 msgstr "Alat ChatFlow"
-
-msgid "Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences."
-msgstr "Periksa kontras warna pada pratinjau sesungguhnya. Konfeti saat selesai menghormati preferensi pengurangan gerakan."
 
 msgid "Chips"
 msgstr "Chip"
@@ -526,11 +595,14 @@ msgstr "Pilihan"
 msgid "Choices come from answer keys on the loaded page. Only key names, not answer values, are saved in this browser."
 msgstr "Pilihan berasal dari kunci jawaban pada halaman yang dimuat. Hanya nama kunci, bukan nilai jawaban, yang disimpan di peramban ini."
 
+msgid "Choose a date range of 367 days or less."
+msgstr "Pilih rentang tanggal maksimal 367 hari."
+
 msgid "Choose a field"
 msgstr "Pilih kolom"
 
-msgid "Choose a form"
-msgstr "Pilih formulir"
+msgid "Choose a form above to see its question-by-question funnel and answer breakdowns."
+msgstr "Pilih formulir di atas untuk melihat corong per pertanyaan dan rincian jawabannya."
 
 msgid "Choose a form from the block settings."
 msgstr "Pilih formulir dari pengaturan blok."
@@ -547,11 +619,17 @@ msgstr "Pilih titik awal. Anda dapat mengubah setiap pertanyaan sebelum menerbit
 msgid "Choose an email field"
 msgstr "Pilih kolom email"
 
+msgid "Choose both dates."
+msgstr "Pilih kedua tanggal."
+
 msgid "Choose email field"
 msgstr "Pilih kolom email"
 
 msgid "Choose form"
 msgstr "Pilih formulir"
+
+msgid "Choose image"
+msgstr "Pilih gambar"
 
 msgid "Choose template"
 msgstr "Pilih templat"
@@ -568,11 +646,17 @@ msgstr "Tutup ekspor"
 msgid "Close preview"
 msgstr "Tutup pratinjau"
 
+msgid "Close the conversation"
+msgstr "Tutup percakapan"
+
 msgid "Closed"
 msgstr "Tutup"
 
-msgid "Closing date (UTC ISO 8601, blank = never)"
-msgstr "Tanggal penutupan (UTC ISO 8601, kosong = tidak pernah)"
+msgid "Closed the chat"
+msgstr "Menutup chat"
+
+msgid "Cloudflare"
+msgstr "Cloudflare"
 
 msgid "Cloudflare Turnstile"
 msgstr "Cloudflare Turnstile"
@@ -582,6 +666,9 @@ msgstr "Kumpulkan nama, alamat email, topik, pesan, dan izin untuk membalas."
 
 msgid "Collected metadata"
 msgstr "Metadata yang dikumpulkan"
+
+msgid "Colour contrast"
+msgstr "Kontras warna"
 
 msgid "Colours"
 msgstr "Warna"
@@ -604,17 +691,17 @@ msgstr "Perusahaan"
 msgid "Completed"
 msgstr "Selesai"
 
+msgid "Completed responses only. Multiple-choice answers can count more than once per response."
+msgstr "Hanya jawaban yang selesai. Jawaban pilihan ganda bisa dihitung lebih dari sekali per jawaban."
+
 msgid "Completed submission"
 msgstr "Kiriman selesai"
 
-msgid "Completed submissions only. Current option labels; removed options grouped without exposing Other text. Multi-choice can count more than once per submission."
-msgstr "Hanya kiriman yang selesai. Menggunakan label opsi saat ini; opsi yang dihapus dikelompokkan tanpa menampilkan teks Lainnya. Pilihan ganda dapat dihitung lebih dari sekali per kiriman."
+msgid "Completion"
+msgstr "Penyelesaian"
 
 msgid "Completion rate"
 msgstr "Tingkat penyelesaian"
-
-msgid "Completion rate (completed ÷ starts)"
-msgstr "Tingkat penyelesaian (selesai ÷ mulai)"
 
 msgid "Completions"
 msgstr "Penyelesaian"
@@ -622,11 +709,14 @@ msgstr "Penyelesaian"
 msgid "Concise"
 msgstr "Ringkas"
 
-msgid "Confetti on completion (off by default)"
-msgstr "Konfeti saat selesai (nonaktif secara bawaan)"
+msgid "Condition"
+msgstr "Kondisi"
 
-msgid "Connect a step to a later step or ending to create a branch. Click a branch and press Delete or Backspace to remove it. Click a step to edit its rule conditions. Drag nodes to arrange the map."
-msgstr "Hubungkan langkah ke langkah berikutnya atau akhir untuk membuat cabang. Klik cabang lalu tekan Delete atau Backspace untuk menghapusnya. Klik langkah untuk mengedit kondisi aturannya. Seret node untuk menata peta."
+msgid "Confetti when the form is completed"
+msgstr "Konfeti saat formulir selesai"
+
+msgid "Connect a step to a later step or ending to create a branch. The branch starts with an editable “answer equals” condition; open the source rule to change it. Click a branch and press Delete or Backspace to remove it. Drag nodes to arrange the map."
+msgstr "Hubungkan langkah ke langkah berikutnya atau akhir untuk membuat cabang. Cabang dimulai dengan kondisi “jawaban sama dengan” yang dapat diedit; buka aturan sumber untuk mengubahnya. Klik cabang lalu tekan Delete atau Backspace untuk menghapusnya. Seret node untuk menata peta."
 
 msgid "Connector"
 msgstr "Konektor"
@@ -634,8 +724,8 @@ msgstr "Konektor"
 msgid "Connector credentials"
 msgstr "Kredensial konektor"
 
-msgid "Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes."
-msgstr "Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Pengaturan global terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya."
+msgid "Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in Site defaults first. Marketing and ad connectors only send when the chosen consent question was answered yes."
+msgstr "Konektor berjalan di latar belakang setelah pengiriman, dengan percobaan ulang dan log pengiriman yang sama seperti webhook. Tambahkan kredensial penyedia di Bawaan situs terlebih dahulu. Konektor pemasaran dan iklan hanya mengirim jika pertanyaan persetujuan yang dipilih dijawab ya."
 
 msgid "Consent"
 msgstr "Persetujuan"
@@ -651,6 +741,9 @@ msgstr "Teks persetujuan"
 
 msgid "Consent to process this intake request"
 msgstr "Persetujuan untuk memproses permintaan konsultasi ini"
+
+msgid "Contact button (WhatsApp, phone, email)"
+msgstr "Tombol kontak (WhatsApp, telepon, email)"
 
 msgid "Contact details and an enquiry."
 msgstr "Detail kontak dan pertanyaan."
@@ -672,12 +765,6 @@ msgstr "Konten"
 
 msgid "Continue / submit button"
 msgstr "Tombol lanjut / kirim"
-
-msgid "Contrast feedback (WCAG AA normal text)"
-msgstr "Umpan balik kontras (WCAG AA teks normal)"
-
-msgid "Conversation endings"
-msgstr "Akhir percakapan"
 
 msgid "Conversation flow"
 msgstr "Alur percakapan"
@@ -757,14 +844,29 @@ msgstr "Kriteria / jumlah"
 msgid "Cross-device resume links"
 msgstr "Tautan lanjutkan di perangkat lain"
 
+msgid "Custom CSS (applies only inside this form)"
+msgstr "CSS kustom (hanya berlaku di dalam formulir ini)"
+
 msgid "Custom CSS, focus indicators and real device behavior require separate visual checks."
 msgstr "CSS khusus, indikator fokus, dan perilaku perangkat nyata memerlukan pemeriksaan visual terpisah."
 
 msgid "Custom elements require the plugin runtime asset. Never include tokens or private settings in HTML."
 msgstr "Elemen kustom memerlukan aset runtime plugin. Jangan menyertakan token atau pengaturan privat dalam HTML."
 
+msgid "Custom font stack (CSS font-family)"
+msgstr "Susunan font kustom (CSS font-family)"
+
 msgid "Custom headers (private)"
 msgstr "Header khusus (pribadi)"
+
+msgid "Custom pattern (regular expression, advanced)"
+msgstr "Pola kustom (ekspresi reguler, lanjutan)"
+
+msgid "Custom phrase “%s”"
+msgstr "Frasa kustom “%s”"
+
+msgid "Custom trusted proxy"
+msgstr "Proxy tepercaya kustom"
 
 msgid "Customer feedback"
 msgstr "Umpan balik pelanggan"
@@ -778,11 +880,11 @@ msgstr "Mode gelap memakai warna bawaannya sendiri."
 msgid "Date"
 msgstr "Tanggal"
 
-msgid "Dates in UTC"
-msgstr "Tanggal dalam UTC"
+msgid "Date range"
+msgstr "Rentang tanggal"
 
-msgid "Dates in site timezone (%s)"
-msgstr "Tanggal dalam zona waktu situs (%s)"
+msgid "Dates use your site time zone (%s)."
+msgstr "Tanggal memakai zona waktu situs Anda (%s)."
 
 msgid "Deactivation never deletes data. Multisite uses each site’s own setting."
 msgstr "Menonaktifkan plugin tidak menghapus data. Multisite menggunakan pengaturan masing-masing situs."
@@ -805,6 +907,9 @@ msgstr "Tema bawaan untuk formulir baru"
 msgid "Default value"
 msgstr "Nilai bawaan"
 
+msgid "Defaults for every form on this site, plus site-wide services. A form can override supported defaults in its Form settings tab."
+msgstr "Bawaan untuk setiap formulir di situs ini, beserta layanan tingkat situs. Formulir dapat mengganti bawaan yang didukung di tab Pengaturan formulir."
+
 msgid "Delay in seconds (0 = immediate)"
 msgstr "Jeda dalam detik (0 = langsung)"
 
@@ -823,20 +928,23 @@ msgstr "Hapus templat konten tersimpan?"
 msgid "Delete selected"
 msgstr "Hapus yang dipilih"
 
-msgid "Delete selected fields? Review broken references before publishing."
-msgstr "Hapus kolom terpilih? Periksa referensi yang rusak sebelum menerbitkan."
-
 msgid "Delete template"
 msgstr "Hapus templat"
 
-msgid "Delete this field? Review broken references before publishing."
-msgstr "Hapus kolom ini? Periksa referensi yang rusak sebelum menerbitkan."
+msgid "Delete the selected fields? Rules, outcomes and variants that use them are removed, and notifications or integrations that depend on them are switched off."
+msgstr "Hapus kolom terpilih? Aturan, hasil, dan varian yang memakainya akan dihapus, dan notifikasi atau integrasi yang bergantung padanya dinonaktifkan."
+
+msgid "Delete this field? Rules, outcomes and variants that use it are removed, and notifications or integrations that depend on it are switched off."
+msgstr "Hapus kolom ini? Aturan, hasil, dan varian yang memakainya akan dihapus, dan notifikasi atau integrasi yang bergantung padanya dinonaktifkan."
 
 msgid "Delete this form permanently? This cannot be undone. Forms that still have submissions cannot be deleted."
 msgstr "Hapus formulir ini secara permanen? Tindakan ini tidak dapat dibatalkan. Formulir yang masih memiliki kiriman tidak dapat dihapus."
 
 msgid "Delete this site’s forms and submissions on plugin uninstall"
 msgstr "Hapus formulir dan kiriman situs ini saat plugin dihapus"
+
+msgid "Deleted form ID (for responses of a form that no longer exists)"
+msgstr "ID formulir yang dihapus (untuk jawaban dari formulir yang sudah tidak ada)"
 
 msgid "Delimiter"
 msgstr "Pemisah"
@@ -856,8 +964,14 @@ msgstr "Desktop"
 msgid "Destination"
 msgstr "Tujuan"
 
+msgid "Detected"
+msgstr "Terdeteksi"
+
 msgid "Device"
 msgstr "Perangkat"
+
+msgid "Device default (no external requests)"
+msgstr "Bawaan perangkat (tanpa permintaan eksternal)"
 
 msgid "Devices"
 msgstr "Perangkat"
@@ -868,8 +982,8 @@ msgstr "Langsung"
 msgid "Direct / unknown"
 msgstr "Langsung / tidak diketahui"
 
-msgid "Direct contact link"
-msgstr "Tautan kontak langsung"
+msgid "Direct connection (no proxy)"
+msgstr "Koneksi langsung (tanpa proxy)"
 
 msgid "Discard local edits and reload?"
 msgstr "Buang perubahan lokal dan muat ulang?"
@@ -880,17 +994,11 @@ msgstr "Tutup"
 msgid "Display"
 msgstr "Tampilan"
 
-msgid "Display and engagement"
-msgstr "Tampilan dan interaksi"
-
 msgid "Display defaults"
 msgstr "Tampilan bawaan"
 
 msgid "Display mode"
 msgstr "Mode tampilan"
-
-msgid "Distinct sessions per step. Drop-off = viewed minus answered (floor zero), not proof of abandonment; branches, opt-out and retained history affect counts. Labels use the current draft."
-msgstr "Sesi unik per langkah. Penurunan = yang melihat dikurangi yang menjawab (minimum nol), bukan bukti sesi ditinggalkan; percabangan, penolakan pelacakan, dan riwayat tersimpan memengaruhi hitungan. Label menggunakan draf saat ini."
 
 msgid "Do not store"
 msgstr "Jangan simpan"
@@ -919,17 +1027,17 @@ msgstr "Unduh berkas terlampir"
 msgid "Draft"
 msgstr "Draf"
 
-msgid "Draft preview"
-msgstr "Pratinjau draf"
+msgid "Draft not saved"
+msgstr "Draf belum tersimpan"
 
 msgid "Draft saved"
 msgstr "Draf disimpan"
 
+msgid "Draft saved %s"
+msgstr "Draf tersimpan %s"
+
 msgid "Drag or use arrow keys to reorder"
 msgstr "Seret atau gunakan tombol panah untuk mengurutkan"
-
-msgid "Drop-off"
-msgstr "Penurunan"
 
 msgid "Dropdown"
 msgstr "Menu tarik-turun"
@@ -949,6 +1057,12 @@ msgstr "Ubah kolom: %s"
 msgid "Edit rules for %s"
 msgstr "Ubah aturan untuk %s"
 
+msgid "Edited ending: %s"
+msgstr "Akhir diubah: %s"
+
+msgid "Edited field: %s"
+msgstr "Kolom diubah: %s"
+
 msgid "Email"
 msgstr "Email"
 
@@ -960,6 +1074,9 @@ msgstr "Alamat email"
 
 msgid "Email body"
 msgstr "Isi email"
+
+msgid "Email delivery plugin"
+msgstr "Plugin pengiriman email"
 
 msgid "Email keyboard"
 msgstr "Keyboard email"
@@ -978,9 +1095,6 @@ msgstr "Sematkan"
 
 msgid "Emoji"
 msgstr "Emoji"
-
-msgid "Enable first-touch tracking"
-msgstr "Aktifkan pelacakan kunjungan pertama"
 
 msgid "Enable honeypot protection"
 msgstr "Aktifkan perlindungan honeypot"
@@ -1024,6 +1138,12 @@ msgstr "Penutup dan penyelesaian"
 msgid "Endpoint"
 msgstr "Endpoint"
 
+msgid "English"
+msgstr "English"
+
+msgid "Enter a stored value."
+msgstr "Masukkan nilai tersimpan."
+
 msgid "Enter the full number including the country code, for example 6281234567890."
 msgstr "Masukkan nomor lengkap dengan kode negara, misalnya 6281234567890."
 
@@ -1033,8 +1153,8 @@ msgstr "Sama dengan"
 msgid "Event name"
 msgstr "Nama peristiwa"
 
-msgid "Exclude page IDs (comma-separated)"
-msgstr "ID halaman yang dikecualikan (pisahkan dengan koma)"
+msgid "Example answers for the preview (JSON)"
+msgstr "Contoh jawaban untuk pratinjau (JSON)"
 
 msgid "Exclusive / none of the above"
 msgstr "Eksklusif / tidak satu pun di atas"
@@ -1042,32 +1162,20 @@ msgstr "Eksklusif / tidak satu pun di atas"
 msgid "Experiment ID"
 msgstr "ID eksperimen"
 
-msgid "Experiment variants"
-msgstr "Varian eksperimen"
-
 msgid "Explore our home range."
 msgstr "Jelajahi rangkaian produk untuk rumah kami."
 
 msgid "Explore our professional range."
 msgstr "Jelajahi rangkaian produk profesional kami."
 
-msgid "Export CSV"
-msgstr "Ekspor CSV"
-
 msgid "Export JSON"
 msgstr "Ekspor JSON"
-
-msgid "Export date range (UTC)"
-msgstr "Rentang tanggal ekspor (UTC)"
 
 msgid "Export expired or download denied. Request a new export."
 msgstr "Ekspor kedaluwarsa atau unduhan ditolak. Buat ekspor baru."
 
 msgid "Export filtered results"
 msgstr "Ekspor hasil terfilter"
-
-msgid "Export responses, move forms between sites, and run maintenance safely."
-msgstr "Ekspor respons, pindahkan formulir antar situs, dan jalankan pemeliharaan dengan aman."
 
 msgid "Export selected"
 msgstr "Ekspor yang dipilih"
@@ -1083,6 +1191,9 @@ msgstr "Mengekspor seluruh baris yang cocok dengan filter aktif, bukan hanya hal
 
 msgid "Exports only selected rows and the active filters."
 msgstr "Mengekspor hanya baris terpilih yang cocok dengan filter aktif."
+
+msgid "Extras"
+msgstr "Tambahan"
 
 msgid "Fast"
 msgstr "Cepat"
@@ -1108,17 +1219,17 @@ msgstr "Kunci field"
 msgid "Field labels"
 msgstr "Label kolom"
 
-msgid "Field mapping: provider field → answer key"
-msgstr "Pemetaan kolom: kolom penyedia → kunci jawaban"
-
 msgid "Field palette"
 msgstr "Palet kolom"
 
 msgid "Field rules"
 msgstr "Aturan kolom"
 
-msgid "Fields without an override follow the global Settings screen."
-msgstr "Kolom tanpa penggantian mengikuti layar Pengaturan global."
+msgid "Field types available"
+msgstr "Jenis kolom tersedia"
+
+msgid "Fields without an override follow Site defaults."
+msgstr "Kolom tanpa penggantian mengikuti Bawaan situs."
 
 msgid "File download denied or unavailable."
 msgstr "Unduhan berkas ditolak atau tidak tersedia."
@@ -1126,14 +1237,23 @@ msgstr "Unduhan berkas ditolak atau tidak tersedia."
 msgid "File upload"
 msgstr "Unggah berkas"
 
+msgid "File uploads and CSV exports need a writable folder outside the public web root. Add define( 'CFF_PRIVATE_DIR', '/path/outside/web/root' ); to wp-config.php."
+msgstr "Unggahan berkas dan ekspor CSV memerlukan folder yang dapat ditulis di luar root web publik. Tambahkan define( 'CFF_PRIVATE_DIR', '/path/outside/web/root' ); ke wp-config.php."
+
 msgid "Find a form"
 msgstr "Cari formulir"
+
+msgid "Find a phrase"
+msgstr "Cari frasa"
 
 msgid "Find more forms"
 msgstr "Cari form lain"
 
-msgid "First-touch attribution"
-msgstr "Atribusi kunjungan pertama"
+msgid "Floating button, popup and auto-open options are under “How the form appears” above."
+msgstr "Opsi tombol mengambang, popup, dan buka otomatis ada di “Cara formulir ditampilkan” di atas."
+
+msgid "Floating chat button (launcher)"
+msgstr "Tombol chat mengambang (launcher)"
 
 msgid "Floating launcher"
 msgstr "Tombol chat mengambang"
@@ -1141,11 +1261,8 @@ msgstr "Tombol chat mengambang"
 msgid "Follow device"
 msgstr "Ikuti perangkat"
 
-msgid "Font source"
-msgstr "Sumber font"
-
-msgid "Font stack"
-msgstr "Daftar font"
+msgid "Font"
+msgstr "Font"
 
 msgid "Footer text"
 msgstr "Teks kaki email"
@@ -1162,9 +1279,6 @@ msgstr "ID formulir"
 msgid "Form ID (blank = all)"
 msgstr "ID formulir (kosong = semua)"
 
-msgid "Form JSON file"
-msgstr "Berkas JSON formulir"
-
 msgid "Form URL QR code"
 msgstr "Kode QR URL formulir"
 
@@ -1177,17 +1291,23 @@ msgstr "Formulir dihapus permanen."
 msgid "Form file exceeds 1 MiB."
 msgstr "Berkas formulir melebihi 1 MiB."
 
-msgid "Form funnel and experiments"
-msgstr "Alur konversi formulir dan eksperimen"
+msgid "Form language"
+msgstr "Bahasa formulir"
 
 msgid "Form name"
 msgstr "Nama formulir"
+
+msgid "Form name: “%1$s” → “%2$s”"
+msgstr "Nama formulir: “%1$s” → “%2$s”"
 
 msgid "Form published"
 msgstr "Form telah tayang"
 
 msgid "Form restored."
 msgstr "Formulir dipulihkan."
+
+msgid "Form settings"
+msgstr "Pengaturan formulir"
 
 msgid "Form settings sections"
 msgstr "Bagian pengaturan form"
@@ -1204,6 +1324,9 @@ msgstr "Format"
 msgid "Forms"
 msgstr "Formulir"
 
+msgid "Formula (e.g. answer.price * answer.quantity + variable.score)"
+msgstr "Rumus (mis. answer.price * answer.quantity + variable.score)"
+
 msgid "Formula-like cells are escaped by the server. Exports contain personal data; store them securely."
 msgstr "Sel yang menyerupai formula diamankan oleh server. Ekspor berisi data pribadi; simpan dengan aman."
 
@@ -1213,14 +1336,11 @@ msgstr "Jumat"
 msgid "Friendly"
 msgstr "Ramah"
 
-msgid "From (UTC)"
-msgstr "Dari (UTC)"
+msgid "From"
+msgstr "Dari"
 
-msgid "From (site timezone)"
-msgstr "Dari (zona waktu situs)"
-
-msgid "From date (UTC)"
-msgstr "Dari tanggal (UTC)"
+msgid "From date"
+msgstr "Dari tanggal"
 
 msgid "From email"
 msgstr "Email pengirim"
@@ -1237,11 +1357,8 @@ msgstr "Halaman penuh"
 msgid "Fullpage"
 msgstr "Halaman penuh"
 
-msgid "Fullpage base slug"
-msgstr "Slug dasar halaman penuh"
-
-msgid "Funnel"
-msgstr "Alur konversi"
+msgid "Fullpage base must be lowercase letters, numbers or hyphens."
+msgstr "Basis halaman penuh harus berupa huruf kecil, angka, atau tanda hubung."
 
 msgid "GIF"
 msgstr "GIF"
@@ -1251,9 +1368,6 @@ msgstr "Kumpulkan penilaian pengalaman, saran, dan niat merekomendasikan tanpa d
 
 msgid "General"
 msgstr "Umum"
-
-msgid "General / Completion"
-msgstr "Umum / Penyelesaian"
 
 msgid "Generate a form with AI"
 msgstr "Buat formulir dengan AI"
@@ -1278,6 +1392,9 @@ msgstr "Pengaturan global: sama dengan kiriman selesai."
 
 msgid "Go to a page or WhatsApp"
 msgstr "Buka halaman atau WhatsApp"
+
+msgid "Go to field"
+msgstr "Buka kolom"
 
 msgid "Goal"
 msgstr "Tujuan"
@@ -1312,6 +1429,12 @@ msgstr "Kelompokkan yang dipilih"
 msgid "Group title"
 msgstr "Judul grup"
 
+msgid "Groups label related fields in this builder to keep long forms organised. Visitors do not see them."
+msgstr "Grup menandai kolom yang saling terkait di builder agar formulir panjang tetap rapi. Pengunjung tidak melihatnya."
+
+msgid "HTTPS"
+msgstr "HTTPS"
+
 msgid "HTTPS media URL"
 msgstr "URL media HTTPS"
 
@@ -1345,9 +1468,6 @@ msgstr "Kolom tersembunyi"
 msgid "Hidden until shown by a rule"
 msgstr "Tersembunyi hingga ditampilkan oleh aturan"
 
-msgid "Hidden value source"
-msgstr "Sumber nilai tersembunyi"
-
 msgid "Hide field"
 msgstr "Sembunyikan kolom"
 
@@ -1369,11 +1489,17 @@ msgstr "Bagaimana kami dapat membantu?"
 msgid "How likely are you to recommend us? (0–10)"
 msgstr "Seberapa besar kemungkinan Anda merekomendasikan kami? (0–10)"
 
+msgid "How people answered"
+msgstr "Cara orang menjawab"
+
+msgid "How the form appears"
+msgstr "Cara formulir ditampilkan"
+
+msgid "How these numbers are counted"
+msgstr "Cara angka ini dihitung"
+
 msgid "How was your experience?"
 msgstr "Bagaimana pengalaman Anda?"
-
-msgid "Human contact during the conversation"
-msgstr "Kontak manusia selama percakapan"
 
 msgid "I agree that the information I provide may be used to respond to this intake request."
 msgstr "Saya menyetujui penggunaan informasi yang saya berikan untuk menanggapi permintaan konsultasi ini."
@@ -1390,44 +1516,29 @@ msgstr "Ikon"
 msgid "If"
 msgstr "Jika"
 
+msgid "If an automatic submit fails (offline, spam check or server error), visitors still get a Retry button."
+msgstr "Jika pengiriman otomatis gagal (offline, pemeriksaan spam, atau galat server), pengunjung tetap mendapat tombol Coba lagi."
+
 msgid "If several choices have paths, rules are evaluated in option order."
 msgstr "Jika beberapa pilihan memiliki alur, aturan diperiksa sesuai urutan pilihan."
+
+msgid "Ignored while a date range is set."
+msgstr "Diabaikan selama rentang tanggal diatur."
 
 msgid "Image"
 msgstr "Gambar"
 
-msgid "Image attachment ID"
-msgstr "ID lampiran gambar"
-
 msgid "Imajiner website survey"
 msgstr "Survei situs web Imajiner"
 
-msgid "Import form"
-msgstr "Impor formulir"
-
-msgid "Import form JSON"
-msgstr "Impor JSON formulir"
-
 msgid "Import form JSON (creates a draft)"
 msgstr "Impor JSON formulir (membuat draf)"
-
-msgid "Import new draft"
-msgstr "Impor sebagai draf baru"
-
-msgid "Imports create a new draft and are validated by the server. Webhooks exported by ChatFlow have their secrets removed and are disabled."
-msgstr "Impor membuat draf baru dan divalidasi oleh server. Rahasia webhook yang diekspor ChatFlow dihapus dan webhook dinonaktifkan."
-
-msgid "Include page IDs (comma-separated; blank = all)"
-msgstr "ID halaman yang disertakan (pisahkan dengan koma; kosong = semua)"
 
 msgid "Incoming webhook URL (https://hooks.slack.com/services/…)"
 msgstr "URL incoming webhook (https://hooks.slack.com/services/…)"
 
 msgid "Indonesian lead qualification with conditional branching."
 msgstr "Kualifikasi calon pelanggan dalam bahasa Indonesia dengan percabangan bersyarat."
-
-msgid "Inherit theme font"
-msgstr "Gunakan font tema"
 
 msgid "Inline"
 msgstr "Inline"
@@ -1437,6 +1548,9 @@ msgstr "Sisipkan jawaban"
 
 msgid "Insert answer merge tag"
 msgstr "Sisipkan tag penggabungan jawaban"
+
+msgid "Inside the page content (inline)"
+msgstr "Di dalam konten halaman (inline)"
 
 msgid "Inspect logic path and variables"
 msgstr "Periksa jalur logika dan variabel"
@@ -1471,6 +1585,9 @@ msgstr "Kosong"
 msgid "Is not empty"
 msgstr "Tidak kosong"
 
+msgid "Its own full page"
+msgstr "Halaman penuh tersendiri"
+
 msgid "Jump to field"
 msgstr "Lompat ke kolom"
 
@@ -1498,11 +1615,11 @@ msgstr "Kisi keyboard"
 msgid "Keyboard hint"
 msgstr "Petunjuk keyboard"
 
-msgid "Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules."
-msgstr "Kunci digunakan dalam ekspor dan integrasi. Mengganti nama tidak mengubah ID tetap; periksa tag penggabungan dan aturan terkait."
-
 msgid "Label"
 msgstr "Label"
+
+msgid "Language and wording"
+msgstr "Bahasa dan teks"
 
 msgid "Last 30 days"
 msgstr "30 hari terakhir"
@@ -1528,8 +1645,14 @@ msgstr "Lavender"
 msgid "Lead capture"
 msgstr "Pengumpulan prospek"
 
+msgid "Leave a box empty to use the default shown in it. %d phrases changed."
+msgstr "Biarkan kotak kosong untuk memakai teks bawaan yang ditampilkan. %d frasa diubah."
+
 msgid "Leave direct mode unless the webserver verifies and isolates proxy traffic. Never trust arbitrary forwarding headers."
 msgstr "Gunakan mode langsung kecuali server web memverifikasi dan mengisolasi lalu lintas proxy. Jangan percaya header penerusan sembarangan."
+
+msgid "Leave empty to show on every page."
+msgstr "Biarkan kosong untuk tampil di semua halaman."
 
 msgid "Leave with unsaved changes?"
 msgstr "Keluar dengan perubahan yang belum disimpan?"
@@ -1579,14 +1702,8 @@ msgstr "Pratinjau tema langsung"
 msgid "Live version %d"
 msgstr "Versi aktif %d"
 
-msgid "Load analytics"
-msgstr "Muat analitik"
-
 msgid "Load template"
 msgstr "Muat templat"
-
-msgid "Loading analytics…"
-msgstr "Memuat analitik…"
 
 msgid "Loading settings…"
 msgstr "Memuat pengaturan…"
@@ -1621,6 +1738,9 @@ msgstr "Kunci mesin"
 msgid "Mailchimp audience ID"
 msgstr "ID audiens Mailchimp"
 
+msgid "Maintenance and data cleanup. Export responses from Submissions; import a form from Forms → Create form."
+msgstr "Pemeliharaan dan pembersihan data. Ekspor jawaban dari Kiriman; impor formulir dari Formulir → Buat formulir."
+
 msgid "Make field optional"
 msgstr "Jadikan kolom opsional"
 
@@ -1642,8 +1762,8 @@ msgstr "Kondisi pencocokan"
 msgid "Maximum"
 msgstr "Maksimum"
 
-msgid "Maximum bytes per file"
-msgstr "Batas byte per berkas"
+msgid "Maximum bytes per file (blank = 10 MiB)"
+msgstr "Ukuran maksimum per berkas dalam byte (kosong = 10 MiB)"
 
 msgid "Maximum length"
 msgstr "Panjang maksimum"
@@ -1695,6 +1815,9 @@ msgstr "Usia minimum"
 
 msgid "Minimum completion seconds"
 msgstr "Waktu penyelesaian minimum (detik)"
+
+msgid "Minimum completion seconds must be zero or more."
+msgstr "Detik penyelesaian minimum harus nol atau lebih."
 
 msgid "Minimum height"
 msgstr "Tinggi minimum"
@@ -1756,11 +1879,11 @@ msgstr "Perlu ditingkatkan"
 msgid "Nested condition"
 msgstr "Kondisi bertingkat"
 
+msgid "Never show on these pages"
+msgstr "Jangan tampilkan di halaman ini"
+
 msgid "New blank form"
 msgstr "Formulir kosong baru"
-
-msgid "New form"
-msgstr "Formulir baru"
 
 msgid "New group"
 msgstr "Grup baru"
@@ -1791,6 +1914,9 @@ msgstr "Malam"
 
 msgid "No"
 msgstr "Tidak"
+
+msgid "No changes since the live version."
+msgstr "Tidak ada perubahan sejak versi live."
 
 msgid "No column"
 msgstr "Tanpa kolom"
@@ -1828,6 +1954,12 @@ msgstr "Tanpa keyboard layar"
 msgid "No outcomes yet. The form ends normally unless an outcome matches."
 msgstr "Belum ada hasil. Formulir berakhir normal kecuali ada hasil yang cocok."
 
+msgid "No phrase matches that search."
+msgstr "Tidak ada frasa yang cocok."
+
+msgid "No published pages match."
+msgstr "Tidak ada halaman terbit yang cocok."
+
 msgid "No recognized SMTP mailer detected. Configure a reliable mailer and test inbox delivery; wp_mail acceptance does not prove delivery."
 msgstr "Pengirim SMTP yang dikenal tidak terdeteksi. Konfigurasikan pengirim yang andal dan uji penerimaan di kotak masuk; penerimaan wp_mail tidak membuktikan email terkirim."
 
@@ -1837,14 +1969,17 @@ msgstr "Belum ada aturan. Tambahkan aturan untuk menampilkan, menyembunyikan, at
 msgid "No scoring variables yet. Add one to start tallying answers."
 msgstr "Belum ada variabel skor. Tambahkan satu untuk mulai menghitung jawaban."
 
-msgid "Non-spam/non-trash submissions created in the range. Sources use UTM source, then referrer hostname; no URLs or query strings returned."
-msgstr "Kiriman bukan spam/sampah yang dibuat dalam rentang tanggal. Sumber menggunakan UTM source, lalu nama host perujuk; tidak mengembalikan URL atau parameter kueri."
-
 msgid "None"
 msgstr "Tidak ada"
 
 msgid "Normal"
 msgstr "Normal"
+
+msgid "Not configured"
+msgstr "Belum diatur"
+
+msgid "Not detected"
+msgstr "Tidak terdeteksi"
 
 msgid "Not published yet"
 msgstr "Belum diterbitkan"
@@ -1858,8 +1993,8 @@ msgstr "Catatan"
 msgid "Notifications"
 msgstr "Notifikasi"
 
-msgid "Notify on abandoned contact leads"
-msgstr "Kirim notifikasi untuk prospek kontak yang ditinggalkan"
+msgid "Notifications use WordPress mail, which often lands in spam. An SMTP plugin (for example WP Mail SMTP or FluentSMTP) makes delivery reliable."
+msgstr "Notifikasi memakai email WordPress, yang sering masuk spam. Plugin SMTP (misalnya WP Mail SMTP atau FluentSMTP) membuat pengiriman lebih andal."
 
 msgid "Number"
 msgstr "Angka"
@@ -1888,11 +2023,17 @@ msgstr "Cukup baik"
 msgid "Older activity"
 msgstr "Aktivitas lebih lama"
 
-msgid "Older than days (default 360 unless dates set)"
-msgstr "Lebih lama dari jumlah hari (bawaan 360 kecuali tanggal diisi)"
+msgid "Older than days"
+msgstr "Lebih lama dari (hari)"
+
+msgid "On"
+msgstr "Aktif"
 
 msgid "Only public HTTPS destinations. Private and loopback hosts are blocked server-side. Secrets remain private."
 msgstr "Hanya tujuan HTTPS publik. Host pribadi dan loopback diblokir oleh server. Rahasia tetap bersifat pribadi."
+
+msgid "Only show on these pages"
+msgstr "Hanya tampilkan di halaman ini"
 
 msgid "Only show the button during working hours"
 msgstr "Tampilkan tombol hanya pada jam kerja"
@@ -1906,9 +2047,6 @@ msgstr "Buka kolom di tab Bangun, pilih Logika, lalu tambahkan aturan untuk mena
 msgid "Open form"
 msgstr "Buka form"
 
-msgid "Open imported form"
-msgstr "Buka formulir hasil impor"
-
 msgid "Open your profile"
 msgstr "Buka profil Anda"
 
@@ -1921,14 +2059,20 @@ msgstr "OpenRouter"
 msgid "OpenRouter API key (sk-or-…)"
 msgstr "Kunci API OpenRouter (sk-or-…)"
 
-msgid "Operand source"
-msgstr "Sumber operand"
-
 msgid "Operation"
 msgstr "Operasi"
 
 msgid "Operator"
 msgstr "Operator"
+
+msgid "Option %d"
+msgstr "Pilihan %d"
+
+msgid "Option 1"
+msgstr "Pilihan 1"
+
+msgid "Option image"
+msgstr "Gambar pilihan"
 
 msgid "Option label"
 msgstr "Label pilihan"
@@ -1941,6 +2085,9 @@ msgstr "Kredensial captcha dan Akismet opsional"
 
 msgid "Optional. Form editors can generate a draft form from a description and rephrase bot copy in a chosen tone. Requests run on your server and send only the description or the form’s own copy to the provider, never submissions. Leave the selected provider’s fields blank to turn AI assist off."
 msgstr "Opsional. Editor formulir dapat membuat draf formulir dari deskripsi dan menulis ulang teks bot dengan nada pilihan. Permintaan berjalan di server Anda dan hanya mengirim deskripsi atau teks formulir ke penyedia, tidak pernah kiriman. Kosongkan kolom penyedia yang dipilih untuk menonaktifkan bantuan AI."
+
+msgid "Or preview with a real response (response number, optional)"
+msgstr "Atau pratinjau dengan jawaban nyata (nomor jawaban, opsional)"
 
 msgid "Other"
 msgstr "Lainnya"
@@ -1960,14 +2107,17 @@ msgstr "Hasil akhir"
 msgid "Outside working hours"
 msgstr "Di luar jam kerja"
 
+msgid "Overridden · use site default"
+msgstr "Diganti · gunakan bawaan situs"
+
 msgid "Override step order (safe independent steps only)"
 msgstr "Ubah urutan langkah (hanya langkah mandiri yang aman)"
 
-msgid "Overview · UTC"
-msgstr "Ringkasan · UTC"
+msgid "PHP version"
+msgstr "Versi PHP"
 
-msgid "Page exclusions take precedence. A published form is required for automatic placement."
-msgstr "Pengecualian halaman diutamakan. Formulir harus diterbitkan untuk penempatan otomatis."
+msgid "Page #%d"
+msgstr "Halaman #%d"
 
 msgid "Page metadata"
 msgstr "Metadata halaman"
@@ -1975,26 +2125,26 @@ msgstr "Metadata halaman"
 msgid "Palette"
 msgstr "Palet"
 
+msgid "Parameter or cookie name (blank = field key)"
+msgstr "Nama parameter atau cookie (kosong = kunci kolom)"
+
 msgid "Partial"
 msgstr "Sebagian"
-
-msgid "Partial retention and spam defaults"
-msgstr "Retensi kiriman sebagian dan perlindungan spam bawaan"
 
 msgid "Partial retention days (blank = same as completed submissions)"
 msgstr "Retensi kiriman sebagian (hari; kosong = sama dengan kiriman selesai)"
 
+msgid "Partial retention days must be a whole number between 1 and 36,500."
+msgstr "Hari retensi parsial harus bilangan bulat antara 1 dan 36.500."
+
 msgid "Partial submission saved"
 msgstr "Kiriman parsial disimpan"
 
-msgid "Partial/abandoned retention days (blank = use global setting)"
-msgstr "Hari retensi parsial/ditinggalkan (kosong = gunakan pengaturan global)"
+msgid "Partial/abandoned retention days (blank = use site default)"
+msgstr "Hari retensi parsial/ditinggalkan (kosong = pakai bawaan situs)"
 
 msgid "Pass"
 msgstr "Lulus"
-
-msgid "Past submission ID (optional; requires submission access)"
-msgstr "ID kiriman sebelumnya (opsional; memerlukan akses kiriman)"
 
 msgid "Per user (blank = unlimited)"
 msgstr "Per pengguna (kosong = tanpa batas)"
@@ -2013,9 +2163,6 @@ msgstr "Telepon"
 
 msgid "Phone question (optional, sent hashed)"
 msgstr "Pertanyaan telepon (opsional, dikirim dalam bentuk hash)"
-
-msgid "Phrase key → translated text"
-msgstr "Kunci frasa → teks terjemahan"
 
 msgid "Pills"
 msgstr "Pil"
@@ -2044,6 +2191,9 @@ msgstr "Santai"
 msgid "Popup"
 msgstr "Jendela pop-up"
 
+msgid "Popup over the page"
+msgstr "Popup di atas halaman"
+
 msgid "Postcode"
 msgstr "Kode pos"
 
@@ -2061,6 +2211,9 @@ msgstr "Menyiapkan kode QR…"
 
 msgid "Preview"
 msgstr "Pratinjau"
+
+msgid "Preview and send a test"
+msgstr "Pratinjau dan kirim uji"
 
 msgid "Preview count"
 msgstr "Pratinjau jumlah"
@@ -2095,9 +2248,6 @@ msgstr "Privasi"
 msgid "Privacy and retention"
 msgstr "Privasi dan retensi"
 
-msgid "Privacy and retention override"
-msgstr "Pengaturan khusus privasi dan retensi"
-
 msgid "Privacy defaults"
 msgstr "Privasi bawaan"
 
@@ -2113,6 +2263,9 @@ msgstr "Token akses private app (cakupan tulis kontak CRM)"
 msgid "Private captcha key"
 msgstr "Kunci captcha privat"
 
+msgid "Private file storage (uploads and exports)"
+msgstr "Penyimpanan berkas privat (unggahan dan ekspor)"
+
 msgid "Private storage unavailable."
 msgstr "Penyimpanan privat tidak tersedia."
 
@@ -2125,6 +2278,9 @@ msgstr "Profesional"
 msgid "Provider"
 msgstr "Penyedia"
 
+msgid "Provider field name"
+msgstr "Nama kolom penyedia"
+
 msgid "Proxy mode"
 msgstr "Mode proxy"
 
@@ -2136,6 +2292,9 @@ msgstr "Hasil publikasi"
 
 msgid "Publish"
 msgstr "Terbitkan"
+
+msgid "Publish & share"
+msgstr "Terbitkan & bagikan"
 
 msgid "Publish failed."
 msgstr "Penerbitan gagal."
@@ -2182,11 +2341,20 @@ msgstr "Kode QR"
 msgid "Qualify website project inquiries, with conditional questions."
 msgstr "Kualifikasi pertanyaan proyek website, dengan pertanyaan bersyarat."
 
+msgid "Question"
+msgstr "Pertanyaan"
+
 msgid "Question labels, bot messages and endings are sent to the AI provider chosen in ChatFlow Settings. Merge tags are kept; review the result before publishing."
 msgstr "Label pertanyaan, pesan bot, dan penutup dikirim ke penyedia AI yang dipilih di Pengaturan ChatFlow. Tag gabungan dipertahankan; periksa hasilnya sebelum menerbitkan."
 
-msgid "Questions: %d added, %d changed, %d removed."
-msgstr "Pertanyaan: %d ditambahkan, %d diubah, %d dihapus."
+msgid "Questions where visitors stopped most"
+msgstr "Pertanyaan tempat pengunjung paling sering berhenti"
+
+msgid "Rate limit must be at least 1."
+msgstr "Batas laju minimal 1."
+
+msgid "Rate window must be at least 1 second."
+msgstr "Jendela laju minimal 1 detik."
 
 msgid "Rate window seconds"
 msgstr "Jendela pembatasan (detik)"
@@ -2215,6 +2383,9 @@ msgstr "Baca setiap respons, tindak lanjuti percakapan yang belum selesai, dan e
 msgid "Read state"
 msgstr "Status baca"
 
+msgid "Ready"
+msgstr "Siap"
+
 msgid "Recipient email field"
 msgstr "Kolom email penerima"
 
@@ -2230,9 +2401,6 @@ msgstr "Pengalihan"
 msgid "Redirect URL"
 msgstr "URL pengalihan"
 
-msgid "Redirect delay (milliseconds)"
-msgstr "Jeda pengalihan (milidetik)"
-
 msgid "Redirect to website"
 msgstr "Alihkan ke situs web"
 
@@ -2245,11 +2413,17 @@ msgstr "Segarkan aktivitas"
 msgid "Refresh progress"
 msgstr "Segarkan progres"
 
-msgid "Regex pattern"
-msgstr "Pola regex"
-
 msgid "Reload server draft"
 msgstr "Muat ulang draf server"
+
+msgid "Remember where visitors first came from (UTM and ad click IDs)"
+msgstr "Ingat dari mana pengunjung pertama kali datang (UTM dan ID klik iklan)"
+
+msgid "Remove"
+msgstr "Hapus"
+
+msgid "Remove %s"
+msgstr "Hapus %s"
 
 msgid "Remove button"
 msgstr "Hapus tombol"
@@ -2266,9 +2440,6 @@ msgstr "Hapus email"
 msgid "Remove ending"
 msgstr "Hapus penutup"
 
-msgid "Remove ending? Update any rules that reference it."
-msgstr "Hapus penutup? Perbarui semua aturan yang merujuknya."
-
 msgid "Remove experiment"
 msgstr "Hapus eksperimen"
 
@@ -2284,6 +2455,12 @@ msgstr "Hapus hasil"
 msgid "Remove rule"
 msgstr "Hapus aturan"
 
+msgid "Remove this ending and update rules, outcomes and the default ending that reference it?"
+msgstr "Hapus akhir ini dan perbarui aturan, hasil, dan akhir bawaan yang merujuknya?"
+
+msgid "Remove this variable? Rules and outcomes that use it are removed, and notifications that depend on it are switched off."
+msgstr "Hapus variabel ini? Aturan dan hasil yang memakainya akan dihapus, dan notifikasi yang bergantung padanya dinonaktifkan."
+
 msgid "Remove variable"
 msgstr "Hapus variabel"
 
@@ -2296,6 +2473,12 @@ msgstr "Hapus webhook"
 msgid "Removed / unknown options"
 msgstr "Opsi dihapus / tidak dikenal"
 
+msgid "Removed ending: %s"
+msgstr "Akhir dihapus: %s"
+
+msgid "Removed field: %s"
+msgstr "Kolom dihapus: %s"
+
 msgid "Rephrase"
 msgstr "Tulis ulang"
 
@@ -2304,6 +2487,9 @@ msgstr "Tulis ulang teks bot dengan AI"
 
 msgid "Rephrasing…"
 msgstr "Menulis ulang…"
+
+msgid "Replace image"
+msgstr "Ganti gambar"
 
 msgid "Replace this email subject and body? Routing and recipients stay unchanged."
 msgstr "Ganti subjek dan isi email ini? Aturan pengiriman dan penerima tidak berubah."
@@ -2338,6 +2524,9 @@ msgstr "Kirim ulang semua notifikasi yang sesuai untuk jawaban selesai ini?"
 msgid "Resend notifications"
 msgstr "Kirim ulang notifikasi"
 
+msgid "Resent %1$d of %2$d submissions; %3$d failed."
+msgstr "Mengirim ulang %1$d dari %2$d kiriman; %3$d gagal."
+
 msgid "Reset filters"
 msgstr "Atur ulang filter"
 
@@ -2365,23 +2554,26 @@ msgstr "Pulihkan yang dipilih"
 msgid "Resume days (1–90)"
 msgstr "Masa melanjutkan sesi (hari; 1–90)"
 
-msgid "Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy."
-msgstr "Melanjutkan sesi menyimpan jawaban di perangkat ini. Jelaskan penyimpanan data pribadi dalam kebijakan privasi dan cookie."
+msgid "Resume stores answers on this device. Disclose personal-data storage in your privacy and cookie policy, or turn on the notice above for forms that collect sensitive data or are often used on shared computers."
+msgstr "Fitur lanjutkan menyimpan jawaban di perangkat ini. Cantumkan penyimpanan data pribadi di kebijakan privasi dan cookie Anda, atau aktifkan pemberitahuan di atas untuk formulir yang mengumpulkan data sensitif atau sering dipakai di komputer bersama."
 
 msgid "Retention days"
 msgstr "Masa retensi (hari)"
 
+msgid "Retention days must be a whole number between 1 and 36,500."
+msgstr "Hari retensi harus bilangan bulat antara 1 dan 36.500."
+
 msgid "Retry delivery"
 msgstr "Ulangi pengiriman"
+
+msgid "Retry loading the published version"
+msgstr "Coba muat ulang versi yang diterbitkan"
 
 msgid "Retry save"
 msgstr "Coba simpan lagi"
 
 msgid "Reusable email content"
 msgstr "Konten email yang dapat digunakan kembali"
-
-msgid "Review changes and version details"
-msgstr "Tinjau perubahan dan detail versi"
 
 msgid "Rewrote %1$d of %2$d texts."
 msgstr "Menulis ulang %1$d dari %2$d teks."
@@ -2395,17 +2587,17 @@ msgstr "Baris per halaman"
 msgid "Rule %d"
 msgstr "Aturan %d"
 
-msgid "Rules are checked in order. The first one that matches wins."
-msgstr "Aturan diperiksa berurutan. Aturan pertama yang cocok yang dipakai."
+msgid "Rules run from top to bottom. A jump or end stops at the first one that matches; other matching show, hide, require and scoring actions all apply."
+msgstr "Aturan dijalankan dari atas ke bawah. Lompat atau akhiri berhenti pada aturan pertama yang cocok; tindakan tampilkan, sembunyikan, wajibkan, dan skor lain yang cocok semuanya diterapkan."
 
-msgid "Rules run from top to bottom. The first matching rule wins."
-msgstr "Aturan dijalankan dari atas ke bawah. Aturan pertama yang cocok yang dipakai."
+msgid "Rules run in order. A jump or end stops at the first match; other matching actions all apply."
+msgstr "Aturan dijalankan berurutan. Lompat atau akhiri berhenti pada kecocokan pertama; tindakan lain yang cocok semuanya diterapkan."
 
 msgid "SMTP status is unknown. Verify your mail transport and test inbox delivery."
 msgstr "Status SMTP tidak diketahui. Periksa pengiriman email dan uji penerimaan di kotak masuk."
 
-msgid "Sample answers (JSON object)"
-msgstr "Contoh jawaban (objek JSON)"
+msgid "Same as the page (site language)"
+msgstr "Sama dengan halaman (bahasa situs)"
 
 msgid "Sample answers must be an object."
 msgstr "Contoh jawaban harus berupa objek."
@@ -2418,9 +2610,6 @@ msgstr "Sabtu"
 
 msgid "Save applies to all sections."
 msgstr "Penyimpanan berlaku untuk semua bagian."
-
-msgid "Save draft"
-msgstr "Simpan draf"
 
 msgid "Save email content as template"
 msgstr "Simpan konten email sebagai templat"
@@ -2443,14 +2632,20 @@ msgstr "Templat tersimpan"
 msgid "Saved. Leave unchanged to keep it, or clear the field to remove it."
 msgstr "Tersimpan. Biarkan tidak berubah untuk mempertahankannya, atau kosongkan untuk menghapusnya."
 
+msgid "Saving and resume"
+msgstr "Penyimpanan dan lanjutkan"
+
 msgid "Saving…"
 msgstr "Menyimpan…"
+
+msgid "Saw it"
+msgstr "Melihat"
 
 msgid "Scale (1–10)"
 msgstr "Skala (1–10)"
 
-msgid "Scoped custom CSS (inside the Shadow DOM)"
-msgstr "CSS khusus terbatas (di dalam Shadow DOM)"
+msgid "Scoring variable"
+msgstr "Variabel skor"
 
 msgid "Scoring variables"
 msgstr "Variabel penilaian"
@@ -2466,6 +2661,9 @@ msgstr "Cari formulir"
 
 msgid "Search keyboard"
 msgstr "Keyboard pencarian"
+
+msgid "Search pages and posts"
+msgstr "Cari halaman dan pos"
 
 msgid "Secrets are stored only in private global settings. Per-form selectors opt in. Third-party checks contact the selected provider; ensure your privacy policy and consent meet its requirements. Missing credentials fail closed."
 msgstr "Rahasia hanya disimpan dalam pengaturan global privat. Pilihan per formulir mengaktifkan pemeriksaan. Pemeriksaan pihak ketiga menghubungi penyedia yang dipilih; pastikan kebijakan privasi dan persetujuan memenuhi persyaratannya. Kredensial yang tidak lengkap menyebabkan penolakan demi keamanan."
@@ -2488,6 +2686,9 @@ msgstr "Pilih halaman ini"
 msgid "Semicolon"
 msgstr "Titik koma"
 
+msgid "Send answers to provider fields"
+msgstr "Kirim jawaban ke kolom penyedia"
+
 msgid "Send only first matching autoresponder"
 msgstr "Kirim hanya balasan otomatis pertama yang cocok"
 
@@ -2496,6 +2697,9 @@ msgstr "Kirim hanya jika kondisi cocok"
 
 msgid "Send test of published version"
 msgstr "Kirim uji versi terbit"
+
+msgid "Sender, delay and saved templates"
+msgstr "Pengirim, penundaan, dan templat tersimpan"
 
 msgid "Sessions and resume"
 msgstr "Sesi dan kelanjutan"
@@ -2506,8 +2710,11 @@ msgstr "Atur menjadi"
 msgid "Set variable"
 msgstr "Atur variabel"
 
-msgid "Settings"
-msgstr "Pengaturan"
+msgid "Sets the language of the buttons, hints and messages the chat shows on its own (Continue, Skip, Start over, error messages). Your questions and endings are written on the Build tab."
+msgstr "Mengatur bahasa tombol, petunjuk, dan pesan yang ditampilkan chat sendiri (Lanjut, Lewati, Mulai ulang, pesan galat). Pertanyaan dan akhir formulir Anda ditulis di tab Bangun."
+
+msgid "Settings changed: %s"
+msgstr "Pengaturan diubah: %s"
 
 msgid "Settings saved."
 msgstr "Pengaturan disimpan."
@@ -2542,6 +2749,9 @@ msgstr "Shortcode"
 msgid "Shortcode copied."
 msgstr "Shortcode tersalin."
 
+msgid "Show a Submit button"
+msgstr "Tampilkan tombol Kirim"
+
 msgid "Show a contact button below the conversation"
 msgstr "Tampilkan tombol kontak di bawah percakapan"
 
@@ -2550,6 +2760,12 @@ msgstr "Tampilkan pesan sebagai gantinya"
 
 msgid "Show a thank-you message"
 msgstr "Tampilkan pesan terima kasih"
+
+msgid "Show all contrast ratios"
+msgstr "Tampilkan semua rasio kontras"
+
+msgid "Show answers for review, then Submit"
+msgstr "Tampilkan jawaban untuk ditinjau, lalu Kirim"
 
 msgid "Show automatically on matching pages"
 msgstr "Tampilkan otomatis pada halaman yang sesuai"
@@ -2560,6 +2776,9 @@ msgstr "Tampilkan kolom"
 msgid "Show hidden fields (%d)"
 msgstr "Tampilkan kolom tersembunyi (%d)"
 
+msgid "Show report"
+msgstr "Tampilkan laporan"
+
 msgid "Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form."
 msgstr "Menampilkan tombol di bawah percakapan agar pengunjung dapat menghubungi Anda langsung (misalnya lewat WhatsApp) kapan saja tanpa harus menyelesaikan formulir."
 
@@ -2569,11 +2788,8 @@ msgstr "Rahasia penandatanganan"
 msgid "Single choice"
 msgstr "Pilihan tunggal"
 
-msgid "Site timezone: %s"
-msgstr "Zona waktu situs: %s"
-
-msgid "Site-wide defaults and services. Individual forms can override supported defaults in their own Settings."
-msgstr "Pengaturan bawaan dan layanan untuk seluruh situs. Setiap form dapat mengganti pengaturan bawaan yang didukung melalui Pengaturannya sendiri."
+msgid "Site defaults"
+msgstr "Bawaan situs"
 
 msgid "Skipped"
 msgstr "Dilewati"
@@ -2587,17 +2803,17 @@ msgstr "Penggeser"
 msgid "Slow"
 msgstr "Lambat"
 
+msgid "Some text may be hard to read. Adjust these colours:"
+msgstr "Sebagian teks mungkin sulit dibaca. Sesuaikan warna berikut:"
+
 msgid "Source / device"
 msgstr "Sumber / perangkat"
 
-msgid "Source key"
-msgstr "Kunci sumber"
-
-msgid "Sources"
-msgstr "Sumber"
-
 msgid "Spam"
 msgstr "Spam"
+
+msgid "Spam defaults"
+msgstr "Bawaan spam"
 
 msgid "Spam protection"
 msgstr "Perlindungan spam"
@@ -2620,14 +2836,14 @@ msgstr "Mulai dari templat"
 msgid "Start over"
 msgstr "Mulai ulang"
 
-msgid "Starts"
+msgid "Start with a lowercase letter; use only lowercase letters, numbers and underscores (64 max)."
+msgstr "Awali dengan huruf kecil; gunakan hanya huruf kecil, angka, dan garis bawah (maksimal 64)."
+
+msgid "Started"
 msgstr "Mulai"
 
-msgid "Starts and completions are independent period totals, not a cohort conversion rate; resumed sessions can make the ratio exceed 100%. Opt-out, consent, DNT/GPC and retention can reduce recorded views."
-msgstr "Sesi dimulai dan penyelesaian merupakan total periode yang terpisah, bukan tingkat konversi satu kelompok; sesi yang dilanjutkan dapat membuat rasio melebihi 100%. Penolakan pelacakan, persetujuan, DNT/GPC, dan retensi dapat mengurangi tayangan tercatat."
-
-msgid "Starts are grouped by assigned session variant. Completions count only those sessions completed during the selected period; these are not conversion rates."
-msgstr "Awal sesi dikelompokkan berdasarkan varian yang ditetapkan. Penyelesaian hanya menghitung sesi tersebut yang selesai dalam periode terpilih; angka ini bukan rasio konversi."
+msgid "Starts"
+msgstr "Mulai"
 
 msgid "Statement"
 msgstr "Pernyataan"
@@ -2641,11 +2857,11 @@ msgstr "Status / percobaan"
 msgid "Step"
 msgstr "Langkah"
 
-msgid "Step drop-off"
-msgstr "Langkah tempat pengunjung berhenti"
+msgid "Stop accepting responses after (site time, blank = never)"
+msgstr "Berhenti menerima jawaban setelah (waktu situs, kosong = tidak pernah)"
 
-msgid "Step engagement and drop-off"
-msgstr "Interaksi langkah dan penurunan jumlah responden"
+msgid "Stopped here"
+msgstr "Berhenti di sini"
 
 msgid "Store permitted metadata"
 msgstr "Simpan metadata yang diizinkan"
@@ -2680,6 +2896,9 @@ msgstr "Kiriman"
 msgid "Submit attempts per visitor IP per rate window"
 msgstr "Percobaan kirim per IP pengunjung per jendela batas"
 
+msgid "Submit automatically (no review)"
+msgstr "Kirim otomatis (tanpa tinjauan)"
+
 msgid "Subtract"
 msgstr "Kurangi"
 
@@ -2691,9 +2910,6 @@ msgstr "Minggu"
 
 msgid "Sunset"
 msgstr "Senja"
-
-msgid "System / local — no ChatFlow font requests"
-msgstr "Sistem / lokal — tanpa permintaan font ChatFlow"
 
 msgid "System status"
 msgstr "Status sistem"
@@ -2712,6 +2928,9 @@ msgstr "Detail teknis"
 
 msgid "Telephone keypad"
 msgstr "Papan tombol telepon"
+
+msgid "Tell visitors their answers are stored on this device"
+msgstr "Beri tahu pengunjung bahwa jawaban mereka disimpan di perangkat ini"
 
 msgid "Test alternate copy or a reordered question set on new sessions."
 msgstr "Uji teks alternatif atau urutan pertanyaan berbeda pada sesi baru."
@@ -2743,8 +2962,8 @@ msgstr "Terima kasih. Permintaan Anda telah diterima."
 msgid "Thank-you message"
 msgstr "Pesan terima kasih"
 
-msgid "The captcha provider and its credentials are configured in global Settings; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice."
-msgstr "Penyedia captcha dan kredensialnya diatur di Pengaturan global; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
+msgid "The captcha provider and its credentials are configured in Site defaults; a form can only use it or turn it off. Optional checks contact third parties and require a suitable privacy notice."
+msgstr "Penyedia captcha dan kredensialnya diatur di Bawaan situs; formulir hanya dapat memakainya atau menonaktifkannya. Pemeriksaan opsional menghubungi pihak ketiga dan memerlukan pemberitahuan privasi yang sesuai."
 
 msgid "The default path runs down the list; animated arrows are rules that skip ahead."
 msgstr "Jalur bawaan mengalir ke bawah daftar; panah beranimasi adalah aturan yang melompat ke depan."
@@ -2770,6 +2989,9 @@ msgstr "Permintaan gagal. Silakan coba lagi."
 msgid "The runtime preview is unavailable. Rebuild the plugin assets."
 msgstr "Pratinjau runtime tidak tersedia. Bangun ulang aset plugin."
 
+msgid "The start date must be before the end date."
+msgstr "Tanggal mulai harus sebelum tanggal akhir."
+
 msgid "The submission is saved before the visitor is redirected. For WhatsApp, build a link below; the visitor must still send the message."
 msgstr "Jawaban disimpan sebelum pengunjung dialihkan. Untuk WhatsApp, buat tautan di bawah; pengunjung tetap harus mengirim pesannya."
 
@@ -2779,6 +3001,12 @@ msgstr "Tema"
 msgid "Then"
 msgstr "Maka"
 
+msgid "These links use the published version. Your draft changes will appear here after you publish."
+msgstr "Tautan ini menggunakan versi yang diterbitkan. Perubahan draf Anda akan muncul di sini setelah diterbitkan."
+
+msgid "These win over the list above."
+msgstr "Ini mengalahkan daftar di atas."
+
 msgid "This form is locked by another admin who is editing it. Your local edits are kept; saving resumes once their editing lock clears."
 msgstr "Formulir ini dikunci oleh admin lain yang sedang mengeditnya. Suntingan lokal Anda tetap tersimpan; penyimpanan berlanjut setelah kunci edit mereka dilepas."
 
@@ -2787,6 +3015,9 @@ msgstr "Formulir ini masih memiliki kiriman. Hapus kiriman tersebut di Alat sebe
 
 msgid "This is an intake request, not medical advice. For urgent care, contact local emergency services."
 msgstr "Ini adalah permintaan konsultasi, bukan nasihat medis. Untuk bantuan mendesak, hubungi layanan darurat setempat."
+
+msgid "This is the first published version."
+msgstr "Ini adalah versi pertama yang diterbitkan."
 
 msgid "This month"
 msgstr "Bulan ini"
@@ -2806,14 +3037,11 @@ msgstr "Zona waktu (mis. Asia/Jakarta atau +07:00)"
 msgid "Timing"
 msgstr "Waktu"
 
-msgid "To (UTC, inclusive)"
-msgstr "Sampai (UTC, inklusif)"
+msgid "To"
+msgstr "Sampai"
 
-msgid "To (site timezone, inclusive)"
-msgstr "Sampai (zona waktu situs, inklusif)"
-
-msgid "To date (UTC)"
-msgstr "Sampai tanggal (UTC)"
+msgid "To date"
+msgstr "Sampai tanggal"
 
 msgid "Tone"
 msgstr "Nada"
@@ -2893,14 +3121,14 @@ msgstr "Kampanye UTM"
 msgid "UTM source"
 msgstr "Sumber UTM"
 
-msgid "UTM sources"
-msgstr "Sumber UTM"
-
 msgid "Undo"
 msgstr "Urungkan"
 
 msgid "Undo rephrase"
 msgstr "Batalkan penulisan ulang"
+
+msgid "Unfinished (partial)"
+msgstr "Belum selesai (parsial)"
 
 msgid "Ungroup"
 msgstr "Lepas pengelompokan"
@@ -2920,11 +3148,14 @@ msgstr "Tidak diketahui"
 msgid "Unknown device"
 msgstr "Perangkat tidak diketahui"
 
+msgid "Unpublished changes"
+msgstr "Perubahan belum diterbitkan"
+
 msgid "Unread"
 msgstr "Belum dibaca"
 
-msgid "Unsaved draft"
-msgstr "Draf belum disimpan"
+msgid "Unsaved changes"
+msgstr "Perubahan belum disimpan"
 
 msgid "Unstar"
 msgstr "Hapus bintang"
@@ -2935,23 +3166,29 @@ msgstr "Formulir tanpa judul"
 msgid "Usage-based recommendations with two conditional endings."
 msgstr "Rekomendasi berdasarkan penggunaan dengan dua penutup bersyarat."
 
+msgid "Use 255 characters or fewer."
+msgstr "Gunakan maksimal 255 karakter."
+
 msgid "Use any OpenRouter model ID. Requests only go to providers that support structured JSON output."
 msgstr "Gunakan ID model OpenRouter apa pun. Permintaan hanya dikirim ke penyedia yang mendukung keluaran JSON terstruktur."
-
-msgid "Use global default"
-msgstr "Gunakan bawaan global"
-
-msgid "Use global setting"
-msgstr "Gunakan pengaturan global"
-
-msgid "Use global setting (%s)"
-msgstr "Gunakan pengaturan global (%s)"
 
 msgid "Use hex colors for calculated feedback"
 msgstr "Gunakan warna heksadesimal untuk perhitungan kontras"
 
+msgid "Use image"
+msgstr "Gunakan gambar"
+
+msgid "Use my theme’s font"
+msgstr "Gunakan font tema saya"
+
 msgid "Use optional Akismet check"
 msgstr "Gunakan pemeriksaan Akismet opsional"
+
+msgid "Use site default"
+msgstr "Gunakan bawaan situs"
+
+msgid "Use site default (%s)"
+msgstr "Gunakan bawaan situs (%s)"
 
 msgid "Use template"
 msgstr "Gunakan templat"
@@ -2968,8 +3205,8 @@ msgstr "Pengguna / peristiwa"
 msgid "User text"
 msgstr "Teks pengguna"
 
-msgid "Using global default"
-msgstr "Memakai bawaan global"
+msgid "Uses site default"
+msgstr "Memakai bawaan situs"
 
 msgid "Validation"
 msgstr "Validasi"
@@ -3004,14 +3241,8 @@ msgstr "Header proxy terverifikasi"
 msgid "Video"
 msgstr "Video"
 
-msgid "View → start"
-msgstr "Tampilan → mulai"
-
-msgid "Viewed"
-msgstr "Dilihat"
-
-msgid "Views (impressions)"
-msgstr "Tampilan (impresi)"
+msgid "Views"
+msgstr "Tayangan"
 
 msgid "Visit website"
 msgstr "Kunjungi situs web"
@@ -3019,17 +3250,29 @@ msgstr "Kunjungi situs web"
 msgid "Visitor bubble"
 msgstr "Gelembung pengunjung"
 
-msgid "Visitor phrase overrides"
-msgstr "Frasa khusus pengunjung"
-
 msgid "Visitor text"
 msgstr "Teks pengunjung"
+
+msgid "Visitors see a \"connection is not secure\" warning in the chat. Turn on HTTPS for this site before collecting personal data."
+msgstr "Pengunjung melihat peringatan \"koneksi tidak aman\" di chat. Aktifkan HTTPS untuk situs ini sebelum mengumpulkan data pribadi."
+
+msgid "Visitors who saw and answered each question. “Stopped here” is seen minus answered; branches can skip questions, so it is a guide rather than proof of abandonment."
+msgstr "Pengunjung yang melihat dan menjawab setiap pertanyaan. “Berhenti di sini” adalah yang melihat dikurangi yang menjawab; percabangan dapat melewati pertanyaan, jadi ini panduan, bukan bukti pengunjung meninggalkan formulir."
+
+msgid "WP-Cron only runs when someone visits the site, so emails and exports can be delayed on quiet sites. A real server cron job fixes this."
+msgstr "WP-Cron hanya berjalan saat ada yang mengunjungi situs, sehingga email dan ekspor bisa tertunda di situs yang sepi. Cron job server yang sebenarnya mengatasi hal ini."
+
+msgid "Wait before redirecting (seconds)"
+msgstr "Tunggu sebelum mengalihkan (detik)"
 
 msgid "Wait for the visitor to press a button"
 msgstr "Tunggu pengunjung menekan tombol"
 
 msgid "Wallpaper"
 msgstr "Wallpaper"
+
+msgid "Webhook %d"
+msgstr "Webhook %d"
 
 msgid "Webhook URL"
 msgstr "URL webhook"
@@ -3045,6 +3288,9 @@ msgstr "Bobot (1–100)"
 
 msgid "Welcome! Add your questions in the builder."
 msgstr "Selamat datang! Tambahkan pertanyaan Anda melalui pembuat formulir."
+
+msgid "Went back"
+msgstr "Kembali"
 
 msgid "What brings you here today?"
 msgstr "Ada yang bisa kami bantu hari ini?"
@@ -3067,11 +3313,23 @@ msgstr "Nomor WhatsApp dengan kode negara"
 msgid "When this choice is selected, continue to"
 msgstr "Saat pilihan ini dipilih, lanjutkan ke"
 
+msgid "Where the value comes from"
+msgstr "Asal nilai"
+
+msgid "Where visitors came from"
+msgstr "Asal pengunjung"
+
+msgid "Where visitors stop"
+msgstr "Tempat pengunjung berhenti"
+
 msgid "Where will you use the product?"
 msgstr "Di mana Anda akan menggunakan produk ini?"
 
-msgid "Whitelisted field keys"
-msgstr "Kunci kolom yang diizinkan"
+msgid "WordPress version"
+msgstr "Versi WordPress"
+
+msgid "Wording"
+msgstr "Teks"
 
 msgid "Work"
 msgstr "Pekerjaan"
@@ -3084,6 +3342,12 @@ msgstr "Sedang diproses…"
 
 msgid "Works with OpenAI and services that offer the same Chat Completions API, such as Groq, Together, Mistral, DeepSeek or a self-hosted gateway. ChatFlow calls {base URL}/chat/completions and asks for JSON output; models without JSON Schema support fall back to plain JSON mode. Only public https endpoints are allowed."
 msgstr "Berfungsi dengan OpenAI dan layanan yang menyediakan API Chat Completions yang sama, seperti Groq, Together, Mistral, DeepSeek, atau gateway yang Anda kelola sendiri. ChatFlow memanggil {base URL}/chat/completions dan meminta keluaran JSON; model tanpa dukungan JSON Schema beralih ke mode JSON biasa. Hanya endpoint https publik yang diizinkan."
+
+msgid "X-Forwarded-For"
+msgstr "X-Forwarded-For"
+
+msgid "X-Real-IP"
+msgstr "X-Real-IP"
 
 msgid "Yes"
 msgstr "Ya"
@@ -3108,6 +3372,9 @@ msgstr "Anda tidak diizinkan melihat analitik."
 
 msgid "You cannot view submissions."
 msgstr "Anda tidak dapat melihat kiriman."
+
+msgid "Your IP address as ChatFlow sees it"
+msgstr "Alamat IP Anda menurut ChatFlow"
 
 msgid "Your chosen colours are kept in every mode. Choose the %s palette for a dark colour scheme."
 msgstr "Warna pilihan Anda dipertahankan di semua mode. Pilih palet %s untuk skema warna gelap."
@@ -3192,6 +3459,9 @@ msgstr "cocok dengan pola"
 
 msgid "opens"
 msgstr "buka"
+
+msgid "reCAPTCHA minimum score must be between 0 and 1."
+msgstr "Skor minimum reCAPTCHA harus antara 0 dan 1."
 
 msgid "reCAPTCHA v3 minimum score (0–1)"
 msgstr "Skor minimum reCAPTCHA v3 (0–1)"

@@ -24,6 +24,63 @@ async function chat(step: Step, locale = 'en') {
 const email: Step = { id: 'email', key: 'email', type: 'email', label: 'Email address', messages: [], required: true };
 
 describe('runtime polish regressions', () => {
+  async function finish(review?: 'off' | 'button' | 'show') {
+    const name: Step = { id: 'name', key: 'name', type: 'short_text', label: 'Name', messages: ['Name?'] };
+    const envelope = form([name]);
+    if (review) envelope.form.completion = { review };
+    const controller = new RuntimeController({ form: envelope, preview: true, locale: 'en' }, null);
+    await controller.initialize();
+    await act(() => render(<Chat controller={controller} />, host));
+    await act(() => controller.answer('Ann'));
+    return controller;
+  }
+  it('submits automatically after the last question by default, without a review', async () => {
+    const controller = await finish();
+    await vi.waitFor(() => expect(controller.state.phase).toBe('done'));
+    expect(host.textContent).not.toContain('Review your answers');
+    controller.dispose();
+  });
+  it('can ask for a Submit click, with or without the answer review', async () => {
+    for (const review of ['button', 'show'] as const) {
+      const controller = await finish(review);
+      expect(controller.state.phase).toBe('ready');
+      expect([...host.querySelectorAll('button')].some(button => button.textContent === 'Submit')).toBe(true);
+      expect(host.textContent.includes('Review your answers')).toBe(review === 'show');
+      controller.dispose();
+      await act(() => render(null, host));
+    }
+  });
+  it('shows the on-device storage notice only when the form turns it on', async () => {
+    // The footer is not rendered in preview, so render a live (non-preview) chat from a known state.
+    for (const storageNotice of [undefined, true]) {
+      const envelope = form([email]);
+      if (storageNotice) envelope.form.session.storageNotice = true;
+      const controller = new RuntimeController({ formId: 42, locale: 'en' }, null);
+      controller.state.form = envelope;
+      controller.state.phase = 'ready';
+      await act(() => render(<Chat controller={controller} />, host));
+      expect(host.textContent.includes('stored on this device')).toBe(Boolean(storageNotice));
+      controller.dispose();
+      await act(() => render(null, host));
+    }
+  });
+  it('starts over straight from the resume prompt without a second confirmation', async () => {
+    const controller = await chat(email);
+    controller.state.phase = 'resume';
+    await act(() => render(<Chat controller={controller} key="resume" />, host));
+    const buttons = () => [...host.querySelectorAll<HTMLButtonElement>('button')].map(button => button.textContent);
+    // The resume prompt already offers Start over, so the header does not repeat it.
+    expect(host.querySelector('header nav')!.textContent).not.toContain('Start over');
+    // Earlier answers are changed with their own Edit control, so the header has no Back button.
+    expect(host.querySelector('header nav')!.textContent).not.toContain('Back');
+    expect(buttons().filter(text => text === 'Start over')).toHaveLength(1);
+    const restart = vi.spyOn(controller, 'restart');
+    await act(() => { [...host.querySelectorAll<HTMLButtonElement>('.conversation button')].find(button => button.textContent === 'Start over')!.click(); });
+    expect(restart).toHaveBeenCalledOnce();
+    expect(host.querySelector('[role=alertdialog]')).toBeNull();
+    expect(host.textContent).not.toContain('Start from the beginning?');
+    controller.dispose();
+  });
   it('refocuses the invalid input when the same bad answer is submitted again', async () => {
     const controller = await chat(email);
     const input = host.querySelector<HTMLInputElement>('.active input')!;

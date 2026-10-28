@@ -1,9 +1,9 @@
 /** @jsxRuntime classic */
 /** @jsx React.createElement */
 import * as React from '@wordpress/element';
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Button, Check, Field, JsonEditor, Notice, Select } from './controls';
+import { Button, Check, Field, Notice, Select } from './controls';
 import { uid } from './model';
 import type { FormSchema, FormSettings } from './api';
 import type { Connector } from '../shared/settings.generated';
@@ -38,6 +38,42 @@ export function newConnector(type: ConnectorType): Connector {
   return { id: uid('conn'), type, enabled: true, events: ['completed'] };
 }
 
+type MappingRow = { remote: string; key: string };
+const toObject = (rows: MappingRow[]) => Object.fromEntries(rows.filter((row) => row.remote.trim() && row.key).map((row) => [row.remote.trim(), row.key]));
+/** Provider field ← question rows, instead of hand-written JSON. Incomplete rows stay local until filled in. */
+function FieldMapping({ example, value, choices, onChange }: { example: string; value: Record<string, string>; choices: { value: string; label: string }[]; onChange: (fields: Record<string, string>) => void }) {
+  const [rows, setRows] = useState<MappingRow[]>(() => Object.entries(value).map(([remote, key]) => ({ remote, key })));
+  const stored = JSON.stringify(value);
+  // Follow undo/redo and reloads without discarding a row that is still being filled in.
+  useEffect(() => {
+    if (JSON.stringify(toObject(rows)) !== stored) setRows(Object.entries(value).map(([remote, key]) => ({ remote, key })));
+  }, [stored]);
+  const update = (next: MappingRow[]) => { setRows(next); onChange(toObject(next)); };
+  return (
+    <fieldset className="cff-field-mapping">
+      <legend>{__('Send answers to provider fields', 'chatflow-forms')}</legend>
+      {rows.map((row, index) => (
+        <div className="cff-field-mapping-row" key={index}>
+          <Field
+            label={__('Provider field name', 'chatflow-forms')}
+            value={row.remote}
+            placeholder={example}
+            onChange={(remote) => update(rows.map((item, i) => (i === index ? { ...item, remote } : item)))}
+          />
+          <Select
+            label={__('Question', 'chatflow-forms')}
+            value={row.key}
+            choices={choices}
+            onChange={(key) => update(rows.map((item, i) => (i === index ? { ...item, key } : item)))}
+          />
+          <Button variant="link" isDestructive onClick={() => update(rows.filter((_, i) => i !== index))}>{__('Remove', 'chatflow-forms')}</Button>
+        </div>
+      ))}
+      <Button variant="secondary" disabled={rows.length >= 30} onClick={() => setRows([...rows, { remote: '', key: '' }])}>{__('Add a field', 'chatflow-forms')}</Button>
+    </fieldset>
+  );
+}
+
 export function ConnectorSettings({ schema, integrations, onChange }: { schema: FormSchema; integrations: Integrations; onChange: (next: Integrations) => void }) {
   const [adding, setAdding] = useState<ConnectorType>('slack');
   const connectors = (integrations.connectors ?? []) as Connector[];
@@ -50,7 +86,7 @@ export function ConnectorSettings({ schema, integrations, onChange }: { schema: 
     <section className="cff-card">
       <h2>{__('Native connectors', 'chatflow-forms')}</h2>
       <Notice status="info" isDismissible={false}>
-        {__('Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in global Settings first. Marketing and ad connectors only send when the chosen consent question was answered yes.', 'chatflow-forms')}
+        {__('Connectors run in the background after submission, with the same retries and delivery log as webhooks. Add provider credentials in Site defaults first. Marketing and ad connectors only send when the chosen consent question was answered yes.', 'chatflow-forms')}
       </Notice>
       {connectors.map((connector) => {
         const needs = connectorNeeds[connector.type];
@@ -62,7 +98,7 @@ export function ConnectorSettings({ schema, integrations, onChange }: { schema: 
         };
         return (
           <fieldset key={connector.id} className="cff-connector">
-            <legend>{connectorLabels[connector.type]} · {connector.id}</legend>
+            <legend>{connectorLabels[connector.type]}</legend>
             <Check label={__('Enabled', 'chatflow-forms')} value={connector.enabled} onChange={(enabled) => change({ enabled })} />
             {(['completed', 'partial', 'abandoned'] as const).map((event) => (
               <Check
@@ -103,9 +139,10 @@ export function ConnectorSettings({ schema, integrations, onChange }: { schema: 
               />
             )}
             {needs.fields && (
-              <JsonEditor
-                label={`${__('Field mapping: provider field → answer key', 'chatflow-forms')} (${needs.fields})`}
+              <FieldMapping
+                example={needs.fields}
                 value={connector.fields ?? {}}
+                choices={fieldChoices(null, __('Choose a question', 'chatflow-forms'))}
                 onChange={(fields) => change({ fields })}
               />
             )}

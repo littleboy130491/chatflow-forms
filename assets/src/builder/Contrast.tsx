@@ -1,5 +1,6 @@
 /** @jsxRuntime classic */
 /** @jsx React.createElement */
+/** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { FormSettings } from './api';
@@ -24,14 +25,25 @@ function messagingPairs(appearance: Look, dark: boolean): Pair[] {
     [__('Button text', 'chatflow-forms'), buttonTextColor(c.primary), c.primary],
   ];
 }
+/** One line when every pair passes; failures listed up front; full ratios on request. */
 export function Contrast({ appearance = {} }: { appearance: FormSettings['appearance'] }) {
   const themes = appearance.theme === 'auto' ? ['light', 'dark'] : [appearance.theme ?? 'light'];
-  return <section><h3>{__('Contrast feedback (WCAG AA normal text)', 'chatflow-forms')}</h3>
-    {themes.map(theme => {
-      const dark = theme === 'dark';
-      const pairs = appearance.style === 'messaging' ? messagingPairs(appearance, dark) : classicPairs(appearance, dark);
-      return <ul key={theme}>{pairs.map(([label, foreground, background]) => { const ratio = contrastRatio(foreground!, background!); return <li key={label}>{theme} · {label}: {ratio === null ? __('Use hex colors for calculated feedback', 'chatflow-forms') : `${ratio.toFixed(2)}:1 · ${ratio >= 4.5 ? __('Pass', 'chatflow-forms') : __('Below 4.5:1', 'chatflow-forms')}`}</li>; })}</ul>;
-    })}
-    <p>{__('Custom CSS, focus indicators and real device behavior require separate visual checks.', 'chatflow-forms')}</p>
+  const rows = themes.flatMap(theme => {
+    const dark = theme === 'dark';
+    const pairs = appearance.style === 'messaging' ? messagingPairs(appearance, dark) : classicPairs(appearance, dark);
+    return pairs.map(([label, foreground, background]) => ({ theme, label, ratio: contrastRatio(foreground, background) }));
+  });
+  const failing = rows.filter(row => row.ratio !== null && row.ratio < 4.5);
+  const unknown = rows.some(row => row.ratio === null);
+  const line = (row: typeof rows[number]) => <li key={`${row.theme}-${row.label}`}>{row.theme} · {row.label}: {row.ratio === null ? __('Use hex colors for calculated feedback', 'chatflow-forms') : `${row.ratio.toFixed(2)}:1 · ${row.ratio >= 4.5 ? __('Pass', 'chatflow-forms') : __('Below 4.5:1', 'chatflow-forms')}`}</li>;
+  return <section className="cff-contrast">
+    <h3>{__('Colour contrast', 'chatflow-forms')}</h3>
+    {failing.length === 0 && !unknown && <p className="cff-contrast-ok">{__('All text colours are easy to read (WCAG AA).', 'chatflow-forms')}</p>}
+    {failing.length > 0 && <><p className="cff-contrast-warn">{__('Some text may be hard to read. Adjust these colours:', 'chatflow-forms')}</p><ul>{failing.map(line)}</ul></>}
+    <details>
+      <summary>{__('Show all contrast ratios', 'chatflow-forms')}</summary>
+      <ul>{rows.map(line)}</ul>
+      <p>{__('Custom CSS, focus indicators and real device behavior require separate visual checks.', 'chatflow-forms')}</p>
+    </details>
   </section>;
 }

@@ -12,11 +12,13 @@ export function Filters({
   value,
   onChange,
   purge = false,
+  questions = [],
 }: {
   api?: AdminApi;
   value: FilterValues;
   onChange: (value: FilterValues) => void;
   purge?: boolean;
+  questions?: { key: string; label: string }[];
 }) {
   const update = (key: string, next: string | number | boolean | undefined) => {
     const values = { ...value };
@@ -28,13 +30,13 @@ export function Filters({
     <div className="cff-settings-grid cff-inbox-filters">
       {api ? <FormPicker api={api} value={String(value.formId ?? '')} onChange={next => update('formId', Number(next) || undefined)} /> : <Field label={__('Form ID (blank = all)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
       <Field
-        label={__('From date (UTC)', 'chatflow-forms')}
+        label={__('From date', 'chatflow-forms')}
         type="date"
         value={value.from ?? ''}
         onChange={(next) => update('from', next)}
       />
       <Field
-        label={__('To date (UTC)', 'chatflow-forms')}
+        label={__('To date', 'chatflow-forms')}
         type="date"
         value={value.to ?? ''}
         onChange={(next) => update('to', next)}
@@ -48,7 +50,8 @@ export function Filters({
       )}
       {!purge && (
         <details className="cff-disclosure cff-advanced-filters"><summary>{__('Advanced filters', 'chatflow-forms')}</summary><div className="cff-settings-grid">
-          {api && <Field label={__('Form ID (blank = all)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
+          {/* Deleted forms keep retained submissions but no longer appear in the picker. */}
+          {api && <Field label={__('Deleted form ID (for responses of a form that no longer exists)', 'chatflow-forms')} type="number" value={value.formId ?? ''} onChange={next => update('formId', Number(next) || undefined)} />}
           <Select
             label={__('Read state', 'chatflow-forms')}
             value={value.isRead === undefined ? '' : String(value.isRead)}
@@ -90,22 +93,32 @@ export function Filters({
             ]}
             onChange={(next) => update('device', next)}
           />
-          <Field
-            label={__('Answer field key', 'chatflow-forms')}
-            value={value.fieldKey ?? ''}
-            onChange={(next) => update('fieldKey', next)}
-          />
-          <Select
-            label={__('Answer operator', 'chatflow-forms')}
+          {/* Pick the question by its label when the loaded responses tell us the labels. */}
+          {questions.length > 0 && !(value.fieldKey && !questions.some((question) => question.key === value.fieldKey)) ? (
+            <Select
+              label={__('Answer to question', 'chatflow-forms')}
+              value={value.fieldKey ?? ''}
+              choices={[{ value: '', label: __('Any question', 'chatflow-forms') }, ...questions.map((question) => ({ value: question.key, label: question.label || question.key }))]}
+              onChange={(next) => update('fieldKey', next)}
+            />
+          ) : (
+            <Field
+              label={__('Answer field key', 'chatflow-forms')}
+              value={value.fieldKey ?? ''}
+              onChange={(next) => update('fieldKey', next)}
+            />
+          )}
+          {value.fieldKey && <Select
+            label={__('Condition', 'chatflow-forms')}
             value={value.operator ?? 'eq'}
             choices={answerOperators.map((operator) => ({ value: operator, label: operatorLabel(operator) }))}
             onChange={(next) => update('operator', next)}
-          />
-          <Field
+          />}
+          {value.fieldKey && <Field
             label={__('Answer value', 'chatflow-forms')}
             value={value.value ?? ''}
             onChange={(next) => update('value', next)}
-          />
+          />}
         </div></details>
       )}
     </div>

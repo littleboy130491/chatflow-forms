@@ -263,9 +263,8 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     expect(container.textContent).not.toContain('Read state');
     expect(container.textContent).not.toContain('Answer field key');
     await click('Preview count');
-    expect(request).toHaveBeenCalledWith('admin/purge/preview', 'POST', {
-      criteria: { olderThanDays: 360 },
-    });
+    // A blank age uses the server's 360-day default.
+    expect(request).toHaveBeenCalledWith('admin/purge/preview', 'POST', { criteria: {} });
     expect(button('Permanently purge').disabled).toBe(true);
     await change('Type DELETE to confirm', 'delete');
     expect(button('Permanently purge').disabled).toBe(true);
@@ -290,7 +289,7 @@ describe('admin component regression tests (WordPress controls mocked, real owne
     await change('Type DELETE to confirm', 'DELETE');
     await click('Permanently purge');
     expect(request).toHaveBeenLastCalledWith('admin/purge', 'POST', {
-      criteria: { olderThanDays: 360 },
+      criteria: {},
       confirmationToken: 'unit-preview',
       confirmation: 'DELETE',
     });
@@ -471,7 +470,7 @@ describe('per-form settings inherit global defaults', () => {
         .find((item) => item.textContent?.startsWith('Captcha'))!
         .querySelector('select')!;
     expect([...captcha().options].map((option) => [option.value, option.textContent])).toEqual([
-      ['', 'Use global setting (Cloudflare Turnstile)'],
+      ['', 'Use site default (Cloudflare Turnstile)'],
       ['none', 'Off for this form'],
     ]);
     await change('Minimum completion seconds', '7');
@@ -483,7 +482,7 @@ describe('per-form settings inherit global defaults', () => {
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
     expect(latest.spam).toEqual({ minSeconds: 7, captcha: 'none' });
-    await click('Use global default');
+    await click('Overridden · use site default');
     expect(latest.spam).toEqual({ captcha: 'none' });
   });
 });
@@ -534,5 +533,86 @@ describe('MCP server settings', () => {
     expect(container.querySelector('pre')?.textContent).toContain("'editor:APPLICATION PASSWORD'");
     expect(container.querySelector('a')?.getAttribute('href')).toContain('#application-passwords-section');
     expect(container.querySelector('[role="alert"]')?.textContent).toContain('Application passwords are not available');
+  });
+});
+describe('form language and wording editor', () => {
+  it('edits phrases by their visible text, clears an override when emptied, and sets the language', async () => {
+    const { WordingEditor } = await import('../../../assets/src/builder/Wording');
+    let latest: FormSettings = { phrases: { startOver: 'Ulangi', legacy_key: 'kept' } };
+    const render = () => act(async () => root.render(createElement(WordingEditor, { settings: latest, siteLocale: 'en_US', onChange: (next: FormSettings) => { latest = next; void render(); } })));
+    await render();
+    // English defaults label each phrase; customised ones are listed first.
+    const labels = [...container.querySelectorAll('label')].map((label) => label.textContent ?? '');
+    expect(labels.indexOf('Start over')).toBeLessThan(labels.indexOf('Continue'));
+    expect(labels).toContain('Custom phrase “legacy_key”');
+    await change('Continue', 'Lanjut dong');
+    expect(latest.phrases).toEqual({ startOver: 'Ulangi', legacy_key: 'kept', continue: 'Lanjut dong' });
+    await change('Start over', '');
+    expect(latest.phrases).toEqual({ legacy_key: 'kept', continue: 'Lanjut dong' });
+    await act(async () => {
+      const select = [...container.querySelectorAll('label')].find((label) => label.textContent?.startsWith('Form language'))!.querySelector('select')!;
+      select.value = 'id';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    expect(latest.language).toBe('id');
+    // Indonesian defaults now label the phrases.
+    expect([...container.querySelectorAll('label')].some((label) => label.textContent === 'Mulai ulang')).toBe(true);
+    await change('Find a phrase', 'zzz-no-match');
+    expect(container.textContent).toContain('No phrase matches that search.');
+  });
+});
+describe('batch 3 admin pickers', () => {
+  it('shows chosen pages by title, adds from search and removes them', async () => {
+    const { PagePicker } = await import('../../../assets/src/builder/PagePicker');
+    const api = new AdminApi(config);
+    const request = vi.fn(async (path: string) =>
+      path.includes('include=') ? { items: [{ id: 7, title: 'Pricing', type: 'Page' }] } : { items: [{ id: 9, title: 'Contact us', type: 'Page' }] },
+    );
+    api.request = request as unknown as AdminApi['request'];
+    let ids = [7];
+    const render = () => act(async () => root.render(createElement(PagePicker, { api, label: 'Only show on these pages', help: '', value: ids, onChange: (next: number[]) => { ids = next; void render(); } })));
+    await render();
+    await vi.waitFor(() => expect(container.textContent).toContain('Pricing'));
+    expect(request).toHaveBeenCalledWith('admin/pages?include=7', 'GET', undefined, expect.anything());
+    vi.useFakeTimers();
+    await change('Search pages and posts', 'cont');
+    await act(async () => { vi.advanceTimersByTime(300); });
+    vi.useRealTimers();
+    await vi.waitFor(() => expect(button('Add “Contact us” (Page)')).toBeTruthy());
+    await click('Add “Contact us” (Page)');
+    expect(ids).toEqual([7, 9]);
+    // The mocked Button drops aria-label; the first chip is Pricing.
+    await act(async () => container.querySelector<HTMLButtonElement>('.cff-page-chips button')!.click());
+    expect(ids).toEqual([9]);
+  });
+  it('maps provider fields to questions with rows instead of JSON', async () => {
+    const { ConnectorSettings } = await import('../../../assets/src/builder/ConnectorSettings');
+    const schema = blankForm().schema;
+    schema.steps = [{ id: 'n', key: 'name', type: 'short_text', label: 'Your name', messages: [] }] as typeof schema.steps;
+    let integrations: FormSettings['integrations'] = { connectors: [{ id: 'c1', type: 'hubspot', enabled: true, events: ['completed'] }] as never };
+    const render = () => act(async () => root.render(createElement(ConnectorSettings, { schema, integrations: integrations!, onChange: (next: NonNullable<FormSettings['integrations']>) => { integrations = next; void render(); } })));
+    await render();
+    await click('Add a field');
+    // An incomplete row is not saved yet.
+    expect((integrations!.connectors![0] as { fields?: unknown }).fields).toBeUndefined();
+    await change('Provider field name', 'firstname');
+    await act(async () => {
+      const select = [...container.querySelectorAll('label')].find((label) => label.textContent?.startsWith('Question'))!.querySelector('select')!;
+      select.value = 'name';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    expect((integrations!.connectors![0] as { fields?: unknown }).fields).toEqual({ firstname: 'name' });
+    await click('Remove');
+    expect((integrations!.connectors![0] as { fields?: unknown }).fields).toEqual({});
+  });
+  it('filters by a question chosen by label, and only asks for a condition once a question is chosen', async () => {
+    const onChange = vi.fn();
+    await act(async () => root.render(createElement(Filters, { value: {}, onChange, questions: [{ key: 'budget', label: 'Budget' }] })));
+    expect(container.textContent).not.toContain('Condition');
+    const select = [...container.querySelectorAll('label')].find((label) => label.textContent?.startsWith('Answer to question'))!.querySelector('select')!;
+    expect([...select.options].map((option) => option.textContent)).toEqual(['Any question', 'Budget']);
+    await act(async () => root.render(createElement(Filters, { value: { fieldKey: 'budget' }, onChange, questions: [{ key: 'budget', label: 'Budget' }] })));
+    expect(container.textContent).toContain('Condition');
+    expect(container.textContent).toContain('Answer value');
   });
 });

@@ -9,7 +9,7 @@ final class Metadata {
 	 * @param array<string,mixed> $input
 	 * @return array<string,mixed>|\WP_Error */
 	public function validate( array $input ): array|\WP_Error {
-		$allowed = array( 'pageUrl', 'pageTitle', 'referrer', 'landingPage', 'landingReferrer', 'utm', 'clickIds', 'locale', 'timezone', 'screen', 'stepTimings' );
+		$allowed = array( 'pageUrl', 'pageTitle', 'referrer', 'landingPage', 'landingReferrer', 'utm', 'clickIds', 'urlParams', 'locale', 'timezone', 'screen', 'stepTimings' );
 		if ( array_diff( array_keys( $input ), $allowed ) ) {
 			return Database::error( 'cff_invalid_meta', 'Unknown client metadata.', 422 );
 		}
@@ -50,6 +50,22 @@ final class Metadata {
 				$result[ 'utm' === $key ? 'utm' : 'click_ids' ][ $name ] = sanitize_text_field( $value );
 			}
 		}
+		if ( isset( $input['urlParams'] ) ) {
+			$values = $input['urlParams'];
+			if ( is_object( $values ) ) {
+				$values = (array) $values;
+			}
+			if ( ! is_array( $values ) || count( $values ) > 100 ) {
+				return Database::error( 'cff_invalid_meta', 'Invalid URL parameters.', 422 );
+			}
+			$result['url_params'] = array();
+			foreach ( $values as $key => $value ) {
+				if ( ! is_string( $key ) || ! preg_match( '/^[a-zA-Z][a-zA-Z0-9_]{0,63}$/D', $key ) || ! is_string( $value ) || strlen( $value ) > 1000 ) {
+					return Database::error( 'cff_invalid_meta', 'Invalid URL parameter.', 422 );
+				}
+				$result['url_params'][ $key ] = sanitize_text_field( $value );
+			}
+		}
 		foreach ( array(
 			'locale'   => 32,
 			'timezone' => 64,
@@ -75,7 +91,7 @@ final class Metadata {
 	public function collect( Form $form, array $client, array $server ): array {
 		$global  = get_option( 'cff_settings', array() );
 		$privacy = array_merge( $global['privacy'] ?? array(), $form->settings()['privacy'] ?? array() );
-		if ( ! ( $privacy['storeMeta'] ?? true ) || ( ( $privacy['respectDnt'] ?? true ) && '1' === ( $server['HTTP_DNT'] ?? '' ) ) ) {
+		if ( ! ( $privacy['storeMeta'] ?? true ) || ( ( $privacy['respectDnt'] ?? true ) && '1' === ( $server['HTTP_DNT'] ?? '' ) ) || '1' === ( $server['HTTP_SEC_GPC'] ?? '' ) ) {
 			return array();
 		}
 		$meta = $client;
@@ -102,9 +118,12 @@ final class Metadata {
 	 * @param array<string,mixed> $meta
 	 * @return array<string,mixed> */
 	public function context( Form $form, array $meta ): array {
-		$url = array();
-		parse_str( (string) wp_parse_url( $meta['page_url'] ?? '', PHP_URL_QUERY ), $query );
-		foreach ( array_slice( $query, 0, 100, true ) as $key => $value ) {
+		$url    = array();
+		$source = isset( $meta['url_params'] ) && is_array( $meta['url_params'] ) ? $meta['url_params'] : array();
+		if ( ! $source ) {
+			parse_str( (string) wp_parse_url( $meta['page_url'] ?? '', PHP_URL_QUERY ), $source );
+		}
+		foreach ( array_slice( $source, 0, 100, true ) as $key => $value ) {
 			if ( is_string( $value ) && strlen( $value ) <= 1000 && preg_match( '/^[a-zA-Z][a-zA-Z0-9_]{0,63}$/D', $key ) ) {
 				$url[ $key ] = sanitize_text_field( $value );
 			}

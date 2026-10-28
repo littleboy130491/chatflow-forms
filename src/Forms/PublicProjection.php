@@ -28,11 +28,16 @@ final class PublicProjection {
 				'schema'     => $schema,
 				'appearance' => (object) ( $settings['appearance'] ?? $schema['appearance'] ?? array() ),
 				'phrases'    => (object) ( $settings['phrases'] ?? array() ),
+				'language'   => in_array( $settings['language'] ?? 'site', array( 'site', 'en', 'id' ), true ) ? ( $settings['language'] ?? 'site' ) : 'site',
+				'completion' => array(
+					'review' => in_array( $settings['completion']['review'] ?? 'off', array( 'off', 'button', 'show' ), true ) ? $settings['completion']['review'] ?? 'off' : 'off',
+				),
 				'session'    => array(
 					'resumeEnabled' => ( $session['resumeEnabled'] ?? true ) && ( $session['savePartial'] ?? true ),
 					'resumePrompt'  => $session['resumePrompt'] ?? true,
 					'resumeDays'    => $session['resumeDays'] ?? 30,
 					'savePartial'   => $session['savePartial'] ?? true,
+					'storageNotice' => (bool) ( $session['storageNotice'] ?? false ),
 					'magicLinks'    => array(
 						'enabled'  => $session['magicLinks']['enabled'] ?? false,
 						'whatsapp' => $session['magicLinks']['whatsapp'] ?? false,

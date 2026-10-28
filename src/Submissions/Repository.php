@@ -24,14 +24,19 @@ final class Repository {
 			'createdAt' => 's.created_at',
 			'status'    => 's.status',
 		);
-		$sort     = $sorts[ $filters['sort'] ?? 'createdAt' ] ?? 's.created_at';
-		$order    = 'asc' === strtolower( $filters['order'] ?? 'desc' ) ? 'ASC' : 'DESC';
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT s.* FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY {$sort} {$order},s.id {$order} LIMIT %d OFFSET %d", $per_page, ( max( 1, $page ) - 1 ) * $per_page ), ARRAY_A );
+		$sort     = is_string( $filters['sort'] ?? null ) ? ( $sorts[ $filters['sort'] ] ?? 's.created_at' ) : 's.created_at';
+		$order    = 'asc' === strtolower( is_string( $filters['order'] ?? null ) ? $filters['order'] : 'desc' ) ? 'ASC' : 'DESC';
+		$limit    = (int) $per_page;
+		$offset   = ( max( 1, $page ) - 1 ) * $limit;
+		// The WHERE clause already contains prepared values (and LIKE wildcards). Re-running
+		// the whole statement through prepare() would treat those wildcards as placeholders
+		// and can return an empty query. The only remaining variables are bounded integers.
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is prepared by where(); $sort/$order are fixed whitelist values; $limit/$offset are integers.
+		$rows = $wpdb->get_results( "SELECT s.* FROM {$wpdb->prefix}cff_submissions s WHERE {$where} ORDER BY {$sort} {$order},s.id {$order} LIMIT {$limit} OFFSET {$offset}", ARRAY_A );
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}cff_submissions s WHERE {$where}" );
 		return array(
-			'items' => array_map( fn( $row ) => new Submission( $row, $this->forms->getVersion( (int) $row['form_id'], (int) $row['form_version'] ) ), $rows ),
+			'items' => array_map( fn( $row ) => new Submission( $row, $this->forms->getVersion( (int) $row['form_id'], (int) $row['form_version'] ) ), is_array( $rows ) ? $rows : array() ),
 			'total' => $total,
 		);
 	}
@@ -78,7 +83,14 @@ final class Repository {
 				$parsed = date_parse( $value );
 				if ( $parsed['warning_count'] || $parsed['error_count'] ) {
 					throw new \InvalidArgumentException( 'Invalid date.' ); }
-				$date = gmdate( 'Y-m-d H:i:s', strtotime( $value . ( 10 === strlen( $value ) ? ( 'to' === $key ? ' 23:59:59 UTC' : ' 00:00:00 UTC' ) : '' ) ) );
+				if ( 10 === strlen( $value ) ) {
+					// A calendar day means the site's day (Settings → General → Timezone), the same
+					// days the admin sees in the inbox; stored timestamps are UTC.
+					$local = new \DateTimeImmutable( $value . ( 'to' === $key ? ' 23:59:59' : ' 00:00:00' ), wp_timezone() );
+					$date  = $local->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
+				} else {
+					$date = gmdate( 'Y-m-d H:i:s', strtotime( $value ) );
+				}
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Values prepared by where()/prepare(); identifiers and operators use fixed local whitelists.
 				$where[] = $wpdb->prepare( "s.created_at{$op}%s", $date );
 			}

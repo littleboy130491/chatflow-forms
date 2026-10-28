@@ -7,7 +7,7 @@ import { FieldInput } from './inputs';
 import { isWhatsapp } from '../shared/whatsapp';
 import { isOpen } from '../shared/hours';
 import { safeColor } from './appearance';
-import { phrases } from './i18n';
+import { formLocale, phrases } from './i18n';
 import type { Step } from './types';
 
 export function typingDelay(length: number, speed: 'off' | 'fast' | 'normal' | 'slow' = 'normal', reduced = false): number {
@@ -50,18 +50,20 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   const [, rerender] = useState(0);
   const [reveal, setReveal] = useState<{ stepId: string | null; count: number }>({ stepId: null, count: 0 });
   const [endingCount, setEndingCount] = useState(0);
-  const [confirm, setConfirm] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  // After the last question: "off" (default) submits automatically, "button" asks for
+  // one click, "show" lists the answers first.
+  const [autoSubmitted, setAutoSubmitted] = useState(false);
   const [magicStatus, setMagicStatus] = useState('');
   const [clock, setClock] = useState(() => Date.now());
   const [reduced, setReduced] = useState(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
   const active = useRef<HTMLDivElement>(null);
   const last = useRef<HTMLDivElement>(null);
   const ending = useRef<HTMLElement>(null);
-  const confirmBox = useRef<HTMLElement>(null);
   const state = controller.state;
   const form = state.form?.form;
-  const locale = controller.options.locale ?? globalThis.document?.documentElement.lang ?? 'en';
+  const review = form?.completion?.review ?? 'off';
+  const locale = formLocale(form?.language, controller.options.locale ?? globalThis.document?.documentElement.lang ?? 'en');
   const phrase = phrases(locale, form?.phrases);
   const step = controller.activeStep;
   const messages = step?.messages ?? [];
@@ -89,13 +91,28 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
   }, [state.activeId, state.phase, shown, messages.length, reduced, form?.schema.bot.typingSpeed]);
   useEffect(() => {
     if (!enabled || state.phase !== 'ready') return;
-    focusActive(active.current, step?.type);
+    // Do not pull focus into an inline form that is still below the fold; the
+    // visitor may be typing elsewhere on the page.
+    const node = active.current;
+    const root = node?.getRootNode();
+    const host = root instanceof ShadowRoot ? root.host as HTMLElement : null;
+    const rect = host?.getBoundingClientRect();
+    const focused = document.activeElement;
+    const focusIsOurs = !focused || focused === document.body || focused === host;
+    if (!rect || (focusIsOurs && rect.top < window.innerHeight && rect.bottom > 0)) focusActive(node, step?.type);
     if (step?.type === 'statement' && waitsForButton(step) === false) {
       // Statements flow straight on after their messages, like a chat; a short pause lets the last one be read.
       const timer = setTimeout(() => { void controller.answer(null); }, reduced ? 0 : 600);
       return () => clearTimeout(timer);
     }
   }, [state.activeId, enabled, state.phase, state.fieldError, step?.settings?.autoContinue, reduced, controller]);
+  useEffect(() => {
+    // Leaving the end of the form (Back, Edit) re-arms the automatic submit.
+    if (step || state.phase !== 'ready') { if (step) setAutoSubmitted(false); return; }
+    if (review !== 'off' || autoSubmitted || state.busy || state.error || state.conflict || state.offline) return;
+    setAutoSubmitted(true);
+    void controller.submit(honeypot);
+  }, [step, state.phase, state.busy, state.error, state.conflict, state.offline, review, autoSubmitted, controller, honeypot]);
   useEffect(() => { if (state.phase === 'done') ending.current?.focus({ preventScroll: true }); }, [state.phase]);
   useEffect(() => { setEndingCount(0); }, [state.completion]);
   useEffect(() => {
@@ -104,9 +121,13 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
     const timer = setTimeout(() => setEndingCount(count => count + 1), typingDelay(endingMessages[endingCount]?.length ?? 0, form?.schema.bot.typingSpeed, reduced));
     return () => clearTimeout(timer);
   }, [state.completion, state.phase, endingCount, form?.schema.bot.typingSpeed, reduced]);
-  useEffect(() => { if (confirm) confirmBox.current?.querySelector<HTMLElement>('button:not([disabled])')?.focus({ preventScroll: true }); }, [confirm]);
-  const cancelRestart = () => { setConfirm(false); requestAnimationFrame(() => focusActive(active.current, step?.type)); };
-  useEffect(() => { last.current?.scrollIntoView?.({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); }, [shown, endingCount, state.activeId, state.error, state.phase, reduced]);
+  useEffect(() => {
+    // Scroll only the conversation pane. scrollIntoView() also scrolls the
+    // document, which makes an inline form below the fold jump into view.
+    const conversation = last.current?.closest<HTMLElement>('.conversation');
+    if (conversation) conversation.scrollTop = conversation.scrollHeight;
+    else last.current?.scrollIntoView?.({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+  }, [shown, endingCount, state.activeId, state.error, state.phase, reduced]);
   useEffect(() => {
     const completion = state.completion;
     if (controller.options.preview || state.phase !== 'done' || !completion?.redirectUrl || endingCount < completion.ending.messages.length) return;
@@ -119,10 +140,10 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
 
   const bot = (text: string, key: string | number) => <div className="bubble bot" key={key}><Markdown text={interpolateRich(text)} /></div>;
   const summary = () => <section className="summary" aria-label={phrase('summary')}><h2>{phrase('summary')}</h2><dl>
-    {(state.path?.visited ?? []).map(id => form?.schema.steps.find(s => s.id === id)).filter((s): s is Step => !!s && !['hidden', 'statement', 'summary', 'media', 'calculated'].includes(s.type) && Object.prototype.hasOwnProperty.call(state.answers, s.key)).map(s => <div key={s.id}><dt>{s.label}</dt><dd>{answerLabel(s, state.answers[s.key], phrase)} <button className="link-button" disabled={state.busy} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}`}>{phrase('edit')}</button></dd></div>)}
+    {(state.path?.visited ?? []).map(id => form?.schema.steps.find(s => s.id === id)).filter((s): s is Step => !!s && !['hidden', 'statement', 'summary', 'media', 'calculated'].includes(s.type) && Object.prototype.hasOwnProperty.call(state.answers, s.key)).map(s => <div key={s.id}><dt>{s.label}</dt><dd>{answerLabel(s, state.answers[s.key], phrase, locale)} <button className="link-button" disabled={state.busy} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}`}>{phrase('edit')}</button></dd></div>)}
   </dl></section>;
-  const restart = <button disabled={state.busy || state.error === 'submissionPending'} onClick={() => setConfirm(true)}>{phrase('startOver')}</button>;
-  const error = state.error && <div className="notice" role="alert"><p>{phrase(state.error)}</p>{!state.conflict && <button disabled={state.busy || state.offline} onClick={() => void controller.retry()}>{phrase('retry')}</button>}</div>;
+  const restart = <button disabled={state.busy || state.offline || state.error === 'submissionPending'} onClick={() => void controller.restart()}>{phrase('startOver')}</button>;
+  const error = state.error && <div className="notice is-error" role="alert"><p>{phrase(state.error)}</p>{!state.conflict && !state.validation && <button disabled={state.busy || state.offline} onClick={() => void controller.retry()}>{phrase('retry')}</button>}</div>;
   const media = form?.schema.bot.avatar ? form.media?.[form.schema.bot.avatar] : null;
   const avatar = media ? safeLink(media.url) : null;
   const look = form?.appearance ?? {};
@@ -143,17 +164,16 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
     <span>{contactLabel}</span>
   </a>;
   return <section className={`chat ${controller.options.mode === 'fullpage' ? 'fullpage' : ''}`} {...styleAttributes} dir={globalThis.document?.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'} aria-label={form?.title ?? 'ChatFlow'} aria-busy={state.busy}>
-    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('back')}><button disabled={state.busy || state.phase !== 'ready' || !controller.visibleSteps.some(s => s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key))} onClick={() => controller.back()}>{phrase('back')}</button>{restart}</nav>{closable && <button type="button" className="close-chat" aria-label={phrase('closeChat')} onClick={onClose}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></button>}</header>
+    <header><div className="identity">{avatar && /^https?:/.test(avatar) ? <img src={avatar} alt={media?.alt ?? phrase('botAvatar')} /> : <span className="avatar" aria-hidden="true">{[...botName.trim()][0] ?? ''}</span>}<div><strong>{botName}</strong><small><span className="online-dot" aria-hidden="true" />{phrase(state.offline ? 'offline' : 'online')}</small></div></div><nav aria-label={phrase('formDialog')}>{state.phase !== 'resume' && restart}</nav>{closable && <button type="button" className="close-chat" aria-label={phrase('closeChat')} onClick={onClose}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" /></svg></button>}</header>
     <div className="progress" role="progressbar" aria-label={phrase('progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(state.phase === 'done' ? 100 : state.path?.progress ?? 0)}><span style={{ width: `${state.phase === 'done' ? 100 : state.path?.progress ?? 0}%` }} /></div>
     {controller.options.preview && <p className="notice">{phrase('preview')}</p>}
     {!controller.options.preview && globalThis.location?.protocol === 'http:' && !['localhost', '127.0.0.1'].includes(location.hostname) && <p className="notice" role="alert">{phrase('insecure')}</p>}
     <main className="conversation">
-      {confirm && <section ref={confirmBox} className="notice" role="alertdialog" aria-modal="false" aria-label={phrase('confirmRestart')} onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); cancelRestart(); } }}><p>{phrase('confirmRestart')}</p><button disabled={state.offline || state.busy} onClick={() => { setConfirm(false); void controller.restart(); }}>{phrase('startOver')}</button><button onClick={cancelRestart}>{phrase('cancel')}</button></section>}
       {state.phase === 'loading' && <p role="status">{phrase('loading')}</p>}
       {state.phase === 'resume' && <section className="notice"><p>{phrase(state.newerVersion ? 'newerVersion' : 'welcomeBack')}</p><button disabled={state.busy} onClick={() => void controller.continueSaved()}>{phrase(state.newerVersion ? 'continueOld' : 'continue')}</button>{restart}</section>}
       {state.phase !== 'resume' && controller.visibleSteps.map(s => <section key={s.id} className="step" aria-label={s.label}>
         {(s.id === state.activeId && state.phase === 'ready' ? s.messages.slice(0, shown) : s.messages).map((message, index) => bot(message, index))}
-        {s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key) && <button className="bubble user" disabled={state.busy || state.phase !== 'ready'} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}: ${answerLabel(s, state.answers[s.key], phrase)}`}>{answerLabel(s, state.answers[s.key], phrase)}<small>{phrase('edit')}</small></button>}
+        {s.id !== state.activeId && Object.prototype.hasOwnProperty.call(state.answers, s.key) && <button className="bubble user" disabled={state.busy || state.phase !== 'ready'} onClick={() => controller.edit(s.id)} aria-label={`${phrase('edit')}: ${s.label}: ${answerLabel(s, state.answers[s.key], phrase, locale)}`}>{answerLabel(s, state.answers[s.key], phrase, locale)}<small>{phrase('edit')}</small></button>}
         {s.id !== state.activeId && reactions(s, state.answers[s.key]).map((message, index) => bot(message, `reaction-${index}`))}
       </section>)}
       <div className="sr-only" aria-live="polite" aria-atomic="false">{state.phase === 'ready' ? messages.slice(0, shown).map((message, index) => <p key={`${state.activeId}-${index}`}>{markdownText(interpolateRich(message))}</p>) : state.phase === 'done' ? <><p>{phrase('complete')}</p>{state.completion?.ending.messages.slice(0, endingCount).map((message, index) => <p key={index}>{markdownText(message)}</p>)}</> : null}</div>
@@ -167,7 +187,8 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
           {controller.canSkip && <button className="link-button" disabled={state.busy || state.conflict} onClick={() => void controller.answer(null)}>{phrase('skip')}</button>}
         </>}
       </div>}
-      {state.phase === 'ready' && !step && <div ref={active}>{summary()}<button disabled={state.busy || state.offline || state.conflict} onClick={() => void controller.submit(honeypot)}>{phrase(state.error === 'submissionPending' ? 'retry' : 'submit')}</button></div>}
+      {/* With review off the button only appears if the automatic submit could not finish (offline, captcha, server error). */}
+      {state.phase === 'ready' && !step && (review !== 'off' || autoSubmitted) && <div ref={active}>{review === 'show' && summary()}<button disabled={state.busy || state.offline || state.conflict} onClick={() => void controller.submit(honeypot)}>{phrase(state.error === 'submissionPending' ? 'retry' : 'submit')}</button></div>}
       {state.phase === 'submitting' && <p role="status">{phrase('loading')}</p>}
       {state.phase === 'done' && state.completion && <section ref={ending} tabIndex={-1} className="ending" aria-label={phrase('complete')}>
         {state.completion.ending.messages.slice(0, endingCount).map((message, index) => <div className="bubble bot" key={index}><Markdown text={message} /></div>)}
@@ -176,16 +197,17 @@ export function Chat({ controller, onClose, closable = false }: { controller: Ru
           {state.completion.redirectUrl && (controller.options.preview ? <p className="notice">{phrase('previewRedirect')}: {state.completion.redirectUrl}</p> : <p role="status">{phrase('redirecting')}</p>)}
           {state.completion.ending.buttons.map(button => {
             const url = button.url ? safeLink(button.url) : null;
-            return button.action === 'restart' ? <button key={button.id} onClick={() => setConfirm(true)}>{button.label}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{button.label}</button> : button.action === 'link' && url ? <a className="button" key={button.id} href={url} target="_blank" rel="noopener noreferrer">{button.label}</a> : null;
+            return button.action === 'restart' ? <button key={button.id} disabled={state.busy || state.offline} onClick={() => void controller.restart()}>{button.label}</button> : button.action === 'close' ? <button key={button.id} onClick={onClose}>{button.label}</button> : button.action === 'link' && url ? <a className="button" key={button.id} href={url} target="_blank" rel="noopener noreferrer">{button.label}</a> : null;
           })}
         </>}
       </section>}
-      {state.conflict && <section className="notice" role="alert"><p>{phrase('conflict')}</p><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(false)}>{phrase('useServer')}</button><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(true)}>{phrase('useLocal')}</button></section>}
+      {state.conflict && <section className="notice is-error" role="alert"><p>{phrase('conflict')}</p><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(false)}>{phrase('useServer')}</button><button disabled={state.busy || state.offline} onClick={() => void controller.resolveConflict(true)}>{phrase('useLocal')}</button></section>}
       {error}
       <div ref={last} />
     </main>
     {(contact || contactClosedMessage) && <div className="contact-bar">{contact || <p className="contact-closed">{contactClosedMessage}</p>}</div>}
-    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><span className="sr-only" role="status">{state.offline ? phrase('offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{(state.offline || state.storageUnavailable || (form?.session.magicLinks?.enabled && state.phase === 'ready')) && <footer>{(state.offline || state.storageUnavailable) && <p className="status-notice">{phrase(state.offline ? 'offline' : 'storageUnavailable')}</p>}
+    {!controller.options.preview && <><label className="honeypot" aria-hidden="true">{phrase('honeypot')}<input type="text" name="cff_website_check" maxLength={255} autoComplete="off" tabIndex={-1} value={honeypot} onInput={e => setHoneypot(e.currentTarget.value)} /></label><span className="sr-only" role="status">{state.offline ? phrase(form?.session.savePartial === false ? 'offlineNoSave' : 'offline') : state.storageUnavailable ? phrase('storageUnavailable') : ''}</span>{(state.offline || state.storageUnavailable || (form?.session.resumeEnabled && form.session.storageNotice) || (form?.session.magicLinks?.enabled && state.phase === 'ready')) && <footer>{(state.offline || state.storageUnavailable) && <p className="status-notice">{phrase(state.offline ? (form?.session.savePartial === false ? 'offlineNoSave' : 'offline') : 'storageUnavailable')}</p>}
+      {form?.session.resumeEnabled && form.session.storageNotice && state.phase !== 'done' && <p className="status-notice session-note">{phrase('sessionStorage')}</p>}
       {form?.session.magicLinks?.enabled && state.phase === 'ready' && <div className="cff-magic">
         <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicEmailConfirm'))) return; void controller.magicLink('email').then(() => setMagicStatus(phrase('magicEmailAccepted'))).catch(() => setMagicStatus(phrase('magicEmailError'))); }}>{phrase('magicEmail')}</button>
         {form.session.magicLinks.whatsapp && <button disabled={state.busy || state.offline || state.conflict} onClick={() => { if (!window.confirm(phrase('magicShareConfirm'))) return; void controller.magicLink('whatsapp').then(async result => {

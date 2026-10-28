@@ -11,9 +11,9 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { AnswerArea, Area, Button, Check, Field, Select } from './controls';
+import { AnswerArea, Area, Button, Check, CommitField, Field, MediaIdField, Select } from './controls';
 import { RuleEditor } from './RuleEditor';
-import { makeOption, reorder, uid } from './model';
+import { makeOption, reorder, uniqueOptionValue } from './model';
 import { withStepMessages } from './labels';
 import type { ReactNode } from 'react';
 import type { FormSchema, Step, Option } from './api';
@@ -50,6 +50,8 @@ function OptionEditor({
   allowOther,
   schema,
   step,
+  reservedValues,
+  onRenameValue,
 }: {
   option: Option;
   onChange: (option: Option) => void;
@@ -57,6 +59,8 @@ function OptionEditor({
   allowOther: boolean;
   schema: FormSchema;
   step: Step;
+  reservedValues: string[];
+  onRenameValue: (value: string) => void;
 }) {
   const simple = option.logic?.length === 1 && 'all' in option.logic[0]!.if && option.logic[0]!.if.all.length === 0 && option.logic[0]!.then.action === 'jump' ? option.logic[0]!.then.to : '';
   const canSetPath = !option.logic?.length || Boolean(simple);
@@ -68,12 +72,21 @@ function OptionEditor({
         value={option.label}
         onChange={(label) => onChange({ ...option, label })}
       />
-      <Field
+      <CommitField
         label={__('Stored value', 'chatflow-forms')}
         value={option.value}
-        onChange={(value) => onChange({ ...option, value })}
+        onCommit={onRenameValue}
+        validate={(value) =>
+          !value.trim()
+            ? __('Enter a stored value.', 'chatflow-forms')
+            : value.length > 255
+              ? __('Use 255 characters or fewer.', 'chatflow-forms')
+              : (step.options ?? []).some((item) => item.id !== option.id && item.value === value) || reservedValues.includes(value)
+                ? __('Another option already uses this value.', 'chatflow-forms')
+                : ''
+        }
         help={__(
-          'Changing a value changes exports and integrations. Its ID stays unchanged.',
+          'Applied when you leave the field. Rules that compare against this value are updated; exports and integrations see the new value.',
           'chatflow-forms',
         )}
       />
@@ -87,13 +100,12 @@ function OptionEditor({
         value={option.reaction}
         onChange={(reaction) => onChange({ ...option, reaction })}
       />
-      <Field
-        label={__('Image attachment ID', 'chatflow-forms')}
-        type="number"
+      <MediaIdField
+        label={__('Option image', 'chatflow-forms')}
         value={option.image}
         onChange={(image) => {
           const next = { ...option };
-          if (Number(image) > 0) next.image = Number(image);
+          if (image > 0) next.image = image;
           else delete next.image;
           onChange(next);
         }}
@@ -165,12 +177,18 @@ export function Inspector({
   schema,
   reservedValues = [],
   onChange,
+  onRenameKey,
+  onRenameOption,
   actions,
 }: {
   step: Step;
   schema: FormSchema;
   reservedValues?: string[];
   onChange: (step: Step) => void;
+  /** Rename the key and rewrite rules, merge tags, formulas and settings that use it. */
+  onRenameKey: (key: string) => void;
+  /** Rename a choice's stored value and the conditions that compare against it. */
+  onRenameOption: (optionId: string, value: string) => void;
   actions?: ReactNode;
 }) {
   const [tab, setTab] = useState('content'),
@@ -285,6 +303,8 @@ export function Inspector({
                         option={option}
                         step={step}
                         schema={schema}
+                        reservedValues={reservedValues}
+                        onRenameValue={(value) => onRenameOption(option.id, value)}
                         onChange={(next) =>
                           setOptions((step.options ?? []).map((item) => (item.id === next.id ? next : item)))
                         }
@@ -306,7 +326,11 @@ export function Inspector({
                   let value = 'option_1',
                     count = 2;
                   while (values.has(value)) value = `option_${count++}`;
-                  setOptions([...(step.options ?? []), makeOption(value)]);
+                  setOptions([...(step.options ?? []), makeOption(value, sprintf(
+                    /* translators: %d: option number */
+                    __('Option %d', 'chatflow-forms'),
+                    (step.options?.length ?? 0) + 1,
+                  ))]);
                 }}
               >
                 {__('Add option', 'chatflow-forms')}
@@ -319,12 +343,17 @@ export function Inspector({
               <Button
                 onClick={() => {
                   const existing = step.options ?? [];
+                  const used = [...reservedValues, ...existing.map((option) => option.value)];
                   const next = bulk
                     .split('\n')
                     .map((label) => label.trim())
                     .filter(Boolean)
                     .slice(0, 200 - existing.length)
-                    .map((label) => ({ ...makeOption(uid('value')), label }));
+                    .map((label) => {
+                      const value = uniqueOptionValue(label, used);
+                      used.push(value);
+                      return makeOption(value, label);
+                    });
                   setOptions([...existing, ...next]);
                   setBulk('');
                 }}
@@ -338,7 +367,7 @@ export function Inspector({
               {__('Rating: 1–5, scale: 1–10, NPS: 0–10. Values are stored as numbers.', 'chatflow-forms')}
             </p>
           )}
-          {step.type === 'calculated' && <Field label={__('Arithmetic expression (answer.key, variable.key)', 'chatflow-forms')} value={settings.expression ?? ''} onChange={expression => patchSettings({ expression })} />}
+          {step.type === 'calculated' && <Field label={__('Formula (e.g. answer.price * answer.quantity + variable.score)', 'chatflow-forms')} value={settings.expression ?? ''} onChange={expression => patchSettings({ expression })} />}
           {step.type === 'phone' && (
             <Field
               label={__('Default country (ISO code)', 'chatflow-forms')}
@@ -387,12 +416,19 @@ export function Inspector({
             value={step.label}
             onChange={(label) => onChange({ ...step, label })}
           />
-          <Field
+          <CommitField
             label={__('Field key', 'chatflow-forms')}
             value={step.key}
-            onChange={(key) => onChange({ ...step, key })}
+            onCommit={onRenameKey}
+            validate={(key) =>
+              !/^[a-z][a-z0-9_]{0,63}$/.test(key)
+                ? __('Start with a lowercase letter; use only lowercase letters, numbers and underscores (64 max).', 'chatflow-forms')
+                : schema.steps.some((item) => item.id !== step.id && item.key === key)
+                  ? __('Another field already uses this key.', 'chatflow-forms')
+                  : ''
+            }
             help={__(
-              'Keys are used by exports and integrations. Renaming keeps the immutable ID; review dependent merge tags and rules.',
+              'Applied when you leave the field. Rules, merge tags, formulas, notifications and integrations that use the old key are updated. Exports use the new key.',
               'chatflow-forms',
             )}
           />
@@ -425,7 +461,7 @@ export function Inspector({
           {step.type === 'hidden' && (
             <Fragment>
               <Select
-                label={__('Hidden value source', 'chatflow-forms')}
+                label={__('Where the value comes from', 'chatflow-forms')}
                 value={settings.source ?? 'default'}
                 choices={(['default', 'url', 'cookie', 'meta', 'merge'] as const).map((value) => ({
                   label: sourceLabels()[value],
@@ -436,7 +472,7 @@ export function Inspector({
                 }
               />
               <Field
-                label={__('Source key', 'chatflow-forms')}
+                label={__('Parameter or cookie name (blank = field key)', 'chatflow-forms')}
                 value={settings.sourceKey}
                 onChange={(sourceKey) => patchSettings({ sourceKey })}
               />
@@ -453,8 +489,18 @@ export function Inspector({
       {tab === 'validation' && (
         <Fragment>
           {step.type === 'file_upload' && <Fragment>
-            <Field label={__('Maximum bytes per file','chatflow-forms')} type="number" value={validation.maxBytes ?? ''} onChange={(value)=>onChange({...step,validation:{...validation,maxBytes:Number(value)}})} />
-            <Field label={__('Allowed MIME types (comma separated)','chatflow-forms')} value={(validation.mimeTypes ?? []).join(',')} onChange={(value)=>onChange({...step,validation:{...validation,mimeTypes:value.split(',').map((mime)=>mime.trim()).filter(Boolean)}})} />
+            <Field
+              label={__('Maximum bytes per file (blank = 10 MiB)', 'chatflow-forms')}
+              type="number"
+              value={validation.maxBytes ?? ''}
+              onChange={(value) => {
+                const next = { ...validation };
+                if (value === '') delete next.maxBytes;
+                else next.maxBytes = Math.max(1, Number(value) || 1);
+                onChange({ ...step, validation: next });
+              }}
+            />
+            <Field label={__('Allowed file types (e.g. image/png, application/pdf; blank = default)','chatflow-forms')} value={(validation.mimeTypes ?? []).join(',')} onChange={(value)=>onChange({...step,validation:{...validation,mimeTypes:value.split(',').map((mime)=>mime.trim()).filter(Boolean)}})} />
           </Fragment>}
           {['short_text', 'long_text', 'email', 'phone'].includes(step.type) && (
             <Fragment>
@@ -477,7 +523,7 @@ export function Inspector({
                 />
               ))}
               <Field
-                label={__('Regex pattern', 'chatflow-forms')}
+                label={__('Custom pattern (regular expression, advanced)', 'chatflow-forms')}
                 value={validation.pattern}
                 onChange={(pattern) => onChange({ ...step, validation: { ...validation, pattern } })}
               />

@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { FlowMap } from './FlowMap';
 import { PowerEditor } from './PowerEditor';
 import { actionLabels, operatorLabels } from './RuleEditor';
-import type { Condition, FormSchema, Step } from './api';
+import type { Condition, FormDTO, FormSchema, Step } from './api';
 import type { ValidationIssue } from '../shared/contracts';
 
 type Predicate = Extract<Condition, { field: string }>;
@@ -119,7 +119,7 @@ function FieldRules({ schema, onEditStep }: { schema: FormSchema; onEditStep: (i
       <header className="cff-card-head">
         <div>
           <h2 id="cff-logic-rules-title">{__('Field rules', 'chatflow-forms')}</h2>
-          <p>{__('Rules are checked in order. The first one that matches wins.', 'chatflow-forms')}</p>
+          <p>{__('Rules run in order. A jump or end stops at the first match; other matching actions all apply.', 'chatflow-forms')}</p>
         </div>
         {count > 0 && (
           <span className="cff-count-pill">
@@ -199,11 +199,14 @@ export function LogicOverview({
   issues,
   onEditStep,
   onChange,
+  onForm,
 }: {
   schema: FormSchema;
   issues: ValidationIssue[];
   onEditStep: (id: string) => void;
   onChange: (schema: FormSchema) => void;
+  /** Form-level edits (variable renames also rewrite notification conditions). */
+  onForm: (transform: (form: FormDTO) => FormDTO) => void;
 }) {
   return (
     <section className="cff-logic-page" aria-label={__('Logic overview', 'chatflow-forms')}>
@@ -254,7 +257,7 @@ export function LogicOverview({
         />
       </section>
 
-      <PowerEditor schema={schema} onChange={onChange} />
+      <PowerEditor schema={schema} onChange={onChange} onForm={onForm} />
     </section>
   );
 }

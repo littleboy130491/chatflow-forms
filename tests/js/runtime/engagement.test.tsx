@@ -45,6 +45,13 @@ describe('Phase2 real field inputs', () => {
   it('uses native slider bounds and submits a number', async () => { const answer = await input(field('slider', { validation: { min: 0, max: 5, step: 0.5 } })); const slider = host.querySelector<HTMLInputElement>('input')!; expect(slider.type).toBe('range'); await act(() => { slider.value = '2.5'; slider.dispatchEvent(new Event('input', { bubbles: true })); }); await act(() => { host.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); }); expect(answer).toHaveBeenCalledWith(2.5); });
   it('collects only configured address fields with autocomplete and renders a readable summary', async () => { const step = field('address', { settings: { addressFields: ['city', 'postcode'] } }); const answer = await input(step); expect(host.querySelectorAll('input')).toHaveLength(2); await act(() => { const city = host.querySelector<HTMLInputElement>('[autocomplete=address-level2]')!; city.value = 'Jakarta'; city.dispatchEvent(new Event('input', { bubbles: true })); }); await act(() => { host.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); }); expect(answer).toHaveBeenCalledWith({ city: 'Jakarta', postcode: '' }); expect(answerLabel(step, { city: 'Jakarta', postcode: '12345' }, phrases('en'))).toBe('Jakarta, 12345'); });
   it('rejects unsafe media URLs and continues a display field with null', async () => { const answer = await input(field('media', { settings: { media: { type: 'image', url: 'javascript:alert(1)' } } })); expect(host.querySelector('img')).toBeNull(); await act(() => host.querySelector('button')!.click()); expect(answer).toHaveBeenCalledWith(null); });
+  it('formats date and number answers in the visitor locale without changing the stored value', () => {
+    expect(answerLabel(field('date'), '2000-01-31', phrases('en'), 'en-US')).toBe('Jan 31, 2000');
+    expect(answerLabel(field('date'), '2000-01-31', phrases('id'), 'id-ID')).toBe(new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeZone: 'UTC' }).format(Date.UTC(2000, 0, 31)));
+    expect(answerLabel(field('number'), 1234567.5, phrases('en'), 'en-US')).toBe('1,234,567.5');
+    expect(answerLabel(field('date'), 'not-a-date', phrases('en'), 'en-US')).toBe('not-a-date');
+    expect(answerLabel(field('number'), 12, phrases('en'), 'not a locale!')).toBe('12');
+  });
   it('does not upload before integration enables an upload callback', async () => { await input(field('file_upload')); expect(host.querySelector<HTMLInputElement>('input')!.disabled).toBe(true); expect(answerLabel(field('file_upload'), 'private-id', phrases('en'))).not.toContain('private-id'); });
 });
 describe('anonymous event privacy and caps', () => {

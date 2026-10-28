@@ -254,6 +254,8 @@ describe('focus and registration guards', () => {
   });
   it('focuses the phone number input rather than the country select', async () => {
     const steps: [Step, ...Step[]] = [{ id: 'phone', key: 'phone', type: 'phone', label: 'Phone', messages: [] }];
+    // Inline forms only take focus while on screen; jsdom reports a zero-size box.
+    vi.spyOn(host, 'getBoundingClientRect').mockReturnValue({ top: 0, bottom: 400, left: 0, right: 400, width: 400, height: 400, x: 0, y: 0, toJSON: () => ({}) });
     let handle: ReturnType<typeof mountRuntime>;
     await act(() => { handle = mountRuntime(host, { form: form(steps), preview: true }); });
     await vi.waitFor(() => expect((host.shadowRoot!.activeElement as HTMLInputElement | null)?.type).toBe('tel'));

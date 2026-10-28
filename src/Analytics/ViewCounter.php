@@ -38,10 +38,12 @@ final class ViewCounter {
 			$wpdb->query(
 				$wpdb->prepare(
 					"INSERT INTO {$wpdb->prefix}cff_stats_daily (form_id,form_version,day,metric,dimension_hash,dimension,value)
-					VALUES (%d,%d,UTC_DATE(),%s,%s,%s,1)
+					VALUES (%d,%d,%s,%s,%s,%s,1)
 					ON DUPLICATE KEY UPDATE value=value+1",
 					$form_id,
 					$version,
+					// The site's calendar day, so daily views line up with site-time reports.
+					wp_date( 'Y-m-d' ),
 					'view',
 					hash( 'sha256', $dimension ),
 					$dimension

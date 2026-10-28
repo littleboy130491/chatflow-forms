@@ -3,10 +3,10 @@
 /** @jsxFrag React.Fragment */
 import * as React from '@wordpress/element';
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { AdminApi, errorMessage, queryString } from '../builder/api';
 import { Button, Field, Notice } from '../builder/controls';
-import { FormAnalytics } from './FormAnalytics';
+import { FormFunnel, type FormAnalyticsReport } from './FormAnalytics';
 import { defaultRange } from './analytics-dates';
 import { FormPicker, decodeTitle } from './FormPicker';
 
@@ -32,63 +32,80 @@ function BreakdownTable({ title, rows }: { title: string; rows: Breakdown[] }) {
   </section>;
 }
 export function Analytics({ api }: { api: AdminApi }) {
-  // This overview aggregates by UTC calendar day; the per-form panel uses the site time zone.
-  const initial = defaultRange('UTC');
+  // One report, one form picker, one date range, all in the site time zone.
+  const timezone = api.config.timezone || 'UTC';
+  const [initial] = useState(() => defaultRange(timezone));
   const [formId, setFormId] = useState('0');
   const [from, setFrom] = useState(initial.from);
   const [to, setTo] = useState(initial.to);
   const [filters, setFilters] = useState({ formId: '0', ...initial });
   const [report, setReport] = useState<AnalyticsReport | null>(null);
+  const [formReport, setFormReport] = useState<FormAnalyticsReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   useEffect(() => {
     const abort = new AbortController();
-    setLoading(true); setError('');
-    api.request<AnalyticsReport>(`admin/analytics?${queryString(filters)}`, 'GET', undefined, abort.signal)
-      .then(setReport)
+    setLoading(true); setError(''); setReport(null); setFormReport(null);
+    const single = filters.formId !== '0';
+    Promise.all([
+      api.request<AnalyticsReport>(`admin/analytics?${queryString(filters)}`, 'GET', undefined, abort.signal),
+      single ? api.request<FormAnalyticsReport>(`admin/analytics/form?${queryString(filters)}`, 'GET', undefined, abort.signal) : Promise.resolve(null),
+    ])
+      .then(([overview, details]) => { setReport(overview); setFormReport(details); })
+      // Never leave the previous range's numbers under the new dates.
       .catch((err) => { if (!abort.signal.aborted) setError(errorMessage(err)); })
       .finally(() => { if (!abort.signal.aborted) setLoading(false); });
     return () => abort.abort();
   }, [api, filters]);
+  const apply = () => {
+    if (!from || !to) {
+      setError(__('Choose both dates.', 'chatflow-forms'));
+      return;
+    }
+    if (from > to) {
+      setError(__('The start date must be before the end date.', 'chatflow-forms'));
+      return;
+    }
+    if (Math.round((Date.parse(to) - Date.parse(from)) / 86400000) + 1 > 367) {
+      setError(__('Choose a date range of 367 days or less.', 'chatflow-forms'));
+      return;
+    }
+    setFilters({ formId: formId || '0', from, to });
+  };
   const kpis = report ? [
-    { label: __('Views (impressions)', 'chatflow-forms'), value: report.counts.views.toLocaleString() },
-    { label: __('View → start', 'chatflow-forms'), value: report.viewStartRate === null ? '—' : `${report.viewStartRate}%` },
-    { label: __('Starts', 'chatflow-forms'), value: report.counts.starts.toLocaleString() },
+    { label: __('Views', 'chatflow-forms'), value: report.counts.views.toLocaleString() },
+    { label: __('Started', 'chatflow-forms'), value: report.counts.starts.toLocaleString() },
     { label: __('Completed', 'chatflow-forms'), value: report.counts.completed.toLocaleString() },
-    { label: __('Completion rate (completed ÷ starts)', 'chatflow-forms'), value: `${report.completionRate}%` },
-    { label: __('Partial', 'chatflow-forms'), value: report.counts.partial.toLocaleString() },
+    { label: __('Completion rate', 'chatflow-forms'), value: `${report.completionRate}%` },
+    { label: __('Unfinished (partial)', 'chatflow-forms'), value: report.counts.partial.toLocaleString() },
     { label: __('Abandoned', 'chatflow-forms'), value: report.counts.abandoned.toLocaleString() },
-    { label: __('Average completion time', 'chatflow-forms'), value: report.avgDurationMs === null ? '—' : `${Math.round(report.avgDurationMs / 1000)} s` },
+    { label: __('Average time to complete', 'chatflow-forms'), value: report.avgDurationMs === null ? '—' : `${Math.round(report.avgDurationMs / 1000)} s` },
   ] : [];
   return <main className="cff-admin cff-analytics-page">
     <div className="cff-page-head">
       <div>
         <h1>{__('Analytics', 'chatflow-forms')}</h1>
-        <p>{__('Aggregate reports use UTC calendar days. The form funnel below uses the site timezone, so daily boundaries and totals may differ.', 'chatflow-forms')}</p>
+        <p>{sprintf(/* translators: %s: site time zone */ __('Dates use your site time zone (%s).', 'chatflow-forms'), timezone)}</p>
       </div>
     </div>
-    <h2>{__('Overview · UTC', 'chatflow-forms')}</h2>
-    <div className="cff-analytics-filters" aria-label={__('Analytics date range', 'chatflow-forms')}>
+    <div className="cff-analytics-filters" aria-label={__('Analytics filters', 'chatflow-forms')}>
       <FormPicker api={api} value={formId === '0' ? '' : formId} onChange={next => setFormId(next || '0')} />
-      <Field label={__('From (UTC)', 'chatflow-forms')} type="date" value={from} onChange={setFrom} />
-      <Field label={__('To (UTC, inclusive)', 'chatflow-forms')} type="date" value={to} onChange={setTo} />
-      <Button disabled={loading} onClick={() => setFilters({ formId: formId || '0', from, to })}>{__('Apply filters', 'chatflow-forms')}</Button>
+      <Field label={__('From', 'chatflow-forms')} type="date" value={from} onChange={setFrom} />
+      <Field label={__('To', 'chatflow-forms')} type="date" value={to} onChange={setTo} />
+      <Button variant="primary" disabled={loading} onClick={apply}>{__('Show report', 'chatflow-forms')}</Button>
     </div>
     {error && <Notice status="error" isDismissible={false}>{error}</Notice>}
     {loading && <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
     {report && !loading && <>
-      <p>{report.from} – {report.to} · {__('Dates in UTC', 'chatflow-forms')}</p>
       <div className="cff-analytics-kpis">{kpis.map((item) => <section className="cff-card" key={item.label}><h2>{item.label}</h2><strong>{item.value}</strong></section>)}</div>
+      {formReport && <FormFunnel report={formReport} />}
       <div className="cff-settings-grid">
-        <BreakdownTable title={__('UTM sources', 'chatflow-forms')} rows={report.sources} />
+        <BreakdownTable title={__('Where visitors came from', 'chatflow-forms')} rows={report.sources} />
         <BreakdownTable title={__('Devices', 'chatflow-forms')} rows={report.devices} />
-        <BreakdownTable title={__('Step drop-off', 'chatflow-forms')} rows={report.dropoffs.map((row) => ({ label: `#${row.formId}: ${row.label}`, count: row.count }))} />
-        {report.answers.map((field) => (
-          <BreakdownTable key={field.fieldKey} title={field.label} rows={field.options} />
-        ))}
+        {!formReport && <BreakdownTable title={__('Questions where visitors stopped most', 'chatflow-forms')} rows={report.dropoffs.map((row) => ({ label: `#${row.formId}: ${row.label}`, count: row.count }))} />}
       </div>
-      <p className="description">{report.methodology}</p>
+      {!formReport && <p className="description">{__('Choose a form above to see its question-by-question funnel and answer breakdowns.', 'chatflow-forms')}</p>}
+      <details className="cff-analytics-method"><summary>{__('How these numbers are counted', 'chatflow-forms')}</summary><p>{report.methodology}</p></details>
     </>}
-    <FormAnalytics api={api} />
   </main>;
 }

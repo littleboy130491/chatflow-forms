@@ -291,12 +291,33 @@ describe('draft mutation serialization and conflict recovery', () => {
   it('caps undo history and clears redo on an ordinary edit', () => {
     const { client } = api(async () => stored()),
       controller = new DraftController(client, stored());
+    let now = 1_000_000;
+    const clock = vi.spyOn(Date, 'now').mockImplementation(() => (now += 1000));
     for (let i = 0; i < 55; i++) controller.edit((f) => ({ ...f, title: String(i) }));
     expect(controller.state.history).toHaveLength(50);
+    clock.mockRestore();
     controller.undo();
     expect(controller.state.future).toHaveLength(1);
     controller.edit((f) => ({ ...f, title: 'branch' }));
     expect(controller.state.future).toEqual([]);
+  });
+});
+describe('undo coalescing', () => {
+  it('folds a burst of keystrokes into one undo step', () => {
+    const { client } = api(async () => stored()),
+      controller = new DraftController(client, stored()),
+      title = controller.state.form.title;
+    let now = 1_000_000;
+    const clock = vi.spyOn(Date, 'now').mockImplementation(() => (now += 100));
+    for (const text of ['H', 'He', 'Hel', 'Hell', 'Hello']) controller.edit((f) => ({ ...f, title: text }));
+    now += 5000;
+    controller.edit((f) => ({ ...f, title: 'Hello!' }));
+    clock.mockRestore();
+    expect(controller.state.history).toHaveLength(2);
+    controller.undo();
+    expect(controller.state.form.title).toBe('Hello');
+    controller.undo();
+    expect(controller.state.form.title).toBe(title);
   });
 });
 describe('form files and submission helpers', () => {

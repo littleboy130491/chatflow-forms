@@ -79,6 +79,7 @@ const iconChoices = (): { value: NonNullable<Contact['icon']>; label: string }[]
 export function ContactLinkEditor({ schema, timezone = 'UTC', onChange }: { schema: FormSchema; timezone?: string | undefined; onChange: (schema: FormSchema) => void }) {
   const contact = schema.bot.contact;
   const [open, setOpen] = useState(Boolean(contact?.url));
+  useEffect(() => { setOpen(Boolean(contact?.url)); }, [contact?.url]);
   // Merge a change into the stored link; empty values fall back to the defaults, and no URL removes the button.
   const set = (patch: { [K in keyof Contact]?: Contact[K] | undefined } | null) => {
     const bot = { ...schema.bot };
@@ -89,7 +90,7 @@ export function ContactLinkEditor({ schema, timezone = 'UTC', onChange }: { sche
   };
   const whatsapp = isWhatsapp(contact?.url ?? '');
   return <section className="cff-contact-link">
-    <h3>{__('Direct contact link', 'chatflow-forms')}</h3>
+    <h2>{__('Contact button (WhatsApp, phone, email)', 'chatflow-forms')}</h2>
     <p className="description">{__('Shows a button below the conversation, so visitors can contact you directly (for example on WhatsApp) at any point instead of finishing the form.', 'chatflow-forms')}</p>
     <label className="cff-inline-check"><input type="checkbox" checked={open} onChange={event => { setOpen(event.currentTarget.checked); if (!event.currentTarget.checked) set(null); }} />{__('Show a contact button below the conversation', 'chatflow-forms')}</label>
     {open && <>

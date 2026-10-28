@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { blankForm, makeStep } from '../../../assets/src/builder/model';
 import { exportForm, parseFormFile } from '../../../assets/src/builder/formIO';
-import { pageIds } from '../../../assets/src/builder/FormSettings';
 import { exportOptions } from '../../../assets/src/submissions/model';
 
 describe('Phase two admin contracts', () => {
@@ -25,10 +24,5 @@ describe('Phase two admin contracts', () => {
     expect(options).toMatchObject({formId:42,format:'xlsx',ids:[23]});
     filters.formId = 43;
     expect(options.filters.formId).toBe(42);
-  });
-  it('accepts only bounded positive integer page IDs and deduplicates', () => {
-    expect(pageIds('1, 12,1')).toEqual([1,12]);
-    expect(pageIds('')).toEqual([]);
-    for (const value of ['-1','0','1.2','2e2','1 or 1=1','9007199254740993',Array(501).fill('1').join(',')]) expect(pageIds(value)).toEqual([]);
   });
 });

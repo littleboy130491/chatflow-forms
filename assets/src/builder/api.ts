@@ -52,6 +52,23 @@ export class AdminApi {
     // Server-registered extension types (cff_field_types) must not fail client diagnostics.
     allowFieldTypes(config.features?.fieldTypes ?? []);
   }
+  /**
+   * Build an admin REST URL for both pretty and plain permalinks. With plain
+   * permalinks `restUrl` already contains `?rest_route=/cff/v1/`, so appending
+   * `?page=1` directly would make the page parameter part of the route.
+   */
+  urlFor(path: string): string {
+    const base = new URL(this.config.restUrl, globalThis.location?.href ?? 'https://localhost/');
+    const [route, query = ''] = path.split('?');
+    if (base.searchParams.has('rest_route')) {
+      const prefix = (base.searchParams.get('rest_route') ?? '').replace(/\/$/, '');
+      base.searchParams.set('rest_route', `${prefix}/${route}`);
+    } else {
+      base.pathname = `${base.pathname.replace(/\/$/, '')}/${route}`;
+    }
+    for (const [key, value] of new URLSearchParams(query)) base.searchParams.set(key, value);
+    return base.href;
+  }
   async request<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     if (
       !path.startsWith('admin/') ||
@@ -60,7 +77,7 @@ export class AdminApi {
       /\\|%2e|%2f|%5c/i.test(path.split('?')[0] ?? '')
     )
       throw new Error('Invalid admin API path');
-    const response = await this.transport(this.config.restUrl + path, {
+    const response = await this.transport(this.urlFor(path), {
       method,
       credentials: 'same-origin',
       cache: 'no-store',

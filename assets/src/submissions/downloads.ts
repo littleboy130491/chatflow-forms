@@ -11,8 +11,8 @@ export function uploadIds(value: unknown): string[] {
 }
 export async function downloadUpload(api: AdminApi, uuid: string): Promise<void> {
   if (!can(api.config, 'view_submissions') || !uploadUuid.test(uuid)) throw new Error(__('File download denied or unavailable.', 'chatflow-forms'));
-  const target = new URL(`admin/uploads/${uuid}`, api.config.restUrl);
-  if (target.origin !== location.origin || target.username || target.password || target.search || target.hash) throw new Error(__('Invalid file download destination.', 'chatflow-forms'));
+  const target = new URL(api.urlFor(`admin/uploads/${uuid}`));
+  if (target.origin !== location.origin || target.username || target.password || target.hash || [...target.searchParams.keys()].some(key => key !== 'rest_route')) throw new Error(__('Invalid file download destination.', 'chatflow-forms'));
   const response = await fetch(target.href, { credentials: 'same-origin', cache: 'no-store', redirect: 'error', headers: { 'X-WP-Nonce': api.config.nonce } });
   if (!response.ok) throw new Error(__('File download denied or unavailable.', 'chatflow-forms'));
   const blob = await response.blob(), url = URL.createObjectURL(blob), link = document.createElement('a');

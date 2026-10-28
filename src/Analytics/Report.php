@@ -13,15 +13,13 @@ final class Report {
 		global $wpdb;
 		if ( $form_id < 0 ) {
 			throw new \InvalidArgumentException( 'Invalid form ID.' ); }
-		$from ??= gmdate( 'Y-m-d', strtotime( '-29 days' ) );
-		$to   ??= gmdate( 'Y-m-d' );
-		$start = \DateTimeImmutable::createFromFormat( '!Y-m-d', $from, new \DateTimeZone( 'UTC' ) );
-		$end   = \DateTimeImmutable::createFromFormat( '!Y-m-d', $to, new \DateTimeZone( 'UTC' ) );
-		if ( ! $start || ! $end || $start->format( 'Y-m-d' ) !== $from || $end->format( 'Y-m-d' ) !== $to || $end < $start || $start->diff( $end )->days > 366 ) {
-			throw new \InvalidArgumentException( 'Use a valid UTC date range of at most 366 days.' );
-		}
-		$until           = $end->modify( '+1 day' )->format( 'Y-m-d H:i:s' );
-		$since           = $start->format( 'Y-m-d H:i:s' );
+		// Calendar days are the site's days (Settings → General → Timezone), like the inbox
+		// and the per-form report; stored timestamps are UTC.
+		$from          ??= wp_date( 'Y-m-d', strtotime( '-29 days' ) );
+		$to            ??= wp_date( 'Y-m-d' );
+		$range           = DateRange::bounds( (string) $from, (string) $to, wp_timezone() );
+		$since           = $range['start'];
+		$until           = $range['end'];
 		$period          = $wpdb->prepare( 'created_at >= %s AND created_at < %s', $since, $until );
 		$sessions_period = $wpdb->prepare( 'started_at >= %s AND started_at < %s', $since, $until );
 		if ( $form_id ) {
@@ -70,13 +68,21 @@ final class Report {
 					break;
 				}
 			}
-			$steps[] = array(
+			// The same question across published versions is one row.
+			$slot = $id . ':' . $step;
+			if ( isset( $steps[ $slot ] ) ) {
+				$steps[ $slot ]['count'] += (int) $row['total'];
+				continue;
+			}
+			$steps[ $slot ] = array(
 				'formId' => $id,
 				'stepId' => $step,
 				'label'  => $label,
 				'count'  => (int) $row['total'],
 			);
 		}
+		$steps = array_values( $steps );
+		usort( $steps, static fn( array $a, array $b ): int => $b['count'] <=> $a['count'] );
 		$series        = static function ( array $rows ): array {
 			$result = array();
 			foreach ( $rows as $row ) {
@@ -92,6 +98,7 @@ final class Report {
 			'from'           => $from,
 			'to'             => $to,
 			'formId'         => $form_id,
+			'timezone'       => wp_timezone_string(),
 			'counts'         => $counts,
 			'completionRate' => $starts ? round( 100 * $counts['completed'] / $starts, 1 ) : 0,
 			'viewStartRate'  => $views >= $starts && $views > 0 ? round( 100 * $starts / $views, 1 ) : null,
@@ -178,7 +185,9 @@ final class Report {
 			$c        = $counts[ $step['id'] ] ?? array();
 			$viewed   = $c['view'] ?? 0;
 			$answered = $c['answer'] ?? 0;
-			$steps[]  = array(
+			// Hidden and calculated fields are never shown to visitors, so they have no funnel.
+			$visible = ! in_array( $step['type'], array( 'hidden', 'calculated' ), true );
+			$steps[] = ! $visible ? null : array(
 				'id'      => $step['id'],
 				'label'   => $step['label'],
 				'views'   => $viewed,
@@ -258,7 +267,7 @@ final class Report {
 			'completions'       => (int) $completed['total'],
 			'completionRate'    => $starts ? round( 100 * (int) $completed['total'] / $starts, 2 ) : null,
 			'averageDurationMs' => (int) round( (float) $completed['duration'] ),
-			'steps'             => $steps,
+			'steps'             => array_values( array_filter( $steps ) ),
 			'distributions'     => array_values( $choices ),
 			'sources'           => array_map(
 				static fn( $name ) => array(

@@ -19,6 +19,10 @@
         "maxLength": 1000
       }
     },
+    "language": {
+      "description": "Language of the built-in visitor phrases (buttons, hints, errors). site follows the page language.",
+      "enum": ["site", "en", "id"]
+    },
     "completion": {
       "type": "object",
       "additionalProperties": false,
@@ -34,6 +38,10 @@
             "maxLength": 255
           },
           "maxItems": 20
+        },
+        "review": {
+          "description": "What happens after the last question: off submits automatically, button shows only a Submit button, show lists the answers for review first.",
+          "enum": ["off", "button", "show"]
         }
       },
       "required": [
@@ -85,6 +93,10 @@
           "maximum": 90
         },
         "deletePartialOnRestart": {
+          "type": "boolean"
+        },
+        "storageNotice": {
+          "description": "Tell visitors in the chat that resumable answers are stored on their device. Off by default.",
           "type": "boolean"
         }
       }

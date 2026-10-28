@@ -20,9 +20,10 @@ vi.mock('@wordpress/components', () => {
 const config: AdminConfig = {restUrl:location.origin+'/wp-json/cff/v1/',nonce:'fixture',pluginUrl:'/',screen:'submissions',locale:'en',features:{fieldTypes:[]},capabilities:{view_submissions:true,edit_submissions:true,delete_submissions:true,export_submissions:true}};
 const row = {id:42,uuid:'12345678-1234-4234-8234-123456789abc',formId:5,formVersion:1,answers:{name:'Ada'},meta:{},createdAt:'2026-10-19T10:00:00+00:00',status:'completed',progress:100};
 const response = (value: unknown) => new Response(JSON.stringify(value));
-it('formats stored dates in UTC and keeps unknown values rather than inventing dates',()=>{
+it('formats stored UTC dates in the site timezone and keeps unknown values rather than inventing dates',()=>{
   expect(readableDate('2026-10-19 10:00:00')).toBe(readableDate('2026-10-19T10:00:00Z'));
-  expect(readableDate('2026-10-19T10:00:00Z')).toContain('UTC');
+  expect(readableDate('2026-10-19 10:00:00','Asia/Jakarta')).toBe(readableDate('2026-10-19T17:00:00Z'));
+  expect(readableDate('2026-10-19T10:00:00Z','+07:00')).toContain('UTC+07:00');
   expect(readableDate('unavailable')).toBe('unavailable');
   expect(answerOperators.every(operator=>operatorLabel(operator)!==operator)).toBe(true);
 });
@@ -51,18 +52,22 @@ it('offers paging, not a non-functional search, to export-only users',async()=>{
   expect(transport.mock.calls.every(call=>String(call[0]).includes('admin/export-forms'))).toBe(true);
   await act(async()=>root.unmount());
 });
-it('uses named forms in overview analytics and explains UTC versus site-timezone reports before loading',async()=>{
+it('shows one analytics report with a single named form picker and site-time dates',async()=>{
   const transport=vi.fn().mockImplementation((url:string)=>Promise.resolve(response(url.includes('analytics/forms')?{items:[{id:5,title:'Contact &#8211; sales &amp; support'}],pages:1}:null)));
   const host=document.createElement('div');const root=createRoot(host);
   await act(async()=>root.render(h(Analytics,{api:new AdminApi({...config,timezone:'Asia/Jakarta'},transport)})));
   expect(host.querySelector('input[type="number"]')).toBeNull();
+  // One picker for the whole page, not a second "Find a form" funnel picker.
+  expect(host.querySelectorAll('select')).toHaveLength(1);
   const formSelect=host.querySelector('select');
   expect([...formSelect!.options].some(option=>option.textContent==='Contact – sales & support')).toBe(true);
-  expect(host.textContent).toContain('Overview · UTC');
-  expect(host.textContent).toContain('Site timezone: Asia/Jakarta');
+  expect(host.textContent).toContain('Dates use your site time zone (Asia/Jakarta).');
+  expect(host.textContent).not.toContain('UTC');
   await act(async()=>{formSelect!.value='5';formSelect!.dispatchEvent(new Event('change',{bubbles:true}));});
-  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Apply filters')!.click());
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Show report')!.click());
+  // Choosing a form loads the overview and that form's funnel for the same range.
   expect(transport.mock.calls.some(call=>String(call[0]).includes('admin/analytics?formId=5&'))).toBe(true);
+  expect(transport.mock.calls.some(call=>String(call[0]).includes('admin/analytics/form?formId=5&'))).toBe(true);
   await act(async()=>root.unmount());
 });
 it('defaults Tools to a non-destructive available task',async()=>{
@@ -134,7 +139,7 @@ it('filters retained responses by a historical form ID absent from the named pic
   const host = document.createElement('div'); document.body.append(host);
   await act(async () => mountSubmissions(host, { ...config, capabilities: { view_submissions: true } }));
   const advanced = host.querySelector('.cff-advanced-filters')!;
-  const input = [...advanced.querySelectorAll('label')].find(label => label.textContent === 'Form ID (blank = all)')?.querySelector('input');
+  const input = [...advanced.querySelectorAll('label')].find(label => label.textContent === 'Deleted form ID (for responses of a form that no longer exists)')?.querySelector('input');
   expect(input).toBeTruthy();
   await act(async () => {
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '999');

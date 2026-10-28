@@ -43,7 +43,7 @@ describe('bundled Indonesian administration catalogs', () => {
     ) as { locale_data: { messages: Parameters<typeof setLocaleData>[0] } };
     setLocaleData(catalog.locale_data.messages, 'chatflow-forms');
     try {
-      expect(__('Save draft', 'chatflow-forms')).toBe('Simpan draf');
+      expect(__('Undo', 'chatflow-forms')).toBe('Urungkan');
       expect(__('Purge data', 'chatflow-forms')).toBe('Hapus data');
       expect(__('Type DELETE to confirm', 'chatflow-forms')).toBe('Ketik DELETE untuk konfirmasi');
     } finally {

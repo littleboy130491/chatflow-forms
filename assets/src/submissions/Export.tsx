@@ -68,7 +68,7 @@ export function Export({ api, filters, ids, exportId }: { api: AdminApi; filters
       <Button disabled={formPage<=1} onClick={() => setFormPage(value=>value-1)}>{__('Previous forms', 'chatflow-forms')}</Button><Button disabled={formPage*50>=formTotal} onClick={() => setFormPage(value=>value+1)}>{__('More forms', 'chatflow-forms')}</Button>
       <p>{__('A form is required so columns remain consistent. Active filters and selected rows are intersected with that form; no cross-form export is implied.', 'chatflow-forms')}</p>
       {filters.formId && filters.formId !== formId && <Notice status="warning" isDismissible={false}>{__('The export form must match the active form filter. Change the filter or select its form before exporting.', 'chatflow-forms')}</Notice>}
-      <Select label={__('Export date range (UTC)', 'chatflow-forms')} value={preset} choices={[{value:'active',label:__('Active/custom date filters', 'chatflow-forms')}, {value:'7',label:__('Last 7 days', 'chatflow-forms')}, {value:'30',label:__('Last 30 days', 'chatflow-forms')}, {value:'90',label:__('Last 90 days', 'chatflow-forms')}, {value:'month',label:__('This month', 'chatflow-forms')}]} onChange={value => setPreset(value as DatePreset)} />
+      <Select label={__('Date range', 'chatflow-forms')} value={preset} choices={[{value:'active',label:__('Active/custom date filters', 'chatflow-forms')}, {value:'7',label:__('Last 7 days', 'chatflow-forms')}, {value:'30',label:__('Last 30 days', 'chatflow-forms')}, {value:'90',label:__('Last 90 days', 'chatflow-forms')}, {value:'month',label:__('This month', 'chatflow-forms')}]} onChange={value => setPreset(value as DatePreset)} />
       <Select label={__('Format', 'chatflow-forms')} value={format}
         choices={[{ value: 'csv', label: 'CSV' }, ...(('xlsx' in api.config.features && api.config.features.xlsx) ? [{value: 'xlsx', label: 'XLSX'}] : [])]}
         onChange={(next) => setFormat(next as 'csv' | 'xlsx')} />
@@ -112,7 +112,7 @@ export function Export({ api, filters, ids, exportId }: { api: AdminApi; filters
                 'admin/submissions/export',
                 'POST',
                 exportOptions(
-                  { ...filters, ...exportDates(preset), formId },
+                  { ...filters, ...exportDates(preset, new Date(), api.config.timezone), formId },
                   ids,
                   columns
                     .split(',')

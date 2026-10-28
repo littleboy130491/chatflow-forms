@@ -347,6 +347,18 @@
 	display: none;
 }
 
+.cff-card-select-all {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	border: 1px solid var(--cff-line);
+	border-radius: var(--cff-radius-sm);
+	background: var(--cff-soft);
+	font-size: 13px;
+	font-weight: 600;
+}
+
 .cff-submission-card {
 	padding: 16px;
 	border: 1px solid var(--cff-line);
@@ -914,4 +926,59 @@
 	.cff-detail dl > div {
 		break-inside: avoid;
 	}
+}
+
+.cff-status-checks {
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+}
+
+.cff-status-checks li {
+	margin: 0 0 8px;
+	padding: 10px 12px 10px 36px;
+	position: relative;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.cff-status-checks li::before {
+	position: absolute;
+	top: 9px;
+	left: 12px;
+	font-weight: 700;
+}
+
+.cff-status-checks li.is-ok::before {
+	content: "✓";
+	color: #067647;
+}
+
+.cff-status-checks li.is-warning {
+	border-color: #f5c26b;
+	background: #fffaeb;
+}
+
+.cff-status-checks li.is-warning::before {
+	content: "!";
+	color: #b54708;
+}
+
+.cff-status-checks p {
+	margin: 4px 0 0;
+}
+
+.cff-status-info div {
+	display: flex;
+	gap: 8px;
+}
+
+.cff-status-info dt {
+	min-width: 260px;
+	font-weight: 600;
+}
+
+.cff-status-info dd {
+	margin: 0;
 }

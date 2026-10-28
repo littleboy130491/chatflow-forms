@@ -11,7 +11,7 @@ import { statuses, statusLabel } from './model';
 import type { PurgeCriteria, PurgeJob, PurgePreview, Status } from './model';
 import { useJobProgress } from './useJobProgress';
 export function Purge({ api }: { api: AdminApi }) {
-  const [criteria, setCriteria] = useState<PurgeCriteria>({ olderThanDays: 360 }),
+  const [criteria, setCriteria] = useState<PurgeCriteria>({}),
     [preview, setPreview] = useState<PurgePreview | null>(null),
     [confirmation, setConfirmation] = useState(''),
     [job, setJob] = useState<PurgeJob | null>(null),
@@ -25,10 +25,15 @@ export function Purge({ api }: { api: AdminApi }) {
     (err) => setError(errorMessage(err)),
   );
   const change = (next: PurgeCriteria) => {
-    setCriteria(next);
+    const normalized = { ...next };
+    // A date range and the age shorthand are alternative bounds. Sending both
+    // intersects them and can silently match nothing.
+    if (normalized.from || normalized.to) delete normalized.olderThanDays;
+    setCriteria(normalized);
     setPreview(null);
     setConfirmation('');
   };
+  const hasDates = Boolean(criteria.from || criteria.to);
   return (
     <section className="cff-card">
       <h1>{__('Purge submissions', 'chatflow-forms')}</h1>
@@ -58,9 +63,10 @@ export function Purge({ api }: { api: AdminApi }) {
         />
         <Filters value={criteria} onChange={change} purge />
         <Field
-          label={__('Older than days (default 360 unless dates set)', 'chatflow-forms')}
+          label={__('Older than days', 'chatflow-forms')}
           type="number"
-          value={criteria.olderThanDays ?? ''}
+          value={hasDates ? '' : criteria.olderThanDays ?? ''}
+          help={hasDates ? __('Ignored while a date range is set.', 'chatflow-forms') : __('Blank = 360 days.', 'chatflow-forms')}
           onChange={(value) => {
             const next = { ...criteria };
             if (value) next.olderThanDays = Number(value);

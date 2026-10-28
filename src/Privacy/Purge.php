@@ -30,7 +30,10 @@ final class Purge {
 					return Database::error( 'cff_purge_invalid', 'Invalid date.', 422 );
 				} $result[ $key ] = $input[ $key ]; }
 		}
-		if ( isset( $input['olderThanDays'] ) || ! isset( $input['from'] ) && ! isset( $input['to'] ) ) {
+		// Dates and the age shorthand are alternative bounds. Applying both silently
+		// intersected a recent date range with "older than 360 days" and deleted nothing.
+		$has_dates = isset( $result['from'] ) || isset( $result['to'] );
+		if ( ! $has_dates ) {
 			$days = $input['olderThanDays'] ?? 360;
 			if ( ! is_int( $days ) || $days < 1 || $days > 36500 ) {
 				return Database::error( 'cff_purge_invalid', 'Invalid age.', 422 ); }

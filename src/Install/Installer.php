@@ -21,10 +21,32 @@ final class Installer {
 	}
 
 	public static function maybeUpgrade(): void {
-		if ( (int) get_option( 'cff_db_version', 0 ) < self::DB_VERSION ) {
-			self::migrate();
-			self::grantCapabilities();
+		if ( get_option( 'cff_migration_error' ) ) {
+			add_action( 'admin_notices', array( self::class, 'migrationNotice' ) );
 		}
+		if ( (int) get_option( 'cff_db_version', 0 ) < self::DB_VERSION ) {
+			try {
+				self::migrate();
+				self::grantCapabilities();
+				delete_option( 'cff_migration_error' );
+			} catch ( \Throwable $error ) {
+				// A failed migration must not take down every request. Keep the old schema
+				// version so the upgrade is retried, and surface a durable admin notice.
+				update_option( 'cff_migration_error', $error->getMessage(), false );
+				add_action( 'admin_notices', array( self::class, 'migrationNotice' ) );
+			}
+		}
+	}
+
+	public static function migrationNotice(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$message = (string) get_option( 'cff_migration_error', '' );
+		if ( '' === $message ) {
+			return;
+		}
+		echo '<div class="notice notice-error"><p><strong>' . esc_html__( 'ChatFlow Forms database upgrade failed.', 'chatflow-forms' ) . '</strong> ' . esc_html( $message ) . '</p><p>' . esc_html__( 'The plugin kept the previous schema version and will retry. Fix the database permissions or error, then reload the admin.', 'chatflow-forms' ) . '</p></div>';
 	}
 
 	public static function initializeSite( \WP_Site $site ): void {
@@ -73,7 +95,7 @@ final class Installer {
 	}
 
 	private static function unschedule(): void {
-		foreach ( array( 'cff_retention', 'cff_abandon_sessions', 'cff_refresh_cloudflare_ranges', 'cff_aggregate_stats', 'cff_recover_deliveries', 'cff_dispatch_delivery', 'cff_export_batch', 'cff_purge_batch', 'cff_private_cleanup', 'cff_recover_magic_links', 'cff_send_magic_link' ) as $hook ) {
+		foreach ( array( 'cff_retention', 'cff_abandon_sessions', 'cff_cloudflare_refresh', 'cff_aggregate_stats', 'cff_recover_deliveries', 'cff_dispatch_delivery', 'cff_export_batch', 'cff_purge_batch', 'cff_private_cleanup', 'cff_recover_magic_links', 'cff_send_magic_link' ) as $hook ) {
 			wp_clear_scheduled_hook( $hook );
 		}
 		if ( function_exists( 'as_unschedule_all_actions' ) && class_exists( '\\ActionScheduler_StoreSchema' ) && ( new \ActionScheduler_StoreSchema() )->tables_exist() ) {
@@ -83,7 +105,13 @@ final class Installer {
 
 	private static function deleteSiteData(): void {
 		global $wpdb;
-		( new \ChatFlow\Privacy\PrivateFiles() )->cleanupSite();
+		// Private-file cleanup is best effort. A missing/read-only CFF_PRIVATE_DIR must
+		// not prevent the database and options from being removed.
+		try {
+			( new \ChatFlow\Privacy\PrivateFiles() )->cleanupSite();
+		} catch ( \Throwable $error ) {
+			// Continue with database cleanup.
+		}
 		foreach ( self::TABLES as $table ) {
 			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'cff_' . $table ) );
 		}

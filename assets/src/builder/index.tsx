@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { diagnoseSchema } from '../shared/logic/index';
-import { Area, Button, Check, Field, Notice, Select } from './controls';
+import { Area, Button, Check, Field, MediaIdField, Notice, Select } from './controls';
 import { AdminApi, can, errorMessage } from './api';
 import type { AdminConfig, FormDTO, FormSchema, Step } from './api';
 import {
@@ -16,12 +16,15 @@ import {
   DraftController,
   duplicateStep,
   makeStep,
-  publishDiff,
+  publishChanges,
+  removeField,
+  renameOptionValue,
+  renameStepKey,
   reorder,
   uid,
 } from './model';
 import { Inspector, SortableItem } from './Inspector';
-import { EndingsEditor, SettingsEditor } from './FormSettings';
+import { DisplaySettings, EndingsEditor, SettingsEditor } from './FormSettings';
 import { Preview } from './Preview';
 import { importForm } from './formIO';
 import { googleFont, googleFonts } from '../shared/fonts';
@@ -276,6 +279,7 @@ function BuilderView({
   const [liveForm, setLiveForm] = useState<FormDTO | null>(null);
   const baseline = liveForm?.schema ?? null;
   const [baselineError, setBaselineError] = useState('');
+  const [baselineAttempt, setBaselineAttempt] = useState(0);
   useEffect(() => {
     if (!form.version || !form.id) return;
     let active = true;
@@ -283,7 +287,7 @@ function BuilderView({
       if (active) { setLiveForm(live); setBaselineError(''); }
     }).catch(err => { if (active) { setLiveForm(null); setBaselineError(errorMessage(err)); } });
     return () => { active = false; };
-  }, [api, form.id, form.version]);
+  }, [api, form.id, form.version, baselineAttempt]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -291,33 +295,46 @@ function BuilderView({
   const issues = useMemo(() => diagnoseSchema(schema), [schema]);
   const edit = (transform: (form: FormDTO) => FormDTO) => controller.edit(transform);
   const setSchema = (next: FormSchema) => edit((value) => ({ ...value, schema: next }));
+  const goToIssue = (path: string) => {
+    const match = /^\/steps\/(\d+)/.exec(path);
+    const target = match ? schema.steps[Number(match[1])] : undefined;
+    if (!target) return;
+    setTab('build');
+    setSelected(target.id);
+    setInspectorOpen(true);
+  };
+  const unpublished = Boolean(
+    form.version > 0 &&
+    liveForm &&
+    (JSON.stringify(liveForm.schema) !== JSON.stringify(schema) || JSON.stringify(liveForm.settings) !== JSON.stringify(form.settings)),
+  );
   const add = (type: string) => {
     const next = makeStep(type as Step['type'], schema.steps, controller.reservedKeys());
-    setSchema({ ...schema, steps: [...schema.steps, next] });
+    const at = schema.steps.findIndex((item) => item.id === selected);
+    const steps = at >= 0
+      ? [...schema.steps.slice(0, at + 1), next, ...schema.steps.slice(at + 1)]
+      : [...schema.steps, next];
+    setSchema({ ...schema, steps: steps as FormSchema['steps'] });
     setSelected(next.id);
     setInspectorOpen(true);
     setPaletteOpen(false);
   };
   const deleteStep = (id: string) => {
     if (schema.steps.length <= 1) return;
-    if (!window.confirm(__('Delete this field? Review broken references before publishing.', 'chatflow-forms')))
+    if (!window.confirm(__('Delete this field? Rules, outcomes and variants that use it are removed, and notifications or integrations that depend on it are switched off.', 'chatflow-forms')))
       return;
-    const steps = schema.steps.filter((item) => item.id !== id);
-    setSchema({
-      ...schema,
-      steps: steps as FormSchema['steps'],
-      groups: (schema.groups ?? []).map((group) => ({
-        ...group,
-        stepIds: group.stepIds.filter((stepId) => stepId !== id),
-      })),
-    });
+    edit((value) => removeField(value, id));
     setMarked(marked.filter((stepId) => stepId !== id));
-    if (selected === id) setSelected(steps[0]?.id ?? '');
+    if (selected === id) setSelected(schema.steps.find((item) => item.id !== id)?.id ?? '');
   };
   const duplicateField = (item: Step) => {
     if (schema.steps.length >= 500) return;
     const copy = duplicateStep(item, schema.steps, controller.reservedKeys());
-    setSchema({ ...schema, steps: [...schema.steps, copy] });
+    const at = schema.steps.findIndex((candidate) => candidate.id === item.id);
+    const steps = at >= 0
+      ? [...schema.steps.slice(0, at + 1), copy, ...schema.steps.slice(at + 1)]
+      : [...schema.steps, copy];
+    setSchema({ ...schema, steps: steps as FormSchema['steps'] });
     setSelected(copy.id);
     setInspectorOpen(true);
   };
@@ -330,13 +347,34 @@ function BuilderView({
     acquire(); const timer = setInterval(acquire, 60000);
     return () => { active = false; clearInterval(timer); };
   }, [api, form.id]);
+  // Drafts save themselves; there is no manual Save button. A failed save pauses
+  // autosave (the error is shown with a Retry) until the admin edits or retries.
+  const saveNow = () => {
+    if (!lockError && !controller.state.conflict && !controller.state.saving) void controller.save().catch(() => undefined);
+  };
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!lockError && !controller.state.conflict && controller.dirty() && !controller.state.saving)
+      if (!lockError && !controller.state.conflict && !controller.state.error && controller.dirty() && !controller.state.saving)
         void controller.save().catch(() => undefined);
-    }, 10000);
+    }, 3000);
     return () => clearInterval(timer);
   }, [controller, lockError]);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const wasSaving = useRef(false);
+  useEffect(() => {
+    if (wasSaving.current && !state.saving && !state.error) setSavedAt(new Date());
+    wasSaving.current = state.saving;
+  }, [state.saving, state.error]);
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        saveNow();
+      }
+    };
+    window.addEventListener('keydown', shortcut);
+    return () => window.removeEventListener('keydown', shortcut);
+  });
   useEffect(() => {
     const next = builderUrlFor(window.location.href, form.id);
     if (next) window.history.replaceState(window.history.state, '', next);
@@ -362,7 +400,20 @@ function BuilderView({
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [controller]);
-  const diff = publishDiff(baseline, schema);
+  useEffect(() => {
+    if (!publishConfirm) return;
+    const layer = publishDialog.current?.parentElement;
+    const main = layer?.closest('main');
+    const siblings = [...(main?.children ?? [])].filter((element) => element !== layer);
+    siblings.forEach((element) => element.setAttribute('inert', ''));
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      siblings.forEach((element) => element.removeAttribute('inert'));
+      document.body.style.overflow = overflow;
+    };
+  }, [publishConfirm]);
+  const changes = publishChanges(liveForm, form);
   return (
     <main className="cff-admin">
       <header className="cff-toolbar">
@@ -388,15 +439,25 @@ function BuilderView({
           >
             {state.saving
               ? __('Saving…', 'chatflow-forms')
-              : dirty
-                ? __('Unsaved draft', 'chatflow-forms')
-                : __('Draft saved', 'chatflow-forms')}{' '}
+              : state.error
+                ? __('Draft not saved', 'chatflow-forms')
+                : dirty
+                  ? __('Unsaved changes', 'chatflow-forms')
+                  : savedAt
+                    ? /* translators: %s: time the draft was last saved */
+                      sprintf(__('Draft saved %s', 'chatflow-forms'), savedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
+                    : __('Draft saved', 'chatflow-forms')}{' '}
             ·{' '}
             {form.version > 0
               ? /* translators: %d: published version number */
                 sprintf(__('Live version %d', 'chatflow-forms'), form.version)
               : __('Not published yet', 'chatflow-forms')}
           </span>
+          {unpublished && (
+            <span className="cff-save-state is-unpublished" role="status">
+              {__('Unpublished changes', 'chatflow-forms')}
+            </span>
+          )}
         </div>
         <div className="cff-toolbar-actions">
           <Button disabled={!state.history.length || state.saving} onClick={() => controller.undo()}>
@@ -404,14 +465,6 @@ function BuilderView({
           </Button>
           <Button disabled={!state.future.length || state.saving} onClick={() => controller.redo()}>
             {__('Redo', 'chatflow-forms')}
-          </Button>
-          <Button
-            disabled={state.saving || Boolean(state.conflict) || Boolean(lockError)}
-            onClick={() => {
-              void controller.save().catch(() => undefined);
-            }}
-          >
-            {__('Save draft', 'chatflow-forms')}
           </Button>
           <Button onClick={() => setPreview(!preview)}>{__('Preview', 'chatflow-forms')}</Button>
           <span ref={publishButton}>
@@ -429,6 +482,26 @@ function BuilderView({
       {state.error && (
         <Notice status={state.locked ? 'warning' : 'error'} isDismissible={false}>
           <p>{state.error}</p>
+          {/* Validation errors need an edit first; other failures (network, lock) can be retried. */}
+          {state.issues.length === 0 && !state.conflict && (
+            <Button variant="secondary" disabled={state.saving || Boolean(lockError)} onClick={saveNow}>
+              {__('Retry save', 'chatflow-forms')}
+            </Button>
+          )}
+          {state.issues.length > 0 && (
+            <ul className="cff-error-list">
+              {state.issues.map((issue, index) => {
+                const match = /^\/steps\/(\d+)/.exec(issue.path);
+                const target = match ? schema.steps[Number(match[1])] : undefined;
+                return (
+                  <li key={`${issue.path}-${index}`}>
+                    <code>{issue.path || __('Form', 'chatflow-forms')}</code> {issue.message}
+                    {target && <Button variant="link" onClick={() => goToIssue(issue.path)}>{__('Go to field', 'chatflow-forms')}</Button>}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {state.locked && (
             <Button
               variant="secondary"
@@ -443,7 +516,12 @@ function BuilderView({
         </Notice>
       )}
       {lockError && <Notice status="warning" isDismissible={false}>{lockError}</Notice>}
-      {baselineError && <Notice status="error" isDismissible={false}>{baselineError}</Notice>}
+      {baselineError && (
+        <Notice status="error" isDismissible={false}>
+          <p>{baselineError}</p>
+          <Button onClick={() => setBaselineAttempt((value) => value + 1)}>{__('Retry loading the published version', 'chatflow-forms')}</Button>
+        </Notice>
+      )}
       {state.conflict && (
         <Notice status="warning" isDismissible={false}>
           <p>
@@ -478,41 +556,90 @@ function BuilderView({
         </Notice>
       )}
       {publishConfirm && (
-        <section
-          className="cff-card"
-          role="dialog"
-          aria-label={__('Publish form?', 'chatflow-forms')}
-          ref={publishDialog}
-          tabIndex={-1}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') closePublish();
+        <div
+          className="cff-modal-layer"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closePublish();
           }}
         >
-          <h2>{__('Publish form?', 'chatflow-forms')}</h2>
-          <p>{sprintf(__('“%s” will be available to visitors. Later edits stay in your draft until you publish again.', 'chatflow-forms'), form.title)}</p>
-          <details><summary>{__('Review changes and version details', 'chatflow-forms')}</summary>
-            <p>{sprintf(__('Questions: %d added, %d changed, %d removed.', 'chatflow-forms'), diff.added, diff.changed, diff.removed)}</p>
-            <p>{__('Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.', 'chatflow-forms')}</p>
-            {form.version > 0 && <p>{__('Changes are compared with the current live version.', 'chatflow-forms')}</p>}
-          </details>
-          <Button onClick={closePublish}>{__('Cancel', 'chatflow-forms')}</Button>
-          <Button
-            variant="primary"
-            disabled={state.saving || Boolean(lockError) || (form.version > 0 && !baseline)}
-            onClick={async () => {
-              try {
-                const published = await controller.publish();
-                setLiveForm(published);
-                setPublishedForm(published);
+          <section
+            className="cff-card cff-publish-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cff-publish-title"
+            ref={publishDialog}
+            tabIndex={-1}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                event.preventDefault();
                 closePublish();
-              } catch {
-                /* The controller displays server validation and conflict errors. */
+                return;
+              }
+              if (event.key !== 'Tab') return;
+              const focusable = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], summary')];
+              const first = focusable[0];
+              const last = focusable.at(-1);
+              if (!first || !last) return;
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
               }
             }}
           >
-            {__('Publish new version', 'chatflow-forms')}
-          </Button>
-        </section>
+            <h2 id="cff-publish-title">{__('Publish form?', 'chatflow-forms')}</h2>
+            <p>{sprintf(__('“%s” will be available to visitors. Later edits stay in your draft until you publish again.', 'chatflow-forms'), form.title)}</p>
+            {issues.length > 0 && (
+              <Notice status="warning" isDismissible={false}>
+                <p>{sprintf(__('%d problems will stop this version from publishing:', 'chatflow-forms'), issues.length)}</p>
+                <ul className="cff-error-list">
+                  {issues.slice(0, 10).map((issue, index) => (
+                    <li key={`${issue.path}-${index}`}>
+                      {issue.message}{' '}
+                      {/^\/steps\/\d+/.test(issue.path) && (
+                        <Button variant="link" onClick={() => { closePublish(); goToIssue(issue.path); }}>{__('Go to field', 'chatflow-forms')}</Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </Notice>
+            )}
+            {form.version > 0 ? (
+              <Fragment>
+                <h3>{sprintf(__('Changes since live version %d', 'chatflow-forms'), form.version)}</h3>
+                {changes.length ? (
+                  <ul className="cff-publish-changes">{changes.map((change) => <li key={change}>{change}</li>)}</ul>
+                ) : (
+                  <p>{__('No changes since the live version.', 'chatflow-forms')}</p>
+                )}
+              </Fragment>
+            ) : (
+              <p>{__('This is the first published version.', 'chatflow-forms')}</p>
+            )}
+            <p className="description">{__('Publishing saves this draft and creates a fixed live version of the form and its private settings. Existing responses are kept.', 'chatflow-forms')}</p>
+            <div className="cff-modal-actions">
+              <Button onClick={closePublish}>{__('Cancel', 'chatflow-forms')}</Button>
+              <Button
+                variant="primary"
+                disabled={state.saving || Boolean(lockError) || (form.version > 0 && !baseline)}
+                onClick={async () => {
+                  try {
+                    const published = await controller.publish();
+                    setLiveForm(published);
+                    setPublishedForm(published);
+                    closePublish();
+                  } catch {
+                    /* The controller displays server validation and conflict errors. */
+                  }
+                }}
+              >
+                {__('Publish new version', 'chatflow-forms')}
+              </Button>
+            </div>
+          </section>
+        </div>
       )}
       {publishedForm && <section className="cff-card cff-publish-success" aria-label={__('Publication result', 'chatflow-forms')}>
         <h2 role="status">{__('Form published', 'chatflow-forms')}</h2>
@@ -526,8 +653,8 @@ function BuilderView({
           { value: 'build', label: __('Build', 'chatflow-forms') },
           { value: 'logic', label: __('Logic', 'chatflow-forms') },
           { value: 'design', label: __('Design', 'chatflow-forms') },
-          { value: 'settings', label: __('Settings', 'chatflow-forms') },
-          { value: 'share', label: __('Share', 'chatflow-forms') },
+          { value: 'settings', label: __('Form settings', 'chatflow-forms') },
+          { value: 'share', label: __('Publish & share', 'chatflow-forms') },
         ].map((item) => (
           <Button
             key={item.value}
@@ -595,19 +722,13 @@ function BuilderView({
                       if (
                         window.confirm(
                           __(
-                            'Delete selected fields? Review broken references before publishing.',
+                            'Delete the selected fields? Rules, outcomes and variants that use them are removed, and notifications or integrations that depend on them are switched off.',
                             'chatflow-forms',
                           ),
                         )
                       ) {
-                        setSchema({
-                          ...schema,
-                          steps: schema.steps.filter((item) => !marked.includes(item.id)) as FormSchema['steps'],
-                          groups: (schema.groups ?? []).map((group) => ({
-                            ...group,
-                            stepIds: group.stepIds.filter((id) => !marked.includes(id)),
-                          })),
-                        });
+                        const ids = marked;
+                        edit((value) => ids.reduce((next, id) => removeField(next, id), value));
                         setMarked([]);
                       }
                     }}
@@ -628,6 +749,9 @@ function BuilderView({
                     {__('Group selected', 'chatflow-forms')}
                   </Button>
                 </div>
+              )}
+              {(schema.groups ?? []).length > 0 && (
+                <p className="description">{__('Groups label related fields in this builder to keep long forms organised. Visitors do not see them.', 'chatflow-forms')}</p>
               )}
               {(schema.groups ?? []).map((group) => (
                 <fieldset key={group.id}>
@@ -691,6 +815,9 @@ function BuilderView({
                       </div>
                       <p className="cff-field-summary">{item.messages[0] || __('No message yet. Select this field to edit.', 'chatflow-forms')}</p>
                       <small>
+                        {(schema.groups ?? []).filter((group) => group.stepIds.includes(item.id)).map((group) => (
+                          <span key={group.id} className="cff-badge cff-badge--group">{group.title}</span>
+                        ))}
                         {item.required && <span className="cff-badge cff-badge--required">{__('Required', 'chatflow-forms')}</span>}
                         {item.hiddenByDefault && <span className="cff-badge cff-badge--hidden">{__('Hidden', 'chatflow-forms')}</span>}
                         {Boolean(item.logic?.length) && <span className="cff-badge cff-badge--logic">{item.logic?.length === 1
@@ -705,14 +832,9 @@ function BuilderView({
                   </SortableItem>
                 ))}
               </SortableContext>
-              <details className="cff-card">
-                <summary>{__('Human contact during the conversation', 'chatflow-forms')}</summary>
-                <ContactLinkEditor schema={schema} timezone={api.config.timezone} onChange={setSchema} />
-              </details>
-              <details className="cff-card">
-                <summary>{__('Conversation endings', 'chatflow-forms')}</summary>
+              <section className="cff-card cff-endings-card">
                 <EndingsEditor form={form} onChange={(next) => edit(() => next)} />
-              </details>
+              </section>
             </section>
             {step && (
               <section ref={inspectorPanel} role={narrow && inspectorOpen ? 'dialog' : undefined} aria-modal={narrow && inspectorOpen ? true : undefined} className={`cff-inspector-panel ${inspectorOpen ? 'is-open' : ''}`} aria-label={__('Field editor', 'chatflow-forms')} onKeyDown={event => {
@@ -748,6 +870,8 @@ function BuilderView({
                     </Button>
                   </Fragment>
                 )}
+                onRenameKey={(key) => edit((value) => renameStepKey(value, step.id, key))}
+                onRenameOption={(optionId, optionValue) => edit((value) => renameOptionValue(value, step.id, optionId, optionValue))}
                 onChange={(next) =>
                   setSchema({
                     ...schema,
@@ -767,6 +891,7 @@ function BuilderView({
           schema={schema}
           issues={issues}
           onChange={setSchema}
+          onForm={edit}
           onEditStep={(id) => {
             setSelected(id);
             setInspectorOpen(true);
@@ -785,13 +910,10 @@ function BuilderView({
             value={schema.bot.name}
             onChange={(name) => setSchema({ ...schema, bot: { ...schema.bot, name } })}
           />
-          <Field
-            label={__('Avatar attachment ID', 'chatflow-forms')}
-            type="number"
-            value={schema.bot.avatar ?? ''}
-            onChange={(value) =>
-              setSchema({ ...schema, bot: { ...schema.bot, avatar: Number(value) || null } })
-            }
+          <MediaIdField
+            label={__('Avatar image', 'chatflow-forms')}
+            value={schema.bot.avatar ?? undefined}
+            onChange={(avatar) => setSchema({ ...schema, bot: { ...schema.bot, avatar: avatar > 0 ? avatar : null } })}
           />
           <Select
             label={__('Typing speed', 'chatflow-forms')}
@@ -807,43 +929,46 @@ function BuilderView({
               })
             }
           />
+          </section>
+          <section className="cff-card">
             <ContactLinkEditor schema={schema} timezone={api.config.timezone} onChange={setSchema} />
           </section>
           <section className="cff-card">
             <h2>{__('Typography', 'chatflow-forms')}</h2>
-            <Field label={__('Font stack', 'chatflow-forms')} value={form.settings.appearance?.font ?? ''} onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, font } } }))} />
-          <Select
-            label={__('Font source', 'chatflow-forms')}
-            value={form.settings.appearance?.googleFont ?? 'system'}
-            choices={[{ value: 'system', label: __('System / local — no ChatFlow font requests', 'chatflow-forms') }, ...googleFonts.map(font => ({ value: font, label: font }))]}
-            onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, googleFont: googleFont(font) ?? 'system', inheritFont: false } } }))}
-          />
-          <p>{__('Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.', 'chatflow-forms')}</p>
-          <Check
-            label={__('Inherit theme font', 'chatflow-forms')}
-            value={form.settings.appearance?.inheritFont}
-            onChange={(inheritFont) =>
-              edit((value) => ({
-                ...value,
-                settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont, ...(inheritFont ? { googleFont: 'system' as const } : {}) } },
-              }))
-            }
-          />
+            <Check
+              label={__('Use my theme’s font', 'chatflow-forms')}
+              value={form.settings.appearance?.inheritFont}
+              onChange={(inheritFont) =>
+                edit((value) => ({
+                  ...value,
+                  settings: { ...value.settings, appearance: { ...value.settings.appearance, inheritFont, ...(inheritFont ? { googleFont: 'system' as const } : {}) } },
+                }))
+              }
+            />
+            {!form.settings.appearance?.inheritFont && <Select
+              label={__('Font', 'chatflow-forms')}
+              value={form.settings.appearance?.googleFont ?? 'system'}
+              choices={[{ value: 'system', label: __('Device default (no external requests)', 'chatflow-forms') }, ...googleFonts.map(font => ({ value: font, label: `${font} (Google Fonts)` }))]}
+              onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, googleFont: googleFont(font) ?? 'system', inheritFont: false } } }))}
+            />}
+            {(form.settings.appearance?.googleFont ?? 'system') !== 'system' && <p>{__('Google fonts are opt-in. Visitors and preview administrators contact Google (fonts.googleapis.com and fonts.gstatic.com), exposing their IP address and browser/network information. Review your privacy policy and consent requirements. System/local fonts remain the default; blocked fonts use the local fallback.', 'chatflow-forms')}</p>}
           </section>
           <section className="cff-card">
-            <h2>{__('Accessibility and extras', 'chatflow-forms')}</h2>
+            <h2>{__('Extras', 'chatflow-forms')}</h2>
             <Contrast appearance={form.settings.appearance} />
-            <Check label={__('Confetti on completion (off by default)', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
+            <Check label={__('Confetti when the form is completed', 'chatflow-forms')} value={(form.settings.appearance as {confetti?:boolean})?.confetti ?? false}
               onChange={(confetti)=>edit((value)=>({...value,settings:{...value.settings,appearance:{...value.settings.appearance,confetti}}}))} />
-            <Area label={__('Scoped custom CSS (inside the Shadow DOM)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
-            <p>{__('Check colour contrast in the real preview. Completion confetti respects reduced-motion preferences.', 'chatflow-forms')}</p>
+            <details className="cff-advanced">
+              <summary>{__('Advanced', 'chatflow-forms')}</summary>
+              <Field label={__('Custom font stack (CSS font-family)', 'chatflow-forms')} value={form.settings.appearance?.font ?? ''} onChange={font => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, font } } }))} />
+              <Area label={__('Custom CSS (applies only inside this form)', 'chatflow-forms')} value={form.settings.appearance?.customCss ?? ''} onChange={customCss => edit(value => ({ ...value, settings: { ...value.settings, appearance: { ...value.settings.appearance, customCss } } }))} />
+            </details>
           </section>
         </Fragment>
       )}
       {tab === 'settings' && (
         <Fragment>
           <SettingsEditor
-            completion={<EndingsEditor form={form} onChange={(next) => edit(() => next)} />}
             form={form}
             api={api}
             save={() => controller.save()}
@@ -852,8 +977,16 @@ function BuilderView({
         </Fragment>
       )}
       {tab === 'share' && (
+        <DisplaySettings form={form} api={api} onChange={(settings) => edit((value) => ({ ...value, settings }))} />
+      )}
+      {tab === 'share' && (
         <section className="cff-card cff-share-card">
           <h2>{__('Share', 'chatflow-forms')}</h2>
+          {unpublished && (
+            <Notice status="warning" isDismissible={false}>
+              {__('These links use the published version. Your draft changes will appear here after you publish.', 'chatflow-forms')}
+            </Notice>
+          )}
           {liveForm || !form.version ? <Share form={liveForm ?? form} config={api.config} /> : baselineError ? <Notice status="error" isDismissible={false}>{baselineError}</Notice> : <p role="status">{__('Loading…', 'chatflow-forms')}</p>}
         </section>
       )}

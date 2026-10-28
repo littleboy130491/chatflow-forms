@@ -100,7 +100,8 @@ version(), draftRevision(), status(), toArray(). Admin FormDTO is exactly
 publish. Historical title/slug come from the frozen version snapshot.
 
 Settings keys are camelCase: appearance, phrases, completion.defaultEndingId,
-completion.allowedRedirectHosts, sessions(savePartial,resumeEnabled,resumePrompt,
+completion.allowedRedirectHosts, completion.review (off|button|show, default off:
+submit automatically after the last question; public), sessions(savePartial,resumeEnabled,resumePrompt,
 resumeDays=30,abandonDays=30,deletePartialOnRestart=false), limits, privacy,
 spam, notifications(admin[],autoresponders[],firstMatchOnly,notifyAbandoned),
 integrations.webhooks[], display. Validate against settings schema. Absent values

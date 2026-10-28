@@ -2,9 +2,9 @@ import { __ } from '@wordpress/i18n';
 import { AdminApi, can, errorMessage, type AdminConfig, type FormDTO } from './api';
 import { downloadForm } from './formIO';
 
-export async function formsListAction(api: AdminApi, action: string, id: number): Promise<string | void> {
+export async function formsListAction(api: AdminApi, action: string, id: number, shortcode?: string): Promise<string | void> {
   if (!can(api.config, 'manage_forms') || !Number.isSafeInteger(id) || id <= 0) throw new Error(__('You cannot manage forms.', 'chatflow-forms'));
-  if (action === 'copy') return navigator.clipboard.writeText(`[chatflow id="${id}"]`);
+  if (action === 'copy') return navigator.clipboard.writeText(shortcode || `[chatflow id="${id}"]`);
   if (action === 'export') return downloadForm(await api.request<FormDTO>(`admin/forms/${id}`));
   if (action === 'duplicate') {
     const form = await api.request<FormDTO>(`admin/forms/${id}/duplicate`, 'POST', {});
@@ -34,7 +34,7 @@ export function mountFormsList(root: HTMLElement, config: AdminConfig = window.c
     busy = true; button.disabled = true;
     const status = root.querySelector<HTMLElement>('[data-cff-status]');
     if (status) status.textContent = __('Working…', 'chatflow-forms');
-    void formsListAction(api, button.dataset.cffAction ?? '', Number(button.dataset.formId)).then(result => {
+    void formsListAction(api, button.dataset.cffAction ?? '', Number(button.dataset.formId), button.dataset.cffShortcode).then(result => {
       if (result === 'reload') window.location.reload();
       else if (result) window.location.assign(result);
       else if (status) status.textContent = button.dataset.cffAction === 'copy'

@@ -28,7 +28,10 @@ export function publicDraft(form: FormDTO, config: AdminConfig): PublicSchemaEnv
         resumeEnabled: session.resumeEnabled ?? true,
         resumePrompt: session.resumePrompt ?? true,
         resumeDays: session.resumeDays ?? 30,
+        storageNotice: session.storageNotice ?? false,
       },
+      completion: { review: form.settings.completion?.review ?? 'off' },
+      language: form.settings.language ?? 'site',
     },
     features: { ...config.features, engagement: false },
   };
@@ -199,9 +202,30 @@ export function Preview({
     setRestarts((value) => value + 1);
   };
   const previewHandle = typeof handle.current === 'object' ? handle.current : undefined;
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const close = useRef(onClose);
+  close.current = onClose;
+  useEffect(() => {
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close.current();
+      }
+    };
+    document.addEventListener('keydown', keydown);
+    return () => {
+      document.removeEventListener('keydown', keydown);
+      previous?.focus();
+    };
+  }, []);
   return (
-    <aside className="cff-preview" role="dialog" aria-label={__('Draft preview', 'chatflow-forms')}>
-      <h2>{__('Preview your form', 'chatflow-forms')}</h2>
+    <aside className="cff-preview" role="dialog" aria-modal="false" aria-labelledby="cff-preview-title">
+      <div className="cff-preview-head">
+        <h2 id="cff-preview-title">{__('Preview your form', 'chatflow-forms')}</h2>
+        <Button ref={closeRef} variant="tertiary" onClick={onClose} aria-label={__('Close preview', 'chatflow-forms')}>×</Button>
+      </div>
       <p>{__('Test your draft as a visitor. Responses here are not saved, and notifications are not sent.', 'chatflow-forms')}</p>
       <Button onClick={onClose}>{__('Back to editor', 'chatflow-forms')}</Button>
       <Button variant="secondary" onClick={restart}>

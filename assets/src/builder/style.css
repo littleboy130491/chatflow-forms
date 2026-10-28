@@ -720,7 +720,8 @@
 	grid-column: 1 / -1;
 }
 
-.cff-palette-group .components-button {
+/* Grid cells: beat the generic "space between adjacent buttons" rule. */
+.cff-admin .cff-palette-group .components-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1018,6 +1019,11 @@
 .cff-badge--hidden {
 	background: var(--cff-soft);
 	color: var(--cff-muted);
+}
+
+.cff-badge--group {
+	background: var(--cff-accent-soft);
+	color: var(--cff-accent);
 }
 
 .cff-badge--logic {
@@ -1794,7 +1800,7 @@
 
 .cff-preview {
 	position: fixed;
-	top: 32px;
+	top: var(--wp-admin--admin-bar--height, 32px);
 	right: 0;
 	bottom: 0;
 	z-index: 30;
@@ -2112,13 +2118,7 @@
 	margin-top: 20px;
 }
 
-.cff-contact-link {
-	margin-top: 22px;
-	padding-top: 18px;
-	border-top: 1px solid var(--cff-line);
-}
-
-.cff-contact-link h3 {
+.cff-contact-link h2 {
 	margin: 0 0 6px;
 }
 
@@ -2254,7 +2254,9 @@
 	overflow-wrap: anywhere;
 }
 
-.cff-share-card {
+/* Publish & share: placement and sharing cards line up. */
+.cff-share-card,
+.cff-display-settings {
 	max-width: 900px;
 }
 
@@ -2392,7 +2394,7 @@
 
 	.cff-inspector-panel.is-open {
 		position: fixed;
-		inset: 46px 0 0 auto;
+		inset: var(--wp-admin--admin-bar--height, 46px) 0 0 auto;
 		display: block;
 		width: min(520px, 100vw);
 		max-height: none;
@@ -2430,7 +2432,7 @@
 
 @media (max-width: 900px) {
 	.cff-admin > .cff-toolbar {
-		top: 0;
+		top: var(--wp-admin--admin-bar--height, 32px);
 	}
 
 	.cff-toolbar-main {
@@ -2847,4 +2849,249 @@
 .cff-status-pill.is-trash {
 	background: var(--cff-danger-soft);
 	color: var(--cff-danger);
+}
+
+/* Media picker ----------------------------------------------------------- */
+
+.cff-media-id {
+	display: grid;
+	gap: 8px;
+	justify-items: start;
+}
+
+.cff-media-id .components-base-control {
+	width: 100%;
+}
+
+.cff-save-state.is-unpublished {
+	background: var(--cff-warning-soft);
+	color: var(--cff-warning);
+}
+
+.cff-error-list {
+	margin: 8px 0 0;
+	padding-inline-start: 20px;
+	max-height: 240px;
+	overflow: auto;
+}
+
+.cff-error-list li {
+	margin: 0 0 4px;
+}
+
+.cff-error-list code {
+	overflow-wrap: anywhere;
+}
+
+.cff-error-list .components-button.is-link {
+	margin-inline-start: 6px;
+	height: auto;
+	min-height: 0;
+	padding: 0;
+}
+
+/* Publish dialog --------------------------------------------------------- */
+
+.cff-modal-layer {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: grid;
+	place-items: center;
+	padding: 24px;
+	background: rgba(16, 24, 40, .45);
+	overflow: auto;
+}
+
+.cff-publish-dialog {
+	width: min(560px, 100%);
+	max-height: calc(100vh - 48px);
+	overflow: auto;
+	margin: 0;
+}
+
+.cff-publish-dialog:focus {
+	outline: none;
+}
+
+.cff-modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+@media (max-width: 700px) {
+	.cff-modal-layer {
+		align-items: end;
+		padding: 0;
+	}
+
+	.cff-publish-dialog {
+		width: 100%;
+		max-height: 90vh;
+		border-radius: var(--cff-radius) var(--cff-radius) 0 0;
+	}
+}
+
+.cff-preview-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.cff-preview-head h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 650;
+}
+
+.cff-preview-head .components-button {
+	min-width: 36px;
+	min-height: 36px;
+	font-size: 22px;
+	line-height: 1;
+}
+
+
+/* Touch devices have no hover, so never hide these controls behind it. */
+@media (hover: none) {
+	.cff-sortable-item > .cff-drag,
+	.cff-field-select {
+		opacity: 1;
+	}
+}
+
+@media (max-width: 1100px) {
+	.cff-sortable-item > .cff-drag,
+	.cff-field-select {
+		opacity: 1;
+	}
+}
+
+.cff-commit-field.has-error input {
+	border-color: #d63638;
+	box-shadow: 0 0 0 1px #d63638;
+}
+
+.cff-field-error {
+	margin: -4px 0 12px;
+	color: #b32d2e;
+	font-size: 12px;
+}
+
+.cff-publish-changes {
+	max-height: 40vh;
+	margin: 0 0 12px;
+	padding-left: 20px;
+	overflow-y: auto;
+	list-style: disc;
+}
+
+/* Collapsible "occasional" sections added in the admin simplification pass. */
+.cff-admin .cff-email-test,
+.cff-admin .cff-advanced {
+	margin-top: 12px;
+	padding-top: 8px;
+	border-top: 1px solid var(--cff-line);
+}
+
+.cff-admin .cff-email-test > summary,
+.cff-admin .cff-advanced > summary,
+.cff-admin .cff-power-section > summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.cff-admin .cff-power-section > summary {
+	display: list-item;
+}
+
+.cff-admin .cff-power-section > summary > div {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.cff-contrast h3 {
+	margin: 0 0 6px;
+	font-size: 14px;
+}
+
+.cff-contrast-ok {
+	color: #067647;
+}
+
+.cff-contrast-warn {
+	color: #b42318;
+	font-weight: 600;
+}
+
+.cff-wording-list {
+	max-height: 60vh;
+	overflow-y: auto;
+	padding-right: 8px;
+}
+
+.cff-admin .cff-page-picker,
+.cff-admin .cff-field-mapping {
+	margin: 12px 0;
+	padding: 12px;
+	border: 1px solid var(--cff-line);
+	border-radius: 8px;
+}
+
+.cff-admin .cff-page-picker legend,
+.cff-admin .cff-field-mapping legend {
+	padding: 0 4px;
+	font-weight: 600;
+}
+
+.cff-page-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+}
+
+.cff-page-chips li {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	padding: 2px 4px 2px 10px;
+	border-radius: 999px;
+	background: var(--cff-accent-soft);
+	color: var(--cff-accent);
+}
+
+.cff-admin .cff-page-chips .components-button {
+	min-height: 0;
+	height: 22px;
+	padding: 0 6px;
+	text-decoration: none;
+}
+
+.cff-page-results {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.cff-field-mapping-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+	gap: 8px;
+	align-items: end;
+}
+
+@media (max-width: 700px) {
+	.cff-field-mapping-row {
+		grid-template-columns: 1fr;
+	}
 }

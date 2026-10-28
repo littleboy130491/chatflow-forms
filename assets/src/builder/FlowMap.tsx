@@ -130,6 +130,13 @@ export function FlowMap({
     const at = schema.steps.findIndex((s) => s.id === connection.source);
     const to = schema.steps.findIndex((s) => s.id === connection.target);
     if (at < 0 || (!ending && to <= at)) return;
+    const source = schema.steps[at]!;
+    // A new edge must not silently become "always". Start with an explicit,
+    // editable condition on the source question (or the first input before it).
+    const inputTypes = ['statement', 'summary', 'media', 'hidden', 'calculated'];
+    const conditionKey = inputTypes.includes(source.type)
+      ? schema.steps.slice(0, at).reverse().find((step) => !inputTypes.includes(step.type))?.key ?? schema.steps.find((step) => !inputTypes.includes(step.type))?.key ?? source.key
+      : source.key;
     onChange({
       ...schema,
       steps: schema.steps.map((s, i) =>
@@ -138,7 +145,7 @@ export function FlowMap({
               ...s,
               logic: [
                 ...(s.logic ?? []),
-                { if: { all: [] }, then: { action: ending ? 'end' : 'jump', to: connection.target! } },
+                { if: { field: conditionKey, source: 'answer', op: 'eq', value: '' }, then: { action: ending ? 'end' : 'jump', to: connection.target! } },
               ],
             }
           : s,
@@ -220,7 +227,7 @@ export function FlowMap({
       </ReactFlow>
       <p>
         {__(
-          'Connect a step to a later step or ending to create a branch. Click a branch and press Delete or Backspace to remove it. Click a step to edit its rule conditions. Drag nodes to arrange the map.',
+          'Connect a step to a later step or ending to create a branch. The branch starts with an editable “answer equals” condition; open the source rule to change it. Click a branch and press Delete or Backspace to remove it. Drag nodes to arrange the map.',
           'chatflow-forms',
         )}
       </p>

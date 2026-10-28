@@ -128,7 +128,7 @@ final class AdminModule implements Module {
 			'cff-forms'       => array( 'forms', 'cff_manage_forms', __( 'Forms', 'chatflow-forms' ) ),
 			'cff-submissions' => array( 'submissions', 'cff_view_submissions', __( 'Submissions', 'chatflow-forms' ) ),
 			'cff-analytics'   => array( 'analytics', 'cff_view_submissions', __( 'Analytics', 'chatflow-forms' ) ),
-			'cff-settings'    => array( 'settings', 'cff_manage_settings', __( 'Settings', 'chatflow-forms' ) ),
+			'cff-settings'    => array( 'settings', 'cff_manage_settings', __( 'Site defaults', 'chatflow-forms' ) ),
 			'cff-tools'       => array( 'submissions', $this->toolsCapability(), __( 'Tools', 'chatflow-forms' ) ),
 		);
 		$available = array_filter( $pages, static fn( array $page ): bool => current_user_can( $page[1] ) );
@@ -144,13 +144,24 @@ final class AdminModule implements Module {
 			if ( $hook ) {
 				$this->screens[ $hook ] = $page[0];
 			}
+			// WordPress convention: "Add new" sits directly under the list it adds to.
+			if ( 'cff-forms' === $slug ) {
+				$this->addBuilderMenu( $parent );
+			}
 		}
 		$this->screens[ 'toplevel_page_' . $parent ] = $first[0];
-		if ( current_user_can( 'cff_manage_forms' ) ) {
-			$hook = add_submenu_page( $parent, __( 'Form builder', 'chatflow-forms' ), __( 'New form', 'chatflow-forms' ), 'cff_manage_forms', 'cff-builder', array( $this, 'render' ) );
-			if ( $hook ) {
-				$this->screens[ $hook ] = 'builder';
-			}
+		if ( ! isset( $available['cff-forms'] ) ) {
+			$this->addBuilderMenu( $parent );
+		}
+	}
+
+	private function addBuilderMenu( string $menu_slug ): void {
+		if ( ! current_user_can( 'cff_manage_forms' ) ) {
+			return;
+		}
+		$hook = add_submenu_page( $menu_slug, __( 'Form builder', 'chatflow-forms' ), __( 'Add new form', 'chatflow-forms' ), 'cff_manage_forms', 'cff-builder', array( $this, 'render' ) );
+		if ( $hook ) {
+			$this->screens[ $hook ] = 'builder';
 		}
 	}
 
@@ -178,8 +189,10 @@ final class AdminModule implements Module {
 			echo '<p>' . esc_html__( 'Conversational forms that feel like a chat. Draft here, publish when you are ready to share.', 'chatflow-forms' ) . '</p>';
 			$this->trashNotice();
 			echo '<div data-cff-status role="status" aria-live="polite"></div><form method="get"><input type="hidden" name="page" value="cff-forms">';
-			if ( $table->isTrashView() ) {
-				echo '<input type="hidden" name="status" value="trash">';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
+			$status = isset( $_GET['status'] ) && is_string( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : '';
+			if ( in_array( $status, array( 'draft', 'publish', 'trash' ), true ) ) {
+				echo '<input type="hidden" name="status" value="' . esc_attr( $status ) . '">';
 			}
 			$table->views();
 			$table->search_box( __( 'Search forms', 'chatflow-forms' ), 'cff-forms' );
@@ -404,7 +417,8 @@ final class AdminModule implements Module {
 		return $count ? $title . ' <span class="awaiting-mod"><span class="pending-count">' . esc_html( number_format_i18n( $count ) ) . '</span></span>' : $title;
 	}
 	private function toolsCapability(): string {
-		foreach ( array( 'cff_purge_submissions', 'cff_export_submissions', 'cff_manage_forms', 'cff_manage_settings' ) as $cap ) {
+		// Export-only users still reach Tools for their "export ready" download links.
+		foreach ( array( 'cff_purge_submissions', 'cff_manage_settings', 'cff_export_submissions' ) as $cap ) {
 			if ( current_user_can( $cap ) ) {
 				return $cap; }
 		}
