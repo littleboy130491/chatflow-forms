@@ -30,10 +30,17 @@ final class Renderer {
 		$height         = max( 200, min( 2000, (int) ( $attributes['height'] ?? $form->settings()['display']['height'] ?? 600 ) ) );
 		$requested_mode = $attributes['mode'] ?? 'inline';
 		$mode           = in_array( $requested_mode, array( 'inline', 'fullpage', 'launcher', 'popup' ), true ) ? $requested_mode : 'inline';
-		$position       = 'left' === ( $attributes['position'] ?? 'right' ) ? 'left' : 'right';
+		$launcher       = $form->settings()['display']['launcher'] ?? array();
+		$position       = $attributes['position'] ?? '';
+		$position       = 'left' === ( '' === $position ? ( $launcher['position'] ?? 'right' ) : $position ) ? 'left' : 'right';
 		$style          = in_array( $mode, array( 'launcher', 'popup' ), true ) ? 'display:block' : 'display:block;min-height:' . $height . 'px';
-		$delay          = isset( $attributes['auto_open'] ) && is_numeric( $attributes['auto_open'] ) ? max( 0, min( 3600, (int) $attributes['auto_open'] ) ) : '';
-		$scroll         = isset( $attributes['scroll_percent'] ) && is_numeric( $attributes['scroll_percent'] ) ? max( 0, min( 100, (int) $attributes['scroll_percent'] ) ) : '';
+		// Attributes the embed leaves out fall back to the form's own launcher settings.
+		$auto_open      = $attributes['auto_open'] ?? '';
+		$auto_open      = '' === $auto_open ? ( $launcher['autoOpenSeconds'] ?? '' ) : $auto_open;
+		$scroll_percent = $attributes['scroll_percent'] ?? '';
+		$scroll_percent = '' === $scroll_percent ? ( $launcher['scrollPercent'] ?? '' ) : $scroll_percent;
+		$delay          = is_numeric( $auto_open ) ? max( 0, min( 3600, (int) $auto_open ) ) : '';
+		$scroll         = is_numeric( $scroll_percent ) ? max( 0, min( 100, (int) $scroll_percent ) ) : '';
 		// A theme can replace the chat UI (chatflow/frontend.js) or restyle it (chatflow/frontend.css).
 		$theme_script = ThemeFrontend::asset( 'js', $form );
 		$theme_style  = ThemeFrontend::asset( 'css', $form );

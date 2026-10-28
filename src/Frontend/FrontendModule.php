@@ -19,7 +19,8 @@ final class FrontendModule implements Module {
 						'height'         => 600,
 						'mode'           => 'inline',
 						'theme'          => 'auto',
-						'position'       => 'right',
+						// Left empty so the form's own launcher settings apply unless the shortcode overrides them.
+						'position'       => '',
 						'auto_open'      => '',
 						'scroll_percent' => '',
 					),
