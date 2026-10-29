@@ -7,6 +7,11 @@ publish them, and read submissions and analytics.
 
 It is **off by default**.
 
+**ChatFlow → AI guide** in wp-admin explains what context an agent needs to build
+a valid form: this site's MCP status and endpoint, downloadable form and settings
+schemas, an importable example form, the rules agents tend to get wrong and a
+brief template. It is also linked from the plugin's row on the Plugins screen.
+
 ## Turn it on
 
 1. **ChatFlow → Settings → MCP server (AI agents)**: tick *Enable the MCP server*

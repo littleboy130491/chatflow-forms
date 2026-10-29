@@ -3471,3 +3471,93 @@ msgstr "diawali dengan"
 
 msgid "“%s” will be available to visitors. Later edits stay in your draft until you publish again."
 msgstr "“%s” akan tersedia bagi pengunjung. Perubahan berikutnya tetap tersimpan sebagai draf sampai Anda menayangkannya lagi."
+
+msgid "AI guide"
+msgstr "Panduan AI"
+
+msgid "Build forms with an AI agent"
+msgstr "Buat formulir dengan agen AI"
+
+msgid "An agent needs two kinds of context: the format (what valid output looks like) and your brief (what this form should do). The plugin can supply most of the format itself."
+msgstr "Agen membutuhkan dua jenis konteks: format (seperti apa keluaran yang valid) dan brief Anda (apa tujuan formulir ini). Sebagian besar format dapat disediakan langsung oleh plugin."
+
+msgid "Option 1: Connect the agent to ChatFlow (recommended)"
+msgstr "Opsi 1: Hubungkan agen ke ChatFlow (disarankan)"
+
+msgid "ChatFlow includes an MCP server, so agents such as Claude Code, Cursor or VS Code can read the format, check their own work and save drafts:"
+msgstr "ChatFlow menyertakan server MCP, sehingga agen seperti Claude Code, Cursor, atau VS Code dapat membaca format, memeriksa hasil kerjanya sendiri, dan menyimpan draf:"
+
+msgid "the form and settings formats, field types and an example form."
+msgstr "format formulir dan pengaturan, jenis kolom, serta contoh formulir."
+
+msgid "schema errors, publish blockers and logic warnings, without saving."
+msgstr "kesalahan skema, penghambat penerbitan, dan peringatan logika, tanpa menyimpan."
+
+msgid "save drafts only. Visitors see nothing until you publish."
+msgstr "hanya menyimpan draf. Pengunjung tidak melihat apa pun sampai Anda menerbitkan."
+
+msgid "MCP server on this site:"
+msgstr "Server MCP di situs ini:"
+
+msgid "Turn on the MCP server in Site defaults → Integrations and AI."
+msgstr "Aktifkan server MCP di Bawaan situs → Integrasi dan AI."
+
+msgid "Open Site defaults"
+msgstr "Buka Bawaan situs"
+
+msgid "Create an application password for the account the agent should act as."
+msgstr "Buat kata sandi aplikasi untuk akun yang akan digunakan oleh agen."
+
+msgid "Add this endpoint to your agent (Streamable HTTP, Basic authorization with the username and application password):"
+msgstr "Tambahkan endpoint ini ke agen Anda (Streamable HTTP, otorisasi Basic dengan nama pengguna dan kata sandi aplikasi):"
+
+msgid "Then tell the agent:"
+msgstr "Lalu sampaikan kepada agen:"
+
+msgid "Option 2: The agent writes a JSON file that you import"
+msgstr "Opsi 2: Agen menulis berkas JSON yang Anda impor"
+
+msgid "For agents that cannot connect to your site, such as a chat window. Give the agent these files, then use Import form JSON on the new form screen."
+msgstr "Untuk agen yang tidak dapat terhubung ke situs Anda, misalnya jendela obrolan. Berikan berkas-berkas ini kepada agen, lalu gunakan Impor JSON formulir di layar formulir baru."
+
+msgid "Download form schema"
+msgstr "Unduh skema formulir"
+
+msgid "Download settings schema"
+msgstr "Unduh skema pengaturan"
+
+msgid "Download example form"
+msgstr "Unduh contoh formulir"
+
+msgid "Import form JSON"
+msgstr "Impor JSON formulir"
+
+msgid "Agents copy a working example far more reliably than they read a schema. You can also export any of your own forms from the builder and use it as the example."
+msgstr "Agen jauh lebih andal meniru contoh yang berfungsi daripada membaca skema. Anda juga dapat mengekspor formulir Anda sendiri dari builder dan menggunakannya sebagai contoh."
+
+msgid "The file wrapper"
+msgstr "Pembungkus berkas"
+
+msgid "Import rejects anything that does not use this outer shape:"
+msgstr "Impor menolak berkas apa pun yang tidak menggunakan bentuk luar ini:"
+
+msgid "Rules to state explicitly"
+msgstr "Aturan yang perlu dinyatakan secara eksplisit"
+
+msgid "Agents tend to get these wrong. Paste them into your instructions:"
+msgstr "Agen sering keliru dalam hal ini. Tempelkan ke instruksi Anda:"
+
+msgid "Your brief (needed with either option)"
+msgstr "Brief Anda (diperlukan untuk kedua opsi)"
+
+msgid "The format tells the agent how to build the form; only you can say what it is for. Fill in this template:"
+msgstr "Format memberi tahu agen cara membuat formulir; hanya Anda yang dapat menjelaskan tujuannya. Isi templat ini:"
+
+msgid "Always check the result"
+msgstr "Selalu periksa hasilnya"
+
+msgid "With MCP: ask the agent to run validate_form until it reports no problems."
+msgstr "Dengan MCP: minta agen menjalankan validate_form sampai tidak ada masalah yang dilaporkan."
+
+msgid "With a file: import it as a draft, then open the Logic tab, which reports broken references, and use Preview before publishing."
+msgstr "Dengan berkas: impor sebagai draf, lalu buka tab Logika yang melaporkan referensi rusak, dan gunakan Pratinjau sebelum menerbitkan."

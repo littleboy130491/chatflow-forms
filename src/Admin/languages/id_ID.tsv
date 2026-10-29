@@ -1366,3 +1366,33 @@ Visitors who saw and answered each question. “Stopped here” is seen minus an
 Went back|Kembali
 Where visitors came from|Asal pengunjung
 Where visitors stop|Tempat pengunjung berhenti
+AI guide|Panduan AI
+Build forms with an AI agent|Buat formulir dengan agen AI
+An agent needs two kinds of context: the format (what valid output looks like) and your brief (what this form should do). The plugin can supply most of the format itself.|Agen membutuhkan dua jenis konteks: format (seperti apa keluaran yang valid) dan brief Anda (apa tujuan formulir ini). Sebagian besar format dapat disediakan langsung oleh plugin.
+Option 1: Connect the agent to ChatFlow (recommended)|Opsi 1: Hubungkan agen ke ChatFlow (disarankan)
+ChatFlow includes an MCP server, so agents such as Claude Code, Cursor or VS Code can read the format, check their own work and save drafts:|ChatFlow menyertakan server MCP, sehingga agen seperti Claude Code, Cursor, atau VS Code dapat membaca format, memeriksa hasil kerjanya sendiri, dan menyimpan draf:
+the form and settings formats, field types and an example form.|format formulir dan pengaturan, jenis kolom, serta contoh formulir.
+schema errors, publish blockers and logic warnings, without saving.|kesalahan skema, penghambat penerbitan, dan peringatan logika, tanpa menyimpan.
+save drafts only. Visitors see nothing until you publish.|hanya menyimpan draf. Pengunjung tidak melihat apa pun sampai Anda menerbitkan.
+MCP server on this site:|Server MCP di situs ini:
+Turn on the MCP server in Site defaults → Integrations and AI.|Aktifkan server MCP di Bawaan situs → Integrasi dan AI.
+Open Site defaults|Buka Bawaan situs
+Create an application password for the account the agent should act as.|Buat kata sandi aplikasi untuk akun yang akan digunakan oleh agen.
+Add this endpoint to your agent (Streamable HTTP, Basic authorization with the username and application password):|Tambahkan endpoint ini ke agen Anda (Streamable HTTP, otorisasi Basic dengan nama pengguna dan kata sandi aplikasi):
+Then tell the agent:|Lalu sampaikan kepada agen:
+Option 2: The agent writes a JSON file that you import|Opsi 2: Agen menulis berkas JSON yang Anda impor
+For agents that cannot connect to your site, such as a chat window. Give the agent these files, then use Import form JSON on the new form screen.|Untuk agen yang tidak dapat terhubung ke situs Anda, misalnya jendela obrolan. Berikan berkas-berkas ini kepada agen, lalu gunakan Impor JSON formulir di layar formulir baru.
+Download form schema|Unduh skema formulir
+Download settings schema|Unduh skema pengaturan
+Download example form|Unduh contoh formulir
+Import form JSON|Impor JSON formulir
+Agents copy a working example far more reliably than they read a schema. You can also export any of your own forms from the builder and use it as the example.|Agen jauh lebih andal meniru contoh yang berfungsi daripada membaca skema. Anda juga dapat mengekspor formulir Anda sendiri dari builder dan menggunakannya sebagai contoh.
+The file wrapper|Pembungkus berkas
+Import rejects anything that does not use this outer shape:|Impor menolak berkas apa pun yang tidak menggunakan bentuk luar ini:
+Rules to state explicitly|Aturan yang perlu dinyatakan secara eksplisit
+Agents tend to get these wrong. Paste them into your instructions:|Agen sering keliru dalam hal ini. Tempelkan ke instruksi Anda:
+Your brief (needed with either option)|Brief Anda (diperlukan untuk kedua opsi)
+The format tells the agent how to build the form; only you can say what it is for. Fill in this template:|Format memberi tahu agen cara membuat formulir; hanya Anda yang dapat menjelaskan tujuannya. Isi templat ini:
+Always check the result|Selalu periksa hasilnya
+With MCP: ask the agent to run validate_form until it reports no problems.|Dengan MCP: minta agen menjalankan validate_form sampai tidak ada masalah yang dilaporkan.
+With a file: import it as a draft, then open the Logic tab, which reports broken references, and use Preview before publishing.|Dengan berkas: impor sebagai draf, lalu buka tab Logika yang melaporkan referensi rusak, dan gunakan Pratinjau sebelum menerbitkan.

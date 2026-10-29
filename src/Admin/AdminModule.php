@@ -13,6 +13,7 @@ final class AdminModule implements Module {
 
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'menus' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( CFF_FILE ), array( $this, 'pluginLinks' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'init', array( $this, 'registerBlock' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueueBlock' ) );
@@ -153,6 +154,23 @@ final class AdminModule implements Module {
 		if ( ! isset( $available['cff-forms'] ) ) {
 			$this->addBuilderMenu( $parent );
 		}
+		if ( current_user_can( 'cff_manage_forms' ) ) {
+			$hook = add_submenu_page( $parent, __( 'Build forms with an AI agent', 'chatflow-forms' ), __( 'AI guide', 'chatflow-forms' ), 'cff_manage_forms', AiGuide::SLUG, array( $this, 'render' ) );
+			if ( $hook ) {
+				$this->screens[ $hook ] = 'guide';
+			}
+		}
+	}
+
+	/**
+	 * @param array<string|int, string> $links
+	 * @return array<string|int, string>
+	 */
+	public function pluginLinks( array $links ): array {
+		if ( current_user_can( 'cff_manage_forms' ) ) {
+			$links['cff-ai-guide'] = '<a href="' . esc_url( AiGuide::url() ) . '">' . esc_html__( 'AI guide', 'chatflow-forms' ) . '</a>';
+		}
+		return $links;
 	}
 
 	private function addBuilderMenu( string $menu_slug ): void {
@@ -174,6 +192,7 @@ final class AdminModule implements Module {
 			'submissions' => 'cff_view_submissions',
 			'analytics'   => 'cff_view_submissions',
 			'settings'    => 'cff_manage_settings',
+			'guide'       => 'cff_manage_forms',
 		)[ $name ] ?? '';
 		if ( 'cff-tools' === $this->pageSlug() ) {
 			$cap = $this->toolsCapability();
@@ -182,6 +201,10 @@ final class AdminModule implements Module {
 			wp_die( esc_html__( 'You are not allowed to access this screen.', 'chatflow-forms' ), '', array( 'response' => 403 ) );
 		}
 		nocache_headers();
+		if ( 'guide' === $name ) {
+			AiGuide::render();
+			return;
+		}
 		if ( 'forms' === $name ) {
 			$table = new FormsTable( $this->forms );
 			$table->prepare_items();
@@ -222,7 +245,11 @@ final class AdminModule implements Module {
 			return;
 		}
 		$screen = $this->screens[ $hook ];
-		$entry  = in_array( $screen, array( 'builder', 'forms' ), true ) ? 'builder' : 'submissions';
+		if ( 'guide' === $screen ) {
+			AiGuide::enqueue();
+			return;
+		}
+		$entry = in_array( $screen, array( 'builder', 'forms' ), true ) ? 'builder' : 'submissions';
 		if ( ! $this->asset( $entry ) ) {
 			return;
 		}
