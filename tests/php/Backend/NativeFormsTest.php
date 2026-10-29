@@ -23,6 +23,8 @@ final class NativeFormsTest extends TestCase {
 			$table = new FormsTable( $forms ); self::assertInstanceOf( \WP_List_Table::class, $table ); $table->prepare_items();
 			self::assertSame( array( $a->id(), $b->id() ), array_column( $table->items, 'id' ) );
 			self::assertSame( 'draft', get_post_status( $a->id() ) );
+			// The contact template has no display settings; the shortcode must fall back to inline, never mode="".
+			self::assertSame( '[chatflow id="' . $a->id() . '" mode="inline"]', $table->items[0]['shortcode'] );
 			self::assertSame( 1, $table->items[1]['completed'] ); self::assertEquals( 100, $table->items[1]['completionRate'] ); self::assertSame( '2026-10-13 00:00:00', $table->items[1]['lastSubmissionAt'] );
 			ob_start(); $table->display(); $html = ob_get_clean();
 			foreach ( array( 'wp-list-table', 'cff-builder', 'preview=1', 'data-cff-action="duplicate"', 'data-cff-action="export"', 'data-cff-action="trash"', 'data-cff-action="copy"', 'Completion rate', 'Shortcode', 'Live', 'Draft' ) as $expected ) self::assertStringContainsString( $expected, $html );

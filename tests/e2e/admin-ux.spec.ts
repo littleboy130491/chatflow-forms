@@ -23,34 +23,26 @@ test('undoing an added field cannot leave a missing mobile inspector locking the
   await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
 });
 
-test('sharing after a title edit during first publish uses the actual published identity', async ({ page }) => {
+test('sharing after renaming a newly published form uses the actual published identity', async ({ page }) => {
   await page.goto('/wp-admin/admin.php?page=cff-builder&blank=1');
   await page.getByRole('textbox', { name: 'Form name', exact: true }).fill('QA publish race');
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  // Drafts autosave; Ctrl+S saves immediately.
+  await page.keyboard.press('Control+s');
   await expect(page).toHaveURL(/formId=\d+/);
 
-  let release!: () => void;
-  let published!: () => void;
   let slug = '';
-  const hold = new Promise<void>(resolve => { release = resolve; });
-  const serverPublished = new Promise<void>(resolve => { published = resolve; });
   await page.route('**/admin/forms/*/publish', async route => {
     const response = await route.fetch();
     slug = (await response.json()).slug;
-    published();
-    await hold;
     await route.fulfill({ response });
   });
   await page.getByRole('button', { name: 'Publish', exact: true }).click();
   await page.getByRole('dialog', { name: 'Publish form?', exact: true }).getByRole('button', { name: 'Publish new version', exact: true }).click();
-  try {
-    await serverPublished;
-    await page.getByRole('textbox', { name: 'Form name', exact: true }).fill('QA newer unpublished title');
-  } finally {
-    release();
-  }
   await expect(page.getByText('Form published', { exact: true })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Form name', exact: true })).toHaveValue('QA newer unpublished title');
+  expect(slug).not.toBe('');
+  // The publish dialog makes the builder inert, so the rename can only follow the publish.
+  await page.getByRole('textbox', { name: 'Form name', exact: true }).fill('QA newer unpublished title');
+  await expect(page.locator('.cff-save-state.is-unpublished')).toBeVisible();
   await page.getByRole('button', { name: 'Share and embed', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Open form', exact: true })).toHaveAttribute('href', new RegExp(`/chat/${slug}/$`));
   await expect(page.getByText('Publish your form to get a shareable link', { exact: true })).toHaveCount(0);

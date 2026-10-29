@@ -56,7 +56,8 @@ test('a visitor can branch, resume on the same device, complete and receive a co
   await advance(chat, 'Lewati');
   await expect(active(chat).getByRole('button', { name: 'Request Free Demo' })).toBeVisible();
   await advance(chat, 'Request Free Demo');
-  await expect(chat.getByText(/Terima kasih, E2E/)).toBeVisible();
+  // Scoped to the ending: the screen-reader live region repeats the same text.
+  await expect(chat.locator('.ending').getByText(/Terima kasih, E2E/)).toBeVisible();
   await expect(chat.getByRole('link', { name: 'Chat via WhatsApp' })).toHaveAttribute('href', /wa\.me/);
   await expect(page.locator('cff-chat')).toHaveCount(1);
 });
@@ -83,7 +84,7 @@ test('visitors submit rating, scale, NPS and a configured slider through real Wo
   await advance(chat, /^(Continue|Lanjut)$/);
   // The final review action sits outside .active once all questions are answered.
   await chat.getByRole('button', { name: /^(Submit|Kirim)$/, exact: true }).click();
-  await expect(chat.getByText('Feedback saved. Thank you!')).toBeVisible();
+  await expect(chat.locator('.ending').getByText('Feedback saved. Thank you!')).toBeVisible();
 });
 
 test('launcher defers the session handshake until opened and restores focus when closed', async ({ page }) => {

@@ -48,12 +48,13 @@ async function blank(page: Page) {
   await login(page);
   await localGoto(page, '/wp-admin/admin.php?page=cff-builder&blank=1');
   await page.getByRole('textbox', { name: 'Form name', exact: true }).fill(`QA admin-functions ${Date.now()}`);
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  // Drafts autosave; Ctrl+S saves immediately.
+  await page.keyboard.press('Control+s');
   await expect(page).toHaveURL(/formId=\d+/);
 }
 async function save(page: Page) {
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-  await expect(page.getByText(/All changes saved|Draft saved/, { exact: false }).first()).toBeVisible();
+  await page.keyboard.press('Control+s');
+  await expect(page.locator('.cff-save-state').first()).toContainText('Draft saved');
 }
 async function shot(page: Page, name: string) {
   // Capture settled visitor bubbles rather than their short entrance fade.

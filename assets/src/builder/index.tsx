@@ -306,7 +306,7 @@ function BuilderView({
   const unpublished = Boolean(
     form.version > 0 &&
     liveForm &&
-    (JSON.stringify(liveForm.schema) !== JSON.stringify(schema) || JSON.stringify(liveForm.settings) !== JSON.stringify(form.settings)),
+    (liveForm.title !== form.title || JSON.stringify(liveForm.schema) !== JSON.stringify(schema) || JSON.stringify(liveForm.settings) !== JSON.stringify(form.settings)),
   );
   const add = (type: string) => {
     const next = makeStep(type as Step['type'], schema.steps, controller.reservedKeys());

@@ -41,11 +41,12 @@ test('Forms list renders a literal shortcode without escaped quote characters', 
   await login(page);
   await page.goto('/wp-admin/admin.php?page=cff-builder&blank=1');
   await page.getByRole('textbox', { name: 'Form name', exact: true }).fill('QA shortcode fixture');
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  // Drafts autosave; Ctrl+S saves immediately.
+  await page.keyboard.press('Control+s');
   await expect(page).toHaveURL(/formId=\d+/);
   const id = new URL(page.url()).searchParams.get('formId');
   await page.goto('/wp-admin/admin.php?page=cff-forms');
-  await expect(page.locator('.wp-list-table code').filter({ hasText: `[chatflow id="${id}"]` })).toBeVisible();
+  await expect(page.locator('.wp-list-table code').filter({ hasText: `[chatflow id="${id}" mode="inline"]` })).toBeVisible();
 });
 
 test('WordPress administrator can create a draft from a template and publish it', async ({ page }) => {
@@ -59,6 +60,6 @@ test('WordPress administrator can create a draft from a template and publish it'
   await expect(page.getByRole('button', { name: 'Publish', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Publish', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: /Publish (new version|form)/ }).click();
-  await expect(page.getByText('Live version 1')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Share', exact: true })).toBeVisible();
+  await expect(page.locator('.cff-save-state.is-live')).toContainText('Live version 1');
+  await expect(page.getByRole('button', { name: 'Share and embed', exact: true })).toBeVisible();
 });

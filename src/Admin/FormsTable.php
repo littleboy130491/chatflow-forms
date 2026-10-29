@@ -44,8 +44,8 @@ final class FormsTable extends \WP_List_Table {
 		$current = $this->currentStatus();
 		$current = '' === $current ? 'all' : $current;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
-		$search  = isset( $_GET['s'] ) && is_string( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
-		$views   = array();
+		$search = isset( $_GET['s'] ) && is_string( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$views  = array();
 		foreach ( array(
 			'all'     => __( 'All', 'chatflow-forms' ),
 			'draft'   => __( 'Draft', 'chatflow-forms' ),
@@ -59,7 +59,7 @@ final class FormsTable extends \WP_List_Table {
 			if ( '' !== $search ) {
 				$args['s'] = $search;
 			}
-			$current_attr = $view === $current ? ' class="current" aria-current="page"' : '';
+			$current_attr   = $view === $current ? ' class="current" aria-current="page"' : '';
 			$views[ $view ] = '<a href="' . esc_url( add_query_arg( $args, admin_url( 'admin.php' ) ) ) . '"' . $current_attr . '>' . esc_html( $label ) . '</a>';
 		}
 		return $views;
@@ -114,10 +114,11 @@ final class FormsTable extends \WP_List_Table {
 			}
 			$form = $this->forms->getDraft( $post->ID );
 			if ( $form ) {
-				$display   = $form->settings()['display'] ?? array();
-				$mode      = in_array( $display['mode'] ?? 'inline', array( 'inline', 'fullpage', 'launcher', 'popup' ), true ) ? $display['mode'] : 'inline';
-				$position  = ( 'launcher' === $mode || 'popup' === $mode ) && 'left' === ( $display['launcher']['position'] ?? 'right' ) ? ' position="left"' : '';
-				$shortcode = '[chatflow id="' . $form->id() . '" mode="' . $mode . '"' . $position . ']';
+				$display       = $form->settings()['display'] ?? array();
+				$mode          = $display['mode'] ?? 'inline';
+				$mode          = in_array( $mode, array( 'inline', 'fullpage', 'launcher', 'popup' ), true ) ? $mode : 'inline';
+				$position      = ( 'launcher' === $mode || 'popup' === $mode ) && 'left' === ( $display['launcher']['position'] ?? 'right' ) ? ' position="left"' : '';
+				$shortcode     = '[chatflow id="' . $form->id() . '" mode="' . $mode . '"' . $position . ']';
 				$this->items[] = array_merge(
 					array(
 						'id'        => $form->id(),
